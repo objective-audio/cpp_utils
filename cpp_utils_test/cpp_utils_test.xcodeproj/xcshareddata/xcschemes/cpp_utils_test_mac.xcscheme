@@ -15,8 +15,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B6626AA41C151E580038175B"
-               BuildableName = "cpp_utils_test.xctest"
-               BlueprintName = "cpp_utils_test"
+               BuildableName = "cpp_utils_test_mac.xctest"
+               BlueprintName = "cpp_utils_test_mac"
                ReferencedContainer = "container:cpp_utils_test.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -34,8 +34,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B6626AA41C151E580038175B"
-               BuildableName = "cpp_utils_test.xctest"
-               BlueprintName = "cpp_utils_test"
+               BuildableName = "cpp_utils_test_mac.xctest"
+               BlueprintName = "cpp_utils_test_mac"
                ReferencedContainer = "container:cpp_utils_test.xcodeproj">
             </BuildableReference>
          </TestableReference>
@@ -57,8 +57,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B6626AA41C151E580038175B"
-            BuildableName = "cpp_utils_test.xctest"
-            BlueprintName = "cpp_utils_test"
+            BuildableName = "cpp_utils_test_mac.xctest"
+            BlueprintName = "cpp_utils_test_mac"
             ReferencedContainer = "container:cpp_utils_test.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -75,8 +75,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B6626AA41C151E580038175B"
-            BuildableName = "cpp_utils_test.xctest"
-            BlueprintName = "cpp_utils_test"
+            BuildableName = "cpp_utils_test_mac.xctest"
+            BlueprintName = "cpp_utils_test_mac"
             ReferencedContainer = "container:cpp_utils_test.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
