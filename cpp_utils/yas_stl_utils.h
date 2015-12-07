@@ -5,6 +5,7 @@
 
 #pragma once
 
+#include <vector>
 #include <map>
 #include <unordered_set>
 #include <memory>

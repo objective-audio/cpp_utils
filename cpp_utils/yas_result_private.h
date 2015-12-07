@@ -5,6 +5,7 @@
 
 #pragma once
 
+#include "yas_types.h"
 #include "yas_exception.h"
 #include <iostream>
 

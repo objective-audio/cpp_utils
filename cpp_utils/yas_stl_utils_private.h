@@ -5,6 +5,8 @@
 
 #pragma once
 
+#include "yas_types.h"
+
 namespace yas {
 template <typename T, typename U>
 std::experimental::optional<T> min_empty_key(const std::map<T, U> &map) {

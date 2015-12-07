@@ -5,7 +5,6 @@
 
 #pragma once
 
-#include "yas_audio_types.h"
 #include "yas_stl_utils.h"
 #include <unordered_map>
 #include <unordered_set>
