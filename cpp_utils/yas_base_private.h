@@ -96,8 +96,9 @@ bool weak<T>::operator!=(const weak &rhs) const {
 template <typename T>
 T weak<T>::lock() const {
     T obj{nullptr};
-    if (!_impl.expired()) {
-        obj.set_impl_ptr(_impl.lock());
+    auto impl = _impl.lock();
+    if (impl) {
+        obj.set_impl_ptr(impl);
     }
     return obj;
 }
