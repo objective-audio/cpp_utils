@@ -4,11 +4,11 @@
 //
 
 #include "yas_operation.h"
-#include <thread>
 #include <atomic>
 #include <mutex>
 #include <vector>
 #include <deque>
+#include <dispatch/dispatch.h>
 
 using namespace yas;
 
@@ -151,8 +151,10 @@ class operation_queue::impl : public base::impl {
             if (op) {
                 _current_operation = op;
 
-                std::thread th([weak_ope = to_weak(op), weak_queue = weak_queue]() {
-                    if (auto ope = weak_ope.lock()) {
+                auto weak_ope = to_weak(op);
+                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, NULL), ^{
+                    auto ope = weak_ope.lock();
+                    if (ope) {
                         auto &ope_for_queue = static_cast<operation_from_queue &>(ope);
                         ope_for_queue._execute();
 
@@ -161,8 +163,6 @@ class operation_queue::impl : public base::impl {
                         }
                     }
                 });
-
-                th.detach();
             }
         }
     }
