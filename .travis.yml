@@ -1,0 +1,10 @@
+language: objective-c
+osx_image: xcode7.1
+branches:
+  only:
+    - master
+notifications:
+  email: false
+script:
+  - xcodebuild -project cpp_utils_test/cpp_utils_test.xcodeproj -scheme cpp_utils_test_mac -configuration Debug OBJROOT=build -sdk macosx clean test
+  - xcodebuild -project cpp_utils_test/cpp_utils_test.xcodeproj -scheme cpp_utils_test_ios -configuration Debug OBJROOT=build -sdk iphonesimulator clean test
