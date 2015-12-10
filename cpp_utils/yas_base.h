@@ -41,6 +41,9 @@ class base {
     template <typename T, typename I = typename T::impl>
     T cast() const;
 
+    template <typename T, typename I = typename T::impl>
+    bool is_kind_of() const;
+
     std::shared_ptr<impl> &impl_ptr();
     void set_impl_ptr(const std::shared_ptr<impl> &);
     void set_impl_ptr(std::shared_ptr<impl> &&);

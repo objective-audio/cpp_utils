@@ -8,7 +8,7 @@
 
 namespace yas {
 namespace test {
-    class test_derived : public base {
+    class derived1 : public base {
         using super_class = base;
 
        public:
@@ -17,10 +17,10 @@ namespace test {
             float value;
         };
 
-        test_derived() : super_class(std::make_shared<impl>()) {
+        derived1() : super_class(std::make_shared<impl>()) {
         }
 
-        test_derived(std::nullptr_t) : super_class(nullptr) {
+        derived1(std::nullptr_t) : super_class(nullptr) {
         }
 
         void set_value(float val) {
@@ -37,7 +37,7 @@ namespace test {
         }
     };
 
-    class test_derived2 : public base {
+    class derived2 : public base {
         using super_class = base;
 
        public:
@@ -46,7 +46,7 @@ namespace test {
             float value;
         };
 
-        test_derived2(std::nullptr_t) : super_class(nullptr) {
+        derived2(std::nullptr_t) : super_class(nullptr) {
         }
     };
 }
@@ -67,8 +67,8 @@ namespace test {
 }
 
 - (void)test_lock_values {
-    yas::test::test_derived derived_1;
-    yas::test::test_derived derived_2;
+    yas::test::derived1 derived_1;
+    yas::test::derived1 derived_2;
 
     derived_1.set_value(1.0f);
     derived_2.set_value(2.0f);
@@ -97,10 +97,10 @@ namespace test {
 }
 
 - (void)test_cast_success {
-    yas::test::test_derived derived;
+    yas::test::derived1 derived;
     yas::base base = derived;
 
-    auto casted = base.cast<yas::test::test_derived>();
+    auto casted = base.cast<yas::test::derived1>();
 
     XCTAssertTrue(!!casted);
 }
@@ -109,23 +109,23 @@ namespace test {
     yas::base base{nullptr};
     base.set_impl_ptr(std::make_shared<yas::base::impl>());
 
-    auto casted = base.cast<yas::test::test_derived>();
+    auto casted = base.cast<yas::test::derived1>();
 
     XCTAssertFalse(!!casted);
 }
 
 - (void)test_make_object_from_impl_success {
-    yas::test::test_derived derived;
+    yas::test::derived1 derived;
 
-    auto derived_from_impl = derived.object_from_impl<yas::test::test_derived>();
+    auto derived_from_impl = derived.object_from_impl<yas::test::derived1>();
 
     XCTAssertTrue(!!derived_from_impl);
 }
 
 - (void)test_make_object_from_impl_failed {
-    yas::test::test_derived derived;
+    yas::test::derived1 derived;
 
-    auto derived2_from_impl = derived.object_from_impl<yas::test::test_derived2>();
+    auto derived2_from_impl = derived.object_from_impl<yas::test::derived2>();
 
     XCTAssertFalse(!!derived2_from_impl);
 }
@@ -151,11 +151,11 @@ namespace test {
 }
 
 - (void)test_derived_equal_to_nullptr {
-    yas::test::test_derived derived{nullptr};
+    yas::test::derived1 derived{nullptr};
 
     XCTAssertTrue(derived == nullptr);
 
-    derived.set_impl_ptr(std::make_shared<yas::test::test_derived::impl>());
+    derived.set_impl_ptr(std::make_shared<yas::test::derived1::impl>());
 
     XCTAssertFalse(derived == nullptr);
 }
@@ -191,6 +191,20 @@ namespace test {
     bool compare_base = base1 < base2;
 
     XCTAssertEqual(compare_impl, compare_base);
+}
+
+- (void)test_is_kind_of {
+    yas::base base{nullptr};
+    base.set_impl_ptr(std::make_shared<yas::base::impl>());
+
+    yas::test::derived1 derived{nullptr};
+    derived.set_impl_ptr(std::make_shared<yas::test::derived1::impl>());
+
+    XCTAssertTrue(derived.is_kind_of<yas::base>());
+    XCTAssertTrue(derived.is_kind_of<yas::test::derived1>());
+
+    XCTAssertFalse(derived.is_kind_of<yas::test::derived2>());
+    XCTAssertFalse(base.is_kind_of<yas::test::derived1>());
 }
 
 @end
