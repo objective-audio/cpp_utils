@@ -30,6 +30,14 @@ T base::cast() const {
     return obj;
 }
 
+template <typename T, typename I>
+bool base::is_kind_of() const {
+    static_assert(std::is_base_of<base, T>(), "base class is not yas::base.");
+    static_assert(std::is_base_of<base::impl, I>(), "impl class is not yas::base::impl.");
+
+    return std::dynamic_pointer_cast<I>(_impl) != nullptr;
+}
+
 template <typename T>
 const std::shared_ptr<T> base::impl_ptr() const {
     return std::static_pointer_cast<T>(_impl);
