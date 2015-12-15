@@ -5,10 +5,10 @@
 
 #pragma once
 
-#include "yas_base.h"
 #include <functional>
-#include <string>
 #include <initializer_list>
+#include <string>
+#include "yas_base.h"
 
 namespace yas {
 template <typename T>

@@ -11,8 +11,7 @@ flex_ptr::flex_ptr(std::nullptr_t) : v(nullptr) {
 }
 
 template <typename T>
-flex_ptr::flex_ptr(const T *const p)
-    : v(static_cast<void *>(const_cast<T *>(p))) {
+flex_ptr::flex_ptr(const T *const p) : v(static_cast<void *>(const_cast<T *>(p))) {
 }
 
 template yas::flex_ptr::flex_ptr(const void *);

@@ -5,8 +5,8 @@
 
 #pragma once
 
-#include <cstddef>
 #include <MacTypes.h>
+#include <cstddef>
 
 namespace yas {
 class flex_ptr {

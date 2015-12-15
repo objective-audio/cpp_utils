@@ -5,10 +5,10 @@
 
 #pragma once
 
-#include "yas_stl_utils.h"
+#include <experimental/optional>
 #include <unordered_map>
 #include <unordered_set>
-#include <experimental/optional>
+#include "yas_stl_utils.h"
 
 namespace yas {
 using string_opt = std::experimental::optional<std::string>;
@@ -122,13 +122,11 @@ class subject<T>::impl {
 #pragma mark - observer
 
 template <typename T>
-observer<T>::observer()
-    : super_class(std::make_shared<impl>()) {
+observer<T>::observer() : super_class(std::make_shared<impl>()) {
 }
 
 template <typename T>
-observer<T>::observer(std::nullptr_t)
-    : super_class(nullptr) {
+observer<T>::observer(std::nullptr_t) : super_class(nullptr) {
 }
 
 template <typename T>
@@ -202,8 +200,7 @@ void observer<T>::clear() {
 #pragma mark - subject
 
 template <typename T>
-subject<T>::subject()
-    : _impl(std::make_unique<impl>()) {
+subject<T>::subject() : _impl(std::make_unique<impl>()) {
 }
 
 template <typename T>

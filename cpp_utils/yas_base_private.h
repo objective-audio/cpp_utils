@@ -46,13 +46,11 @@ const std::shared_ptr<T> base::impl_ptr() const {
 #pragma mark - weak
 
 template <typename T>
-weak<T>::weak()
-    : _impl() {
+weak<T>::weak() : _impl() {
 }
 
 template <typename T>
-weak<T>::weak(const T &obj)
-    : _impl(obj.impl_ptr()) {
+weak<T>::weak(const T &obj) : _impl(obj.impl_ptr()) {
 }
 
 template <typename T>

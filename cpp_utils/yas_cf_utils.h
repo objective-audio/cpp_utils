@@ -5,10 +5,10 @@
 
 #pragma once
 
+#include <CoreFoundation/CoreFoundation.h>
 #include <string>
 #include <unordered_map>
 #include <vector>
-#include <CoreFoundation/CoreFoundation.h>
 
 namespace yas {
 template <typename T>
