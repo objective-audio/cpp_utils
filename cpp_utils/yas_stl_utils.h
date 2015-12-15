@@ -8,6 +8,7 @@
 #include <experimental/optional>
 #include <map>
 #include <memory>
+#include <string>
 #include <unordered_set>
 #include <vector>
 
@@ -26,6 +27,8 @@ void enumerate(T &collection, F function);
 
 template <typename T>
 std::vector<T> to_vector(std::unordered_set<T> &set);
+
+std::string to_lower(const std::string &);
 }
 
 #include "yas_stl_utils_private.h"
