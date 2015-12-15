@@ -5,8 +5,8 @@
 
 #pragma once
 
-#include <memory>
 #include <map>
+#include <memory>
 
 namespace yas {
 class base {

@@ -5,10 +5,10 @@
 
 #pragma once
 
-#include "yas_observing.h"
-#include "yas_base.h"
 #include <memory>
 #include <mutex>
+#include "yas_base.h"
+#include "yas_observing.h"
 
 namespace yas {
 namespace property_method {

@@ -3,12 +3,12 @@
 //  Copyright (c) 2015 Yuki Yasoshima.
 //
 
-#include "yas_operation.h"
+#include <dispatch/dispatch.h>
 #include <atomic>
+#include <deque>
 #include <mutex>
 #include <vector>
-#include <deque>
-#include <dispatch/dispatch.h>
+#include "yas_operation.h"
 
 using namespace yas;
 

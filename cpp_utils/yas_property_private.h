@@ -49,24 +49,20 @@ class property<T, K>::impl : public base::impl {
 };
 
 template <typename T, typename K>
-property<T, K>::property()
-    : property(K{}, T{}) {
+property<T, K>::property() : property(K{}, T{}) {
 }
 
 template <typename T, typename K>
-property<T, K>::property(const K &key)
-    : property(key, T{}) {
+property<T, K>::property(const K &key) : property(key, T{}) {
 }
 
 template <typename T, typename K>
-property<T, K>::property(const K &key, const T &value)
-    : super_class(std::make_shared<impl>(key, value)) {
+property<T, K>::property(const K &key, const T &value) : super_class(std::make_shared<impl>(key, value)) {
     impl_ptr<impl>()->set_property(*this);
 }
 
 template <typename T, typename K>
-property<T, K>::property(std::nullptr_t)
-    : super_class(nullptr) {
+property<T, K>::property(std::nullptr_t) : super_class(nullptr) {
 }
 
 template <typename T, typename K>

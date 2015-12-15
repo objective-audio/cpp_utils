@@ -5,10 +5,10 @@
 
 #pragma once
 
-#include "yas_base.h"
 #include <MacTypes.h>
-#include <memory>
 #include <functional>
+#include <memory>
+#include "yas_base.h"
 
 namespace yas {
 class operation;
