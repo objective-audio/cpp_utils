@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B641BFAE1C2509FE00F742B4 /* yas_stl_utils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B641BFAD1C2509FE00F742B4 /* yas_stl_utils.cpp */; };
+		B641BFAF1C2509FE00F742B4 /* yas_stl_utils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B641BFAD1C2509FE00F742B4 /* yas_stl_utils.cpp */; };
 		B6626AC31C15B4230038175B /* yas_base.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B6626AAF1C15B4230038175B /* yas_base.cpp */; };
 		B6626AC41C15B4230038175B /* yas_cf_utils.mm in Sources */ = {isa = PBXBuildFile; fileRef = B6626AB31C15B4230038175B /* yas_cf_utils.mm */; };
 		B6626AC51C15B4230038175B /* yas_exception.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B6626AB51C15B4230038175B /* yas_exception.cpp */; };
@@ -36,6 +38,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		B641BFAD1C2509FE00F742B4 /* yas_stl_utils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = yas_stl_utils.cpp; sourceTree = "<group>"; };
 		B6626AA51C151E580038175B /* cpp_utils_test_mac.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = cpp_utils_test_mac.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B6626AAA1C151E580038175B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B6626AAF1C15B4230038175B /* yas_base.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = yas_base.cpp; sourceTree = "<group>"; };
@@ -144,6 +147,7 @@
 				B6626ABF1C15B4230038175B /* yas_result.h */,
 				B6626AC01C15B4230038175B /* yas_result_private.h */,
 				B6626AC11C15B4230038175B /* yas_stl_utils.h */,
+				B641BFAD1C2509FE00F742B4 /* yas_stl_utils.cpp */,
 				B6626AC21C15B4230038175B /* yas_stl_utils_private.h */,
 				B6626AD81C15B6EC0038175B /* yas_types.h */,
 			);
@@ -194,7 +198,7 @@
 		B6626A9B1C151E380038175B /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0710;
+				LastUpgradeCheck = 0720;
 				TargetAttributes = {
 					B6626AA41C151E580038175B = {
 						CreatedOnToolsVersion = 7.1.1;
@@ -257,6 +261,7 @@
 				B6626AD41C15B47C0038175B /* yas_result_tests.mm in Sources */,
 				B6626AD01C15B47C0038175B /* yas_stl_utils_tests.mm in Sources */,
 				B6626AD11C15B47C0038175B /* yas_flex_pointer_tests.mm in Sources */,
+				B641BFAE1C2509FE00F742B4 /* yas_stl_utils.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -277,6 +282,7 @@
 				B6626AEA1C15B92B0038175B /* yas_property_tests.mm in Sources */,
 				B6626AE51C15B9270038175B /* yas_stl_utils_tests.mm in Sources */,
 				B6626AF11C15B93B0038175B /* yas_operation.cpp in Sources */,
+				B641BFAF1C2509FE00F742B4 /* yas_stl_utils.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -286,6 +292,8 @@
 		B6626A9F1C151E380038175B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ENABLE_TESTABILITY = YES;
+				ONLY_ACTIVE_ARCH = YES;
 			};
 			name = Debug;
 		};
@@ -491,6 +499,7 @@
 				B6626AAD1C151E580038175B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		B6626AE21C15B8EF0038175B /* Build configuration list for PBXNativeTarget "cpp_utils_test_ios" */ = {
 			isa = XCConfigurationList;
@@ -499,6 +508,7 @@
 				B6626AE41C15B8EF0038175B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

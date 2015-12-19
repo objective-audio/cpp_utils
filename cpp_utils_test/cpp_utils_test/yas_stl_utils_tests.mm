@@ -4,6 +4,7 @@
 //
 
 #import <XCTest/XCTest.h>
+#import <iostream>
 #import "yas_stl_utils.h"
 
 @interface yas_stl_utils_tests : XCTestCase
@@ -117,6 +118,13 @@
 
     XCTAssertEqual(*set.begin(), vec[0]);
     XCTAssertEqual(*(++set.begin()), vec[1]);
+}
+
+- (void)test_to_lower {
+    auto str1 = "aBcDeFgH";
+    auto str2 = "abcdefgh";
+    
+    XCTAssertTrue(yas::to_lower(str1) == str2);
 }
 
 @end
