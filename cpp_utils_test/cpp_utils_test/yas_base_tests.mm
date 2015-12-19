@@ -207,4 +207,20 @@ namespace test {
     XCTAssertFalse(base.is_kind_of<yas::test::derived1>());
 }
 
+- (void)test_weak_identifier {
+    yas::base base{nullptr};
+    base.set_impl_ptr(std::make_shared<yas::base::impl>());
+
+    yas::weak<yas::base> weak_base{base};
+
+    auto identifier = base.identifier();
+
+    XCTAssertEqual(weak_base.identifier(), identifier);
+
+    base = nullptr;
+
+    XCTAssertNotEqual(weak_base.identifier(), identifier);
+    XCTAssertEqual(weak_base.identifier(), 0);
+}
+
 @end
