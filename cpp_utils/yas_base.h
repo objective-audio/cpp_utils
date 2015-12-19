@@ -33,7 +33,7 @@ class base {
     bool operator!=(std::nullptr_t) const;
     bool operator<(const base &rhs) const;
 
-    operator bool() const;
+    explicit operator bool() const;
     bool expired() const;
 
     uintptr_t identifier() const;
@@ -71,6 +71,8 @@ class weak {
     weak<T> &operator=(const T &);
 
     explicit operator bool() const;
+
+    uintptr_t identifier() const;
 
     bool operator==(const weak &rhs) const;
     bool operator!=(const weak &rhs) const;
