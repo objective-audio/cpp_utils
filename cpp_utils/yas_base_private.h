@@ -78,6 +78,14 @@ weak<T>::operator bool() const {
 }
 
 template <typename T>
+uintptr_t weak<T>::identifier() const {
+    if (auto impl = _impl.lock()) {
+        return reinterpret_cast<uintptr_t>(&*impl);
+    }
+    return 0;
+}
+
+template <typename T>
 bool weak<T>::operator==(const weak &rhs) const {
     if (_impl.expired() || rhs._impl.expired()) {
         return false;
