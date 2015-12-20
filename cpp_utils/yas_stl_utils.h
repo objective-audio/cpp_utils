@@ -29,6 +29,7 @@ template <typename T>
 std::vector<T> to_vector(std::unordered_set<T> &set);
 
 std::string to_lower(const std::string &);
+std::string to_replaced(const std::string &source, const std::string &target, const std::string &replacement);
 }
 
 #include "yas_stl_utils_private.h"

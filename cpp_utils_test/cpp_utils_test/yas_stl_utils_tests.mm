@@ -123,8 +123,26 @@
 - (void)test_to_lower {
     auto str1 = "aBcDeFgH";
     auto str2 = "abcdefgh";
-    
+
     XCTAssertTrue(yas::to_lower(str1) == str2);
+}
+
+- (void)test_to_replaced {
+    auto source = "source_text";
+    auto destination = yas::to_replaced(source, "source", "destination");
+    XCTAssertEqual(destination, "destination_text");
+}
+
+- (void)test_to_replaced_plural {
+    auto source = "a_text_a_text_a";
+    auto destination = yas::to_replaced(source, "a", "b");
+    XCTAssertEqual(destination, "b_text_b_text_b");
+}
+
+- (void)test_to_replaced_empty {
+    auto source = "";
+    auto destination = yas::to_replaced(source, "a", "b");
+    XCTAssertEqual(destination, "");
 }
 
 @end
