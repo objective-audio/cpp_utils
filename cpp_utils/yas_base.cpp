@@ -5,11 +5,17 @@
 
 #include "yas_base.h"
 
+#include <iostream>
+
 using namespace yas;
 
 #pragma mark - base::impl
 
 base::impl::~impl() = default;
+
+uintptr_t base::impl::identifier() const {
+    return reinterpret_cast<uintptr_t>(this);
+}
 
 #pragma mark - base
 
@@ -58,7 +64,7 @@ bool base::expired() const {
 }
 
 uintptr_t base::identifier() const {
-    return reinterpret_cast<uintptr_t>(&*_impl);
+    return _impl->identifier();
 }
 
 std::shared_ptr<base::impl> &base::impl_ptr() {
