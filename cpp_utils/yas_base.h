@@ -17,6 +17,8 @@ class base {
 
         template <typename T, typename I = typename T::impl>
         T cast();
+
+        uintptr_t identifier() const;
     };
 
     base(std::nullptr_t);
