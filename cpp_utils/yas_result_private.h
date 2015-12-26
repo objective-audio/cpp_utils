@@ -100,7 +100,17 @@ const T &result<T, U>::value() const {
 }
 
 template <typename T, typename U>
+T &result<T, U>::value() {
+    return *_value;
+}
+
+template <typename T, typename U>
 const U &result<T, U>::error() const {
+    return *_error;
+}
+
+template <typename T, typename U>
+U &result<T, U>::error() {
     return *_error;
 }
 

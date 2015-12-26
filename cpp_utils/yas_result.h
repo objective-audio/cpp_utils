@@ -31,7 +31,9 @@ class result {
     bool is_success() const;
 
     const T &value() const;
+    T &value();
     const U &error() const;
+    U &error();
 
     std::experimental::optional<T> value_opt() const;
     std::experimental::optional<U> error_opt() const;
