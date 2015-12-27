@@ -1,6 +1,5 @@
 //
 //  yas_cf_tests.m
-//  Copyright (c) 2015 Yuki Yasoshima.
 //
 
 #import <XCTest/XCTest.h>

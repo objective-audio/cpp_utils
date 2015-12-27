@@ -1,6 +1,5 @@
 //
 //  yas_flex_ptr.cpp
-//  Copyright (c) 2015 Yuki Yasoshima.
 //
 
 #include "yas_flex_ptr.h"

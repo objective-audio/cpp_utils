@@ -1,6 +1,5 @@
 //
 //  yas_operation.cpp
-//  Copyright (c) 2015 Yuki Yasoshima.
 //
 
 #include <dispatch/dispatch.h>

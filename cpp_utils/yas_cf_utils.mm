@@ -1,6 +1,5 @@
 //
 //  yas_cf_utils.mm
-//  Copyright (c) 2015 Yuki Yasoshima.
 //
 
 #include <Foundation/Foundation.h>
