@@ -1,6 +1,5 @@
 //
 //  yas_base.cpp
-//  Copyright (c) 2015 Yuki Yasoshima.
 //
 
 #include "yas_base.h"

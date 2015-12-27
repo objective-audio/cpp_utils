@@ -1,6 +1,5 @@
 //
 //  yas_stl_utils_tests.m
-//  Copyright (c) 2015 Yuki Yasoshima.
 //
 
 #import <XCTest/XCTest.h>

@@ -1,6 +1,5 @@
 //
 //  yas_exception.cpp
-//  Copyright (c) 2015 Yuki Yasoshima.
 //
 
 #include <CoreFoundation/CoreFoundation.h>
