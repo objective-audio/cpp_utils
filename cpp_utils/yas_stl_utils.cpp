@@ -2,9 +2,8 @@
 //  yas_stl_utils.cpp
 //
 
+#include <sstream>
 #include "yas_stl_utils.h"
-
-#include <iostream>
 
 std::string yas::to_lower(const std::string &string) {
     std::string lower_string = string;
@@ -12,7 +11,7 @@ std::string yas::to_lower(const std::string &string) {
     return lower_string;
 }
 
-std::string yas::to_replaced(const std::string &source, const std::string &target, const std::string &replacement) {
+std::string yas::replaced(const std::string &source, const std::string &target, const std::string &replacement) {
     std::string destination = source;
     std::string::size_type pos = 0;
     while (pos = destination.find(target, pos), pos != std::string::npos) {
@@ -20,4 +19,18 @@ std::string yas::to_replaced(const std::string &source, const std::string &targe
         pos += replacement.length();
     }
     return destination;
+}
+
+std::string yas::joined(const std::vector<std::string> &components, const std::string &separator) {
+    std::ostringstream stream;
+    bool is_first = true;
+    for (auto &component : components) {
+        if (is_first) {
+            is_first = false;
+        } else {
+            stream << separator;
+        }
+        stream << component;
+    }
+    return stream.str();
 }
