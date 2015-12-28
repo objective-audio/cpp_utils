@@ -29,6 +29,7 @@ std::vector<T> to_vector(std::unordered_set<T> &set);
 
 std::string to_lower(const std::string &);
 std::string replaced(const std::string &source, const std::string &target, const std::string &replacement);
+std::string joined(const std::vector<std::string> &components, const std::string &separator);
 }
 
 #include "yas_stl_utils_private.h"
