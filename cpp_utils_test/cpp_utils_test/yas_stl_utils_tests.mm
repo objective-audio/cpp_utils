@@ -126,21 +126,21 @@
     XCTAssertTrue(yas::to_lower(str1) == str2);
 }
 
-- (void)test_to_replaced {
+- (void)test_replaced {
     auto source = "source_text";
-    auto destination = yas::to_replaced(source, "source", "destination");
+    auto destination = yas::replaced(source, "source", "destination");
     XCTAssertEqual(destination, "destination_text");
 }
 
-- (void)test_to_replaced_plural {
+- (void)test_replaced_plural {
     auto source = "a_text_a_text_a";
-    auto destination = yas::to_replaced(source, "a", "b");
+    auto destination = yas::replaced(source, "a", "b");
     XCTAssertEqual(destination, "b_text_b_text_b");
 }
 
-- (void)test_to_replaced_empty {
+- (void)test_replaced_empty {
     auto source = "";
-    auto destination = yas::to_replaced(source, "a", "b");
+    auto destination = yas::replaced(source, "a", "b");
     XCTAssertEqual(destination, "");
 }
 
