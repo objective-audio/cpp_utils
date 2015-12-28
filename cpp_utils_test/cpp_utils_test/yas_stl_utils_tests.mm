@@ -144,4 +144,11 @@
     XCTAssertEqual(destination, "");
 }
 
+- (void)test_joined {
+    std::vector<std::string> components{"abc", "def", "ghi"};
+    auto joined = yas::joined(components, "-");
+
+    XCTAssertEqual(joined, "abc-def-ghi");
+}
+
 @end
