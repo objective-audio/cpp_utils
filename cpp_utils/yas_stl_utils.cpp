@@ -12,7 +12,7 @@ std::string yas::to_lower(const std::string &string) {
     return lower_string;
 }
 
-std::string yas::to_replaced(const std::string &source, const std::string &target, const std::string &replacement) {
+std::string yas::replaced(const std::string &source, const std::string &target, const std::string &replacement) {
     std::string destination = source;
     std::string::size_type pos = 0;
     while (pos = destination.find(target, pos), pos != std::string::npos) {
