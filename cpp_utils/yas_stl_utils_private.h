@@ -44,6 +44,17 @@ T filter(const T &collection, P predicate) {
     return filtered;
 }
 
+template <typename T, typename R, typename F>
+auto map(std::vector<T> const &vector, F function) -> std::vector<R> {
+    std::vector<R> mapped;
+
+    for (auto &obj : vector) {
+        mapped.emplace_back(function(obj));
+    }
+
+    return mapped;
+}
+
 template <typename T, typename P>
 void erase_if(T &collection, P predicate) {
     auto it = collection.begin();

@@ -151,4 +151,24 @@
     XCTAssertEqual(joined, "abc-def-ghi");
 }
 
+- (void)test_map {
+    std::vector<int> vector{0, 1, 2};
+    auto mapped = yas::map(vector, [](int const &obj) { return obj + 1; });
+
+    XCTAssertEqual(mapped.size(), 3);
+    XCTAssertEqual(mapped.at(0), 1);
+    XCTAssertEqual(mapped.at(1), 2);
+    XCTAssertEqual(mapped.at(2), 3);
+}
+
+- (void)test_map_different_return_type {
+    std::vector<int> vector{0, 1, 2};
+    auto mapped = yas::map<int, std::string>(vector, [](int const &obj) { return std::to_string(obj + 1); });
+
+    XCTAssertEqual(mapped.size(), 3);
+    XCTAssertEqual(mapped.at(0), "1");
+    XCTAssertEqual(mapped.at(1), "2");
+    XCTAssertEqual(mapped.at(2), "3");
+}
+
 @end
