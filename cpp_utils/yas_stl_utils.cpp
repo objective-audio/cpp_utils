@@ -5,13 +5,13 @@
 #include <sstream>
 #include "yas_stl_utils.h"
 
-std::string yas::to_lower(const std::string &string) {
+std::string yas::to_lower(std::string const &string) {
     std::string lower_string = string;
     std::transform(lower_string.begin(), lower_string.end(), lower_string.begin(), ::tolower);
     return lower_string;
 }
 
-std::string yas::replaced(const std::string &source, const std::string &target, const std::string &replacement) {
+std::string yas::replaced(std::string const &source, std::string const &target, std::string const &replacement) {
     std::string destination = source;
     std::string::size_type pos = 0;
     while (pos = destination.find(target, pos), pos != std::string::npos) {
@@ -21,10 +21,10 @@ std::string yas::replaced(const std::string &source, const std::string &target, 
     return destination;
 }
 
-std::string yas::joined(const std::vector<std::string> &components, const std::string &separator) {
+std::string yas::joined(std::vector<std::string> const &components, std::string const &separator) {
     std::ostringstream stream;
     bool is_first = true;
-    for (auto &component : components) {
+    for (auto const &component : components) {
         if (is_first) {
             is_first = false;
         } else {
