@@ -44,11 +44,11 @@ T filter(const T &collection, P predicate) {
     return filtered;
 }
 
-template <typename T, typename R, typename F>
-auto map(std::vector<T> const &vector, F function) -> std::vector<R> {
+template <typename R, typename T, typename F>
+auto map(T collection, F function) -> std::vector<R> {
     std::vector<R> mapped;
 
-    for (auto &obj : vector) {
+    for (auto &obj : collection) {
         mapped.emplace_back(function(obj));
     }
 
