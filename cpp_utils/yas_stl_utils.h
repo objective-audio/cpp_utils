@@ -18,8 +18,8 @@ std::experimental::optional<T> min_empty_key(const std::map<T, U> &map);
 template <typename T, typename P>
 T filter(const T &collection, P predicate);
 
-template <typename T, typename R = T, typename F>
-auto map(std::vector<T> const &vector, F function) -> std::vector<R>;
+template <typename R, typename T, typename F>
+auto map(T collection, F function) -> std::vector<R>;
 
 template <typename T, typename P>
 void erase_if(T &collection, P predicate);
