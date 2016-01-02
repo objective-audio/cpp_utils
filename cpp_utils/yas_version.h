@@ -10,8 +10,10 @@
 namespace yas {
 class version {
    public:
-    version(std::string const &);
+    version();
+    version(std::string const &str);
     version(std::vector<int> const &);
+    version(std::nullptr_t);
 
     bool operator==(version const &) const;
     bool operator!=(version const &) const;

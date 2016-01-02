@@ -19,6 +19,13 @@
     [super tearDown];
 }
 
+- (void)test_create_version {
+    yas::version version;
+
+    XCTAssertEqual(version.numbers().size(), 0);
+    XCTAssertEqual(version.str(), "");
+}
+
 - (void)test_create_version_with_string {
     yas::version version{"1.2.3"};
 
@@ -44,6 +51,13 @@
     XCTAssertEqual(numbers.at(3), 2);
 
     XCTAssertEqual(version.str(), "5.4.3.2");
+}
+
+- (void)test_create_version_with_null {
+    yas::version version{nullptr};
+
+    XCTAssertEqual(version.numbers().size(), 0);
+    XCTAssertEqual(version.str(), "");
 }
 
 - (void)test_equal {
