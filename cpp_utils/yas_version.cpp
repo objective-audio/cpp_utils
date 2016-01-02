@@ -54,10 +54,16 @@ static comparison_result compare(version const &lhs, version const &rhs) {
 }
 }
 
+version::version() : _numbers() {
+}
+
 version::version(std::string const &str) : _numbers(to_numbers(str)) {
 }
 
 version::version(std::vector<int> const &numbers) : _numbers(numbers) {
+}
+
+version::version(std::nullptr_t) : _numbers() {
 }
 
 bool version::operator==(version const &rhs) const {
