@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B60C5BD31C37F80100D7C886 /* yas_version.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B60C5BD11C37F80100D7C886 /* yas_version.cpp */; };
+		B60C5BD41C37F80100D7C886 /* yas_version.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B60C5BD11C37F80100D7C886 /* yas_version.cpp */; };
+		B60C5BD61C37FD2C00D7C886 /* yas_version_tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = B60C5BD51C37FD2C00D7C886 /* yas_version_tests.mm */; };
+		B60C5BD71C37FD2C00D7C886 /* yas_version_tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = B60C5BD51C37FD2C00D7C886 /* yas_version_tests.mm */; };
 		B641BFAE1C2509FE00F742B4 /* yas_stl_utils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B641BFAD1C2509FE00F742B4 /* yas_stl_utils.cpp */; };
 		B641BFAF1C2509FE00F742B4 /* yas_stl_utils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B641BFAD1C2509FE00F742B4 /* yas_stl_utils.cpp */; };
 		B6626AC31C15B4230038175B /* yas_base.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B6626AAF1C15B4230038175B /* yas_base.cpp */; };
@@ -40,6 +44,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		B60C5BD11C37F80100D7C886 /* yas_version.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = yas_version.cpp; sourceTree = "<group>"; };
+		B60C5BD21C37F80100D7C886 /* yas_version.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = yas_version.h; sourceTree = "<group>"; };
+		B60C5BD51C37FD2C00D7C886 /* yas_version_tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = yas_version_tests.mm; sourceTree = "<group>"; };
 		B641BFAD1C2509FE00F742B4 /* yas_stl_utils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = yas_stl_utils.cpp; sourceTree = "<group>"; };
 		B6626AA51C151E580038175B /* cpp_utils_test_mac.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = cpp_utils_test_mac.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B6626AAA1C151E580038175B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -126,6 +133,7 @@
 				B6626ACE1C15B47C0038175B /* yas_base_tests.mm */,
 				B6626ACF1C15B47C0038175B /* yas_operation_tests.mm */,
 				B6E745F91C2EEEB700464402 /* yas_each_index_tests.mm */,
+				B60C5BD51C37FD2C00D7C886 /* yas_version_tests.mm */,
 				B6626AAA1C151E580038175B /* Info.plist */,
 			);
 			path = cpp_utils_test;
@@ -158,6 +166,8 @@
 				B6626AD81C15B6EC0038175B /* yas_types.h */,
 				B6E745F61C2EE02B00464402 /* yas_each_index.h */,
 				B6E745FC1C2F823900464402 /* yas_each_index_private.h */,
+				B60C5BD11C37F80100D7C886 /* yas_version.cpp */,
+				B60C5BD21C37F80100D7C886 /* yas_version.h */,
 			);
 			name = cpp_utils;
 			path = ../cpp_utils;
@@ -258,6 +268,7 @@
 			files = (
 				B6626AD61C15B47C0038175B /* yas_base_tests.mm in Sources */,
 				B6E745FA1C2EEEB700464402 /* yas_each_index_tests.mm in Sources */,
+				B60C5BD31C37F80100D7C886 /* yas_version.cpp in Sources */,
 				B6626AC31C15B4230038175B /* yas_base.cpp in Sources */,
 				B6626AC51C15B4230038175B /* yas_exception.cpp in Sources */,
 				B6626AC61C15B4230038175B /* yas_flex_ptr.cpp in Sources */,
@@ -268,6 +279,7 @@
 				B6626AD21C15B47C0038175B /* yas_observing_tests.mm in Sources */,
 				B6626AC41C15B4230038175B /* yas_cf_utils.mm in Sources */,
 				B6626AD41C15B47C0038175B /* yas_result_tests.mm in Sources */,
+				B60C5BD61C37FD2C00D7C886 /* yas_version_tests.mm in Sources */,
 				B6626AD01C15B47C0038175B /* yas_stl_utils_tests.mm in Sources */,
 				B6626AD11C15B47C0038175B /* yas_flex_pointer_tests.mm in Sources */,
 				B641BFAE1C2509FE00F742B4 /* yas_stl_utils.cpp in Sources */,
@@ -280,6 +292,7 @@
 			files = (
 				B6626AE91C15B92B0038175B /* yas_result_tests.mm in Sources */,
 				B6E745FB1C2EEEB700464402 /* yas_each_index_tests.mm in Sources */,
+				B60C5BD41C37F80100D7C886 /* yas_version.cpp in Sources */,
 				B6626AF01C15B93B0038175B /* yas_flex_ptr.cpp in Sources */,
 				B6626AED1C15B93B0038175B /* yas_base.cpp in Sources */,
 				B6626AEE1C15B93B0038175B /* yas_cf_utils.mm in Sources */,
@@ -290,6 +303,7 @@
 				B6626AEC1C15B92B0038175B /* yas_operation_tests.mm in Sources */,
 				B6626AEF1C15B93B0038175B /* yas_exception.cpp in Sources */,
 				B6626AEA1C15B92B0038175B /* yas_property_tests.mm in Sources */,
+				B60C5BD71C37FD2C00D7C886 /* yas_version_tests.mm in Sources */,
 				B6626AE51C15B9270038175B /* yas_stl_utils_tests.mm in Sources */,
 				B6626AF11C15B93B0038175B /* yas_operation.cpp in Sources */,
 				B641BFAF1C2509FE00F742B4 /* yas_stl_utils.cpp in Sources */,
