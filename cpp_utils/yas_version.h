@@ -11,8 +11,8 @@ namespace yas {
 class version {
    public:
     version();
-    version(std::string const &str);
-    version(std::vector<int> const &);
+    explicit version(std::string const &str);
+    explicit version(std::vector<int> const &);
     version(std::nullptr_t);
 
     bool operator==(version const &) const;
@@ -21,6 +21,8 @@ class version {
     bool operator<=(version const &) const;
     bool operator>(version const &) const;
     bool operator>=(version const &) const;
+
+    explicit operator bool() const;
 
     std::string str() const;
     std::vector<int> const &numbers() const;

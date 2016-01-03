@@ -142,4 +142,13 @@
     XCTAssertTrue(ver3 >= ver4);
 }
 
+- (void)test_operator_bool {
+    XCTAssertTrue(yas::version{"1"});
+    XCTAssertTrue(yas::version{"0.1"});
+
+    XCTAssertFalse(yas::version{});
+    XCTAssertFalse(yas::version{""});
+    XCTAssertFalse(yas::version{"0.0.0"});
+}
+
 @end

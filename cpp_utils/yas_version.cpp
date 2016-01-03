@@ -90,6 +90,10 @@ bool version::operator>=(version const &rhs) const {
     return compare(*this, rhs) != comparison_result::ascending;
 }
 
+version::operator bool() const {
+    return *this != version{};
+}
+
 std::string version::str() const {
     return joined(map<std::string>(_numbers, [](int const &i) { return std::to_string(i); }), ".");
 }
