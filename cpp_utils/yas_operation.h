@@ -41,6 +41,8 @@ class operation_queue : public base {
     using super_class = base;
 
    public:
+    class impl;
+
     using priority_t = UInt32;
 
     explicit operation_queue(const size_t priority_count = 1);
@@ -53,8 +55,5 @@ class operation_queue : public base {
 
     void suspend();
     void resume();
-
-   private:
-    class impl;
 };
 }

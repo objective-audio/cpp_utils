@@ -2,10 +2,10 @@
 //  yas_operation.cpp
 //
 
-#include <dispatch/dispatch.h>
 #include <atomic>
 #include <deque>
 #include <mutex>
+#include <thread>
 #include <vector>
 #include "yas_operation.h"
 
@@ -52,8 +52,6 @@ void operation::_cancel() {
 
 class operation_queue::impl : public base::impl {
    public:
-    weak<operation_queue> weak_queue;
-
     impl(const size_t count) : _operations(count) {
     }
 
@@ -151,17 +149,18 @@ class operation_queue::impl : public base::impl {
                 _current_operation = op;
 
                 auto weak_ope = to_weak(op);
-                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, NULL), ^{
+                auto queue = cast<operation_queue>();
+
+                std::thread thread{[weak_ope, queue]() {
                     auto ope = weak_ope.lock();
                     if (ope) {
                         auto &ope_for_queue = static_cast<operation_from_queue &>(ope);
                         ope_for_queue._execute();
-
-                        if (auto queue = weak_queue.lock()) {
-                            queue.impl_ptr<impl>()->_operation_did_finish(ope);
-                        }
+                        queue.impl_ptr<impl>()->_operation_did_finish(ope);
                     }
-                });
+                }};
+
+                thread.detach();
             }
         }
     }
@@ -178,7 +177,6 @@ class operation_queue::impl : public base::impl {
 };
 
 operation_queue::operation_queue(const size_t count) : super_class(std::make_unique<impl>(count)) {
-    impl_ptr<impl>()->weak_queue = *this;
 }
 
 operation_queue::operation_queue(std::nullptr_t) : super_class(nullptr) {
