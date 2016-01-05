@@ -2,10 +2,10 @@
 //  yas_operation.cpp
 //
 
-#include <dispatch/dispatch.h>
 #include <atomic>
 #include <deque>
 #include <mutex>
+#include <thread>
 #include <vector>
 #include "yas_operation.h"
 
@@ -150,14 +150,17 @@ class operation_queue::impl : public base::impl {
 
                 auto weak_ope = to_weak(op);
                 auto queue = cast<operation_queue>();
-                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, NULL), ^{
+
+                std::thread thread{[weak_ope, queue]() {
                     auto ope = weak_ope.lock();
                     if (ope) {
                         auto &ope_for_queue = static_cast<operation_from_queue &>(ope);
                         ope_for_queue._execute();
                         queue.impl_ptr<impl>()->_operation_did_finish(ope);
                     }
-                });
+                }};
+
+                thread.detach();
             }
         }
     }
