@@ -22,9 +22,9 @@ class operation : public base, public operation_from_queue {
     using super_class = base;
 
    public:
-    using execution_f = std::function<void(const operation &)>;
+    using execution_f = std::function<void(operation const &)>;
 
-    explicit operation(const execution_f &);
+    explicit operation(execution_f const &);
     operation(std::nullptr_t);
 
     void cancel();
@@ -45,12 +45,12 @@ class operation_queue : public base {
 
     using priority_t = UInt32;
 
-    explicit operation_queue(const size_t priority_count = 1);
+    explicit operation_queue(size_t const priority_count = 1);
     operation_queue(std::nullptr_t);
 
-    void add_operation(const operation &, const priority_t pr = 0);
-    void insert_operation_to_top(const operation &, const priority_t pr = 0);
-    void cancel_operation(const operation &);
+    void add_operation(operation const &, priority_t const pr = 0);
+    void insert_operation_to_top(operation const &, priority_t const pr = 0);
+    void cancel_operation(operation const &);
     void cancel_all_operations();
     void wait_until_all_operations_are_finished();
 
