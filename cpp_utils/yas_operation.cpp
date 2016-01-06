@@ -57,6 +57,7 @@ class operation_queue::impl : public base::impl {
 
     ~impl() {
         cancel_all_operations();
+        wait_until_all_operations_are_finished();
     }
 
     void add_operation(const operation &op, const priority_t priority) {
@@ -107,6 +108,30 @@ class operation_queue::impl : public base::impl {
 
         if (_current_operation) {
             _current_operation.cancel();
+        }
+    }
+
+    void wait_until_all_operations_are_finished() {
+        while (true) {
+            std::lock_guard<std::recursive_mutex> lock(_mutex);
+
+            bool op_exists = _current_operation != nullptr;
+            if (!op_exists) {
+                for (auto &dq : _operations) {
+                    if (dq.size() > 0) {
+                        op_exists = true;
+                    }
+                }
+            }
+
+            if (op_exists) {
+                if (_suspended) {
+                    throw "operation_queue is suspended.";
+                }
+                std::this_thread::yield();
+            } else {
+                break;
+            }
         }
     }
 
@@ -196,6 +221,10 @@ void operation_queue::cancel_operation(const operation &op) {
 
 void operation_queue::cancel_all_operations() {
     impl_ptr<impl>()->cancel_all_operations();
+}
+
+void operation_queue::wait_until_all_operations_are_finished() {
+    impl_ptr<impl>()->wait_until_all_operations_are_finished();
 }
 
 void operation_queue::suspend() {
