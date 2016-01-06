@@ -57,7 +57,6 @@ class operation_queue::impl : public base::impl {
 
     ~impl() {
         cancel_all_operations();
-        wait_until_all_operations_are_finished();
     }
 
     void add_operation(const operation &op, const priority_t priority) {
