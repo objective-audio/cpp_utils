@@ -57,7 +57,6 @@ class operation_queue::impl : public base::impl {
 
     ~impl() {
         cancel_all_operations();
-        wait_until_all_operations_are_finished();
     }
 
     void add_operation(const operation &op, const priority_t priority) {
@@ -174,14 +173,16 @@ class operation_queue::impl : public base::impl {
                 _current_operation = op;
 
                 auto weak_ope = to_weak(op);
-                auto queue = cast<operation_queue>();
+                auto weak_queue = to_weak(cast<operation_queue>());
 
-                std::thread thread{[weak_ope, queue]() {
+                std::thread thread{[weak_ope, weak_queue]() {
                     auto ope = weak_ope.lock();
                     if (ope) {
                         auto &ope_for_queue = static_cast<operation_from_queue &>(ope);
                         ope_for_queue._execute();
-                        queue.impl_ptr<impl>()->_operation_did_finish(ope);
+                        if (auto queue = weak_queue.lock()) {
+                            queue.impl_ptr<impl>()->_operation_did_finish(ope);
+                        }
                     }
                 }};
 
