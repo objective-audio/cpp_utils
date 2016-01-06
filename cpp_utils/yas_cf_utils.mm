@@ -7,8 +7,7 @@
 
 std::string yas::to_string(const CFStringRef &cf_string) {
     if (cf_string && CFStringGetLength(cf_string) > 0) {
-        NSString *objc_str = (__bridge NSString *)cf_string;
-        return std::string([objc_str UTF8String]);
+        return std::string(CFStringGetCStringPtr(cf_string, kCFStringEncodingUTF8));
     }
     return std::string();
 }
