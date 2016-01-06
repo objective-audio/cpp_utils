@@ -52,6 +52,7 @@ class operation_queue : public base {
     void insert_operation_to_top(const operation &, const priority_t pr = 0);
     void cancel_operation(const operation &);
     void cancel_all_operations();
+    void wait_until_all_operations_are_finished();
 
     void suspend();
     void resume();

@@ -4,7 +4,10 @@
 
 #import <XCTest/XCTest.h>
 #import <future>
+#include <thread>
 #import "yas_operation.h"
+
+using namespace std::chrono_literals;
 
 @interface yas_operation_tests : XCTestCase
 
@@ -130,7 +133,7 @@
 
     bool called = false;
 
-    yas::operation operation([self, &called](const yas::operation &op) { called = true; });
+    yas::operation operation([&called](const yas::operation &op) { called = true; });
 
     queue.add_operation(operation);
 
@@ -150,7 +153,7 @@
 
     bool called = false;
 
-    yas::operation operation([self, &called](const yas::operation &op) { called = true; });
+    yas::operation operation([&called](const yas::operation &op) { called = true; });
 
     queue.add_operation(operation);
 
@@ -250,6 +253,39 @@
     [self waitForExpectationsWithTimeout:1.0 handler:nil];
 
     XCTAssertEqual(count.load(), 6);
+}
+
+- (void)test_wait {
+    yas::operation_queue queue;
+
+    queue.suspend();
+
+    bool called = false;
+
+    yas::operation operation([&called](const yas::operation &op) {
+        std::this_thread::sleep_for(100ms);
+        called = true;
+    });
+
+    queue.add_operation(operation);
+
+    queue.resume();
+
+    queue.wait_until_all_operations_are_finished();
+
+    XCTAssertTrue(called);
+}
+
+- (void)test_wait_failed {
+    yas::operation_queue queue;
+
+    queue.suspend();
+
+    yas::operation operation([](const yas::operation &op) {});
+
+    queue.add_operation(operation);
+
+    XCTAssertThrows(queue.wait_until_all_operations_are_finished());
 }
 
 @end
