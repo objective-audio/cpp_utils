@@ -23,16 +23,16 @@ class base {
     base(std::nullptr_t);
     virtual ~base();
 
-    base(const base &);
+    base(base const &);
     base(base &&);
-    base &operator=(const base &);
+    base &operator=(base const &);
     base &operator=(base &&);
 
-    bool operator==(const base &rhs) const;
-    bool operator!=(const base &rhs) const;
+    bool operator==(base const &rhs) const;
+    bool operator!=(base const &rhs) const;
     bool operator==(std::nullptr_t) const;
     bool operator!=(std::nullptr_t) const;
-    bool operator<(const base &rhs) const;
+    bool operator<(base const &rhs) const;
 
     explicit operator bool() const;
     bool expired() const;
@@ -46,11 +46,11 @@ class base {
     bool is_kind_of() const;
 
     std::shared_ptr<impl> &impl_ptr();
-    void set_impl_ptr(const std::shared_ptr<impl> &);
+    void set_impl_ptr(std::shared_ptr<impl> const &);
     void set_impl_ptr(std::shared_ptr<impl> &&);
 
     template <typename T = class impl>
-    const std::shared_ptr<T> impl_ptr() const;
+    std::shared_ptr<T> const impl_ptr() const;
 
    protected:
     base(const std::shared_ptr<class impl> &);
@@ -63,20 +63,20 @@ template <typename T>
 class weak {
    public:
     weak();
-    weak(const T &);
+    weak(T const &);
 
-    weak(const weak<T> &);
+    weak(weak<T> const &);
     weak(weak<T> &&);
-    weak<T> &operator=(const weak<T> &);
+    weak<T> &operator=(weak<T> const &);
     weak<T> &operator=(weak<T> &&);
-    weak<T> &operator=(const T &);
+    weak<T> &operator=(T const &);
 
     explicit operator bool() const;
 
     uintptr_t identifier() const;
 
-    bool operator==(const weak &rhs) const;
-    bool operator!=(const weak &rhs) const;
+    bool operator==(weak const &rhs) const;
+    bool operator!=(weak const &rhs) const;
 
     T lock() const;
 
@@ -87,10 +87,10 @@ class weak {
 };
 
 template <typename K, typename T>
-std::map<K, T> lock_values(const std::map<K, weak<T>> &);
+std::map<K, T> lock_values(std::map<K, weak<T>> const &);
 
 template <typename T>
-weak<T> to_weak(const T &);
+weak<T> to_weak(T const &);
 }
 
 #include "yas_base_private.h"
