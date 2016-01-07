@@ -19,7 +19,7 @@ template <typename T, typename P>
 T filter(T const &collection, P predicate);
 
 template <typename R, typename T, typename F>
-std::vector<R> map(T const collection, F function);
+std::vector<R> map(T const &collection, F function);
 
 template <typename T, typename P>
 void erase_if(T &collection, P predicate);
