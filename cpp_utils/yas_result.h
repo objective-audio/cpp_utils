@@ -12,8 +12,8 @@ namespace yas {
 template <typename T, typename U>
 class result {
    public:
-    explicit result(const T &value);
-    explicit result(const U &error);
+    explicit result(T const &value);
+    explicit result(U const &error);
     explicit result(T &&value);
     explicit result(U &&error);
 
@@ -22,16 +22,16 @@ class result {
     result(const result<T, U> &);
     result(result<T, U> &&);
 
-    result<T, U> &operator=(const result<T, U> &);
+    result<T, U> &operator=(result<T, U> const &);
     result<T, U> &operator=(result<T, U> &&);
 
     explicit operator bool() const;
 
     bool is_success() const;
 
-    const T &value() const;
+    T const &value() const;
     T &value();
-    const U &error() const;
+    U const &error() const;
     U &error();
 
     std::experimental::optional<T> value_opt() const;
