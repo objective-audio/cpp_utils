@@ -131,18 +131,18 @@
 		B6626AA71C151E580038175B /* cpp_utils_test */ = {
 			isa = PBXGroup;
 			children = (
-				B6626AC81C15B47C0038175B /* yas_stl_utils_tests.mm */,
+				B6626AAA1C151E580038175B /* Info.plist */,
+				B6626ACE1C15B47C0038175B /* yas_base_tests.mm */,
+				B6626ACB1C15B47C0038175B /* yas_cf_tests.mm */,
+				B63C48B61C3945AE00B63598 /* yas_each_dictionary_tests.mm */,
+				B6E745F91C2EEEB700464402 /* yas_each_index_tests.mm */,
 				B6626AC91C15B47C0038175B /* yas_flex_pointer_tests.mm */,
 				B6626ACA1C15B47C0038175B /* yas_observing_tests.mm */,
-				B6626ACB1C15B47C0038175B /* yas_cf_tests.mm */,
-				B6626ACC1C15B47C0038175B /* yas_result_tests.mm */,
-				B6626ACD1C15B47C0038175B /* yas_property_tests.mm */,
-				B6626ACE1C15B47C0038175B /* yas_base_tests.mm */,
 				B6626ACF1C15B47C0038175B /* yas_operation_tests.mm */,
-				B6E745F91C2EEEB700464402 /* yas_each_index_tests.mm */,
+				B6626ACD1C15B47C0038175B /* yas_property_tests.mm */,
+				B6626ACC1C15B47C0038175B /* yas_result_tests.mm */,
+				B6626AC81C15B47C0038175B /* yas_stl_utils_tests.mm */,
 				B60C5BD51C37FD2C00D7C886 /* yas_version_tests.mm */,
-				B63C48B61C3945AE00B63598 /* yas_each_dictionary_tests.mm */,
-				B6626AAA1C151E580038175B /* Info.plist */,
 			);
 			path = cpp_utils_test;
 			sourceTree = "<group>";
@@ -150,34 +150,34 @@
 		B6626AAE1C15B4230038175B /* cpp_utils */ = {
 			isa = PBXGroup;
 			children = (
+				B6626AB11C15B4230038175B /* yas_base_private.h */,
 				B6626AAF1C15B4230038175B /* yas_base.cpp */,
 				B6626AB01C15B4230038175B /* yas_base.h */,
-				B6626AB11C15B4230038175B /* yas_base_private.h */,
+				B6626AB41C15B4230038175B /* yas_cf_utils_private.h */,
 				B6626AB21C15B4230038175B /* yas_cf_utils.h */,
 				B6626AB31C15B4230038175B /* yas_cf_utils.mm */,
-				B6626AB41C15B4230038175B /* yas_cf_utils_private.h */,
+				B63C48B21C393F7700B63598 /* yas_each_dictionary.cpp */,
+				B63C48B31C393F7700B63598 /* yas_each_dictionary.h */,
+				B6E745FC1C2F823900464402 /* yas_each_index_private.h */,
+				B6E745F61C2EE02B00464402 /* yas_each_index.h */,
 				B6626AB51C15B4230038175B /* yas_exception.cpp */,
 				B6626AB61C15B4230038175B /* yas_exception.h */,
 				B6626AB71C15B4230038175B /* yas_flex_ptr.cpp */,
 				B6626AB81C15B4230038175B /* yas_flex_ptr.h */,
-				B6626AB91C15B4230038175B /* yas_observing.h */,
 				B6626ABA1C15B4230038175B /* yas_observing_private.h */,
+				B6626AB91C15B4230038175B /* yas_observing.h */,
 				B6626ABB1C15B4230038175B /* yas_operation.cpp */,
 				B6626ABC1C15B4230038175B /* yas_operation.h */,
-				B6626ABD1C15B4230038175B /* yas_property.h */,
 				B6626ABE1C15B4230038175B /* yas_property_private.h */,
-				B6626ABF1C15B4230038175B /* yas_result.h */,
+				B6626ABD1C15B4230038175B /* yas_property.h */,
 				B6626AC01C15B4230038175B /* yas_result_private.h */,
-				B6626AC11C15B4230038175B /* yas_stl_utils.h */,
-				B641BFAD1C2509FE00F742B4 /* yas_stl_utils.cpp */,
+				B6626ABF1C15B4230038175B /* yas_result.h */,
 				B6626AC21C15B4230038175B /* yas_stl_utils_private.h */,
+				B641BFAD1C2509FE00F742B4 /* yas_stl_utils.cpp */,
+				B6626AC11C15B4230038175B /* yas_stl_utils.h */,
 				B6626AD81C15B6EC0038175B /* yas_types.h */,
-				B6E745F61C2EE02B00464402 /* yas_each_index.h */,
-				B6E745FC1C2F823900464402 /* yas_each_index_private.h */,
 				B60C5BD11C37F80100D7C886 /* yas_version.cpp */,
 				B60C5BD21C37F80100D7C886 /* yas_version.h */,
-				B63C48B21C393F7700B63598 /* yas_each_dictionary.cpp */,
-				B63C48B31C393F7700B63598 /* yas_each_dictionary.h */,
 			);
 			name = cpp_utils;
 			path = ../cpp_utils;
