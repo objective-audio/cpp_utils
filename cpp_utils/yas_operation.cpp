@@ -18,11 +18,11 @@ class operation::impl : public base::impl {
     std::atomic<bool> canceled;
     execution_f execution;
 
-    impl(const execution_f &exe) : canceled(false), execution(exe) {
+    impl(execution_f const &exe) : canceled(false), execution(exe) {
     }
 };
 
-operation::operation(const execution_f &exe) : super_class(std::make_unique<impl>(exe)) {
+operation::operation(execution_f const &exe) : super_class(std::make_unique<impl>(exe)) {
 }
 
 operation::operation(std::nullptr_t) : super_class(nullptr) {
@@ -52,14 +52,14 @@ void operation::_cancel() {
 
 class operation_queue::impl : public base::impl {
    public:
-    impl(const size_t count) : _operations(count) {
+    impl(size_t const count) : _operations(count) {
     }
 
     ~impl() {
         cancel_all_operations();
     }
 
-    void add_operation(const operation &op, const priority_t priority) {
+    void add_operation(operation const &op, priority_t const priority) {
         std::lock_guard<std::recursive_mutex> lock(_mutex);
 
         auto &dq = _operations.at(priority);
@@ -68,7 +68,7 @@ class operation_queue::impl : public base::impl {
         _start_next_operation_if_needed();
     }
 
-    void insert_operation_to_top(const operation &op, const priority_t priority) {
+    void insert_operation_to_top(operation const &op, priority_t const priority) {
         std::lock_guard<std::recursive_mutex> lock(_mutex);
 
         auto &dq = _operations.at(priority);
@@ -77,7 +77,7 @@ class operation_queue::impl : public base::impl {
         _start_next_operation_if_needed();
     }
 
-    void cancel_operation(const operation &operation) {
+    void cancel_operation(operation const &operation) {
         std::lock_guard<std::recursive_mutex> lock(_mutex);
 
         for (auto &dq : _operations) {
@@ -191,7 +191,7 @@ class operation_queue::impl : public base::impl {
         }
     }
 
-    void _operation_did_finish(const operation &prev_op) {
+    void _operation_did_finish(operation const &prev_op) {
         std::lock_guard<std::recursive_mutex> lock(_mutex);
 
         if (_current_operation == prev_op) {
@@ -202,21 +202,21 @@ class operation_queue::impl : public base::impl {
     }
 };
 
-operation_queue::operation_queue(const size_t count) : super_class(std::make_unique<impl>(count)) {
+operation_queue::operation_queue(size_t const count) : super_class(std::make_unique<impl>(count)) {
 }
 
 operation_queue::operation_queue(std::nullptr_t) : super_class(nullptr) {
 }
 
-void operation_queue::add_operation(const operation &op, const priority_t pr) {
+void operation_queue::add_operation(operation const &op, priority_t const pr) {
     impl_ptr<impl>()->add_operation(op, pr);
 }
 
-void operation_queue::insert_operation_to_top(const operation &op, const priority_t pr) {
+void operation_queue::insert_operation_to_top(operation const &op, priority_t const pr) {
     impl_ptr<impl>()->insert_operation_to_top(op, pr);
 }
 
-void operation_queue::cancel_operation(const operation &op) {
+void operation_queue::cancel_operation(operation const &op) {
     impl_ptr<impl>()->cancel_operation(op);
 }
 

@@ -8,7 +8,7 @@
 
 using namespace yas;
 
-void yas::raise_with_reason(const std::string &reason) {
+void yas::raise_with_reason(std::string const &reason) {
     throw std::runtime_error(reason);
 }
 

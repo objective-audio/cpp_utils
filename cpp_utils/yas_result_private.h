@@ -10,11 +10,11 @@
 
 namespace yas {
 template <typename T, typename U>
-result<T, U>::result(const T &value) : _value(std::experimental::make_optional<T>(T(value))), _error(nullopt) {
+result<T, U>::result(T const &value) : _value(std::experimental::make_optional<T>(T(value))), _error(nullopt) {
 }
 
 template <typename T, typename U>
-result<T, U>::result(const U &error) : _value(nullopt), _error(std::experimental::make_optional<U>(U(error))) {
+result<T, U>::result(U const &error) : _value(nullopt), _error(std::experimental::make_optional<U>(U(error))) {
 }
 
 template <typename T, typename U>
@@ -29,7 +29,7 @@ template <typename T, typename U>
 result<T, U>::~result() = default;
 
 template <typename T, typename U>
-result<T, U>::result(const result<T, U> &other) {
+result<T, U>::result(result<T, U> const &other) {
     if (other._value) {
         this->_value = other._value;
     } else if (other._error) {
@@ -51,7 +51,7 @@ result<T, U>::result(result<T, U> &&other) {
 }
 
 template <typename T, typename U>
-result<T, U> &result<T, U>::operator=(const result<T, U> &rhs) {
+result<T, U> &result<T, U>::operator=(result<T, U> const &rhs) {
     if (rhs._value) {
         this->_value = rhs._value;
     } else if (rhs._error) {
@@ -94,7 +94,7 @@ bool result<T, U>::is_success() const {
 }
 
 template <typename T, typename U>
-const T &result<T, U>::value() const {
+T const &result<T, U>::value() const {
     return *_value;
 }
 
@@ -104,7 +104,7 @@ T &result<T, U>::value() {
 }
 
 template <typename T, typename U>
-const U &result<T, U>::error() const {
+U const &result<T, U>::error() const {
     return *_error;
 }
 

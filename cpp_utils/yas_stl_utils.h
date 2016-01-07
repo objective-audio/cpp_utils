@@ -13,13 +13,13 @@
 
 namespace yas {
 template <typename T, typename U>
-std::experimental::optional<T> min_empty_key(const std::map<T, U> &map);
+std::experimental::optional<T> min_empty_key(std::map<T, U> const &map);
 
 template <typename T, typename P>
-T filter(const T &collection, P predicate);
+T filter(T const &collection, P predicate);
 
 template <typename R, typename T, typename F>
-auto map(T collection, F function) -> std::vector<R>;
+std::vector<R> map(T const &collection, F function);
 
 template <typename T, typename P>
 void erase_if(T &collection, P predicate);

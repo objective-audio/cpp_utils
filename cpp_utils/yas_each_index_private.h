@@ -31,12 +31,12 @@ T const &each_index_iterator<T>::operator*() const {
 }
 
 template <typename T>
-bool each_index_iterator<T>::operator==(const each_index_iterator &rhs) const {
+bool each_index_iterator<T>::operator==(each_index_iterator const &rhs) const {
     return _index == rhs._index;
 }
 
 template <typename T>
-bool each_index_iterator<T>::operator!=(const each_index_iterator &rhs) const {
+bool each_index_iterator<T>::operator!=(each_index_iterator const &rhs) const {
     return _index != rhs._index;
 }
 
@@ -52,12 +52,12 @@ each_index<T, enable_if_integral_t<T>>::each_index(T const start, T const end)
 }
 
 template <typename T>
-bool each_index<T, enable_if_integral_t<T>>::operator==(const each_index &rhs) const {
+bool each_index<T, enable_if_integral_t<T>>::operator==(each_index const &rhs) const {
     return _start == rhs._start && _end == rhs._end;
 }
 
 template <typename T>
-bool each_index<T, enable_if_integral_t<T>>::operator!=(const each_index &rhs) const {
+bool each_index<T, enable_if_integral_t<T>>::operator!=(each_index const &rhs) const {
     return _start != rhs._start || _end != rhs._end;
 }
 

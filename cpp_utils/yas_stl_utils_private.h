@@ -8,7 +8,7 @@
 
 namespace yas {
 template <typename T, typename U>
-std::experimental::optional<T> min_empty_key(const std::map<T, U> &map) {
+std::experimental::optional<T> min_empty_key(std::map<T, U> const &map) {
     auto map_size = map.size();
 
     if (map_size == 0) {
@@ -32,7 +32,7 @@ std::experimental::optional<T> min_empty_key(const std::map<T, U> &map) {
 }
 
 template <typename T, typename P>
-T filter(const T &collection, P predicate) {
+T filter(T const &collection, P predicate) {
     T filtered;
 
     for (auto &obj : collection) {
@@ -45,7 +45,7 @@ T filter(const T &collection, P predicate) {
 }
 
 template <typename R, typename T, typename F>
-auto map(T collection, F function) -> std::vector<R> {
+std::vector<R> map(T const &collection, F function) {
     std::vector<R> mapped;
 
     for (auto &obj : collection) {

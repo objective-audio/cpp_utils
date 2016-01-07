@@ -38,7 +38,7 @@ bool base::is_kind_of() const {
 }
 
 template <typename T>
-const std::shared_ptr<T> base::impl_ptr() const {
+std::shared_ptr<T> const base::impl_ptr() const {
     return std::static_pointer_cast<T>(_impl);
 }
 
@@ -49,23 +49,23 @@ weak<T>::weak() : _impl() {
 }
 
 template <typename T>
-weak<T>::weak(const T &obj) : _impl(obj.impl_ptr()) {
+weak<T>::weak(T const &obj) : _impl(obj.impl_ptr()) {
 }
 
 template <typename T>
-weak<T>::weak(const weak<T> &) = default;
+weak<T>::weak(weak<T> const &) = default;
 
 template <typename T>
 weak<T>::weak(weak<T> &&) = default;
 
 template <typename T>
-weak<T> &weak<T>::operator=(const weak<T> &) = default;
+weak<T> &weak<T>::operator=(weak<T> const &) = default;
 
 template <typename T>
 weak<T> &weak<T>::operator=(weak<T> &&) = default;
 
 template <typename T>
-weak<T> &weak<T>::operator=(const T &obj) {
+weak<T> &weak<T>::operator=(T const &obj) {
     _impl = obj.impl_ptr();
 
     return *this;
@@ -85,7 +85,7 @@ uintptr_t weak<T>::identifier() const {
 }
 
 template <typename T>
-bool weak<T>::operator==(const weak &rhs) const {
+bool weak<T>::operator==(weak const &rhs) const {
     if (_impl.expired() || rhs._impl.expired()) {
         return false;
     } else {
@@ -96,7 +96,7 @@ bool weak<T>::operator==(const weak &rhs) const {
 }
 
 template <typename T>
-bool weak<T>::operator!=(const weak &rhs) const {
+bool weak<T>::operator!=(weak const &rhs) const {
     if (_impl.expired() || rhs._impl.expired()) {
         return true;
     } else {
@@ -124,7 +124,7 @@ void weak<T>::reset() {
 #pragma mark - global
 
 template <typename K, typename T>
-std::map<K, T> lock_values(const std::map<K, weak<T>> &map) {
+std::map<K, T> lock_values(std::map<K, weak<T>> const &map) {
     std::map<K, T> unwrapped_map;
 
     for (auto &pair : map) {
@@ -137,7 +137,7 @@ std::map<K, T> lock_values(const std::map<K, weak<T>> &map) {
 }
 
 template <typename T>
-weak<T> to_weak(const T &obj) {
+weak<T> to_weak(T const &obj) {
     return weak<T>(obj);
 }
 }

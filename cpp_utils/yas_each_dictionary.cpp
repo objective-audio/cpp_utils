@@ -31,11 +31,11 @@ std::pair<CFTypeRef, CFTypeRef> const &each_dictionary_iterator::operator*() con
     return null_pair;
 }
 
-bool each_dictionary_iterator::operator==(const each_dictionary_iterator &rhs) const {
+bool each_dictionary_iterator::operator==(each_dictionary_iterator const &rhs) const {
     return _index == rhs._index;
 }
 
-bool each_dictionary_iterator::operator!=(const each_dictionary_iterator &rhs) const {
+bool each_dictionary_iterator::operator!=(each_dictionary_iterator const &rhs) const {
     return _index != rhs._index;
 }
 
@@ -61,11 +61,11 @@ each_dictionary::~each_dictionary() {
     CFRelease(_dict);
 }
 
-bool each_dictionary::operator==(const each_dictionary &rhs) const {
+bool each_dictionary::operator==(each_dictionary const &rhs) const {
     return _dict == rhs._dict;
 }
 
-bool each_dictionary::operator!=(const each_dictionary &rhs) const {
+bool each_dictionary::operator!=(each_dictionary const &rhs) const {
     return _dict != rhs._dict;
 }
 

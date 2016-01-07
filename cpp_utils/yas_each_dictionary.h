@@ -23,8 +23,8 @@ class each_dictionary_iterator : public std::iterator<std::input_iterator_tag, s
 
     std::pair<CFTypeRef, CFTypeRef> const &operator*() const;
 
-    bool operator==(const each_dictionary_iterator &rhs) const;
-    bool operator!=(const each_dictionary_iterator &rhs) const;
+    bool operator==(each_dictionary_iterator const &rhs) const;
+    bool operator!=(each_dictionary_iterator const &rhs) const;
 
    private:
     cf_type_vector_ptr _keys_and_values;
@@ -38,8 +38,8 @@ class each_dictionary {
     each_dictionary(CFDictionaryRef const dict);
     ~each_dictionary();
 
-    bool operator==(const each_dictionary &rhs) const;
-    bool operator!=(const each_dictionary &rhs) const;
+    bool operator==(each_dictionary const &rhs) const;
+    bool operator!=(each_dictionary const &rhs) const;
 
     each_dictionary::iterator begin() const;
     each_dictionary::iterator end() const;
