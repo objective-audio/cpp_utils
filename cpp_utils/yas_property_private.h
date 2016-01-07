@@ -8,10 +8,10 @@ namespace yas {
 template <typename T, typename K>
 class property<T, K>::impl : public base::impl {
    public:
-    impl(const K &key, const T &value) : _key(key), _value(value) {
+    impl(K const &key, T const &value) : _key(key), _value(value) {
     }
 
-    void set_property(const property &prop) {
+    void set_property(property const &prop) {
         _weak_property = prop;
     }
 
@@ -19,7 +19,7 @@ class property<T, K>::impl : public base::impl {
         return _key;
     }
 
-    void set_value(const T &val) {
+    void set_value(T const &val) {
         if (auto lock = std::unique_lock<std::mutex>(_notify_mutex, std::try_to_lock)) {
             if (lock.owns_lock()) {
                 if (auto property = _weak_property.lock()) {
@@ -52,11 +52,11 @@ property<T, K>::property() : property(K{}, T{}) {
 }
 
 template <typename T, typename K>
-property<T, K>::property(const K &key) : property(key, T{}) {
+property<T, K>::property(K const &key) : property(key, T{}) {
 }
 
 template <typename T, typename K>
-property<T, K>::property(const K &key, const T &value) : super_class(std::make_shared<impl>(key, value)) {
+property<T, K>::property(K const &key, T const &value) : super_class(std::make_shared<impl>(key, value)) {
     impl_ptr<impl>()->set_property(*this);
 }
 
@@ -65,37 +65,37 @@ property<T, K>::property(std::nullptr_t) : super_class(nullptr) {
 }
 
 template <typename T, typename K>
-bool property<T, K>::operator==(const property &rhs) const {
+bool property<T, K>::operator==(property const &rhs) const {
     return impl_ptr() && rhs.impl_ptr() && (impl_ptr() == rhs.impl_ptr());
 }
 
 template <typename T, typename K>
-bool property<T, K>::operator!=(const property &rhs) const {
+bool property<T, K>::operator!=(property const &rhs) const {
     return !impl_ptr() || !rhs.impl_ptr() || (impl_ptr() != rhs.impl_ptr());
 }
 
 template <typename T, typename K>
-bool property<T, K>::operator==(const T &rhs) const {
+bool property<T, K>::operator==(T const &rhs) const {
     return impl_ptr<impl>()->value() == rhs;
 }
 
 template <typename T, typename K>
-bool property<T, K>::operator!=(const T &rhs) const {
+bool property<T, K>::operator!=(T const &rhs) const {
     return impl_ptr<impl>()->value() != rhs;
 }
 
 template <typename T, typename K>
-const K &property<T, K>::key() const {
+K const &property<T, K>::key() const {
     return impl_ptr<impl>()->key();
 }
 
 template <typename T, typename K>
-void property<T, K>::set_value(const T &value) {
+void property<T, K>::set_value(T const &value) {
     impl_ptr<impl>()->set_value(value);
 }
 
 template <typename T, typename K>
-const T &property<T, K>::value() const {
+T const &property<T, K>::value() const {
     return impl_ptr<impl>()->value();
 }
 
@@ -105,12 +105,12 @@ subject<property<T, K>> &property<T, K>::subject() {
 }
 
 template <typename T, typename K>
-bool operator==(const T &lhs, const property<T, K> &rhs) {
+bool operator==(T const &lhs, property<T, K> const &rhs) {
     return lhs == rhs.value();
 }
 
 template <typename T, typename K>
-bool operator!=(const T &lhs, const property<T, K> &rhs) {
+bool operator!=(T const &lhs, property<T, K> const &rhs) {
     return lhs != rhs.value();
 }
 }
