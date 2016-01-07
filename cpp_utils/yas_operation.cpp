@@ -178,7 +178,7 @@ class operation_queue::impl : public base::impl {
                 std::thread thread{[weak_ope, weak_queue]() {
                     auto ope = weak_ope.lock();
                     if (ope) {
-                        auto &ope_for_queue = static_cast<operation_from_queue &>(ope);
+                        auto &ope_for_queue = static_cast<operation_controllable &>(ope);
                         ope_for_queue._execute();
                         if (auto queue = weak_queue.lock()) {
                             queue.impl_ptr<impl>()->_operation_did_finish(ope);

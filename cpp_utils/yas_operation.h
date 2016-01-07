@@ -12,13 +12,13 @@
 namespace yas {
 class operation;
 
-class operation_from_queue {
+class operation_controllable {
    public:
     virtual void _execute() = 0;
     virtual void _cancel() = 0;
 };
 
-class operation : public base, public operation_from_queue {
+class operation : public base, public operation_controllable {
     using super_class = base;
 
    public:
