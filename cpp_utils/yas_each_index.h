@@ -20,8 +20,8 @@ class each_index_iterator : public std::iterator<std::input_iterator_tag, T> {
 
     T const &operator*() const;
 
-    bool operator==(const each_index_iterator &rhs) const;
-    bool operator!=(const each_index_iterator &rhs) const;
+    bool operator==(each_index_iterator const &rhs) const;
+    bool operator!=(each_index_iterator const &rhs) const;
 
    private:
     T _index;
@@ -38,8 +38,8 @@ class each_index<T, enable_if_integral_t<T>> {
     each_index(T const end);
     each_index(T const start, T const end);
 
-    bool operator==(const each_index &rhs) const;
-    bool operator!=(const each_index &rhs) const;
+    bool operator==(each_index const &rhs) const;
+    bool operator!=(each_index const &rhs) const;
 
     each_index::iterator begin() const;
     each_index::iterator end() const;
