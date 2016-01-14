@@ -71,6 +71,48 @@
     XCTAssertEqual(error, result.error());
 }
 
+- (void)test_error_to_success_copy_assignment {
+    yas::result<std::nullptr_t, std::string> result{"test_error"};
+
+    XCTAssertFalse(result);
+
+    yas::result<std::nullptr_t, std::string> success_result{nullptr};
+    result = success_result;
+
+    XCTAssertTrue(result);
+}
+
+- (void)test_success_to_error_copy_assignment {
+    yas::result<std::nullptr_t, std::string> result{nullptr};
+
+    XCTAssertTrue(result);
+
+    yas::result<std::nullptr_t, std::string> error_result{"test_error"};
+    result = error_result;
+
+    XCTAssertFalse(result);
+}
+
+- (void)test_error_to_success_move_assignment {
+    yas::result<std::nullptr_t, std::string> result{"test_error"};
+
+    XCTAssertFalse(result);
+
+    result = yas::result<std::nullptr_t, std::string>{nullptr};
+
+    XCTAssertTrue(result);
+}
+
+- (void)test_success_to_error_move_assignment {
+    yas::result<std::nullptr_t, std::string> result{nullptr};
+
+    XCTAssertTrue(result);
+
+    result = yas::result<std::nullptr_t, std::string>{"test_error"};
+
+    XCTAssertFalse(result);
+}
+
 - (void)test_receive_success_result {
     bool value = true;
     bool result_flag;
