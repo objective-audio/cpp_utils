@@ -29,15 +29,11 @@ template <typename T, typename U>
 result<T, U>::~result() = default;
 
 template <typename T, typename U>
-result<T, U>::result(result<T, U> const &other) {
-    this->_value = other._value;
-    this->_error = other._error;
+result<T, U>::result(result<T, U> const &other) : _value(other._value), _error(other._error) {
 }
 
 template <typename T, typename U>
-result<T, U>::result(result<T, U> &&other) {
-    this->_value = std::move(other._value);
-    this->_error = std::move(other._error);
+result<T, U>::result(result<T, U> &&other) : _value(std::move(other._value)), _error(std::move(other._error)) {
 }
 
 template <typename T, typename U>

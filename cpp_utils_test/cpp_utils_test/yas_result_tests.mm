@@ -113,6 +113,22 @@
     XCTAssertFalse(result);
 }
 
+- (void)test_copy_constructor {
+    yas::result<std::nullptr_t, std::string> src_result{"test_error"};
+    yas::result<std::nullptr_t, std::string> result{src_result};
+
+    XCTAssertFalse(result);
+    XCTAssertEqual(result.error(), "test_error");
+}
+
+- (void)test_move_constructor {
+    yas::result<std::nullptr_t, std::string> src_result{"test_error"};
+    yas::result<std::nullptr_t, std::string> result{std::move(src_result)};
+
+    XCTAssertFalse(result);
+    XCTAssertEqual(result.error(), "test_error");
+}
+
 - (void)test_receive_success_result {
     bool value = true;
     bool result_flag;
