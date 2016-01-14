@@ -29,49 +29,25 @@ template <typename T, typename U>
 result<T, U>::~result() = default;
 
 template <typename T, typename U>
-result<T, U>::result(result<T, U> const &other) {
-    if (other._value) {
-        this->_value = other._value;
-    } else if (other._error) {
-        this->_error = other._error;
-    } else {
-        throw std::logic_error(std::string(__PRETTY_FUNCTION__) + " : value or error are not found.");
-    }
+result<T, U>::result(result<T, U> const &other) : _value(other._value), _error(other._error) {
 }
 
 template <typename T, typename U>
-result<T, U>::result(result<T, U> &&other) {
-    if (other._value) {
-        this->_value = std::move(other._value);
-    } else if (other._error) {
-        this->_error = std::move(other._error);
-    } else {
-        throw std::logic_error(std::string(__PRETTY_FUNCTION__) + " : value or error are not found.");
-    }
+result<T, U>::result(result<T, U> &&other) : _value(std::move(other._value)), _error(std::move(other._error)) {
 }
 
 template <typename T, typename U>
 result<T, U> &result<T, U>::operator=(result<T, U> const &rhs) {
-    if (rhs._value) {
-        this->_value = rhs._value;
-    } else if (rhs._error) {
-        this->_error = rhs._error;
-    } else {
-        throw std::logic_error(std::string(__PRETTY_FUNCTION__) + " : value or error are not found.");
-    }
+    this->_value = rhs._value;
+    this->_error = rhs._error;
 
     return *this;
 }
 
 template <typename T, typename U>
 result<T, U> &result<T, U>::operator=(result<T, U> &&rhs) {
-    if (rhs._value) {
-        this->_value = std::move(rhs._value);
-    } else if (rhs._error) {
-        this->_error = std::move(rhs._error);
-    } else {
-        throw std::logic_error(std::string(__PRETTY_FUNCTION__) + " : value or error are not found.");
-    }
+    this->_value = std::move(rhs._value);
+    this->_error = std::move(rhs._error);
 
     return *this;
 }
