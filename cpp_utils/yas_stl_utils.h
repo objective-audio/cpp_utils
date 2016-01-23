@@ -33,6 +33,9 @@ std::vector<T> to_vector(std::unordered_set<T> &set);
 std::string to_lower(std::string const &);
 std::string replaced(std::string const &source, std::string const &target, std::string const &replacement);
 std::string joined(std::vector<std::string> const &components, std::string const &separator);
+
+template <typename T, typename F>
+std::string joined(T const &collection, std::string const &separator, F function);
 }
 
 #include "yas_stl_utils_private.h"

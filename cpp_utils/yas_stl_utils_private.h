@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include <sstream>
 #include "yas_types.h"
 
 namespace yas {
@@ -80,5 +81,20 @@ void enumerate(T &collection, F function) {
 template <typename T>
 std::vector<T> to_vector(std::unordered_set<T> &set) {
     return std::vector<T>{set.begin(), set.end()};
+}
+
+template <typename T, typename F>
+std::string joined(T const &collection, std::string const &separator, F function) {
+    std::ostringstream stream;
+    bool is_first = true;
+    for (auto const &component : collection) {
+        if (is_first) {
+            is_first = false;
+        } else {
+            stream << separator;
+        }
+        stream << function(component);
+    }
+    return stream.str();
 }
 }
