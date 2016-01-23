@@ -4,6 +4,7 @@
 
 #import <XCTest/XCTest.h>
 #import <iostream>
+#import <set>
 #import "yas_stl_utils.h"
 
 @interface yas_stl_utils_tests : XCTestCase
@@ -149,6 +150,20 @@
     auto joined = yas::joined(components, "-");
 
     XCTAssertEqual(joined, "abc-def-ghi");
+}
+
+- (void)test_joined_integer_set {
+    std::set<int> components{1, 2, 3};
+    auto joined = yas::joined(components, "-", [](int const &val) { return std::to_string(val); });
+
+    std::cout << joined << std::endl;
+
+    XCTAssertEqual(joined.size(), 5);
+    XCTAssertEqual(joined.at(0), '1');
+    XCTAssertEqual(joined.at(1), '-');
+    XCTAssertEqual(joined.at(2), '2');
+    XCTAssertEqual(joined.at(3), '-');
+    XCTAssertEqual(joined.at(4), '3');
 }
 
 - (void)test_map {
