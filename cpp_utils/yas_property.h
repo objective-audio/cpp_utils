@@ -32,9 +32,9 @@ class property : public base {
     bool operator==(T const &) const;
     bool operator!=(T const &) const;
 
-    const K &key() const;
+    K const &key() const;
     void set_value(T const &value);
-    const T &value() const;
+    T const &value() const;
 
     subject<property> &subject();
 
