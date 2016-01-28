@@ -149,6 +149,15 @@
     XCTAssertTrue(yas::to_lower(str1) == str2);
 }
 
+- (void)test_to_lower_move {
+    std::string str1 = "aBcDeFgH";
+    std::string str2 = "abcdefgh";
+    
+    XCTAssertTrue(yas::to_lower(std::move(str1)) == str2);
+    
+    XCTAssertEqual(str1.size(), 0);
+}
+
 - (void)test_replaced {
     auto source = "source_text";
     auto destination = yas::replaced(source, "source", "destination");
