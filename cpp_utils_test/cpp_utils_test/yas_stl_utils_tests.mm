@@ -125,15 +125,21 @@
     XCTAssertEqual(vec_b.size(), 0);
 }
 
-- (void)test_to_vector {
+- (void)test_unordered_set_to_vector {
     std::unordered_set<int> set{1, 3, 5};
     auto vec = yas::to_vector(set);
 
     XCTAssertEqual(set.size(), 3);
     XCTAssertEqual(vec.size(), 3);
 
-    XCTAssertEqual(*set.begin(), vec[0]);
-    XCTAssertEqual(*(++set.begin()), vec[1]);
+    for (auto const &val : vec) {
+        XCTAssertTrue(set.count(val));
+        if (set.count(val)) {
+            set.erase(val);
+        }
+    }
+
+    XCTAssertEqual(set.size(), 0);
 }
 
 - (void)test_to_lower {

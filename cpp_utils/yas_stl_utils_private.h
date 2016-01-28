@@ -86,8 +86,11 @@ std::vector<T> connect(std::vector<T> vec_a, std::vector<T> vec_b) {
 }
 
 template <typename T>
-std::vector<T> to_vector(std::unordered_set<T> &set) {
-    return std::vector<T>{set.begin(), set.end()};
+std::vector<T> to_vector(std::unordered_set<T> set) {
+    std::vector<T> vector;
+    vector.reserve(set.size());
+    std::move(set.begin(), set.end(), std::back_inserter(vector));
+    return vector;
 }
 
 template <typename T, typename F>
