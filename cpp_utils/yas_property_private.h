@@ -8,7 +8,7 @@ namespace yas {
 template <typename T, typename K>
 class property<T, K>::impl : public base::impl {
    public:
-    impl(K const &key, T const &value) : _key(key), _value(value) {
+    impl(K key, T value) : _key(std::move(key)), _value(std::move(value)) {
     }
 
     void set_property(property const &prop) {
@@ -19,12 +19,12 @@ class property<T, K>::impl : public base::impl {
         return _key;
     }
 
-    void set_value(T const &val) {
+    void set_value(T val) {
         if (auto lock = std::unique_lock<std::mutex>(_notify_mutex, std::try_to_lock)) {
             if (lock.owns_lock()) {
                 if (auto property = _weak_property.lock()) {
                     _subject.notify(property_method::will_change, property);
-                    _value = val;
+                    _value = std::move(val);
                     _subject.notify(property_method::did_change, property);
                 }
             }
@@ -52,11 +52,11 @@ property<T, K>::property() : property(K{}, T{}) {
 }
 
 template <typename T, typename K>
-property<T, K>::property(K const &key) : property(key, T{}) {
+property<T, K>::property(K key) : property(std::move(key), T{}) {
 }
 
 template <typename T, typename K>
-property<T, K>::property(K const &key, T const &value) : super_class(std::make_shared<impl>(key, value)) {
+property<T, K>::property(K key, T value) : super_class(std::make_shared<impl>(std::move(key), std::move(value))) {
     impl_ptr<impl>()->set_property(*this);
 }
 
@@ -90,8 +90,8 @@ K const &property<T, K>::key() const {
 }
 
 template <typename T, typename K>
-void property<T, K>::set_value(T const &value) {
-    impl_ptr<impl>()->set_value(value);
+void property<T, K>::set_value(T value) {
+    impl_ptr<impl>()->set_value(std::move(value));
 }
 
 template <typename T, typename K>
