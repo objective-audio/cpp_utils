@@ -5,10 +5,9 @@
 #include <sstream>
 #include "yas_stl_utils.h"
 
-std::string yas::to_lower(std::string const &string) {
-    std::string lower_string = string;
-    std::transform(lower_string.begin(), lower_string.end(), lower_string.begin(), ::tolower);
-    return lower_string;
+std::string yas::to_lower(std::string string) {
+    std::transform(string.begin(), string.end(), string.begin(), ::tolower);
+    return string;
 }
 
 std::string yas::replaced(std::string const &source, std::string const &target, std::string const &replacement) {
