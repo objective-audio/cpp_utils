@@ -176,6 +176,16 @@
     XCTAssertEqual(destination, "");
 }
 
+- (void)test_replaced_move {
+    std::string source = "a_text_a_text_a";
+    std::string target = "a";
+    std::string replacement = "b";
+    std::string destination = yas::replaced(std::move(source), target, std::move(replacement));
+    XCTAssertEqual(destination, "b_text_b_text_b");
+    XCTAssertEqual(source.size(), 0);
+    XCTAssertEqual(replacement.size(), 0);
+}
+
 - (void)test_joined {
     std::vector<std::string> components{"abc", "def", "ghi"};
     auto joined = yas::joined(components, "-");

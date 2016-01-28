@@ -34,7 +34,7 @@ template <typename T>
 std::vector<T> to_vector(std::unordered_set<T> set);
 
 std::string to_lower(std::string);
-std::string replaced(std::string const &source, std::string const &target, std::string const &replacement);
+std::string replaced(std::string source, std::string const &target, std::string replacement);
 std::string joined(std::vector<std::string> const &components, std::string const &separator);
 
 template <typename T, typename F>
