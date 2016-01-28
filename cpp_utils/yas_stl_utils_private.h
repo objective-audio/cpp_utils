@@ -48,6 +48,7 @@ T filter(T const &collection, P predicate) {
 template <typename R, typename T, typename F>
 std::vector<R> map(T const &collection, F function) {
     std::vector<R> mapped;
+    mapped.reserve(collection.size());
 
     for (auto &obj : collection) {
         mapped.emplace_back(function(obj));
