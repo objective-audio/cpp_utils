@@ -3,6 +3,7 @@
 //
 
 #import <XCTest/XCTest.h>
+#import <vector>
 #import "yas_result.h"
 
 @interface yas_result_tests : XCTestCase
@@ -180,6 +181,24 @@
     auto value_opt = result.value_opt();
 
     XCTAssertFalse(value_opt);
+}
+
+- (void)test_move_value {
+    yas::result<std::string, int> result1{std::string{"test_string"}};
+
+    auto moved_value1 = std::move(result1.value());
+
+    XCTAssertEqual(moved_value1, "test_string");
+    XCTAssertEqual(result1.value().size(), 0);
+}
+
+- (void)test_move_error {
+    yas::result<int, std::string> result1{std::string{"test_string"}};
+
+    auto moved_value1 = std::move(result1.error());
+
+    XCTAssertEqual(moved_value1, "test_string");
+    XCTAssertEqual(result1.error().size(), 0);
 }
 
 @end
