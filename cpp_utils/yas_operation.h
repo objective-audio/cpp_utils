@@ -25,6 +25,7 @@ class operation : public base, public operation_controllable {
     using execution_f = std::function<void(operation const &)>;
 
     explicit operation(execution_f const &);
+    explicit operation(execution_f &&);
     operation(std::nullptr_t);
 
     void cancel();
