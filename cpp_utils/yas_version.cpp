@@ -10,9 +10,9 @@
 using namespace yas;
 
 namespace yas {
-static std::vector<int> to_numbers(std::string const &str) {
+static std::vector<int> to_numbers(std::string str) {
     std::vector<int> vec;
-    std::istringstream stream(replaced(str, ".", " "));
+    std::istringstream stream(replaced(std::move(str), ".", " "));
     for (int i; stream >> i;) {
         vec.push_back(i);
     }
@@ -57,10 +57,10 @@ static comparison_result compare(version const &lhs, version const &rhs) {
 version::version() : _numbers() {
 }
 
-version::version(std::string const &str) : _numbers(to_numbers(str)) {
+version::version(std::string str) : _numbers(to_numbers(std::move(str))) {
 }
 
-version::version(std::vector<int> const &numbers) : _numbers(numbers) {
+version::version(std::vector<int> numbers) : _numbers(std::move(numbers)) {
 }
 
 version::version(std::nullptr_t) : _numbers() {
