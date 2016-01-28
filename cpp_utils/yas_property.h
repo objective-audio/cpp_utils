@@ -23,8 +23,8 @@ class property : public base {
 
    public:
     property();
-    explicit property(K const &key);
-    property(const K &key, T const &value);
+    explicit property(K key);
+    property(K key, T value);
     property(std::nullptr_t);
 
     bool operator==(property const &) const;
@@ -33,7 +33,7 @@ class property : public base {
     bool operator!=(T const &) const;
 
     K const &key() const;
-    void set_value(T const &value);
+    void set_value(T value);
     T const &value() const;
 
     subject<property> &subject();
