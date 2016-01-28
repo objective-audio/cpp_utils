@@ -20,9 +20,15 @@ class operation::impl : public base::impl {
 
     impl(execution_f const &exe) : canceled(false), execution(exe) {
     }
+
+    impl(execution_f &&exe) : canceled(false), execution(std::move(exe)) {
+    }
 };
 
 operation::operation(execution_f const &exe) : super_class(std::make_unique<impl>(exe)) {
+}
+
+operation::operation(execution_f &&exe) : super_class(std::make_unique<impl>(std::move(exe))) {
 }
 
 operation::operation(std::nullptr_t) : super_class(nullptr) {
