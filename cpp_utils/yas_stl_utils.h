@@ -28,6 +28,9 @@ template <typename T, typename F>
 void enumerate(T &collection, F function);
 
 template <typename T>
+std::vector<T> connect(std::vector<T> vec_a, std::vector<T> vec_b);
+
+template <typename T>
 std::vector<T> to_vector(std::unordered_set<T> &set);
 
 std::string to_lower(std::string const &);

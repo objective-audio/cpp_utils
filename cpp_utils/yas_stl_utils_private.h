@@ -79,6 +79,13 @@ void enumerate(T &collection, F function) {
 }
 
 template <typename T>
+std::vector<T> connect(std::vector<T> vec_a, std::vector<T> vec_b) {
+    vec_a.reserve(vec_a.size() + vec_b.size());
+    std::move(vec_b.begin(), vec_b.end(), std::back_inserter(vec_a));
+    return std::move(vec_a);
+}
+
+template <typename T>
 std::vector<T> to_vector(std::unordered_set<T> &set) {
     return std::vector<T>{set.begin(), set.end()};
 }
