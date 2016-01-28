@@ -152,9 +152,9 @@
 - (void)test_to_lower_move {
     std::string str1 = "aBcDeFgH";
     std::string str2 = "abcdefgh";
-    
+
     XCTAssertTrue(yas::to_lower(std::move(str1)) == str2);
-    
+
     XCTAssertEqual(str1.size(), 0);
 }
 
@@ -180,10 +180,9 @@
     std::string source = "a_text_a_text_a";
     std::string target = "a";
     std::string replacement = "b";
-    std::string destination = yas::replaced(std::move(source), target, std::move(replacement));
+    std::string destination = yas::replaced(std::move(source), target, replacement);
     XCTAssertEqual(destination, "b_text_b_text_b");
     XCTAssertEqual(source.size(), 0);
-    XCTAssertEqual(replacement.size(), 0);
 }
 
 - (void)test_joined {
