@@ -109,6 +109,22 @@
     XCTAssertEqual(sum, (3 + 6 + 9));
 }
 
+- (void)test_connect_vector {
+    std::vector<std::string> vec_a{"a", "b"};
+    std::vector<std::string> vec_b{"c", "d"};
+
+    auto vec_c = yas::connect(std::move(vec_a), std::move(vec_b));
+
+    XCTAssertEqual(vec_c.size(), 4);
+    XCTAssertEqual(vec_c.at(0), "a");
+    XCTAssertEqual(vec_c.at(1), "b");
+    XCTAssertEqual(vec_c.at(2), "c");
+    XCTAssertEqual(vec_c.at(3), "d");
+
+    XCTAssertEqual(vec_a.size(), 0);
+    XCTAssertEqual(vec_b.size(), 0);
+}
+
 - (void)test_to_vector {
     std::unordered_set<int> set{1, 3, 5};
     auto vec = yas::to_vector(set);
