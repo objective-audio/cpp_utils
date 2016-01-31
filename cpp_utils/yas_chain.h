@@ -19,7 +19,7 @@ class chain_context : base {
    public:
     chain_context(T &&default_value, std::vector<std::function<void(chain_context<T>)>> &&functions);
 
-    void set(T &&);
+    void set(T);
     T const &get() const;
     T &get();
 
