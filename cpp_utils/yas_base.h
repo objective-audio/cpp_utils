@@ -49,14 +49,15 @@ class base {
     void set_impl_ptr(std::shared_ptr<impl> const &);
     void set_impl_ptr(std::shared_ptr<impl> &&);
 
-    template <typename T = class impl>
+    template <typename T = impl>
     std::shared_ptr<T> const impl_ptr() const;
 
    protected:
-    base(const std::shared_ptr<class impl> &);
+    base(std::shared_ptr<impl> const &);
+    base(std::shared_ptr<impl> &&);
 
    private:
-    std::shared_ptr<class impl> _impl;
+    std::shared_ptr<impl> _impl;
 };
 
 template <typename T>

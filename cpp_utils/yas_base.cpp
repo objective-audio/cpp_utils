@@ -24,6 +24,9 @@ base::base(std::nullptr_t) : _impl(nullptr) {
 base::base(std::shared_ptr<base::impl> const &impl) : _impl(impl) {
 }
 
+base::base(std::shared_ptr<base::impl> &&impl) : _impl(std::move(impl)) {
+}
+
 base::~base() = default;
 
 base::base(base const &) = default;
