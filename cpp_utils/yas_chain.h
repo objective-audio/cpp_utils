@@ -9,24 +9,31 @@
 #include "yas_base.h"
 
 namespace yas {
+template <typename T>
 class chain_context;
-using chain_f = std::function<void(chain_context)>;
-using chain_v = std::vector<chain_f>;
 
+template <typename T>
 class chain_context : base {
     using super_class = base;
 
    public:
+    chain_context(T &&default_value, std::vector<std::function<void(chain_context<T>)>> &&functions);
+
+    void set(T &&);
+    T const &get() const;
+    T &get();
+
     void next();
     void stop();
 
    private:
     class impl;
-
-    chain_context(chain_v &&functions);
-
-    friend void chain(chain_v);
 };
 
-void chain(chain_v functions);
+void chain(std::vector<std::function<void(chain_context<std::nullptr_t>)>> functions);
+
+template <typename T>
+void chain(T default_value, std::vector<std::function<void(chain_context<T>)>> functions);
 }
+
+#include "yas_chain_private.h"
