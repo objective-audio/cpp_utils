@@ -3,6 +3,7 @@
 //
 
 #import <XCTest/XCTest.h>
+#import <string>
 #import "yas_chain.h"
 
 @interface yas_chain_tests : XCTestCase
@@ -19,19 +20,23 @@
     [super tearDown];
 }
 
-- (void)test_chain_all {
+- (void)test_chain_full_int {
     int count = 0;
 
-    yas::chain({[self, &count](yas::chain_context context) {
-                    XCTAssertEqual(count, 0);
-                    count++;
-                    context.next();
-                },
-                [self, &count](yas::chain_context context) {
-                    XCTAssertEqual(count, 1);
-                    count++;
-                    context.next();
-                }});
+    yas::chain(1, {[self, &count](auto context) {
+                       XCTAssertEqual(count, 0);
+
+                       context.set(2);
+                       ++count;
+                       context.next();
+                   },
+                   [self, &count](auto context) {
+                       XCTAssertEqual(count, 1);
+                       XCTAssertEqual(context.get(), 2);
+
+                       ++count;
+                       context.next();
+                   }});
 
     XCTAssertEqual(count, 2);
 }
@@ -39,12 +44,12 @@
 - (void)test_chain_stop {
     int count = 0;
 
-    yas::chain({[self, &count](yas::chain_context context) {
+    yas::chain({[self, &count](auto context) {
                     XCTAssertEqual(count, 0);
                     count++;
                     context.stop();
                 },
-                [self, &count](yas::chain_context context) {
+                [self, &count](auto context) {
                     XCTAssertEqual(count, 1);
                     count++;
                     context.next();
@@ -58,7 +63,7 @@
 
     XCTestExpectation *exp = [self expectationWithDescription:@"exp"];
 
-    auto func = [self, &count, exp](yas::chain_context context) {
+    auto func = [self, &count, exp](auto context) {
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), [self, &count, context, exp]() {
             dispatch_async(dispatch_get_main_queue(), [self, &count, context, exp]() mutable {
                 count++;
