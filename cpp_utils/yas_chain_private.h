@@ -35,8 +35,8 @@ chain_context<T>::chain_context(T &&default_value, std::vector<std::function<voi
 }
 
 template <typename T>
-void chain_context<T>::set(T &&val) {
-    impl_ptr<impl>()->value = std::forward<T>(val);
+void chain_context<T>::set(T val) {
+    impl_ptr<impl>()->value = std::move(val);
 }
 
 template <typename T>
