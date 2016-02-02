@@ -5,6 +5,7 @@
 #import <XCTest/XCTest.h>
 #import <iostream>
 #import <set>
+#import <unordered_map>
 #import "yas_stl_utils.h"
 
 @interface yas_stl_utils_tests : XCTestCase
@@ -125,6 +126,50 @@
     XCTAssertEqual(vec_b.size(), 0);
 }
 
+- (void)test_move_insert_map {
+    std::unordered_map<std::string, int> map_a{{"a", 1}, {"b", 2}};
+    std::unordered_map<std::string, int> map_b{{"c", 3}, {"d", 4}};
+
+    yas::move_insert(map_a, std::move(map_b));
+
+    XCTAssertEqual(map_a.size(), 4);
+    XCTAssertEqual(map_a.count("a"), 1);
+    XCTAssertEqual(map_a.count("b"), 1);
+    XCTAssertEqual(map_a.count("c"), 1);
+    XCTAssertEqual(map_a.count("d"), 1);
+    XCTAssertEqual(map_a.at("a"), 1);
+    XCTAssertEqual(map_a.at("b"), 2);
+    XCTAssertEqual(map_a.at("c"), 3);
+    XCTAssertEqual(map_a.at("d"), 4);
+
+    XCTAssertEqual(map_b.size(), 0);
+}
+
+- (void)test_pull {
+    std::unordered_map<std::string, int> map{{"a", 1}, {"b", 2}, {"c", 3}};
+
+    auto b_value = yas::pull(map, std::string("b"));
+
+    XCTAssertEqual(b_value, 2);
+    XCTAssertEqual(map.size(), 2);
+    XCTAssertEqual(map.count("b"), 0);
+}
+
+- (void)test_move_from_map {
+    std::unordered_map<std::string, int> map{{"a", 1}, {"b", 2}, {"c", 3}};
+    std::unordered_map<std::string, int> map2;
+
+    yas::move_insert(map2, map, "b");
+
+    XCTAssertEqual(map.size(), 2);
+    XCTAssertEqual(map2.size(), 1);
+
+    XCTAssertEqual(map.count("b"), 0);
+    XCTAssertEqual(map2.count("b"), 1);
+
+    XCTAssertEqual(map2.at("b"), 2);
+}
+
 - (void)test_unordered_set_to_vector {
     std::unordered_set<int> set{1, 3, 5};
     auto vec = yas::to_vector(set);
@@ -195,8 +240,6 @@
 - (void)test_joined_integer_set {
     std::set<int> components{1, 2, 3};
     auto joined = yas::joined(components, "-", [](int const &val) { return std::to_string(val); });
-
-    std::cout << joined << std::endl;
 
     XCTAssertEqual(joined.size(), 5);
     XCTAssertEqual(joined.at(0), '1');
