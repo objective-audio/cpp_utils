@@ -126,6 +126,21 @@
     XCTAssertEqual(vec_b.size(), 0);
 }
 
+- (void)test_move_back_insert {
+    std::vector<std::string> vec_a{"a", "b"};
+    std::vector<std::string> vec_b{"c", "d"};
+
+    yas::move_back_insert(vec_a, std::move(vec_b));
+
+    XCTAssertEqual(vec_a.size(), 4);
+    XCTAssertEqual(vec_a.at(0), "a");
+    XCTAssertEqual(vec_a.at(1), "b");
+    XCTAssertEqual(vec_a.at(2), "c");
+    XCTAssertEqual(vec_a.at(3), "d");
+
+    XCTAssertEqual(vec_b.size(), 0);
+}
+
 - (void)test_move_insert_map {
     std::unordered_map<std::string, int> map_a{{"a", 1}, {"b", 2}};
     std::unordered_map<std::string, int> map_b{{"c", 3}, {"d", 4}};

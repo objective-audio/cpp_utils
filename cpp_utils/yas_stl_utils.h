@@ -32,6 +32,9 @@ template <typename T>
 std::vector<T> connect(std::vector<T> vec_a, std::vector<T> vec_b);
 
 template <typename T>
+void move_back_insert(std::vector<T> &a, std::vector<T> b);
+
+template <typename T>
 void move_insert(T &a, T b);
 
 template <typename T, typename K>
