@@ -8,6 +8,7 @@
 #include <map>
 #include <memory>
 #include <string>
+#include <unordered_map>
 #include <unordered_set>
 #include <vector>
 
@@ -29,6 +30,18 @@ void enumerate(T &collection, F function);
 
 template <typename T>
 std::vector<T> connect(std::vector<T> vec_a, std::vector<T> vec_b);
+
+template <typename T>
+void move_back_insert(std::vector<T> &a, std::vector<T> b);
+
+template <typename T>
+void move_insert(T &a, T b);
+
+template <typename T, typename K>
+void move_insert(T &a, T &b, K const &k);
+
+template <typename T, typename U>
+U pull(std::unordered_map<T, U> &map, T const &key);
 
 template <typename T>
 std::vector<T> to_vector(std::unordered_set<T> set);

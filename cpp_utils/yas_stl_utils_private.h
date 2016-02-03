@@ -87,6 +87,30 @@ std::vector<T> connect(std::vector<T> vec_a, std::vector<T> vec_b) {
 }
 
 template <typename T>
+void move_back_insert(std::vector<T> &a, std::vector<T> b) {
+    a.reserve(a.size() + b.size());
+    std::move(b.begin(), b.end(), std::back_inserter(a));
+}
+
+template <typename T>
+void move_insert(T &a, T b) {
+    a.insert(std::make_move_iterator(b.begin()), std::make_move_iterator(b.end()));
+}
+
+template <typename T, typename K>
+void move_insert(T &a, T &b, K const &k) {
+    a.emplace(*std::make_move_iterator(b.find(k)));
+    b.erase(k);
+}
+
+template <typename T, typename U>
+U pull(std::unordered_map<T, U> &map, T const &key) {
+    auto value = std::move(map.at(key));
+    map.erase(key);
+    return value;
+}
+
+template <typename T>
 std::vector<T> to_vector(std::unordered_set<T> set) {
     std::vector<T> vector;
     vector.reserve(set.size());
