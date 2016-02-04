@@ -284,4 +284,22 @@
     XCTAssertEqual(mapped.at(2), "3");
 }
 
+- (void)test_replace {
+    std::unordered_map<int, std::string> map{{1, "1"}, {2, "2"}, {3, "3"}};
+    std::string value{"two"};
+
+    yas::replace(map, 2, std::move(value));
+
+    XCTAssertEqual(map.size(), 3);
+    XCTAssertEqual(map.count(2), 1);
+    XCTAssertEqual(map.at(2), "two");
+
+    XCTAssertEqual(map.count(1), 1);
+    XCTAssertEqual(map.at(1), "1");
+    XCTAssertEqual(map.count(3), 1);
+    XCTAssertEqual(map.at(3), "3");
+
+    XCTAssertEqual(value.size(), 0);
+}
+
 @end
