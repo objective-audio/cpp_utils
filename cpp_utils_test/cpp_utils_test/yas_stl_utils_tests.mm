@@ -94,6 +94,16 @@
     XCTAssertTrue(set.count(4));
 }
 
+- (void)test_erase_if_exists {
+    std::unordered_map<int, std::string> map{{1, "1"}, {2, "2"}, {3, "3"}};
+    yas::erase_if_exists(map, 2);
+
+    XCTAssertEqual(map.size(), 2);
+    XCTAssertEqual(map.count(1), 1);
+    XCTAssertEqual(map.count(2), 0);
+    XCTAssertEqual(map.count(3), 1);
+}
+
 - (void)test_enumerate {
     int count = 0;
     int sum = 0;
