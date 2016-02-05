@@ -43,6 +43,9 @@ void move_insert(T &a, T &b, K const &k);
 template <typename T, typename U>
 U pull(std::unordered_map<T, U> &map, T const &key);
 
+template <typename T, typename U>
+void replace(std::unordered_map<T, U> &map, T const &key, U value);
+
 template <typename T>
 std::vector<T> to_vector(std::unordered_set<T> set);
 

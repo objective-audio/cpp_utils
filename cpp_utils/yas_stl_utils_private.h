@@ -110,6 +110,14 @@ U pull(std::unordered_map<T, U> &map, T const &key) {
     return value;
 }
 
+template <typename T, typename U>
+void replace(std::unordered_map<T, U> &map, T const &key, U value) {
+    if (map.count(key)) {
+        map.erase(key);
+    }
+    map.emplace(std::make_pair(key, std::move(value)));
+}
+
 template <typename T>
 std::vector<T> to_vector(std::unordered_set<T> set) {
     std::vector<T> vector;
