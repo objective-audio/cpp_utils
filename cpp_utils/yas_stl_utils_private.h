@@ -70,6 +70,13 @@ void erase_if(T &collection, P predicate) {
     }
 }
 
+template <typename T, typename U>
+void erase_if_exists(std::unordered_map<T, U> &map, T const &key) {
+    if (map.count(key)) {
+        map.erase(key);
+    }
+}
+
 template <typename T, typename F>
 void enumerate(T &collection, F function) {
     auto it = collection.begin();
