@@ -95,7 +95,7 @@ version::operator bool() const {
 }
 
 std::string version::str() const {
-    return joined(map<std::string>(_numbers, [](int const &i) { return std::to_string(i); }), ".");
+    return joined(to_vector<std::string>(_numbers, [](int const &i) { return std::to_string(i); }), ".");
 }
 
 std::vector<int> const &version::numbers() const {

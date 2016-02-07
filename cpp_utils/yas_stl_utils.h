@@ -19,9 +19,6 @@ std::experimental::optional<T> min_empty_key(std::map<T, U> const &map);
 template <typename T, typename P>
 T filter(T const &collection, P predicate);
 
-template <typename R, typename T, typename F>
-std::vector<R> map(T const &collection, F function);
-
 template <typename T, typename P>
 void erase_if(T &collection, P predicate);
 
@@ -48,6 +45,9 @@ U pull(std::unordered_map<T, U> &map, T const &key);
 
 template <typename T, typename U>
 void replace(std::unordered_map<T, U> &map, T const &key, U value);
+
+template <typename R, typename T, typename F>
+std::vector<R> to_vector(T collection, F function);
 
 template <typename T>
 std::vector<T> to_vector(std::unordered_set<T> set);

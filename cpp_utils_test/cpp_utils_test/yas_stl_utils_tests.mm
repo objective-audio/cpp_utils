@@ -274,9 +274,9 @@
     XCTAssertEqual(joined.at(4), '3');
 }
 
-- (void)test_map {
+- (void)test_to_vector {
     std::vector<int> vector{0, 1, 2};
-    auto mapped = yas::map<int>(vector, [](int const &obj) { return obj + 1; });
+    auto mapped = yas::to_vector<int>(std::move(vector), [](int const &obj) { return obj + 1; });
 
     XCTAssertEqual(mapped.size(), 3);
     XCTAssertEqual(mapped.at(0), 1);
@@ -284,9 +284,10 @@
     XCTAssertEqual(mapped.at(2), 3);
 }
 
-- (void)test_map_different_return_type {
+- (void)test_to_vector_different_return_type {
     std::vector<int> vector{0, 1, 2};
-    auto mapped = yas::map<std::string>(vector, [](int const &obj) { return std::to_string(obj + 1); });
+    auto mapped =
+        yas::to_vector<std::string>(std::move(vector), [](int const &obj) { return std::to_string(obj + 1); });
 
     XCTAssertEqual(mapped.size(), 3);
     XCTAssertEqual(mapped.at(0), "1");

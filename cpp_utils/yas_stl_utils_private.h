@@ -45,18 +45,6 @@ T filter(T const &collection, P predicate) {
     return filtered;
 }
 
-template <typename R, typename T, typename F>
-std::vector<R> map(T const &collection, F function) {
-    std::vector<R> mapped;
-    mapped.reserve(collection.size());
-
-    for (auto &obj : collection) {
-        mapped.emplace_back(function(obj));
-    }
-
-    return mapped;
-}
-
 template <typename T, typename P>
 void erase_if(T &collection, P predicate) {
     auto it = collection.begin();
@@ -123,6 +111,18 @@ void replace(std::unordered_map<T, U> &map, T const &key, U value) {
         map.erase(key);
     }
     map.emplace(std::make_pair(key, std::move(value)));
+}
+
+template <typename R, typename T, typename F>
+std::vector<R> to_vector(T collection, F function) {
+    std::vector<R> vector;
+    vector.reserve(collection.size());
+
+    for (auto &obj : collection) {
+        vector.emplace_back(function(obj));
+    }
+
+    return vector;
 }
 
 template <typename T>
