@@ -437,4 +437,18 @@
     XCTAssertFalse(called);
 }
 
+- (void)test_subject_has_observer {
+    yas::subject<int> subject;
+
+    XCTAssertFalse(subject.has_observer());
+
+    if (auto observer = subject.make_observer("key", [](const auto &, const auto &) {})) {
+        XCTAssertTrue(subject.has_observer());
+    } else {
+        XCTAssert(0);
+    }
+
+    XCTAssertFalse(subject.has_observer());
+}
+
 @end
