@@ -50,6 +50,8 @@ class subject {
     bool operator==(subject const &) const;
     bool operator!=(subject const &) const;
 
+    bool has_observer() const;
+
     void notify(std::string const &key) const;
     void notify(std::string const &key, const T &object) const;
 

@@ -116,6 +116,10 @@ class subject<T>::impl {
             return set.size() == 0;
         });
     }
+
+    bool has_observer() {
+        return observers.size() > 0;
+    }
 };
 
 #pragma mark - observer
@@ -221,6 +225,11 @@ bool subject<T>::operator==(subject const &rhs) const {
 template <typename T>
 bool subject<T>::operator!=(subject const &rhs) const {
     return this != &rhs;
+}
+
+template <typename T>
+bool subject<T>::has_observer() const {
+    return _impl->has_observer();
 }
 
 template <typename T>
