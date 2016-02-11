@@ -5,6 +5,7 @@
 #pragma once
 
 #include <CoreFoundation/CoreFoundation.h>
+#include "yas_each_index.h"
 
 template <typename T>
 void yas::set_cf_property(T &_property, T const &value) {
@@ -40,6 +41,20 @@ template CFNumberRef yas::to_cf_object(Float32 const &);
 template CFNumberRef yas::to_cf_object(Float64 const &);
 template CFNumberRef yas::to_cf_object(SInt32 const &);
 template CFNumberRef yas::to_cf_object(SInt16 const &);
+
+template <typename T, typename F>
+std::vector<T> yas::to_vector(CFArrayRef const array, F function) {
+    CFIndex const count = CFArrayGetCount(array);
+
+    std::vector<T> vector;
+    vector.reserve(count);
+
+    for (auto const &idx : yas::each_index<CFIndex>{count}) {
+        vector.emplace_back(function(CFArrayGetValueAtIndex(array, idx)));
+    }
+
+    return vector;
+}
 
 template <typename T>
 CFArrayRef yas::to_cf_object(std::vector<T> const &vector) {
