@@ -29,6 +29,8 @@ constexpr CFNumberType cf_number_type(SInt16 const &) { return kCFNumberSInt16Ty
 template <typename T>
 CFNumberRef to_cf_object(T const &);
 
+template <typename T, typename F>
+std::vector<T> to_vector(CFArrayRef const array, F function);
 template <typename T>
 CFArrayRef to_cf_object(std::vector<T> const &vector);
 

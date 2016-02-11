@@ -192,4 +192,16 @@
     XCTAssertEqual(fcc, 0);
 }
 
+- (void)test_to_vector {
+    CFArrayRef array = (__bridge CFArrayRef)(@[@"a", @"b", @"c"]);
+
+    auto vector =
+        yas::to_vector<std::string>(array, [](CFTypeRef const &obj) { return yas::to_string((CFStringRef)obj); });
+
+    XCTAssertEqual(vector.size(), 3);
+    XCTAssertEqual(vector.at(0), "a");
+    XCTAssertEqual(vector.at(1), "b");
+    XCTAssertEqual(vector.at(2), "c");
+}
+
 @end
