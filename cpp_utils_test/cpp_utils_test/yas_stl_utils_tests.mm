@@ -110,9 +110,10 @@
 
     std::vector<int> vec{3, 6, 9};
 
-    yas::for_each(vec, [&count, &sum](auto &value) {
+    yas::for_each(vec, [&count, &sum](auto &it) {
         ++count;
-        sum += value;
+        sum += *it;
+        return ++it;
     });
 
     XCTAssertEqual(count, 3);
