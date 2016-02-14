@@ -4,7 +4,6 @@
 
 #pragma once
 
-#include <algorithm>
 #include <sstream>
 #include "yas_types.h"
 
@@ -68,7 +67,13 @@ void erase_if_exists(std::unordered_map<T, U> &map, T const &key) {
 
 template <typename T, typename F>
 void for_each(T &collection, F function) {
-    std::for_each(collection.begin(), collection.end(), function);
+    auto it = collection.begin();
+
+    while (it != collection.end()) {
+        auto next = std::next(it);
+        function(*it);
+        it = next;
+    }
 }
 
 template <typename T>
