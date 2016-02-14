@@ -70,9 +70,7 @@ void for_each(T &collection, F function) {
     auto it = collection.begin();
 
     while (it != collection.end()) {
-        auto next = std::next(it);
-        function(*it);
-        it = next;
+        it = function(it);
     }
 }
 
