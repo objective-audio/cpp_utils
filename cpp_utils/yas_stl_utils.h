@@ -26,7 +26,7 @@ template <typename T, typename U>
 void erase_if_exists(std::unordered_map<T, U> &map, T const &key);
 
 template <typename T, typename F>
-void enumerate(T &collection, F function);
+void for_each(T &collection, F function);
 
 template <typename T>
 std::vector<T> connect(std::vector<T> vec_a, std::vector<T> vec_b);

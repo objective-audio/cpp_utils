@@ -104,16 +104,15 @@
     XCTAssertEqual(map.count(3), 1);
 }
 
-- (void)test_enumerate {
+- (void)test_for_each {
     int count = 0;
     int sum = 0;
 
     std::vector<int> vec{3, 6, 9};
 
-    yas::enumerate(vec, [&count, &sum](auto &it) {
+    yas::for_each(vec, [&count, &sum](auto &value) {
         ++count;
-        sum += *it;
-        return ++it;
+        sum += value;
     });
 
     XCTAssertEqual(count, 3);
