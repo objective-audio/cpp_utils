@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include <algorithm>
 #include <sstream>
 #include "yas_types.h"
 
@@ -66,12 +67,8 @@ void erase_if_exists(std::unordered_map<T, U> &map, T const &key) {
 }
 
 template <typename T, typename F>
-void enumerate(T &collection, F function) {
-    auto it = collection.begin();
-
-    while (it != collection.end()) {
-        it = function(it);
-    }
+void for_each(T &collection, F function) {
+    std::for_each(collection.begin(), collection.end(), function);
 }
 
 template <typename T>
