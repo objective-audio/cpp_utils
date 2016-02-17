@@ -21,8 +21,8 @@ class observer<T>::impl : public base::impl {
         std::unordered_map<string_opt, handler_f const> functions;
 
        public:
-        void add_handler(string_opt const &key, handler_f const &handler) {
-            functions.insert(std::make_pair(key, handler));
+        void add_handler(string_opt const &key, handler_f &&handler) {
+            functions.insert(std::make_pair(key, std::move(handler)));
         }
 
         void remove_handler(string_opt const &key) {
@@ -141,13 +141,13 @@ observer<T>::~observer() {
 }
 
 template <typename T>
-void observer<T>::add_handler(subject<T> &subject, std::string const &key, handler_f const &handler) {
+void observer<T>::add_handler(subject<T> &subject, std::string const &key, handler_f handler) {
     auto imp = impl_ptr<impl>();
     auto subject_ptr = &subject;
     if (imp->handlers.count(subject_ptr) == 0) {
         imp->handlers.insert(std::make_pair(&subject, typename impl::handler_holder{}));
     };
-    imp->handlers.at(&subject).add_handler(key, handler);
+    imp->handlers.at(&subject).add_handler(key, std::move(handler));
 
     subject._impl->add_observer(*this, key);
 }
@@ -166,13 +166,13 @@ void observer<T>::remove_handler(subject<T> &subject, std::string const &key) {
 }
 
 template <typename T>
-void observer<T>::add_wild_card_handler(subject<T> &subject, handler_f const &handler) {
+void observer<T>::add_wild_card_handler(subject<T> &subject, handler_f handler) {
     auto imp = impl_ptr<impl>();
     auto subject_ptr = &subject;
     if (imp->handlers.count(subject_ptr) == 0) {
         imp->handlers.insert(std::make_pair(&subject, typename impl::handler_holder{}));
     };
-    imp->handlers.at(&subject).add_handler(nullopt, handler);
+    imp->handlers.at(&subject).add_handler(nullopt, std::move(handler));
     subject._impl->add_observer(*this, nullopt);
 }
 
