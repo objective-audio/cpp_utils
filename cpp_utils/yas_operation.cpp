@@ -65,20 +65,20 @@ class operation_queue::impl : public base::impl {
         cancel_all_operations();
     }
 
-    void add_operation(operation const &op, priority_t const priority) {
+    void add_operation(operation &&op, priority_t const priority) {
         std::lock_guard<std::recursive_mutex> lock(_mutex);
 
         auto &dq = _operations.at(priority);
-        dq.push_back(op);
+        dq.emplace_back(std::move(op));
 
         _start_next_operation_if_needed();
     }
 
-    void insert_operation_to_top(operation const &op, priority_t const priority) {
+    void insert_operation_to_top(operation &&op, priority_t const priority) {
         std::lock_guard<std::recursive_mutex> lock(_mutex);
 
         auto &dq = _operations.at(priority);
-        dq.push_front(op);
+        dq.emplace_front(std::move(op));
 
         _start_next_operation_if_needed();
     }
@@ -214,12 +214,12 @@ operation_queue::operation_queue(size_t const count) : super_class(std::make_uni
 operation_queue::operation_queue(std::nullptr_t) : super_class(nullptr) {
 }
 
-void operation_queue::add_operation(operation const &op, priority_t const pr) {
-    impl_ptr<impl>()->add_operation(op, pr);
+void operation_queue::add_operation(operation op, priority_t const pr) {
+    impl_ptr<impl>()->add_operation(std::move(op), pr);
 }
 
-void operation_queue::insert_operation_to_top(operation const &op, priority_t const pr) {
-    impl_ptr<impl>()->insert_operation_to_top(op, pr);
+void operation_queue::insert_operation_to_top(operation op, priority_t const pr) {
+    impl_ptr<impl>()->insert_operation_to_top(std::move(op), pr);
 }
 
 void operation_queue::cancel_operation(operation const &op) {
