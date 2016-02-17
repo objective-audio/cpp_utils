@@ -30,10 +30,10 @@ class observer : public base {
     observer &operator=(observer const &) = default;
     observer &operator=(observer &&) = default;
 
-    void add_handler(subject<T> &subject, std::string const &key, handler_f const &handler);
+    void add_handler(subject<T> &subject, std::string const &key, handler_f handler);
     void remove_handler(subject<T> &subject, std::string const &key);
 
-    void add_wild_card_handler(subject<T> &subject, handler_f const &handler);
+    void add_wild_card_handler(subject<T> &subject, handler_f handler);
     void remove_wild_card_handler(subject<T> &subject);
 
     void clear();
