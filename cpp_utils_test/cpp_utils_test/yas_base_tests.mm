@@ -23,11 +23,16 @@ namespace test {
         }
 
         void set_value(float val) {
-            impl_ptr<impl>()->value = val;
+            if (impl_ptr()) {
+                impl_ptr<impl>()->value = val;
+            }
         }
 
         float value() const {
-            return impl_ptr<impl>()->value;
+            if (impl_ptr()) {
+                return impl_ptr<impl>()->value;
+            }
+            return 0.0f;
         }
 
         template <typename T>
@@ -220,6 +225,24 @@ namespace test {
 
     XCTAssertNotEqual(weak_base.identifier(), identifier);
     XCTAssertEqual(weak_base.identifier(), 0);
+}
+
+- (void)test_move {
+    yas::test::derived1 obj1{};
+    yas::test::derived1 obj2{};
+
+    obj1.set_value(10.0f);
+    obj2.set_value(20.0f);
+
+    XCTAssertEqual(obj1.value(), 10.0f);
+    XCTAssertEqual(obj2.value(), 20.0f);
+
+    obj1 = std::move(obj2);
+
+    XCTAssertTrue(obj1);
+    XCTAssertFalse(obj2);
+    XCTAssertEqual(obj1.value(), 20.0f);
+    XCTAssertEqual(obj2.value(), 0.0f);
 }
 
 @end
