@@ -52,6 +52,9 @@ std::vector<R> to_vector(T collection, F function);
 template <typename T>
 std::vector<T> to_vector(std::unordered_set<T> set);
 
+template <typename K, typename T, typename F>
+std::unordered_map<K, T> to_map(std::vector<T> collection, F function);
+
 std::string to_lower(std::string);
 std::string replaced(std::string source, std::string const &target, std::string const &replacement);
 std::string joined(std::vector<std::string> const &components, std::string const &separator);
