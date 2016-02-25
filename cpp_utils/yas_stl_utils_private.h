@@ -133,6 +133,17 @@ std::vector<T> to_vector(std::unordered_set<T> set) {
     return vector;
 }
 
+template <typename K, typename T, typename F>
+std::unordered_map<K, T> to_map(std::vector<T> collection, F function) {
+    std::unordered_map<K, T> map;
+
+    for (T &value : collection) {
+        map.emplace(std::make_pair(function(value), std::move(value)));
+    }
+
+    return map;
+}
+
 template <typename T, typename F>
 std::string joined(T const &collection, std::string const &separator, F function) {
     std::ostringstream stream;
