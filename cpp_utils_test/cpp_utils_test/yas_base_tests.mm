@@ -14,6 +14,14 @@ namespace test {
         class impl : public base::impl {
            public:
             float value;
+
+            bool is_equal(std::shared_ptr<base::impl> const &rhs) const override {
+                if (auto casted_rhs = std::dynamic_pointer_cast<impl>(rhs)) {
+                    return value == casted_rhs->value;
+                } else {
+                    return false;
+                }
+            }
         };
 
         derived1() : super_class(std::make_shared<impl>()) {
@@ -50,7 +58,16 @@ namespace test {
             float value;
         };
 
+        derived2() : super_class(std::make_shared<impl>()) {
+        }
+
         derived2(std::nullptr_t) : super_class(nullptr) {
+        }
+
+        void set_value(float val) {
+            if (impl_ptr()) {
+                impl_ptr<impl>()->value = val;
+            }
         }
     };
 }
@@ -243,6 +260,56 @@ namespace test {
     XCTAssertFalse(obj2);
     XCTAssertEqual(obj1.value(), 20.0f);
     XCTAssertEqual(obj2.value(), 0.0f);
+}
+
+- (void)test_is_equal_same_class {
+    yas::test::derived1 obj1{};
+    yas::test::derived1 obj2{};
+
+    obj1.set_value(1.0);
+    obj2.set_value(1.0);
+
+    XCTAssertTrue(obj1 == obj1);
+    XCTAssertFalse(obj1 != obj1);
+    XCTAssertTrue(obj1 == obj2);
+    XCTAssertFalse(obj1 != obj2);
+
+    obj2.set_value(2.0);
+
+    XCTAssertFalse(obj1 == obj2);
+    XCTAssertTrue(obj1 != obj2);
+}
+
+- (void)test_is_equal_different_class {
+    yas::test::derived1 obj1{};
+    yas::test::derived2 obj2{};
+
+    obj1.set_value(1.0);
+    obj2.set_value(1.0);
+
+    XCTAssertFalse(obj1 == obj2);
+    XCTAssertTrue(obj1 != obj2);
+}
+
+- (void)test_is_equal_weak {
+    yas::test::derived1 obj1{};
+    yas::test::derived1 obj2{};
+
+    obj1.set_value(3.5);
+    obj2.set_value(3.5);
+
+    auto wobj1 = yas::to_weak(obj1);
+    auto wobj2 = yas::to_weak(obj2);
+
+    XCTAssertTrue(wobj1 == wobj1);
+    XCTAssertFalse(wobj1 != wobj1);
+    XCTAssertTrue(wobj1 == wobj2);
+    XCTAssertFalse(wobj1 != wobj2);
+
+    obj2.set_value(-1.0);
+    
+    XCTAssertFalse(wobj1 == wobj2);
+    XCTAssertTrue(wobj1 != wobj2);
 }
 
 @end

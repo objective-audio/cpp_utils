@@ -12,6 +12,10 @@ using namespace yas;
 
 base::impl::~impl() = default;
 
+bool base::impl::is_equal(std::shared_ptr<impl> const &rhs) const {
+    return false;
+}
+
 uintptr_t base::impl::identifier() const {
     return reinterpret_cast<uintptr_t>(this);
 }
@@ -35,11 +39,11 @@ base &base::operator=(base const &) = default;
 base &base::operator=(base &&) = default;
 
 bool base::operator==(base const &rhs) const {
-    return _impl && rhs._impl && _impl == rhs._impl;
+    return _impl && rhs._impl && (_impl == rhs._impl || _impl->is_equal(rhs._impl));
 }
 
 bool base::operator!=(base const &rhs) const {
-    return !_impl || !rhs._impl || _impl != rhs._impl;
+    return !_impl || !rhs._impl || (_impl != rhs._impl && !_impl->is_equal(rhs._impl));
 }
 
 bool base::operator==(std::nullptr_t) const {
