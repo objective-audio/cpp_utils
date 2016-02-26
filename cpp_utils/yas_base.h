@@ -14,6 +14,8 @@ class base {
        public:
         virtual ~impl();
 
+        virtual bool is_equal(std::shared_ptr<impl> const &) const;
+
         template <typename T, typename I = typename T::impl>
         T cast();
 
