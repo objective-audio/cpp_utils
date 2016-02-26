@@ -91,7 +91,7 @@ bool weak<T>::operator==(weak const &rhs) const {
     } else {
         auto impl = _impl.lock();
         auto rhs_impl = rhs._impl.lock();
-        return impl == rhs_impl;
+        return impl && rhs_impl && (impl == rhs_impl || impl->is_equal(rhs_impl));
     }
 }
 
@@ -102,7 +102,7 @@ bool weak<T>::operator!=(weak const &rhs) const {
     } else {
         auto impl = _impl.lock();
         auto rhs_impl = rhs._impl.lock();
-        return impl != rhs_impl;
+        return !impl || !rhs_impl || (impl != rhs_impl && !impl->is_equal(rhs_impl));
     }
 }
 

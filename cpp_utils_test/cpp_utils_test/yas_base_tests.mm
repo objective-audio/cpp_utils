@@ -291,4 +291,25 @@ namespace test {
     XCTAssertTrue(obj1 != obj2);
 }
 
+- (void)test_is_equal_weak {
+    yas::test::derived1 obj1{};
+    yas::test::derived1 obj2{};
+
+    obj1.set_value(3.5);
+    obj2.set_value(3.5);
+
+    auto wobj1 = yas::to_weak(obj1);
+    auto wobj2 = yas::to_weak(obj2);
+
+    XCTAssertTrue(wobj1 == wobj1);
+    XCTAssertFalse(wobj1 != wobj1);
+    XCTAssertTrue(wobj1 == wobj2);
+    XCTAssertFalse(wobj1 != wobj2);
+
+    obj2.set_value(-1.0);
+    
+    XCTAssertFalse(wobj1 == wobj2);
+    XCTAssertTrue(wobj1 != wobj2);
+}
+
 @end
