@@ -8,6 +8,7 @@
 #include <thread>
 #include <vector>
 #include "yas_operation.h"
+#include "yas_stl_utils.h"
 
 using namespace yas;
 
@@ -77,6 +78,18 @@ class operation_queue::impl : public base::impl {
     void push_back(operation &&op) {
         std::lock_guard<std::recursive_mutex> lock(_mutex);
 
+        auto &cancel_id = op.option().push_cancel_id;
+
+        for (auto &dq : _operations) {
+            erase_if(dq, [&cancel_id](auto const &value) { return value.option().push_cancel_id == cancel_id; });
+        }
+
+        if (_current_operation) {
+            if (_current_operation.option().push_cancel_id == cancel_id) {
+                _current_operation.cancel();
+            }
+        }
+
         auto &dq = _operations.at(op.option().priority);
         dq.emplace_back(std::move(op));
 
@@ -85,6 +98,18 @@ class operation_queue::impl : public base::impl {
 
     void push_front(operation &&op) {
         std::lock_guard<std::recursive_mutex> lock(_mutex);
+
+        auto &cancel_id = op.option().push_cancel_id;
+
+        for (auto &dq : _operations) {
+            erase_if(dq, [&cancel_id](auto const &value) { return value.option().push_cancel_id == cancel_id; });
+        }
+
+        if (_current_operation) {
+            if (_current_operation.option().push_cancel_id == cancel_id) {
+                _current_operation.cancel();
+            }
+        }
 
         auto &dq = _operations.at(op.option().priority);
         dq.emplace_front(std::move(op));
