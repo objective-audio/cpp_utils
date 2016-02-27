@@ -62,10 +62,10 @@ class operation_queue::impl : public base::impl {
     }
 
     ~impl() {
-        cancel_all_operations();
+        cancel();
     }
 
-    void add_operation(operation &&op, priority_t const priority) {
+    void push_back(operation &&op, priority_t const priority) {
         std::lock_guard<std::recursive_mutex> lock(_mutex);
 
         auto &dq = _operations.at(priority);
@@ -74,7 +74,7 @@ class operation_queue::impl : public base::impl {
         _start_next_operation_if_needed();
     }
 
-    void insert_operation_to_top(operation &&op, priority_t const priority) {
+    void push_front(operation &&op, priority_t const priority) {
         std::lock_guard<std::recursive_mutex> lock(_mutex);
 
         auto &dq = _operations.at(priority);
@@ -83,7 +83,7 @@ class operation_queue::impl : public base::impl {
         _start_next_operation_if_needed();
     }
 
-    void cancel_operation(operation const &operation) {
+    void cancel(operation const &operation) {
         std::lock_guard<std::recursive_mutex> lock(_mutex);
 
         for (auto &dq : _operations) {
@@ -101,7 +101,7 @@ class operation_queue::impl : public base::impl {
         }
     }
 
-    void cancel_all_operations() {
+    void cancel() {
         std::lock_guard<std::recursive_mutex> lock(_mutex);
 
         for (auto &dq : _operations) {
@@ -214,20 +214,20 @@ operation_queue::operation_queue(size_t const count) : super_class(std::make_uni
 operation_queue::operation_queue(std::nullptr_t) : super_class(nullptr) {
 }
 
-void operation_queue::add_operation(operation op, priority_t const pr) {
-    impl_ptr<impl>()->add_operation(std::move(op), pr);
+void operation_queue::push_back(operation op, priority_t const pr) {
+    impl_ptr<impl>()->push_back(std::move(op), pr);
 }
 
-void operation_queue::insert_operation_to_top(operation op, priority_t const pr) {
-    impl_ptr<impl>()->insert_operation_to_top(std::move(op), pr);
+void operation_queue::push_front(operation op, priority_t const pr) {
+    impl_ptr<impl>()->push_front(std::move(op), pr);
 }
 
-void operation_queue::cancel_operation(operation const &op) {
-    impl_ptr<impl>()->cancel_operation(op);
+void operation_queue::cancel(operation const &op) {
+    impl_ptr<impl>()->cancel(op);
 }
 
-void operation_queue::cancel_all_operations() {
-    impl_ptr<impl>()->cancel_all_operations();
+void operation_queue::cancel() {
+    impl_ptr<impl>()->cancel();
 }
 
 void operation_queue::wait_until_all_operations_are_finished() {

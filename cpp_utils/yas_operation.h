@@ -49,10 +49,10 @@ class operation_queue : public base {
     explicit operation_queue(size_t const priority_count = 1);
     operation_queue(std::nullptr_t);
 
-    void add_operation(operation, priority_t const pr = 0);
-    void insert_operation_to_top(operation, priority_t const pr = 0);
-    void cancel_operation(operation const &);
-    void cancel_all_operations();
+    void push_back(operation, priority_t const pr = 0);
+    void push_front(operation, priority_t const pr = 0);
+    void cancel(operation const &);
+    void cancel();
     void wait_until_all_operations_are_finished();
 
     void suspend();
