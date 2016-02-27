@@ -4,6 +4,9 @@
 
 #pragma once
 
+#include <MacTypes.h>
+#include "yas_base.h"
+
 namespace yas {
 class operation_controllable {
    public:
@@ -14,6 +17,7 @@ class operation_controllable {
 using operation_priority_t = UInt32;
 
 struct operation_option_t {
-    operation_priority_t priority;
+    operation_priority_t priority = 0;
+    base push_cancel_id = nullptr;
 };
 }

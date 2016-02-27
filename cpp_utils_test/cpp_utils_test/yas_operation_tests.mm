@@ -301,4 +301,68 @@ using namespace std::chrono_literals;
     XCTAssertThrows(queue.wait_until_all_operations_are_finished());
 }
 
+- (void)test_cancel_by_push_cancel_id {
+    yas::operation_queue queue;
+
+    yas::base cancel_id_a{nullptr};
+    yas::base cancel_id_b{nullptr};
+    cancel_id_a.set_impl_ptr(std::make_shared<yas::base::impl>());
+    cancel_id_b.set_impl_ptr(std::make_shared<yas::base::impl>());
+
+    bool called_a_1 = false;
+    bool called_a_2 = false;
+    bool called_b = false;
+    bool called_n_1 = false;
+    bool called_n_2 = false;
+
+    yas::operation op_a_1{[&called_a_1](auto const &op) { called_a_1 = true; }, {.push_cancel_id = cancel_id_a}};
+    yas::operation op_a_2{[&called_a_2](auto const &op) { called_a_2 = true; }, {.push_cancel_id = cancel_id_a}};
+    yas::operation op_b{[&called_b](auto const &op) { called_b = true; }, {.push_cancel_id = cancel_id_b}};
+    yas::operation op_n_1{[&called_n_1](auto const &op) { called_n_1 = true; }};
+    yas::operation op_n_2{[&called_n_2](auto const &op) { called_n_2 = true; }};
+
+    queue.suspend();
+
+    queue.push_back(std::move(op_a_1));
+    queue.push_back(std::move(op_b));
+    queue.push_back(std::move(op_n_1));
+    queue.push_back(std::move(op_a_2));
+    queue.push_back(std::move(op_n_2));
+
+    queue.resume();
+
+    queue.wait_until_all_operations_are_finished();
+
+    XCTAssertFalse(called_a_1);
+    XCTAssertTrue(called_a_2);
+    XCTAssertTrue(called_b);
+    XCTAssertTrue(called_n_1);
+    XCTAssertTrue(called_n_2);
+}
+
+- (void)test_cancel_different_priority {
+    yas::operation_queue queue{2};
+
+    yas::base cancel_id{nullptr};
+    cancel_id.set_impl_ptr(std::make_shared<yas::base::impl>());
+
+    bool called_1 = false;
+    bool called_2 = false;
+
+    yas::operation op_1{[&called_1](auto const &op) { called_1 = true; }, {.priority = 0, .push_cancel_id = cancel_id}};
+    yas::operation op_2{[&called_2](auto const &op) { called_2 = true; }, {.priority = 1, .push_cancel_id = cancel_id}};
+
+    queue.suspend();
+
+    queue.push_back(std::move(op_1));
+    queue.push_back(std::move(op_2));
+
+    queue.resume();
+
+    queue.wait_until_all_operations_are_finished();
+
+    XCTAssertFalse(called_1);
+    XCTAssertTrue(called_2);
+}
+
 @end
