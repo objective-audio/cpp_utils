@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include <MacTypes.h>
 #include "yas_base.h"
 
 namespace yas {

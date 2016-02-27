@@ -4,7 +4,6 @@
 
 #pragma once
 
-#include <MacTypes.h>
 #include <functional>
 #include "yas_operation_protocol.h"
 
