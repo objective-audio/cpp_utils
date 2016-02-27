@@ -17,20 +17,22 @@ class operation::impl : public base::impl {
    public:
     std::atomic<bool> canceled;
     execution_f execution;
-    option_t option;
+    operation_option_t option;
 
-    impl(execution_f const &exe, option_t &&option) : canceled(false), execution(exe), option(std::move(option)) {
+    impl(execution_f const &exe, operation_option_t &&option)
+        : canceled(false), execution(exe), option(std::move(option)) {
     }
 
-    impl(execution_f &&exe, option_t &&option) : canceled(false), execution(std::move(exe)), option(std::move(option)) {
+    impl(execution_f &&exe, operation_option_t &&option)
+        : canceled(false), execution(std::move(exe)), option(std::move(option)) {
     }
 };
 
-operation::operation(execution_f const &exe, option_t option)
+operation::operation(execution_f const &exe, operation_option_t option)
     : super_class(std::make_unique<impl>(exe, std::move(option))) {
 }
 
-operation::operation(execution_f &&exe, option_t opt)
+operation::operation(execution_f &&exe, operation_option_t opt)
     : super_class(std::make_unique<impl>(std::move(exe), std::move(opt))) {
 }
 
@@ -45,7 +47,7 @@ bool operation::is_canceled() const {
     return impl_ptr<impl>()->canceled;
 }
 
-operation::option_t const &operation::option() const {
+operation_option_t const &operation::option() const {
     return impl_ptr<impl>()->option;
 }
 
