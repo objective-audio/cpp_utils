@@ -23,13 +23,20 @@ class operation : public base, public operation_controllable {
 
    public:
     using execution_f = std::function<void(operation const &)>;
+    using priority_t = UInt32;
 
-    explicit operation(execution_f const &);
-    explicit operation(execution_f &&);
+    struct option_t {
+        priority_t priority;
+    };
+
+    explicit operation(execution_f const &, option_t opt = {.priority = 0});
+    explicit operation(execution_f &&, option_t opt = {.priority = 0});
     operation(std::nullptr_t);
 
     void cancel();
     bool is_canceled() const;
+
+    option_t const &option() const;
 
    private:
     class impl;
@@ -44,13 +51,11 @@ class operation_queue : public base {
    public:
     class impl;
 
-    using priority_t = UInt32;
-
     explicit operation_queue(size_t const priority_count = 1);
     operation_queue(std::nullptr_t);
 
-    void push_back(operation, priority_t const pr = 0);
-    void push_front(operation, priority_t const pr = 0);
+    void push_back(operation);
+    void push_front(operation);
     void cancel(operation const &);
     void cancel();
     void wait_until_all_operations_are_finished();
