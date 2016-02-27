@@ -6,8 +6,6 @@
 
 #include <MacTypes.h>
 #include <functional>
-#include <memory>
-#include "yas_base.h"
 #include "yas_operation_protocol.h"
 
 namespace yas {
@@ -19,8 +17,8 @@ class operation : public base, public operation_controllable {
    public:
     using execution_f = std::function<void(operation const &)>;
 
-    explicit operation(execution_f const &, operation_option_t opt = {.priority = 0});
-    explicit operation(execution_f &&, operation_option_t opt = {.priority = 0});
+    explicit operation(execution_f const &, operation_option_t opt = {});
+    explicit operation(execution_f &&, operation_option_t opt = {});
     operation(std::nullptr_t);
 
     void cancel();
