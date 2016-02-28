@@ -158,4 +158,9 @@ std::string joined(T const &collection, std::string const &separator, F function
     }
     return stream.str();
 }
+
+template <typename T>
+std::weak_ptr<T> to_weak(std::shared_ptr<T> shared) {
+    return shared;
+}
 }

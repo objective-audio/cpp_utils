@@ -325,4 +325,23 @@
     XCTAssertEqual(map.at(2), "c");
 }
 
+- (void)test_to_weak {
+    auto shared = std::make_shared<int>(99);
+    std::weak_ptr<int> weak = yas::to_weak(shared);
+
+    auto shared_from_weak = weak.lock();
+    XCTAssertTrue(shared_from_weak);
+    XCTAssertEqual(*shared_from_weak, 99);
+
+    XCTAssertFalse(weak.expired());
+
+    shared_from_weak.reset();
+
+    XCTAssertFalse(weak.expired());
+
+    shared.reset();
+
+    XCTAssertTrue(weak.expired());
+}
+
 @end
