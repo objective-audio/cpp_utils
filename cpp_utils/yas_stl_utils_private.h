@@ -32,6 +32,17 @@ std::experimental::optional<T> min_empty_key(std::map<T, U> const &map) {
     return next;
 }
 
+template <typename T>
+std::experimental::optional<std::size_t> index(std::vector<T> const &vector, T const &target) {
+    auto it = std::find_if(vector.begin(), vector.end(), [&target](auto const &value) { return target == value; });
+
+    if (it != vector.end()) {
+        return std::distance(vector.begin(), it);
+    } else {
+        return yas::nullopt;
+    }
+}
+
 template <typename T, typename P>
 T filter(T const &collection, P predicate) {
     T filtered;
