@@ -344,4 +344,15 @@
     XCTAssertTrue(weak.expired());
 }
 
+- (void)test_index {
+    std::vector<int> vector{3, 25, 1, 0, -1};
+
+    auto index_of_1 = yas::index(vector, 1);
+    XCTAssertTrue(index_of_1);
+    XCTAssertEqual(*index_of_1, 2);
+
+    auto index_of_2 = yas::index(vector, 2);
+    XCTAssertFalse(index_of_2);
+}
+
 @end
