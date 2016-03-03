@@ -38,7 +38,7 @@ class observer<T>::impl : public base::impl {
         }
 
         void call_wild_card_handler(std::string const &key, T const &sender) const {
-            if (functions.count(nullopt)) {
+            if (functions.count(nullopt) > 0) {
                 functions.at(nullopt)(key, sender);
             }
         }
@@ -239,14 +239,14 @@ void subject<T>::notify(std::string const &key) const {
 
 template <typename T>
 void subject<T>::notify(std::string const &key, T const &object) const {
-    if (_impl->observers.count(key)) {
+    if (_impl->observers.count(key) > 0) {
         for (auto &weak_observer : _impl->observers.at(key)) {
             if (observer<T> obs = weak_observer.lock()) {
                 obs.template impl_ptr<typename observer<T>::impl>()->call_handler(*this, key, object);
             }
         }
     }
-    if (_impl->observers.count(nullopt)) {
+    if (_impl->observers.count(nullopt) > 0) {
         for (auto &weak_observer : _impl->observers.at(nullopt)) {
             if (auto obs = weak_observer.lock()) {
                 obs.template impl_ptr<typename observer<T>::impl>()->call_wild_card_handler(*this, key, object);

@@ -71,7 +71,7 @@ void erase_if(T &collection, P predicate) {
 
 template <typename T, typename U>
 void erase_if_exists(std::unordered_map<T, U> &map, T const &key) {
-    if (map.count(key)) {
+    if (map.count(key) > 0) {
         map.erase(key);
     }
 }
@@ -118,7 +118,7 @@ U pull(std::unordered_map<T, U> &map, T const &key) {
 
 template <typename T, typename U>
 void replace(std::unordered_map<T, U> &map, T const &key, U value) {
-    if (map.count(key)) {
+    if (map.count(key) > 0) {
         map.erase(key);
     }
     map.emplace(std::make_pair(key, std::move(value)));
