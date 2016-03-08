@@ -122,9 +122,6 @@ namespace test {
                 impl_ptr<impl>()->value = val;
             }
         }
-
-        template <typename T, typename I>
-        friend T cast(base const &);
     };
 }
 }
