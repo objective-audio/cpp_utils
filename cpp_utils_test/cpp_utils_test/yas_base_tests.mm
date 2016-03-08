@@ -70,6 +70,62 @@ namespace test {
             }
         }
     };
+
+    class derived3base : public base {
+        using super_class = base;
+
+       public:
+        class impl : public base::impl {
+           public:
+            float base_value;
+        };
+
+        derived3base() : super_class(std::make_shared<impl>()) {
+        }
+
+        derived3base(std::nullptr_t) : super_class(nullptr) {
+        }
+
+        void set_base_value(float val) {
+            if (impl_ptr()) {
+                impl_ptr<impl>()->base_value = val;
+            }
+        }
+
+       protected:
+        derived3base(std::shared_ptr<impl> const &impl) : super_class(impl) {
+        }
+    };
+
+    class derived3 : public derived3base {
+        using super_class = derived3base;
+
+        class impl : public derived3base::impl {
+           public:
+            float value;
+
+            friend derived3 cast<derived3>(base const &);
+        };
+
+       public:
+        derived3() : super_class(std::make_shared<impl>()) {
+        }
+
+        derived3(std::nullptr_t) : super_class(nullptr) {
+        }
+
+        derived3(base const &base) : super_class(std::dynamic_pointer_cast<derived3::impl>(base.impl_ptr())) {
+        }
+
+        void set_value(float val) {
+            if (impl_ptr()) {
+                impl_ptr<impl>()->value = val;
+            }
+        }
+
+        template <typename T, typename I>
+        friend T cast(base const &);
+    };
 }
 }
 
@@ -121,18 +177,41 @@ namespace test {
     yas::test::derived1 derived;
     yas::base base = derived;
 
-    auto casted = base.cast<yas::test::derived1>();
+    XCTAssertTrue(typeid(base) == typeid(yas::base));
+
+    auto casted = yas::cast<yas::test::derived1>(base);
 
     XCTAssertTrue(!!casted);
+    XCTAssertTrue(typeid(casted) == typeid(yas::test::derived1));
 }
 
 - (void)test_cast_failed {
     yas::base base{nullptr};
     base.set_impl_ptr(std::make_shared<yas::base::impl>());
 
-    auto casted = base.cast<yas::test::derived1>();
+    auto casted = yas::cast<yas::test::derived1>(base);
 
     XCTAssertFalse(!!casted);
+}
+
+- (void)test_cast_any {
+    using namespace yas;
+    using namespace yas::test;
+
+    derived2 drv2{};
+    derived3 drv3{};
+
+    base bas2 = cast<base>(drv2);
+    base bas3 = cast<base>(drv3);
+    auto drv3bas = cast<derived3base>(drv3);
+
+    derived2 casted2 = cast<derived2>(bas2);
+    derived3 casted3 = cast<derived3>(bas3);
+    derived3 casted3b = cast<derived3>(drv3bas);
+
+    XCTAssertTrue(typeid(casted2) == typeid(yas::test::derived2));
+    XCTAssertTrue(typeid(casted3) == typeid(yas::test::derived3));
+    XCTAssertTrue(typeid(casted3b) == typeid(yas::test::derived3));
 }
 
 - (void)test_make_object_from_impl_success {
@@ -221,11 +300,11 @@ namespace test {
     yas::test::derived1 derived{nullptr};
     derived.set_impl_ptr(std::make_shared<yas::test::derived1::impl>());
 
-    XCTAssertTrue(derived.is_kind_of<yas::base>());
-    XCTAssertTrue(derived.is_kind_of<yas::test::derived1>());
+    XCTAssertTrue(yas::is_kind_of<yas::base>(derived));
+    XCTAssertTrue(yas::is_kind_of<yas::test::derived1>(derived));
 
-    XCTAssertFalse(derived.is_kind_of<yas::test::derived2>());
-    XCTAssertFalse(base.is_kind_of<yas::test::derived1>());
+    XCTAssertFalse(yas::is_kind_of<yas::test::derived2>(derived));
+    XCTAssertFalse(yas::is_kind_of<yas::test::derived1>(base));
 }
 
 - (void)test_weak_identifier {
@@ -307,7 +386,7 @@ namespace test {
     XCTAssertFalse(wobj1 != wobj2);
 
     obj2.set_value(-1.0);
-    
+
     XCTAssertFalse(wobj1 == wobj2);
     XCTAssertTrue(wobj1 != wobj2);
 }
