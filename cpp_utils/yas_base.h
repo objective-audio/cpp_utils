@@ -41,12 +41,6 @@ class base {
 
     uintptr_t identifier() const;
 
-    template <typename T, typename I = typename T::impl>
-    T cast() const;
-
-    template <typename T, typename I = typename T::impl>
-    bool is_kind_of() const;
-
     std::shared_ptr<impl> &impl_ptr();
     void set_impl_ptr(std::shared_ptr<impl> const &);
     void set_impl_ptr(std::shared_ptr<impl> &&);
@@ -61,6 +55,12 @@ class base {
    private:
     std::shared_ptr<impl> _impl;
 };
+
+template <typename T>
+bool is_kind_of(base const &);
+
+template <typename T>
+T cast(base const &);
 
 template <typename T>
 class weak {

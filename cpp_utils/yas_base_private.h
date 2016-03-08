@@ -19,27 +19,25 @@ T base::impl::cast() {
 
 #pragma mark - base
 
-template <typename T, typename I>
-T base::cast() const {
-    static_assert(std::is_base_of<base, T>(), "base class is not yas::base.");
-    static_assert(std::is_base_of<base::impl, I>(), "impl class is not yas::base::impl.");
-
-    auto obj = T(nullptr);
-    obj.set_impl_ptr(std::dynamic_pointer_cast<I>(_impl));
-    return obj;
-}
-
-template <typename T, typename I>
-bool base::is_kind_of() const {
-    static_assert(std::is_base_of<base, T>(), "base class is not yas::base.");
-    static_assert(std::is_base_of<base::impl, I>(), "impl class is not yas::base::impl.");
-
-    return std::dynamic_pointer_cast<I>(_impl) != nullptr;
-}
-
 template <typename T>
 std::shared_ptr<T> const base::impl_ptr() const {
     return std::static_pointer_cast<T>(_impl);
+}
+
+template <typename T>
+bool is_kind_of(base const &src) {
+    static_assert(std::is_base_of<base, T>(), "base class is not yas::base.");
+
+    return std::dynamic_pointer_cast<typename T::impl>(src.impl_ptr()) != nullptr;
+}
+
+template <typename T>
+T cast(base const &src) {
+    static_assert(std::is_base_of<base, T>(), "base class is not yas::base.");
+
+    auto obj = T(nullptr);
+    obj.set_impl_ptr(std::dynamic_pointer_cast<typename T::impl>(src.impl_ptr()));
+    return obj;
 }
 
 #pragma mark - weak
