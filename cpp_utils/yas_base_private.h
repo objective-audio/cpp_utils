@@ -20,8 +20,8 @@ T base::impl::cast() {
 #pragma mark - base
 
 template <typename T>
-std::shared_ptr<T> const base::impl_ptr() const {
-    return std::static_pointer_cast<T>(_impl);
+std::shared_ptr<T> base::impl_ptr() const {
+    return std::dynamic_pointer_cast<T>(_impl);
 }
 
 template <typename T>

@@ -10,6 +10,7 @@ using namespace yas;
 
 #pragma mark - base::impl
 
+base::impl::impl() = default;
 base::impl::~impl() = default;
 
 bool base::impl::is_equal(std::shared_ptr<impl> const &rhs) const {

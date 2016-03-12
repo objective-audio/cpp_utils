@@ -12,6 +12,7 @@ class base {
    public:
     class impl : public std::enable_shared_from_this<base::impl> {
        public:
+        impl();
         virtual ~impl();
 
         virtual bool is_equal(std::shared_ptr<impl> const &) const;
@@ -20,6 +21,12 @@ class base {
         T cast();
 
         uintptr_t identifier() const;
+
+       private:
+        impl(impl const &) = delete;
+        impl(impl &&) = delete;
+        impl &operator=(impl const &) = delete;
+        impl &operator=(impl &&) = delete;
     };
 
     base(std::nullptr_t);
@@ -46,7 +53,7 @@ class base {
     void set_impl_ptr(std::shared_ptr<impl> &&);
 
     template <typename T = impl>
-    std::shared_ptr<T> const impl_ptr() const;
+    std::shared_ptr<T> impl_ptr() const;
 
    protected:
     base(std::shared_ptr<impl> const &);
