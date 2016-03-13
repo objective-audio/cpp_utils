@@ -14,7 +14,7 @@ using namespace yas;
 
 #pragma mark - operation
 
-class operation::impl : public base::impl {
+class operation::impl : public base::impl, public controllable_operation::impl {
    public:
     std::atomic<bool> canceled;
     execution_f execution;
@@ -26,6 +26,18 @@ class operation::impl : public base::impl {
 
     impl(execution_f &&exe, operation_option_t &&option)
         : canceled(false), execution(std::move(exe)), option(std::move(option)) {
+    }
+
+    void execute() {
+        if (execution) {
+            if (!canceled) {
+                execution(cast<operation>());
+            }
+        }
+    }
+
+    void cancel() {
+        canceled = true;
     }
 };
 
@@ -41,7 +53,7 @@ operation::operation(std::nullptr_t) : super_class(nullptr) {
 }
 
 void operation::cancel() {
-    _cancel();
+    impl_ptr<impl>()->cancel();
 }
 
 bool operation::is_canceled() const {
@@ -52,16 +64,8 @@ operation_option_t const &operation::option() const {
     return impl_ptr<impl>()->option;
 }
 
-void operation::_execute() {
-    if (auto &exe = impl_ptr<impl>()->execution) {
-        if (!is_canceled()) {
-            exe(*this);
-        }
-    }
-}
-
-void operation::_cancel() {
-    impl_ptr<impl>()->canceled = true;
+controllable_operation operation::controllable() const {
+    return controllable_operation{impl_ptr<controllable_operation::impl>()};
 }
 
 #pragma mark - queue
@@ -218,8 +222,8 @@ class operation_queue::impl : public base::impl {
                 std::thread thread{[weak_ope, weak_queue]() {
                     auto ope = weak_ope.lock();
                     if (ope) {
-                        auto &ope_for_queue = static_cast<operation_controllable &>(ope);
-                        ope_for_queue._execute();
+                        ope.controllable().execute();
+
                         if (auto queue = weak_queue.lock()) {
                             queue.impl_ptr<impl>()->_operation_did_finish(ope);
                         }

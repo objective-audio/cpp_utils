@@ -10,10 +10,12 @@
 namespace yas {
 class operation;
 
-class operation : public base, public operation_controllable {
+class operation : public base {
     using super_class = base;
 
    public:
+    class impl;
+
     using execution_f = std::function<void(operation const &)>;
 
     explicit operation(execution_f const &, operation_option_t opt = {});
@@ -25,11 +27,7 @@ class operation : public base, public operation_controllable {
 
     operation_option_t const &option() const;
 
-   private:
-    class impl;
-
-    void _execute() override;
-    void _cancel() override;
+    controllable_operation controllable() const;
 };
 
 class operation_queue : public base {
