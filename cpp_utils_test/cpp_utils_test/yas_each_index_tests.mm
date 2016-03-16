@@ -89,4 +89,26 @@
     //    yas::each_index<std::string>{0};
 }
 
+- (void)test_make_each {
+    std::size_t count = 0;
+
+    for (auto const &idx : yas::make_each(3)) {
+        XCTAssertEqual(idx, count);
+        ++count;
+    }
+
+    XCTAssertEqual(count, 3);
+}
+
+- (void)test_make_each_with_end {
+    std::size_t count = 4;
+
+    for (auto const &idx : yas::make_each(4, 7)) {
+        XCTAssertEqual(idx, count);
+        ++count;
+    }
+
+    XCTAssertEqual(count, 7);
+}
+
 @end
