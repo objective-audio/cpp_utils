@@ -32,7 +32,7 @@ static comparison_result compare(version const &lhs, version const &rhs) {
     auto rhs_size = rhs_numbers.size();
     auto max_size = std::max(lhs_size, rhs_size);
 
-    for (auto &idx : each_index<size_t>(max_size)) {
+    for (auto &idx : make_each(max_size)) {
         if (idx < lhs_size && idx < rhs_size) {
             auto &lhs_val = lhs_numbers[idx];
             auto &rhs_val = rhs_numbers[idx];
