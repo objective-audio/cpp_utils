@@ -52,7 +52,7 @@ each_dictionary::each_dictionary(CFDictionaryRef const dict)
 
     CFDictionaryGetKeysAndValues(dict, keys.data(), values.data());
 
-    for (auto &idx : each_index<std::size_t>(count)) {
+    for (auto &idx : make_each(count)) {
         _keys_and_values->emplace_back(std::make_pair(keys.at(idx), values.at(idx)));
     }
 }
