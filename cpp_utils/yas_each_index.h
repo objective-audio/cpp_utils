@@ -48,6 +48,12 @@ class each_index<T, enable_if_integral_t<T>> {
     T _start;
     T _end;
 };
+
+template <typename T>
+each_index<T> make_each(T const end);
+
+template <typename T>
+each_index<T> make_each(T const start, T const end);
 }
 
 #include "yas_each_index_private.h"

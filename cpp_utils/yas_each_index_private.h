@@ -70,4 +70,14 @@ template <typename T>
 each_index<T, enable_if_integral_t<T>>::each_index::iterator each_index<T, enable_if_integral_t<T>>::end() const {
     return each_index_iterator<T>(_end);
 }
+
+template <typename T>
+each_index<T> make_each(T const end) {
+    return each_index<T>(end);
+}
+
+template <typename T>
+each_index<T> make_each(T const start, T const end) {
+    return each_index<T>(start, end);
+}
 }
