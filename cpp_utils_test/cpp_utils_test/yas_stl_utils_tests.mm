@@ -81,7 +81,7 @@
     XCTAssertThrows(filtered_map.at(4));
 }
 
-- (void)test_erase_if {
+- (void)test_erase_if_set {
     std::unordered_set<int> set{0, 1, 2, 3, 4};
     yas::erase_if(set, [](const auto &val) { return (val % 2) != 0; });
 
@@ -92,6 +92,17 @@
     XCTAssertTrue(set.count(2));
     XCTAssertFalse(set.count(3));
     XCTAssertTrue(set.count(4));
+}
+
+- (void)test_erase_if_vector {
+    std::vector<int> vec{2, 5, 1, 0, 10};
+
+    yas::erase_if(vec, [](auto const &val) { return val < 5; });
+
+    XCTAssertEqual(vec.size(), 2);
+
+    XCTAssertEqual(vec.at(0), 5);
+    XCTAssertEqual(vec.at(1), 10);
 }
 
 - (void)test_erase_if_exists {
