@@ -3,7 +3,6 @@
 //
 
 #include <Foundation/Foundation.h>
-#include "yas_objc_macros.h"
 #include "yas_objc_ptr.h"
 
 using namespace yas;

@@ -3,7 +3,6 @@
 //
 
 #import <XCTest/XCTest.h>
-#import "yas_objc_macros.h"
 #import "yas_objc_ptr.h"
 
 using namespace yas;
