@@ -4,6 +4,8 @@
 
 #pragma once
 
+#include "yas_objc_macros.h"
+
 namespace yas {
 template <typename T>
 objc_ptr<T, enable_if_id_t<T>>::objc_ptr() : super_class(std::make_shared<objc_ptr_impl>()) {
