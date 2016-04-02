@@ -366,4 +366,24 @@
     XCTAssertFalse(index_of_2);
 }
 
+- (void)test_to_unordered_set_from_vector {
+    std::vector<int> vector{2, 4, 6};
+
+    auto set = yas::to_unordered_set(std::move(vector));
+
+    XCTAssertEqual(set.size(), 3);
+
+    yas::erase_if(set, [](auto const &val) { return val == 2; });
+
+    XCTAssertEqual(set.size(), 2);
+
+    yas::erase_if(set, [](auto const &val) { return val == 4; });
+
+    XCTAssertEqual(set.size(), 1);
+
+    yas::erase_if(set, [](auto const &val) { return val == 6; });
+
+    XCTAssertEqual(set.size(), 0);
+}
+
 @end
