@@ -144,6 +144,13 @@ std::vector<T> to_vector(std::unordered_set<T> set) {
     return vector;
 }
 
+template <typename T>
+std::unordered_set<T> to_unordered_set(std::vector<T> vector) {
+    std::unordered_set<T> set;
+    std::move(vector.begin(), vector.end(), std::inserter(set, set.end()));
+    return set;
+}
+
 template <typename K, typename T, typename F>
 std::unordered_map<K, T> to_map(std::vector<T> collection, F function) {
     std::unordered_map<K, T> map;
