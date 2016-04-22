@@ -9,35 +9,36 @@
 #include <unordered_set>
 #include "yas_stl_utils.h"
 
+using namespace std::experimental;
+
 namespace yas {
-using string_opt = std::experimental::optional<std::string>;
 
 #pragma mark - impl
 
-template <typename T>
-class observer<T>::impl : public base::impl {
+template <typename T, typename Key>
+class observer<T, Key>::impl : public base::impl {
    public:
     class handler_holder {
-        std::unordered_map<string_opt, handler_f const> functions;
+        std::unordered_map<optional<Key>, handler_f const> functions;
 
        public:
-        void add_handler(string_opt const &key, handler_f &&handler) {
+        void add_handler(optional<Key> const &key, handler_f &&handler) {
             functions.insert(std::make_pair(key, std::move(handler)));
         }
 
-        void remove_handler(string_opt const &key) {
+        void remove_handler(optional<Key> const &key) {
             if (functions.count(key) > 0) {
                 functions.erase(key);
             }
         }
 
-        void call_handler(std::string const &key, T const &sender) const {
+        void call_handler(Key const &key, T const &sender) const {
             if (functions.count(key) > 0) {
                 functions.at(key)(key, sender);
             }
         }
 
-        void call_wild_card_handler(std::string const &key, T const &sender) const {
+        void call_wild_card_handler(Key const &key, T const &sender) const {
             if (functions.count(nullopt) > 0) {
                 functions.at(nullopt)(key, sender);
             }
@@ -48,38 +49,38 @@ class observer<T>::impl : public base::impl {
         }
     };
 
-    std::unordered_map<const subject<T> *, handler_holder> handlers;
+    std::unordered_map<const subject<T, Key> *, handler_holder> handlers;
 
-    void call_handler(subject<T> const &subject, std::string const &key, T const &object) {
+    void call_handler(subject<T, Key> const &subject, Key const &key, T const &object) {
         if (handlers.count(&subject) > 0) {
             handlers.at(&subject).call_handler(key, object);
         }
     }
 
-    void call_wild_card_handler(subject<T> const &subject, std::string const &key, T const &object) {
+    void call_wild_card_handler(subject<T, Key> const &subject, Key const &key, T const &object) {
         if (handlers.count(&subject) > 0) {
             handlers.at(&subject).call_wild_card_handler(key, object);
         }
     }
 };
 
-template <typename T>
-class subject<T>::impl {
+template <typename T, typename Key>
+class subject<T, Key>::impl {
    public:
-    using observer_set_t = std::unordered_set<weak<observer<T>>>;
-    using observers_t = std::unordered_map<string_opt, observer_set_t>;
+    using observer_set_t = std::unordered_set<weak<observer<T, Key>>>;
+    using observers_t = std::unordered_map<optional<Key>, observer_set_t>;
     observers_t observers;
 
-    void add_observer(observer<T> const &obs, string_opt const &key) {
+    void add_observer(observer<T, Key> const &obs, optional<Key> const &key) {
         if (observers.count(key) == 0) {
             observers.insert(std::make_pair(key, observer_set_t()));
         }
 
         auto &set = observers.at(key);
-        set.insert(weak<observer<T>>(obs));
+        set.insert(weak<observer<T, Key>>(obs));
     }
 
-    void remove_observer(observer<T> const &observer, string_opt const &key) {
+    void remove_observer(observer<T, Key> const &observer, optional<Key> const &key) {
         if (observers.count(key) > 0) {
             auto &set = observers.at(key);
 
@@ -124,24 +125,24 @@ class subject<T>::impl {
 
 #pragma mark - observer
 
-template <typename T>
-observer<T>::observer() : super_class(std::make_shared<impl>()) {
+template <typename T, typename Key>
+observer<T, Key>::observer() : super_class(std::make_shared<impl>()) {
 }
 
-template <typename T>
-observer<T>::observer(std::nullptr_t) : super_class(nullptr) {
+template <typename T, typename Key>
+observer<T, Key>::observer(std::nullptr_t) : super_class(nullptr) {
 }
 
-template <typename T>
-observer<T>::~observer() {
+template <typename T, typename Key>
+observer<T, Key>::~observer() {
     if (impl_ptr() && impl_ptr().unique()) {
         clear();
         impl_ptr().reset();
     }
 }
 
-template <typename T>
-void observer<T>::add_handler(subject<T> &subject, std::string const &key, handler_f handler) {
+template <typename T, typename Key>
+void observer<T, Key>::add_handler(subject<T, Key> &subject, Key const &key, handler_f handler) {
     auto imp = impl_ptr<impl>();
     auto subject_ptr = &subject;
     if (imp->handlers.count(subject_ptr) == 0) {
@@ -152,8 +153,8 @@ void observer<T>::add_handler(subject<T> &subject, std::string const &key, handl
     subject._impl->add_observer(*this, key);
 }
 
-template <typename T>
-void observer<T>::remove_handler(subject<T> &subject, std::string const &key) {
+template <typename T, typename Key>
+void observer<T, Key>::remove_handler(subject<T, Key> &subject, Key const &key) {
     auto imp = impl_ptr<impl>();
     if (imp->handlers.count(&subject) > 0) {
         auto &handler_holder = imp->handlers.at(&subject);
@@ -165,8 +166,8 @@ void observer<T>::remove_handler(subject<T> &subject, std::string const &key) {
     subject._impl->remove_observer(*this, key);
 }
 
-template <typename T>
-void observer<T>::add_wild_card_handler(subject<T> &subject, handler_f handler) {
+template <typename T, typename Key>
+void observer<T, Key>::add_wild_card_handler(subject<T, Key> &subject, handler_f handler) {
     auto imp = impl_ptr<impl>();
     auto subject_ptr = &subject;
     if (imp->handlers.count(subject_ptr) == 0) {
@@ -176,8 +177,8 @@ void observer<T>::add_wild_card_handler(subject<T> &subject, handler_f handler) 
     subject._impl->add_observer(*this, nullopt);
 }
 
-template <typename T>
-void observer<T>::remove_wild_card_handler(subject<T> &subject) {
+template <typename T, typename Key>
+void observer<T, Key>::remove_wild_card_handler(subject<T, Key> &subject) {
     auto imp = impl_ptr<impl>();
     if (imp->handlers.count(&subject) > 0) {
         auto &handler_holder = imp->handlers.at(&subject);
@@ -189,8 +190,8 @@ void observer<T>::remove_wild_card_handler(subject<T> &subject) {
     subject._impl->remove_observer(*this, nullopt);
 }
 
-template <typename T>
-void observer<T>::clear() {
+template <typename T, typename Key>
+void observer<T, Key>::clear() {
     auto id = identifier();
     auto imp = impl_ptr<impl>();
     for (auto &pair : imp->handlers) {
@@ -202,79 +203,79 @@ void observer<T>::clear() {
 
 #pragma mark - subject
 
-template <typename T>
-subject<T>::subject() : _impl(std::make_unique<impl>()) {
+template <typename T, typename Key>
+subject<T, Key>::subject() : _impl(std::make_unique<impl>()) {
 }
 
-template <typename T>
-subject<T>::~subject() {
+template <typename T, typename Key>
+subject<T, Key>::~subject() {
     for (auto &pair : _impl->observers) {
         for (auto &weak_observer : pair.second) {
             if (auto obs = weak_observer.lock()) {
-                obs.template impl_ptr<typename observer<T>::impl>()->handlers.erase(this);
+                obs.template impl_ptr<typename observer<T, Key>::impl>()->handlers.erase(this);
             }
         }
     }
 }
 
-template <typename T>
-bool subject<T>::operator==(subject const &rhs) const {
+template <typename T, typename Key>
+bool subject<T, Key>::operator==(subject const &rhs) const {
     return this == &rhs;
 }
 
-template <typename T>
-bool subject<T>::operator!=(subject const &rhs) const {
+template <typename T, typename Key>
+bool subject<T, Key>::operator!=(subject const &rhs) const {
     return this != &rhs;
 }
 
-template <typename T>
-bool subject<T>::has_observer() const {
+template <typename T, typename Key>
+bool subject<T, Key>::has_observer() const {
     return _impl->has_observer();
 }
 
-template <typename T>
-void subject<T>::notify(std::string const &key) const {
+template <typename T, typename Key>
+void subject<T, Key>::notify(Key const &key) const {
     notify(key, nullptr);
 }
 
-template <typename T>
-void subject<T>::notify(std::string const &key, T const &object) const {
+template <typename T, typename Key>
+void subject<T, Key>::notify(Key const &key, T const &object) const {
     if (_impl->observers.count(key) > 0) {
         for (auto &weak_observer : _impl->observers.at(key)) {
-            if (observer<T> obs = weak_observer.lock()) {
-                obs.template impl_ptr<typename observer<T>::impl>()->call_handler(*this, key, object);
+            if (observer<T, Key> obs = weak_observer.lock()) {
+                obs.template impl_ptr<typename observer<T, Key>::impl>()->call_handler(*this, key, object);
             }
         }
     }
     if (_impl->observers.count(nullopt) > 0) {
         for (auto &weak_observer : _impl->observers.at(nullopt)) {
             if (auto obs = weak_observer.lock()) {
-                obs.template impl_ptr<typename observer<T>::impl>()->call_wild_card_handler(*this, key, object);
+                obs.template impl_ptr<typename observer<T, Key>::impl>()->call_wild_card_handler(*this, key, object);
             }
         }
     }
 }
 
-template <typename T>
-observer<T> subject<T>::make_observer(std::string const &key, typename observer<T>::handler_f const &handler) {
-    observer<T> obs;
+template <typename T, typename Key>
+observer<T, Key> subject<T, Key>::make_observer(Key const &key, typename observer<T, Key>::handler_f const &handler) {
+    observer<T, Key> obs;
     obs.add_handler(*this, key, handler);
     return obs;
 }
 
-template <typename T>
-observer<T> subject<T>::make_wild_card_observer(typename observer<T>::handler_f const &handler) {
-    observer<T> obs;
+template <typename T, typename Key>
+observer<T, Key> subject<T, Key>::make_wild_card_observer(typename observer<T, Key>::handler_f const &handler) {
+    observer<T, Key> obs;
     obs.add_wild_card_handler(*this, handler);
     return obs;
 }
 }
 
-template <typename T>
-yas::observer<T> yas::make_subject_dispatcher(subject<T> const &source,
-                                              std::initializer_list<subject<T> *> const &destinations) {
-    observer<T> observer;
-    auto handler = [&source](auto const &method, auto const &value) { source.notify(method, value); };
+template <typename T, typename Key>
+yas::observer<T, Key> yas::make_subject_dispatcher(subject<T, Key> const &source,
+                                                   std::initializer_list<subject<T, Key> *> const &destinations) {
+    observer<T, Key> observer;
+    auto handler = [&source](auto const &key, auto const &value) { source.notify(key, value); };
 
     for (auto const &destination : destinations) {
         observer.add_wild_card_handler(*destination, handler);
