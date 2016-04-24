@@ -123,15 +123,15 @@ void weak<T>::reset() {
 
 template <typename K, typename T>
 std::map<K, T> lock_values(std::map<K, weak<T>> const &map) {
-    std::map<K, T> unwrapped_map;
+    std::map<K, T> locked_map;
 
     for (auto &pair : map) {
         if (auto shared = pair.second.lock()) {
-            unwrapped_map.insert(std::make_pair(pair.first, shared));
+            locked_map.insert(std::make_pair(pair.first, shared));
         }
     }
 
-    return unwrapped_map;
+    return locked_map;
 }
 
 template <typename T>
