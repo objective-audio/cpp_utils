@@ -56,12 +56,12 @@ property<T, K>::property(K key) : property(std::move(key), T{}) {
 }
 
 template <typename T, typename K>
-property<T, K>::property(K key, T value) : super_class(std::make_shared<impl>(std::move(key), std::move(value))) {
+property<T, K>::property(K key, T value) : base(std::make_shared<impl>(std::move(key), std::move(value))) {
     impl_ptr<impl>()->set_property(*this);
 }
 
 template <typename T, typename K>
-property<T, K>::property(std::nullptr_t) : super_class(nullptr) {
+property<T, K>::property(std::nullptr_t) : base(nullptr) {
 }
 
 template <typename T, typename K>

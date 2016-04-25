@@ -19,7 +19,7 @@ struct null_key {};
 
 template <typename T, typename K = null_key>
 class property : public base {
-    using super_class = base;
+    class impl;
 
    public:
     property();
@@ -37,9 +37,6 @@ class property : public base {
     T const &value() const;
 
     subject<property> &subject();
-
-   private:
-    class impl;
 };
 }
 

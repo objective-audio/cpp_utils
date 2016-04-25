@@ -15,7 +15,6 @@ class subject;
 
 template <typename T = std::nullptr_t, typename Key = std::string>
 class observer : public base {
-    using super_class = base;
     class impl;
 
    public:

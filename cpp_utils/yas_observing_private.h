@@ -126,11 +126,11 @@ class subject<T, Key>::impl {
 #pragma mark - observer
 
 template <typename T, typename Key>
-observer<T, Key>::observer() : super_class(std::make_shared<impl>()) {
+observer<T, Key>::observer() : base(std::make_shared<impl>()) {
 }
 
 template <typename T, typename Key>
-observer<T, Key>::observer(std::nullptr_t) : super_class(nullptr) {
+observer<T, Key>::observer(std::nullptr_t) : base(nullptr) {
 }
 
 template <typename T, typename Key>

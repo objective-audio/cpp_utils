@@ -8,11 +8,11 @@
 
 namespace yas {
 template <typename T>
-objc_ptr<T, enable_if_id_t<T>>::objc_ptr() : super_class(std::make_shared<objc_ptr_impl>()) {
+objc_ptr<T, enable_if_id_t<T>>::objc_ptr() : base(std::make_shared<objc_ptr_impl>()) {
 }
 
 template <typename T>
-objc_ptr<T, enable_if_id_t<T>>::objc_ptr(T const obj) : super_class(std::make_shared<objc_ptr_impl>(obj)) {
+objc_ptr<T, enable_if_id_t<T>>::objc_ptr(T const obj) : base(std::make_shared<objc_ptr_impl>(obj)) {
 }
 
 template <typename T>

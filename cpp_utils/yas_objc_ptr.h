@@ -36,8 +36,6 @@ class objc_ptr;
 
 template <typename T>
 class objc_ptr<T, enable_if_id_t<T>> : public base {
-    using super_class = base;
-
    public:
     objc_ptr();
     explicit objc_ptr(T const);
