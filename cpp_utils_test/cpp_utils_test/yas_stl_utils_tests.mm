@@ -3,7 +3,6 @@
 //
 
 #import <XCTest/XCTest.h>
-#import <iostream>
 #import <set>
 #import <unordered_map>
 #import "yas_stl_utils.h"

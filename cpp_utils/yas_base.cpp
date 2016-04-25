@@ -4,8 +4,6 @@
 
 #include "yas_base.h"
 
-#include <iostream>
-
 using namespace yas;
 
 #pragma mark - base::impl
