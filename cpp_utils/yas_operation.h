@@ -11,8 +11,6 @@ namespace yas {
 class operation;
 
 class operation : public base {
-    using super_class = base;
-
    public:
     class impl;
 
@@ -31,8 +29,6 @@ class operation : public base {
 };
 
 class operation_queue : public base {
-    using super_class = base;
-
    public:
     class impl;
 

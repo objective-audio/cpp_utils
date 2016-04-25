@@ -41,8 +41,6 @@ namespace test {
     };
 
     class required_object : public base {
-        using super_class = base;
-
         struct impl : public base::impl, public required_protocol::impl, public optional_protocol::impl {
             bool required_function() override {
                 return true;
@@ -50,7 +48,7 @@ namespace test {
         };
 
        public:
-        required_object() : super_class(std::make_shared<impl>()) {
+        required_object() : base(std::make_shared<impl>()) {
         }
 
         required_protocol required() {
@@ -71,8 +69,6 @@ namespace test {
     };
 
     class optional_object : public base {
-        using super_class = base;
-
         struct impl : public base::impl, public required_protocol::impl, public optional_protocol::impl {
             bool required_function() override {
                 return false;
@@ -84,7 +80,7 @@ namespace test {
         };
 
        public:
-        optional_object() : super_class(std::make_shared<impl>()) {
+        optional_object() : base(std::make_shared<impl>()) {
         }
 
         required_protocol required() {

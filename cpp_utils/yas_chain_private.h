@@ -31,7 +31,7 @@ struct chain_context<T>::impl : base::impl {
 
 template <typename T>
 chain_context<T>::chain_context(T &&default_value, std::vector<std::function<void(chain_context<T>)>> &&functions)
-    : super_class(std::make_unique<impl>(std::move(default_value), std::move(functions))) {
+    : base(std::make_unique<impl>(std::move(default_value), std::move(functions))) {
 }
 
 template <typename T>

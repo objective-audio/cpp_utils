@@ -14,7 +14,7 @@ class chain_context;
 
 template <typename T>
 class chain_context : base {
-    using super_class = base;
+    class impl;
 
    public:
     chain_context(T &&default_value, std::vector<std::function<void(chain_context<T>)>> &&functions);
@@ -27,7 +27,6 @@ class chain_context : base {
     void stop();
 
    private:
-    class impl;
 };
 
 void chain(std::vector<std::function<void(chain_context<std::nullptr_t>)>> functions);

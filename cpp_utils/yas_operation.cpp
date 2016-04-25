@@ -42,14 +42,14 @@ class operation::impl : public base::impl, public controllable_operation::impl {
 };
 
 operation::operation(execution_f const &exe, operation_option_t option)
-    : super_class(std::make_unique<impl>(exe, std::move(option))) {
+    : base(std::make_unique<impl>(exe, std::move(option))) {
 }
 
 operation::operation(execution_f &&exe, operation_option_t opt)
-    : super_class(std::make_unique<impl>(std::move(exe), std::move(opt))) {
+    : base(std::make_unique<impl>(std::move(exe), std::move(opt))) {
 }
 
-operation::operation(std::nullptr_t) : super_class(nullptr) {
+operation::operation(std::nullptr_t) : base(nullptr) {
 }
 
 void operation::cancel() {
@@ -246,10 +246,10 @@ class operation_queue::impl : public base::impl {
     }
 };
 
-operation_queue::operation_queue(size_t const count) : super_class(std::make_unique<impl>(count)) {
+operation_queue::operation_queue(size_t const count) : base(std::make_unique<impl>(count)) {
 }
 
-operation_queue::operation_queue(std::nullptr_t) : super_class(nullptr) {
+operation_queue::operation_queue(std::nullptr_t) : base(nullptr) {
 }
 
 void operation_queue::push_back(operation op) {
