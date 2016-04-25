@@ -41,6 +41,9 @@ class result {
     std::experimental::optional<T> _value;
     std::experimental::optional<U> _error;
 };
+
+template <typename... Args>
+result<std::tuple<Args...>, std::nullptr_t> where(Args &&... args);
 }
 
 #include "yas_result_private.h"

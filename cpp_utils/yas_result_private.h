@@ -97,4 +97,39 @@ template <typename T, typename U>
 std::experimental::optional<U> result<T, U>::error_opt() const {
     return _error;
 }
+
+#pragma mark - where
+
+template <typename Tpl, std::size_t N = std::tuple_size<typename std::remove_reference<Tpl>::type>::value - 1>
+struct _where_impl {
+    static bool constexpr value(Tpl const &tpl) {
+        if (!std::get<N>(tpl)) {
+            return false;
+        } else {
+            return _where_impl<Tpl, N - 1>::value(tpl);
+        }
+    }
+};
+
+template <typename Tpl>
+struct _where_impl<Tpl, 0> {
+    static bool constexpr value(Tpl const &tpl) {
+        if (std::get<0>(tpl)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+};
+
+template <typename... Args>
+result<std::tuple<Args...>, std::nullptr_t> where(Args &&... args) {
+    auto tpl = std::forward_as_tuple(args...);
+
+    if (_where_impl<decltype(tpl)>::value(tpl)) {
+        return result<std::tuple<Args...>, std::nullptr_t>{std::move(tpl)};
+    } else {
+        return result<std::tuple<Args...>, std::nullptr_t>{nullptr};
+    }
+}
 }
