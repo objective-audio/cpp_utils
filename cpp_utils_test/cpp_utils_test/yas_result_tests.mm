@@ -6,6 +6,8 @@
 #import <vector>
 #import "yas_result.h"
 
+using namespace yas;
+
 @interface yas_result_tests : XCTestCase
 
 @end
@@ -199,6 +201,36 @@
 
     XCTAssertEqual(moved_value1, "test_string");
     XCTAssertEqual(result1.error().size(), 0);
+}
+
+- (void)test_where {
+    bool bool_true_value = true;
+    bool bool_false_value = false;
+    int int_true_value = 1;
+    int int_false_value = 0;
+
+    XCTAssertTrue(where(bool_true_value));
+    XCTAssertFalse(where(bool_false_value));
+    XCTAssertTrue(where(bool_true_value, int_true_value));
+    XCTAssertFalse(where(bool_true_value, int_false_value));
+    XCTAssertFalse(where(bool_false_value, int_true_value));
+    XCTAssertFalse(where(bool_false_value, int_false_value));
+}
+
+- (void)test_where_result_type {
+    bool bool_value = true;
+    int int_value = 1;
+
+    auto result = where(bool_value, int_value);
+    XCTAssertTrue(typeid(std::get<0>(result.value())) == typeid(bool));
+    XCTAssertTrue(typeid(std::get<1>(result.value())) == typeid(int));
+}
+
+- (void)test_where_many_parameters {
+    XCTAssertTrue(where(true, true, true, true, true));
+    XCTAssertFalse(where(true, true, false, true, true));
+    XCTAssertFalse(where(false, true, true, true, true));
+    XCTAssertFalse(where(true, true, true, true, false));
 }
 
 @end
