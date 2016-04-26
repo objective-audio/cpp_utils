@@ -18,7 +18,7 @@ class observer : public base {
     class impl;
 
    public:
-    using handler_f = std::function<void(Key const &, const T &)>;
+    using handler_f = std::function<void(Key const &, T const &)>;
 
     observer();
     observer(std::nullptr_t);
@@ -52,7 +52,7 @@ class subject {
     bool has_observer() const;
 
     void notify(Key const &key) const;
-    void notify(Key const &key, const T &object) const;
+    void notify(Key const &key, T const &object) const;
 
     observer<T, Key> make_observer(Key const &key, typename observer<T, Key>::handler_f const &handler);
     observer<T, Key> make_wild_card_observer(typename observer<T, Key>::handler_f const &handler);
