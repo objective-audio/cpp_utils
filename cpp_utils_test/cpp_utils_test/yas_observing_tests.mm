@@ -54,7 +54,7 @@ using namespace yas;
 
         XCTAssertFalse(called);
 
-        observer.add_handler(subject, key, [&called](std::string const &key, const int &sender) {
+        observer.add_handler(subject, key, [&called](std::string const &key, int const &sender) {
             if (key == "key" && sender == 100) {
                 called = true;
             }
@@ -79,12 +79,12 @@ using namespace yas;
     bool called1 = false;
     bool called2 = false;
 
-    observer.add_handler(subject, key1, [&called1](std::string const &key, const int &sender) {
+    observer.add_handler(subject, key1, [&called1](std::string const &key, int const &sender) {
         if (key == "key1" && sender == 100) {
             called1 = true;
         }
     });
-    observer.add_handler(subject, key2, [&called2](std::string const &key, const int &sender) {
+    observer.add_handler(subject, key2, [&called2](std::string const &key, int const &sender) {
         if (key == "key2" && sender == 100) {
             called2 = true;
         }
@@ -124,12 +124,12 @@ using namespace yas;
     bool called1 = false;
     bool called2 = false;
 
-    observer1.add_handler(subject, key, [&called1](std::string const &key, const int &sender) {
+    observer1.add_handler(subject, key, [&called1](std::string const &key, int const &sender) {
         if (key == "key" && sender == 100) {
             called1 = true;
         }
     });
-    observer2.add_handler(subject, key, [&called2](std::string const &key, const int &sender) {
+    observer2.add_handler(subject, key, [&called2](std::string const &key, int const &sender) {
         if (key == "key" && sender == 100) {
             called2 = true;
         }
@@ -153,13 +153,13 @@ using namespace yas;
     bool called1 = false;
     bool called2 = false;
 
-    observer.add_handler(subject1, key, [&called1](std::string const &key, const int &sender) {
+    observer.add_handler(subject1, key, [&called1](std::string const &key, int const &sender) {
         if (key == "key" && sender == 100) {
             called1 = true;
         }
     });
 
-    observer.add_handler(subject2, key, [&called2](std::string const &key, const int &sender) {
+    observer.add_handler(subject2, key, [&called2](std::string const &key, int const &sender) {
         if (key == "key" && sender == 100) {
             called2 = true;
         }
@@ -304,7 +304,7 @@ using namespace yas;
     subject<int> subject;
     observer<int> observer;
 
-    observer.add_handler(subject, key, [&called](std::string const &key, const int &sender) {
+    observer.add_handler(subject, key, [&called](std::string const &key, int const &sender) {
         if (key == "key" && sender == 100) {
             called = true;
         }
@@ -335,7 +335,7 @@ using namespace yas;
     {
         observer<int> observer;
 
-        observer.add_handler(subject, key, [&called](std::string const &key, const int &sender) {
+        observer.add_handler(subject, key, [&called](std::string const &key, int const &sender) {
             if (key == "key" && sender == 100) {
                 called = true;
             }
@@ -365,7 +365,7 @@ using namespace yas;
     {
         subject<int> subject;
 
-        observer.add_handler(subject, key, [&called](std::string const &key, const int &sender) {
+        observer.add_handler(subject, key, [&called](std::string const &key, int const &sender) {
             if (key == "key" && sender == 100) {
                 called = true;
             }
