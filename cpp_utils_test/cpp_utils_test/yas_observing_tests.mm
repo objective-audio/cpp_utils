@@ -24,8 +24,8 @@ using namespace yas;
 - (void)test_single {
     int sender = 100;
 
-    const std::string key("key");
-    const std::string key2("key2");
+    std::string const key("key");
+    std::string const key2("key2");
 
     bool called = false;
     subject<int> subject;
@@ -69,9 +69,9 @@ using namespace yas;
 - (void)test_multi_keys {
     int sender = 100;
 
-    const std::string key1("key1");
-    const std::string key2("key2");
-    const std::string key3("key3");
+    std::string const key1("key1");
+    std::string const key2("key2");
+    std::string const key3("key3");
 
     subject<int> subject;
     observer<int> observer;
@@ -115,7 +115,7 @@ using namespace yas;
 - (void)test_multi_observers {
     int sender = 100;
 
-    const std::string key("key");
+    std::string const key("key");
 
     subject<int> subject;
     observer<int> observer1;
@@ -144,7 +144,7 @@ using namespace yas;
 - (void)test_multi_subjects {
     int sender = 100;
 
-    const std::string key("key");
+    std::string const key("key");
 
     subject<int> subject1;
     subject<int> subject2;
@@ -255,8 +255,8 @@ using namespace yas;
 }
 
 - (void)test_subject_dispatcher {
-    static const std::string property_method1 = "p1";
-    static const std::string property_method2 = "p2";
+    static std::string const property_method1 = "p1";
+    static std::string const property_method2 = "p2";
 
     struct test_class {
         subject<std::string> property1;
@@ -297,7 +297,7 @@ using namespace yas;
 - (void)test_clear_observer {
     int sender = 100;
 
-    const std::string key("key");
+    std::string const key("key");
 
     bool called = false;
 
@@ -326,7 +326,7 @@ using namespace yas;
 - (void)test_remove_observer {
     int sender = 100;
 
-    const std::string key("key");
+    std::string const key("key");
 
     bool called = false;
 
@@ -356,7 +356,7 @@ using namespace yas;
 - (void)test_remove_subject {
     int sender = 100;
 
-    const std::string key("key");
+    std::string const key("key");
 
     bool called = false;
 
