@@ -58,7 +58,7 @@
 
 - (void)test_filter_vector {
     std::vector<int> vec{1, 4, 5, 3, 2};
-    auto filtered_vec = yas::filter(vec, [](const auto &val) { return (val % 2) != 0; });
+    auto filtered_vec = yas::filter(vec, [](auto const &val) { return (val % 2) != 0; });
 
     XCTAssertEqual(filtered_vec.size(), 3);
     XCTAssertEqual(filtered_vec[0], 1);
@@ -68,7 +68,7 @@
 
 - (void)test_filter_map {
     std::map<int, int> map{{0, 12}, {1, 11}, {2, 10}, {3, 9}, {4, 8}};
-    auto filtered_map = yas::filter(map, [](const auto &pair) { return (pair.second % 2) != 0; });
+    auto filtered_map = yas::filter(map, [](auto const &pair) { return (pair.second % 2) != 0; });
 
     XCTAssertEqual(filtered_map.size(), 2);
 
@@ -82,7 +82,7 @@
 
 - (void)test_erase_if_set {
     std::unordered_set<int> set{0, 1, 2, 3, 4};
-    yas::erase_if(set, [](const auto &val) { return (val % 2) != 0; });
+    yas::erase_if(set, [](auto const &val) { return (val % 2) != 0; });
 
     XCTAssertEqual(set.size(), 3);
 
