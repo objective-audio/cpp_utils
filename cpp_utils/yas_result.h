@@ -19,7 +19,7 @@ class result {
 
     ~result();
 
-    result(const result<T, U> &);
+    result(result<T, U> const &);
     result(result<T, U> &&);
 
     result<T, U> &operator=(result<T, U> const &);
