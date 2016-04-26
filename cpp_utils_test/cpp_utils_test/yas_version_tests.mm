@@ -68,19 +68,19 @@
     XCTAssertEqual(version.numbers().at(0), 1);
     XCTAssertEqual(version.numbers().at(1), 2);
     XCTAssertEqual(version.numbers().at(2), 3);
-    
+
     XCTAssertEqual(str.size(), 0);
 }
 
 - (void)test_create_version_move_with_vector {
     std::vector<int> vec{1, 2, 3};
     yas::version version{std::move(vec)};
-    
+
     XCTAssertEqual(version.numbers().size(), 3);
     XCTAssertEqual(version.numbers().at(0), 1);
     XCTAssertEqual(version.numbers().at(1), 2);
     XCTAssertEqual(version.numbers().at(2), 3);
-    
+
     XCTAssertEqual(vec.size(), 0);
 }
 
