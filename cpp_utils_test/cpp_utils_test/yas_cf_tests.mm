@@ -67,7 +67,7 @@
 }
 
 - (void)testFloat32ToCFNumber {
-    Float32 value = 1.5;
+    float value = 1.5;
 
     CFNumberRef cf_number = yas::to_cf_object(value);
 
@@ -75,7 +75,7 @@
 }
 
 - (void)testFloat64ToCFNumber {
-    Float64 value = 2.6;
+    double value = 2.6;
 
     CFNumberRef cf_number = yas::to_cf_object(value);
 
@@ -83,7 +83,7 @@
 }
 
 - (void)testSInt32ToCFNumber {
-    SInt32 value = 3;
+    int32_t value = 3;
 
     CFNumberRef cf_number = yas::to_cf_object(value);
 
@@ -91,7 +91,7 @@
 }
 
 - (void)testSInt16ToCFNumber {
-    SInt16 value = 123;
+    int16_t value = 123;
 
     CFNumberRef cf_number = yas::to_cf_object(value);
 
@@ -116,12 +116,12 @@
 
 - (void)testMapToCFDictionary {
     std::string const key1 = "key_1";
-    SInt16 const value1 = 10;
+    int16_t const value1 = 10;
 
     std::string const key2 = "key_2";
-    SInt16 const value2 = 20;
+    int16_t const value2 = 20;
 
-    std::unordered_map<std::string, SInt16> map{{key1, value1}, {key2, value2}};
+    std::unordered_map<std::string, int16_t> map{{key1, value1}, {key2, value2}};
 
     CFDictionaryRef const cf_dictionary = yas::to_cf_object(map);
 

@@ -20,14 +20,14 @@
 }
 
 - (void)test_flex_ptr {
-    Float32 float32_value = 1.0f;
-    Float64 float64_value = 2.0;
-    SInt32 int32_value = 3;
-    UInt32 uint32_value = 4;
-    SInt16 int16_value = 5;
-    UInt16 uint16_value = 6;
-    SInt8 int8_value = 7;
-    UInt8 uint8_value = 8;
+    float float32_value = 1.0f;
+    double float64_value = 2.0;
+    int32_t int32_value = 3;
+    uint32_t uint32_value = 4;
+    int16_t int16_value = 5;
+    uint16_t uint16_value = 6;
+    int8_t int8_value = 7;
+    uint8_t uint8_value = 8;
 
     // create
 
@@ -71,7 +71,7 @@
 }
 
 - (void)test_copy {
-    Float32 value = 20.0f;
+    float value = 20.0f;
 
     yas::flex_ptr flex_ptr(&value);
     const yas::flex_ptr const_flex_ptr = flex_ptr;
