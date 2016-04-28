@@ -37,10 +37,10 @@ CFNumberRef yas::to_cf_object(T const &value) {
     return number;
 }
 
-template CFNumberRef yas::to_cf_object(Float32 const &);
-template CFNumberRef yas::to_cf_object(Float64 const &);
-template CFNumberRef yas::to_cf_object(SInt32 const &);
-template CFNumberRef yas::to_cf_object(SInt16 const &);
+template CFNumberRef yas::to_cf_object(float const &);
+template CFNumberRef yas::to_cf_object(double const &);
+template CFNumberRef yas::to_cf_object(int32_t const &);
+template CFNumberRef yas::to_cf_object(int16_t const &);
 
 template <typename T, typename F>
 std::vector<T> yas::to_vector(CFArrayRef const array, F function) {

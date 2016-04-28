@@ -14,11 +14,11 @@ flex_ptr::flex_ptr(const T *const p) : v(static_cast<void *>(const_cast<T *>(p))
 }
 
 template yas::flex_ptr::flex_ptr(const void *);
-template yas::flex_ptr::flex_ptr(const Float32 *);
-template yas::flex_ptr::flex_ptr(const Float64 *);
-template yas::flex_ptr::flex_ptr(const SInt32 *);
-template yas::flex_ptr::flex_ptr(const UInt32 *);
-template yas::flex_ptr::flex_ptr(const SInt16 *);
-template yas::flex_ptr::flex_ptr(const UInt16 *);
-template yas::flex_ptr::flex_ptr(const SInt8 *);
-template yas::flex_ptr::flex_ptr(const UInt8 *);
+template yas::flex_ptr::flex_ptr(const float *);
+template yas::flex_ptr::flex_ptr(const double *);
+template yas::flex_ptr::flex_ptr(const int32_t *);
+template yas::flex_ptr::flex_ptr(const uint32_t *);
+template yas::flex_ptr::flex_ptr(const int16_t *);
+template yas::flex_ptr::flex_ptr(const uint16_t *);
+template yas::flex_ptr::flex_ptr(const int8_t *);
+template yas::flex_ptr::flex_ptr(const uint8_t *);

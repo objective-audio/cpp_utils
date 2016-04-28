@@ -22,7 +22,7 @@
 }
 
 - (void)test_min_empty_key_insert {
-    std::map<UInt8, UInt8> map;
+    std::map<uint8_t, uint8_t> map;
 
     auto key = yas::min_empty_key(map);
     XCTAssertTrue(key);
@@ -36,7 +36,7 @@
 }
 
 - (void)test_min_empty_key_insert_gappy {
-    std::map<UInt8, UInt8> map;
+    std::map<uint8_t, uint8_t> map;
 
     map.insert(std::make_pair(1, 1));
 
@@ -46,9 +46,9 @@
 }
 
 - (void)test_min_empty_key_filled {
-    std::map<UInt8, UInt8> map;
+    std::map<uint8_t, uint8_t> map;
 
-    for (UInt16 i = 0; i < std::numeric_limits<UInt8>::max(); ++i) {
+    for (uint16_t i = 0; i < std::numeric_limits<uint8_t>::max(); ++i) {
         map.insert(std::make_pair(i, i));
     }
 

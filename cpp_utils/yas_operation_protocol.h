@@ -4,7 +4,6 @@
 
 #pragma once
 
-#include <MacTypes.h>
 #include "yas_base.h"
 #include "yas_protocol.h"
 
@@ -29,7 +28,7 @@ class controllable_operation : public protocol {
     }
 };
 
-using operation_priority_t = UInt32;
+using operation_priority_t = uint32_t;
 
 struct operation_option_t {
     operation_priority_t priority = 0;

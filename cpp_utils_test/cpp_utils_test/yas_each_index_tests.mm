@@ -73,19 +73,19 @@
 - (void)test_support_types {
     // integral type only
 
-    yas::each_index<UInt8>{0};
-    yas::each_index<UInt16>{0};
-    yas::each_index<UInt32>{0};
-    yas::each_index<UInt64>{0};
-    yas::each_index<SInt8>{0};
-    yas::each_index<SInt16>{0};
-    yas::each_index<SInt32>{0};
-    yas::each_index<SInt64>{0};
+    yas::each_index<uint8_t>{0};
+    yas::each_index<uint16_t>{0};
+    yas::each_index<uint32_t>{0};
+    yas::each_index<uint64_t>{0};
+    yas::each_index<int8_t>{0};
+    yas::each_index<int16_t>{0};
+    yas::each_index<int32_t>{0};
+    yas::each_index<int64_t>{0};
 
     //    compile error
 
-    //    yas::each_index<Float32>{0};
-    //    yas::each_index<Float64>{0};
+    //    yas::each_index<float>{0};
+    //    yas::each_index<double>{0};
     //    yas::each_index<std::string>{0};
 }
 
