@@ -10,9 +10,10 @@
 #include "yas_observing.h"
 
 namespace yas {
-namespace property_method {
-    static auto const will_change = "yas.property.will_change";
-    static auto const did_change = "yas.property.did_change";
+
+enum class property_method {
+    will_change,
+    did_change,
 };
 
 struct null_key {};
@@ -36,7 +37,7 @@ class property : public base {
     void set_value(T value);
     T const &value() const;
 
-    subject<property> &subject();
+    subject<property, property_method> &subject();
 };
 }
 
