@@ -5,17 +5,21 @@
 #import <XCTest/XCTest.h>
 #import "yas_property.h"
 
+using namespace yas;
+
 enum class test_key {
     property1,
     property2,
 };
 
 struct test_class {
-    yas::property<int, test_key> property1;
-    yas::property<int, test_key> property2;
+    using property_t = yas::property<int, test_key>;
 
-    yas::subject<yas::property<int, test_key>, yas::property_method> properties_subject;
-    yas::observer<yas::property<int, test_key>, yas::property_method> dispatcher;
+    property_t property1;
+    property_t property2;
+
+    property_t::subject_t properties_subject;
+    property_t::observer_t dispatcher;
 
     test_class()
         : property1({.key = test_key::property1, .value = 1}),
@@ -63,8 +67,32 @@ struct test_class {
     XCTAssertNotEqual(float_property.value(), value1);
 }
 
+- (void)test_make_property_with_key {
+    int key = 1;
+    float value = 2.0f;
+
+    auto property = make_property(value, key);
+
+    XCTAssertEqual(property.key(), 1);
+    XCTAssertEqual(property.value(), 2.0f);
+
+    XCTAssertTrue(typeid(property.key()) == typeid(int));
+    XCTAssertTrue(typeid(property.value()) == typeid(float));
+}
+
+- (void)test_make_property_without_key {
+    float value = 3.0f;
+
+    auto property = make_property(value);
+
+    XCTAssertEqual(property.value(), 3.0f);
+
+    XCTAssertTrue(typeid(property.key()) == typeid(null_key));
+    XCTAssertTrue(typeid(property.value()) == typeid(float));
+}
+
 - (void)test_change_value {
-    yas::property<int, int> property({.key = 1, .value = 2});
+    yas::property<int, int> property({.value = 2, .key = 1});
 
     XCTAssertEqual(property.value(), 2);
 
@@ -76,7 +104,7 @@ struct test_class {
 
 - (void)test_observe_value {
     yas::property<bool, int> property({.value = false, .key = 1});
-    yas::observer<yas::property<bool, int>, yas::property_method> observer;
+    decltype(property)::observer_t observer;
 
     bool will_change_called = false;
 
@@ -121,7 +149,7 @@ struct test_class {
 
 - (void)test_dispatcher {
     test_class test_object;
-    yas::observer<yas::property<int, test_key>, yas::property_method> observer;
+    test_class::property_t::observer_t observer;
 
     int receive_value1 = 0;
     int receive_value2 = 0;
@@ -153,7 +181,7 @@ struct test_class {
 
 - (void)test_recursive_guard {
     test_class test_object;
-    yas::observer<yas::property<int, test_key>, yas::property_method> observer;
+    test_class::property_t::observer_t observer;
 
     observer.add_handler(test_object.properties_subject, yas::property_method::did_change,
                          [&test_object](auto const &method, auto const &property) {
