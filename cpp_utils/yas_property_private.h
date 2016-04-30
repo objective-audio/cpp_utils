@@ -8,7 +8,7 @@ namespace yas {
 template <typename T, typename K>
 class property<T, K>::impl : public base::impl {
    public:
-    impl(K key, T value) : _key(std::move(key)), _value(std::move(value)) {
+    impl(T value, K key) : _key(std::move(key)), _value(std::move(value)) {
     }
 
     void set_property(property const &prop) {
@@ -35,7 +35,7 @@ class property<T, K>::impl : public base::impl {
         return _value;
     }
 
-    yas::subject<property<T, K>> &subject() {
+    yas::subject<property<T, K>, property_method> &subject() {
         return _subject;
     }
 
@@ -43,20 +43,17 @@ class property<T, K>::impl : public base::impl {
     std::mutex _notify_mutex;
     K _key;
     T _value;
-    yas::subject<property<T, K>> _subject;
+    yas::subject<property<T, K>, property_method> _subject;
     weak<property<T, K>> _weak_property;
 };
 
 template <typename T, typename K>
-property<T, K>::property() : property(K{}, T{}) {
+property<T, K>::property() : property(property_args<T, K>{}) {
 }
 
 template <typename T, typename K>
-property<T, K>::property(K key) : property(std::move(key), T{}) {
-}
-
-template <typename T, typename K>
-property<T, K>::property(K key, T value) : base(std::make_shared<impl>(std::move(key), std::move(value))) {
+property<T, K>::property(property_args<T, K> args)
+    : base(std::make_shared<impl>(std::move(args.value), std::move(args.key))) {
     impl_ptr<impl>()->set_property(*this);
 }
 
@@ -100,7 +97,7 @@ T const &property<T, K>::value() const {
 }
 
 template <typename T, typename K>
-subject<property<T, K>> &property<T, K>::subject() {
+subject<property<T, K>, property_method> &property<T, K>::subject() {
     return impl_ptr<impl>()->subject();
 }
 
@@ -112,5 +109,10 @@ bool operator==(T const &lhs, property<T, K> const &rhs) {
 template <typename T, typename K>
 bool operator!=(T const &lhs, property<T, K> const &rhs) {
     return lhs != rhs.value();
+}
+
+template <typename T, typename K>
+property<T, K> make_property(T value, K key) {
+    return property<T, K>{{.key = std::move(key), .value = std::move(value)}};
 }
 }

@@ -10,21 +10,30 @@
 #include "yas_observing.h"
 
 namespace yas {
-namespace property_method {
-    static auto const will_change = "yas.property.will_change";
-    static auto const did_change = "yas.property.did_change";
+
+enum class property_method {
+    will_change,
+    did_change,
 };
 
 struct null_key {};
+
+template <typename T, typename K = null_key>
+struct property_args {
+    T value;
+    K key;
+};
 
 template <typename T, typename K = null_key>
 class property : public base {
     class impl;
 
    public:
+    using subject_t = subject<property, property_method>;
+    using observer_t = observer<property, property_method>;
+
     property();
-    explicit property(K key);
-    property(K key, T value);
+    explicit property(property_args<T, K>);
     property(std::nullptr_t);
 
     bool operator==(property const &) const;
@@ -36,8 +45,11 @@ class property : public base {
     void set_value(T value);
     T const &value() const;
 
-    subject<property> &subject();
+    subject<property, property_method> &subject();
 };
+
+template <typename T, typename K = null_key>
+property<T, K> make_property(T value, K key = null_key{});
 }
 
 #include "yas_property_private.h"
