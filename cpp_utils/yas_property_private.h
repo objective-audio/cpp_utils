@@ -87,12 +87,22 @@ K const &property<T, K>::key() const {
 }
 
 template <typename T, typename K>
+K &property<T, K>::key() {
+    return impl_ptr<impl>()->key();
+}
+
+template <typename T, typename K>
 void property<T, K>::set_value(T value) {
     impl_ptr<impl>()->set_value(std::move(value));
 }
 
 template <typename T, typename K>
 T const &property<T, K>::value() const {
+    return impl_ptr<impl>()->value();
+}
+
+template <typename T, typename K>
+T &property<T, K>::value() {
     return impl_ptr<impl>()->value();
 }
 
