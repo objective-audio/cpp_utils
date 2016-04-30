@@ -113,6 +113,6 @@ bool operator!=(T const &lhs, property<T, K> const &rhs) {
 
 template <typename T, typename K>
 property<T, K> make_property(T value, K key) {
-    return property<T, K>{key, value};
+    return property<T, K>{{.key = std::move(key), .value = std::move(value)}};
 }
 }

@@ -46,7 +46,7 @@ class property : public base {
 };
 
 template <typename T, typename K = null_key>
-property<T, K> make_property(T value, K key);
+property<T, K> make_property(T value, K key = null_key{});
 }
 
 #include "yas_property_private.h"
