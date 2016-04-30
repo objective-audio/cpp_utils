@@ -19,13 +19,18 @@ enum class property_method {
 struct null_key {};
 
 template <typename T, typename K = null_key>
+struct property_args {
+    T value;
+    K key;
+};
+
+template <typename T, typename K = null_key>
 class property : public base {
     class impl;
 
    public:
     property();
-    explicit property(K key);
-    property(K key, T value);
+    explicit property(property_args<T, K>);
     property(std::nullptr_t);
 
     bool operator==(property const &) const;
@@ -39,6 +44,9 @@ class property : public base {
 
     subject<property, property_method> &subject();
 };
+
+template <typename T, typename K = null_key>
+property<T, K> make_property(T value, K key);
 }
 
 #include "yas_property_private.h"

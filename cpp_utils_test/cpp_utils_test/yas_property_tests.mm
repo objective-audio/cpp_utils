@@ -18,8 +18,8 @@ struct test_class {
     yas::observer<yas::property<int, test_key>, yas::property_method> dispatcher;
 
     test_class()
-        : property1(test_key::property1, 1),
-          property2(test_key::property2, 2),
+        : property1({.key = test_key::property1, .value = 1}),
+          property2({.key = test_key::property2, .value = 2}),
           dispatcher(yas::make_subject_dispatcher(properties_subject, {&property1.subject(), &property2.subject()})) {
     }
 };
@@ -50,7 +50,7 @@ struct test_class {
     int key = 1;
     float value1 = 1.5;
 
-    yas::property<float, int> float_property(key, value1);
+    yas::property<float, int> float_property({.value = value1, .key = key});
 
     XCTAssertEqual(key, float_property.key());
     XCTAssertEqual(float_property.value(), value1);
@@ -64,7 +64,7 @@ struct test_class {
 }
 
 - (void)test_change_value {
-    yas::property<int, int> property(1, 2);
+    yas::property<int, int> property({.key = 1, .value = 2});
 
     XCTAssertEqual(property.value(), 2);
 
@@ -75,7 +75,7 @@ struct test_class {
 }
 
 - (void)test_observe_value {
-    yas::property<bool, int> property(1, false);
+    yas::property<bool, int> property({.value = false, .key = 1});
     yas::observer<yas::property<bool, int>, yas::property_method> observer;
 
     bool will_change_called = false;
@@ -199,8 +199,8 @@ struct test_class {
 - (void)test_equal_to_value_true {
     float value = 3.0f;
 
-    yas::property<float, int> property1{1, value};
-    yas::property<float, int> property2{2, value};
+    yas::property<float, int> property1{{.key = 1, .value = value}};
+    yas::property<float, int> property2{{.key = 2, .value = value}};
 
     XCTAssertTrue(property1 == value);
     XCTAssertTrue(value == property1);
@@ -210,8 +210,8 @@ struct test_class {
     float value1 = 3.0f;
     float value2 = 5.0f;
 
-    yas::property<float, int> property1{1, value1};
-    yas::property<float, int> property2{2, value2};
+    yas::property<float, int> property1{{.key = 1, .value = value1}};
+    yas::property<float, int> property2{{.key = 2, .value = value2}};
 
     XCTAssertFalse(property1 == value2);
     XCTAssertFalse(value1 == property2);
@@ -221,8 +221,8 @@ struct test_class {
     float value1 = 3.0f;
     float value2 = 5.0f;
 
-    yas::property<float, int> property1{1, value1};
-    yas::property<float, int> property2{2, value2};
+    yas::property<float, int> property1{{.key = 1, .value = value1}};
+    yas::property<float, int> property2{{.key = 2, .value = value2}};
 
     XCTAssertTrue(property1 != value2);
     XCTAssertTrue(value1 != property2);
@@ -231,8 +231,8 @@ struct test_class {
 - (void)test_not_equal_to_value_false {
     float value = 3.0f;
 
-    yas::property<float, int> property1{1, value};
-    yas::property<float, int> property2{2, value};
+    yas::property<float, int> property1{{.key = 1, .value = value}};
+    yas::property<float, int> property2{{.key = 2, .value = value}};
 
     XCTAssertFalse(property1 != value);
     XCTAssertFalse(value != property1);

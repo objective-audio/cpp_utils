@@ -8,7 +8,7 @@ namespace yas {
 template <typename T, typename K>
 class property<T, K>::impl : public base::impl {
    public:
-    impl(K key, T value) : _key(std::move(key)), _value(std::move(value)) {
+    impl(T value, K key) : _key(std::move(key)), _value(std::move(value)) {
     }
 
     void set_property(property const &prop) {
@@ -48,15 +48,12 @@ class property<T, K>::impl : public base::impl {
 };
 
 template <typename T, typename K>
-property<T, K>::property() : property(K{}, T{}) {
+property<T, K>::property() : property(property_args<T, K>{}) {
 }
 
 template <typename T, typename K>
-property<T, K>::property(K key) : property(std::move(key), T{}) {
-}
-
-template <typename T, typename K>
-property<T, K>::property(K key, T value) : base(std::make_shared<impl>(std::move(key), std::move(value))) {
+property<T, K>::property(property_args<T, K> args)
+    : base(std::make_shared<impl>(std::move(args.value), std::move(args.key))) {
     impl_ptr<impl>()->set_property(*this);
 }
 
@@ -112,5 +109,10 @@ bool operator==(T const &lhs, property<T, K> const &rhs) {
 template <typename T, typename K>
 bool operator!=(T const &lhs, property<T, K> const &rhs) {
     return lhs != rhs.value();
+}
+
+template <typename T, typename K>
+property<T, K> make_property(T value, K key) {
+    return property<T, K>{key, value};
 }
 }
