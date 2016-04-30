@@ -18,6 +18,7 @@ class observer : public base {
     class impl;
 
    public:
+    using subject_t = subject<T, Key>;
     using handler_f = std::function<void(Key const &, T const &)>;
 
     observer();
@@ -37,12 +38,14 @@ class observer : public base {
 
     void clear();
 
-    friend subject<T, Key>;
+    friend subject_t;
 };
 
 template <typename T = std::nullptr_t, typename Key = std::string>
 class subject {
    public:
+    using observer_t = observer<T, Key>;
+
     subject();
     ~subject();
 
@@ -66,7 +69,7 @@ class subject {
     subject &operator=(subject const &) = delete;
     subject &operator=(subject &&) = delete;
 
-    friend observer<T, Key>;
+    friend observer_t;
 };
 
 template <typename T, typename Key>

@@ -29,6 +29,9 @@ class property : public base {
     class impl;
 
    public:
+    using subject_t = subject<property, property_method>;
+    using observer_t = observer<property, property_method>;
+
     property();
     explicit property(property_args<T, K>);
     property(std::nullptr_t);
