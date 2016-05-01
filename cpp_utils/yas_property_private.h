@@ -23,9 +23,16 @@ class property<T, K>::impl : public base::impl {
         if (auto lock = std::unique_lock<std::mutex>(_notify_mutex, std::try_to_lock)) {
             if (lock.owns_lock()) {
                 if (auto property = _weak_property.lock()) {
-                    _subject.notify(property_method::will_change, property);
+                    _subject.notify(property_method::will_change,
+                                    yas::property<T, K>::change_context{
+                                        .old_value = _value, .new_value = val, .property = property});
+
+                    auto old_value = std::move(_value);
                     _value = std::move(val);
-                    _subject.notify(property_method::did_change, property);
+
+                    _subject.notify(property_method::did_change,
+                                    yas::property<T, K>::change_context{
+                                        .old_value = old_value, .new_value = _value, .property = property});
                 }
             }
         }
@@ -35,7 +42,7 @@ class property<T, K>::impl : public base::impl {
         return _value;
     }
 
-    yas::subject<property<T, K>, property_method> &subject() {
+    subject_t &subject() {
         return _subject;
     }
 
@@ -43,7 +50,7 @@ class property<T, K>::impl : public base::impl {
     std::mutex _notify_mutex;
     K _key;
     T _value;
-    yas::subject<property<T, K>, property_method> _subject;
+    subject_t _subject;
     weak<property<T, K>> _weak_property;
 };
 
@@ -107,7 +114,7 @@ T &property<T, K>::value() {
 }
 
 template <typename T, typename K>
-subject<property<T, K>, property_method> &property<T, K>::subject() {
+typename property<T, K>::subject_t &property<T, K>::subject() {
     return impl_ptr<impl>()->subject();
 }
 
