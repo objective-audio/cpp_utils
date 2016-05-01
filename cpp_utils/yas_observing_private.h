@@ -34,13 +34,13 @@ class observer<T, Key>::impl : public base::impl {
 
         void call_handler(Key const &key, T const &sender) const {
             if (functions.count(key) > 0) {
-                functions.at(key)(key, sender);
+                functions.at(key)(observer<T, Key>::change_context{.key = key, .value = sender});
             }
         }
 
         void call_wild_card_handler(Key const &key, T const &sender) const {
             if (functions.count(nullopt) > 0) {
-                functions.at(nullopt)(key, sender);
+                functions.at(nullopt)(observer<T, Key>::change_context{.key = key, .value = sender});
             }
         }
 
@@ -275,7 +275,7 @@ template <typename T, typename Key>
 yas::observer<T, Key> yas::make_subject_dispatcher(subject<T, Key> const &source,
                                                    std::initializer_list<subject<T, Key> *> const &destinations) {
     observer<T, Key> observer;
-    auto handler = [&source](auto const &key, auto const &value) { source.notify(key, value); };
+    auto handler = [&source](auto const &context) { source.notify(context.key, context.value); };
 
     for (auto const &destination : destinations) {
         observer.add_wild_card_handler(*destination, handler);

@@ -18,8 +18,13 @@ class observer : public base {
     class impl;
 
    public:
+    struct change_context {
+        Key const &key;
+        T const &value;
+    };
+
     using subject_t = subject<T, Key>;
-    using handler_f = std::function<void(Key const &, T const &)>;
+    using handler_f = std::function<void(change_context const &)>;
 
     observer();
     observer(std::nullptr_t);
