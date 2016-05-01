@@ -265,4 +265,32 @@ struct test_class {
     XCTAssertFalse(value != property1);
 }
 
+- (void)test_change_context {
+    yas::property<int> property{{.value = 1}};
+
+    bool will_called = false;
+    bool did_called = false;
+
+    auto will_observer =
+        property.subject().make_observer(property_method::will_change, [self, &will_called](auto const &context) {
+            XCTAssertEqual(context.value.old_value, 1);
+            XCTAssertEqual(context.value.new_value, 2);
+            XCTAssertEqual(context.value.property.value(), 1);
+            will_called = true;
+        });
+
+    auto did_observer =
+        property.subject().make_observer(property_method::did_change, [self, &did_called](auto const &context) {
+            XCTAssertEqual(context.value.old_value, 1);
+            XCTAssertEqual(context.value.new_value, 2);
+            XCTAssertEqual(context.value.property.value(), 2);
+            did_called = true;
+        });
+
+    property.set_value(2);
+
+    XCTAssertTrue(will_called);
+    XCTAssertTrue(did_called);
+}
+
 @end
