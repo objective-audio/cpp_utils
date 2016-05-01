@@ -33,8 +33,8 @@ using namespace yas;
     {
         observer<int> observer;
 
-        observer.add_handler(subject, key, [&called](std::string const &key, auto const &sender) {
-            if (key == "key" && sender == 100) {
+        observer.add_handler(subject, key, [&called](auto const &context) {
+            if (context.key == "key" && context.value == 100) {
                 called = true;
             }
         });
@@ -54,8 +54,8 @@ using namespace yas;
 
         XCTAssertFalse(called);
 
-        observer.add_handler(subject, key, [&called](std::string const &key, int const &sender) {
-            if (key == "key" && sender == 100) {
+        observer.add_handler(subject, key, [&called](auto const &context) {
+            if (context.key == "key" && context.value == 100) {
                 called = true;
             }
         });
@@ -79,13 +79,13 @@ using namespace yas;
     bool called1 = false;
     bool called2 = false;
 
-    observer.add_handler(subject, key1, [&called1](std::string const &key, int const &sender) {
-        if (key == "key1" && sender == 100) {
+    observer.add_handler(subject, key1, [&called1](auto const &context) {
+        if (context.key == "key1" && context.value == 100) {
             called1 = true;
         }
     });
-    observer.add_handler(subject, key2, [&called2](std::string const &key, int const &sender) {
-        if (key == "key2" && sender == 100) {
+    observer.add_handler(subject, key2, [&called2](auto const &context) {
+        if (context.key == "key2" && context.value == 100) {
             called2 = true;
         }
     });
@@ -124,13 +124,13 @@ using namespace yas;
     bool called1 = false;
     bool called2 = false;
 
-    observer1.add_handler(subject, key, [&called1](std::string const &key, int const &sender) {
-        if (key == "key" && sender == 100) {
+    observer1.add_handler(subject, key, [&called1](auto const &context) {
+        if (context.key == "key" && context.value == 100) {
             called1 = true;
         }
     });
-    observer2.add_handler(subject, key, [&called2](std::string const &key, int const &sender) {
-        if (key == "key" && sender == 100) {
+    observer2.add_handler(subject, key, [&called2](auto const &context) {
+        if (context.key == "key" && context.value == 100) {
             called2 = true;
         }
     });
@@ -153,14 +153,14 @@ using namespace yas;
     bool called1 = false;
     bool called2 = false;
 
-    observer.add_handler(subject1, key, [&called1](std::string const &key, int const &sender) {
-        if (key == "key" && sender == 100) {
+    observer.add_handler(subject1, key, [&called1](auto const &context) {
+        if (context.key == "key" && context.value == 100) {
             called1 = true;
         }
     });
 
-    observer.add_handler(subject2, key, [&called2](std::string const &key, int const &sender) {
-        if (key == "key" && sender == 100) {
+    observer.add_handler(subject2, key, [&called2](auto const &context) {
+        if (context.key == "key" && context.value == 100) {
             called2 = true;
         }
     });
@@ -194,14 +194,13 @@ using namespace yas;
     std::string receive_10 = "";
     std::string receive_20 = "";
 
-    observer.add_wild_card_handler(subject,
-                                   [&receive_10, &receive_20](std::string const &key, std::string const &sender) {
-                                       if (key == "10") {
-                                           receive_10 = sender;
-                                       } else if (key == "20") {
-                                           receive_20 = sender;
-                                       }
-                                   });
+    observer.add_wild_card_handler(subject, [&receive_10, &receive_20](auto const &context) {
+        if (context.key == "10") {
+            receive_10 = context.value;
+        } else if (context.key == "20") {
+            receive_20 = context.value;
+        }
+    });
 
     subject.notify(key00, sender_00);
 
@@ -232,14 +231,13 @@ using namespace yas;
     std::string receive_10 = "";
     std::string receive_20 = "";
 
-    observer.add_wild_card_handler(subject,
-                                   [&receive_10, &receive_20](std::string const &key, std::string const &sender) {
-                                       if (key == "10") {
-                                           receive_10 = sender;
-                                       } else if (key == "20") {
-                                           receive_20 = sender;
-                                       }
-                                   });
+    observer.add_wild_card_handler(subject, [&receive_10, &receive_20](auto const &context) {
+        if (context.key == "10") {
+            receive_10 = context.value;
+        } else if (context.key == "20") {
+            receive_20 = context.value;
+        }
+    });
 
     observer.remove_wild_card_handler(subject);
 
@@ -278,14 +276,13 @@ using namespace yas;
     std::string value2 = "";
 
     observer<std::string> observer;
-    observer.add_wild_card_handler(test_object.properties_subject,
-                                   [&value1, &value2](std::string const &method, std::string const &sender) {
-                                       if (method == property_method1) {
-                                           value1 = sender;
-                                       } else if (method == property_method2) {
-                                           value2 = sender;
-                                       }
-                                   });
+    observer.add_wild_card_handler(test_object.properties_subject, [&value1, &value2](auto const &context) {
+        if (context.key == property_method1) {
+            value1 = context.value;
+        } else if (context.key == property_method2) {
+            value2 = context.value;
+        }
+    });
 
     test_object.property1.notify(property_method1, std::string("property1"));
     test_object.property2.notify(property_method2, std::string("property2"));
@@ -304,8 +301,8 @@ using namespace yas;
     subject<int> subject;
     observer<int> observer;
 
-    observer.add_handler(subject, key, [&called](std::string const &key, int const &sender) {
-        if (key == "key" && sender == 100) {
+    observer.add_handler(subject, key, [&called](auto const &context) {
+        if (context.key == "key" && context.value == 100) {
             called = true;
         }
     });
@@ -335,8 +332,8 @@ using namespace yas;
     {
         observer<int> observer;
 
-        observer.add_handler(subject, key, [&called](std::string const &key, int const &sender) {
-            if (key == "key" && sender == 100) {
+        observer.add_handler(subject, key, [&called](auto const &context) {
+            if (context.key == "key" && context.value == 100) {
                 called = true;
             }
         });
@@ -365,8 +362,8 @@ using namespace yas;
     {
         subject<int> subject;
 
-        observer.add_handler(subject, key, [&called](std::string const &key, int const &sender) {
-            if (key == "key" && sender == 100) {
+        observer.add_handler(subject, key, [&called](auto const &context) {
+            if (context.key == "key" && context.value == 100) {
                 called = true;
             }
         });
@@ -385,8 +382,8 @@ using namespace yas;
     int receiver = 0;
     std::string key = "key";
 
-    auto observer = subject.make_observer(key, [&receiver](auto const &key, auto const &sender) {
-        if (key == "key" && sender == 101) {
+    auto observer = subject.make_observer(key, [&receiver](auto const &context) {
+        if (context.key == "key" && context.value == 101) {
             receiver = sender;
         }
     });
@@ -402,9 +399,9 @@ using namespace yas;
     std::string key2 = "key2";
     std::string key3 = "key3";
 
-    auto observer = subject.make_wild_card_observer([&receiver](auto const &key, auto const &sender) {
-        if (key == "key1" || key == "key2") {
-            receiver = sender;
+    auto observer = subject.make_wild_card_observer([&receiver](auto const &context) {
+        if (context.key == "key1" || context.key == "key2") {
+            receiver = context.value;
         }
     });
 
@@ -425,7 +422,7 @@ using namespace yas;
     subject<int> subject;
     bool called = false;
 
-    base = subject.make_observer("key", [&called](auto const &, auto const &) { called = true; });
+    base = subject.make_observer("key", [&called](auto const &) { called = true; });
 
     subject.notify("key", 0);
 
@@ -444,7 +441,7 @@ using namespace yas;
 
     XCTAssertFalse(subject.has_observer());
 
-    if (auto observer = subject.make_observer("key", [](auto const &, auto const &) {})) {
+    if (auto observer = subject.make_observer("key", [](auto const &) {})) {
         XCTAssertTrue(subject.has_observer());
     } else {
         XCTAssert(0);
@@ -462,9 +459,9 @@ using namespace yas;
         bool called = false;
         int value = 0;
 
-        auto observer = subject.make_observer(test_enum::type1, [&called, &value](auto const &key, auto const &val) {
+        auto observer = subject.make_observer(test_enum::type1, [&called, &value](auto const &context) {
             called = true;
-            value = val;
+            value = context.value;
         });
 
         subject.notify(test_enum::type2, 1);
