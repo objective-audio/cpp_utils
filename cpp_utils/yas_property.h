@@ -10,7 +10,6 @@
 #include "yas_observing.h"
 
 namespace yas {
-
 enum class property_method {
     will_change,
     did_change,
@@ -29,8 +28,14 @@ class property : public base {
     class impl;
 
    public:
-    using subject_t = subject<property, property_method>;
-    using observer_t = observer<property, property_method>;
+    struct change_context {
+        T const &old_value;
+        T const &new_value;
+        property const &property;
+    };
+
+    using subject_t = subject<change_context, property_method>;
+    using observer_t = observer<change_context, property_method>;
 
     property();
     explicit property(property_args<T, K>);
