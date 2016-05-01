@@ -48,7 +48,7 @@ class property : public base {
     T const &value() const;
     T &value();
 
-    subject<property, property_method> &subject();
+    subject_t &subject();
 };
 
 template <typename T, typename K = null_key>

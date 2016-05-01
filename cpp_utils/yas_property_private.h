@@ -35,7 +35,7 @@ class property<T, K>::impl : public base::impl {
         return _value;
     }
 
-    yas::subject<property<T, K>, property_method> &subject() {
+    subject_t &subject() {
         return _subject;
     }
 
@@ -43,7 +43,7 @@ class property<T, K>::impl : public base::impl {
     std::mutex _notify_mutex;
     K _key;
     T _value;
-    yas::subject<property<T, K>, property_method> _subject;
+    subject_t _subject;
     weak<property<T, K>> _weak_property;
 };
 
