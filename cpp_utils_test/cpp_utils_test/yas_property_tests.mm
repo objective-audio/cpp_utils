@@ -109,36 +109,35 @@ struct test_class {
     bool will_change_called = false;
 
     observer.add_handler(property.subject(), yas::property_method::will_change,
-                         [self, &will_change_called](auto const &method, auto const &property) {
-                             XCTAssertEqual(method, yas::property_method::will_change);
-                             XCTAssertEqual(property.key(), 1);
-                             XCTAssertEqual(property.value(), false);
+                         [self, &will_change_called](auto const &context) {
+                             XCTAssertEqual(context.key, yas::property_method::will_change);
+                             XCTAssertEqual(context.value.property.key(), 1);
+                             XCTAssertEqual(context.value.property.value(), false);
                              will_change_called = true;
                          });
 
     bool did_change_called = false;
 
     observer.add_handler(property.subject(), yas::property_method::did_change,
-                         [self, &did_change_called](auto const &method, auto const &property) {
-                             XCTAssertEqual(method, yas::property_method::did_change);
-                             XCTAssertEqual(property.key(), 1);
-                             XCTAssertEqual(property.value(), true);
+                         [self, &did_change_called](auto const &context) {
+                             XCTAssertEqual(context.key, yas::property_method::did_change);
+                             XCTAssertEqual(context.value.property.key(), 1);
+                             XCTAssertEqual(context.value.property.value(), true);
                              did_change_called = true;
                          });
 
     int wildcard_called_count = 0;
 
-    observer.add_wild_card_handler(property.subject(),
-                                   [self, &wildcard_called_count](auto const &method, auto const &property) {
-                                       if (method == yas::property_method::will_change) {
-                                           XCTAssertEqual(property.key(), 1);
-                                           XCTAssertEqual(property.value(), false);
-                                       } else if (method == yas::property_method::did_change) {
-                                           XCTAssertEqual(property.key(), 1);
-                                           XCTAssertEqual(property.value(), true);
-                                       }
-                                       ++wildcard_called_count;
-                                   });
+    observer.add_wild_card_handler(property.subject(), [self, &wildcard_called_count](auto const &context) {
+        if (context.key == yas::property_method::will_change) {
+            XCTAssertEqual(context.value.property.key(), 1);
+            XCTAssertEqual(context.value.property.value(), false);
+        } else if (context.key == yas::property_method::did_change) {
+            XCTAssertEqual(context.value.property.key(), 1);
+            XCTAssertEqual(context.value.property.value(), true);
+        }
+        ++wildcard_called_count;
+    });
 
     property.set_value(true);
 
@@ -155,14 +154,14 @@ struct test_class {
     int receive_value2 = 0;
 
     observer.add_wild_card_handler(test_object.properties_subject,
-                                   [&receive_value1, &receive_value2](auto const &method, auto const &property) {
-                                       if (method == yas::property_method::did_change) {
-                                           switch (property.key()) {
+                                   [&receive_value1, &receive_value2](auto const &context) {
+                                       if (context.key == yas::property_method::did_change) {
+                                           switch (context.value.property.key()) {
                                                case test_key::property1:
-                                                   receive_value1 = property.value();
+                                                   receive_value1 = context.value.property.value();
                                                    break;
                                                case test_key::property2:
-                                                   receive_value2 = property.value();
+                                                   receive_value2 = context.value.property.value();
                                                    break;
                                            }
                                        }
@@ -184,13 +183,13 @@ struct test_class {
     test_class::property_t::observer_t observer;
 
     observer.add_handler(test_object.properties_subject, yas::property_method::did_change,
-                         [&test_object](auto const &method, auto const &property) {
-                             switch (property.key()) {
+                         [&test_object](auto const &context) {
+                             switch (context.value.property.key()) {
                                  case test_key::property1:
-                                     test_object.property2.set_value(property.value());
+                                     test_object.property2.set_value(context.value.property.value());
                                      break;
                                  case test_key::property2:
-                                     test_object.property1.set_value(property.value());
+                                     test_object.property1.set_value(context.value.property.value());
                                      break;
                                  default:
                                      break;
