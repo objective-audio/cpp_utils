@@ -25,9 +25,9 @@ struct property_args {
 
 template <typename T, typename K = null_key>
 class property : public base {
+   public:
     class impl;
 
-   public:
     struct change_context {
         T const &old_value;
         T const &new_value;

@@ -14,10 +14,6 @@ class property<T, K>::impl : public base::impl {
     impl(property_args<T, K> &&args) : _args(std::move(args)) {
     }
 
-    void set_property(property const &prop) {
-        _weak_property = prop;
-    }
-
     K &key() {
         return _args.key;
     }
@@ -26,17 +22,17 @@ class property<T, K>::impl : public base::impl {
         if (_subject.has_observer()) {
             if (auto lock = std::unique_lock<std::mutex>(_notify_mutex, std::try_to_lock)) {
                 if (lock.owns_lock()) {
-                    if (auto property = _weak_property.lock()) {
+                    if (auto p = cast<property<T, K>>()) {
                         _subject.notify(property_method::will_change,
                                         yas::property<T, K>::change_context{
-                                            .old_value = _args.value, .new_value = val, .property = property});
+                                            .old_value = _args.value, .new_value = val, .property = p});
 
                         auto old_value = std::move(_args.value);
                         _args.value = std::move(val);
 
                         _subject.notify(property_method::did_change,
                                         yas::property<T, K>::change_context{
-                                            .old_value = old_value, .new_value = _args.value, .property = property});
+                                            .old_value = old_value, .new_value = _args.value, .property = p});
                     }
                 }
             }
@@ -58,7 +54,6 @@ class property<T, K>::impl : public base::impl {
     std::mutex _notify_mutex;
     property_args<T, K> _args;
     subject_t _subject;
-    weak<property<T, K>> _weak_property;
 };
 
 template <typename T, typename K>
@@ -67,12 +62,10 @@ property<T, K>::property() : property(property_args<T, K>{}) {
 
 template <typename T, typename K>
 property<T, K>::property(property_args<T, K> const &args) : base(std::make_shared<impl>(args)) {
-    impl_ptr<impl>()->set_property(*this);
 }
 
 template <typename T, typename K>
 property<T, K>::property(property_args<T, K> &&args) : base(std::make_shared<impl>(std::move(args))) {
-    impl_ptr<impl>()->set_property(*this);
 }
 
 template <typename T, typename K>
