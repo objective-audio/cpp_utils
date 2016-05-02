@@ -48,7 +48,6 @@ class property : public base {
     bool operator!=(T const &) const;
 
     K const &key() const;
-    K &key();
 
     void set_value(T value);
     T const &value() const;
