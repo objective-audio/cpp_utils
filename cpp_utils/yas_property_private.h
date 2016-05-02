@@ -8,7 +8,10 @@ namespace yas {
 template <typename T, typename K>
 class property<T, K>::impl : public base::impl {
    public:
-    impl(T value, K key) : _key(std::move(key)), _value(std::move(value)) {
+    impl(property_args<T, K> const &args) : _args(args) {
+    }
+
+    impl(property_args<T, K> &&args) : _args(std::move(args)) {
     }
 
     void set_property(property const &prop) {
@@ -16,7 +19,7 @@ class property<T, K>::impl : public base::impl {
     }
 
     K &key() {
-        return _key;
+        return _args.key;
     }
 
     void set_value(T val) {
@@ -25,21 +28,21 @@ class property<T, K>::impl : public base::impl {
                 if (auto property = _weak_property.lock()) {
                     _subject.notify(property_method::will_change,
                                     yas::property<T, K>::change_context{
-                                        .old_value = _value, .new_value = val, .property = property});
+                                        .old_value = _args.value, .new_value = val, .property = property});
 
-                    auto old_value = std::move(_value);
-                    _value = std::move(val);
+                    auto old_value = std::move(_args.value);
+                    _args.value = std::move(val);
 
                     _subject.notify(property_method::did_change,
                                     yas::property<T, K>::change_context{
-                                        .old_value = old_value, .new_value = _value, .property = property});
+                                        .old_value = old_value, .new_value = _args.value, .property = property});
                 }
             }
         }
     }
 
     T &value() {
-        return _value;
+        return _args.value;
     }
 
     subject_t &subject() {
@@ -48,8 +51,7 @@ class property<T, K>::impl : public base::impl {
 
    private:
     std::mutex _notify_mutex;
-    K _key;
-    T _value;
+    property_args<T, K> _args;
     subject_t _subject;
     weak<property<T, K>> _weak_property;
 };
@@ -59,8 +61,12 @@ property<T, K>::property() : property(property_args<T, K>{}) {
 }
 
 template <typename T, typename K>
-property<T, K>::property(property_args<T, K> args)
-    : base(std::make_shared<impl>(std::move(args.value), std::move(args.key))) {
+property<T, K>::property(property_args<T, K> const &args) : base(std::make_shared<impl>(args)) {
+    impl_ptr<impl>()->set_property(*this);
+}
+
+template <typename T, typename K>
+property<T, K>::property(property_args<T, K> &&args) : base(std::make_shared<impl>(std::move(args))) {
     impl_ptr<impl>()->set_property(*this);
 }
 

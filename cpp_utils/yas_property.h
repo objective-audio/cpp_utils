@@ -38,7 +38,8 @@ class property : public base {
     using observer_t = observer<change_context, property_method>;
 
     property();
-    explicit property(property_args<T, K>);
+    explicit property(property_args<T, K> const &);
+    explicit property(property_args<T, K> &&);
     property(std::nullptr_t);
 
     bool operator==(property const &) const;

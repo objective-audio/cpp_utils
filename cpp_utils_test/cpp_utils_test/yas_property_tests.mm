@@ -67,6 +67,14 @@ struct test_class {
     XCTAssertNotEqual(float_property.value(), value1);
 }
 
+- (void)test_create_property_by_copy_constructor {
+    property_args<float, int> args{.key = 1, .value = 2.0f};
+    property<float, int> property{args};
+
+    XCTAssertEqual(property.key(), 1);
+    XCTAssertEqual(property.value(), 2.0f);
+}
+
 - (void)test_make_property_with_key {
     int key = 1;
     float value = 2.0f;
