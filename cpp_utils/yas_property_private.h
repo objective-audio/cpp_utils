@@ -23,21 +23,26 @@ class property<T, K>::impl : public base::impl {
     }
 
     void set_value(T val) {
-        if (auto lock = std::unique_lock<std::mutex>(_notify_mutex, std::try_to_lock)) {
-            if (lock.owns_lock()) {
-                if (auto property = _weak_property.lock()) {
-                    _subject.notify(property_method::will_change,
-                                    yas::property<T, K>::change_context{
-                                        .old_value = _args.value, .new_value = val, .property = property});
+        if (_subject.has_observer()) {
+            if (auto lock = std::unique_lock<std::mutex>(_notify_mutex, std::try_to_lock)) {
+                if (lock.owns_lock()) {
+                    if (auto property = _weak_property.lock()) {
+                        _subject.notify(property_method::will_change,
+                                        yas::property<T, K>::change_context{
+                                            .old_value = _args.value, .new_value = val, .property = property});
 
-                    auto old_value = std::move(_args.value);
-                    _args.value = std::move(val);
+                        auto old_value = std::move(_args.value);
+                        _args.value = std::move(val);
 
-                    _subject.notify(property_method::did_change,
-                                    yas::property<T, K>::change_context{
-                                        .old_value = old_value, .new_value = _args.value, .property = property});
+                        _subject.notify(property_method::did_change,
+                                        yas::property<T, K>::change_context{
+                                            .old_value = old_value, .new_value = _args.value, .property = property});
+                    }
                 }
             }
+
+        } else {
+            _args.value = std::move(val);
         }
     }
 
