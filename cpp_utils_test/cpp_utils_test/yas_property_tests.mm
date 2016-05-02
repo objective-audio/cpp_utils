@@ -301,4 +301,35 @@ struct test_class {
     XCTAssertTrue(did_called);
 }
 
+- (void)test_set_same_value {
+    yas::property<std::shared_ptr<int>> property({.value = nullptr});
+
+    bool called = false;
+    std::shared_ptr<int> called_value = nullptr;
+
+    auto observer = property.subject().make_observer(yas::property_method::did_change,
+                                                     [&called_value, &called](auto const &context) mutable {
+                                                         called_value = context.value.property.value();
+                                                         called = true;
+                                                     });
+
+    property.set_value(nullptr);
+
+    XCTAssertFalse(called);
+
+    auto value10 = std::make_shared<int>(10);
+
+    property.set_value(value10);
+
+    XCTAssertTrue(called);
+    XCTAssertEqual(*called_value, 10);
+
+    called = false;
+    called_value = nullptr;
+
+    property.set_value(value10);
+
+    XCTAssertFalse(called);
+}
+
 @end
