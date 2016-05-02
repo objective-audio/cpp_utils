@@ -22,17 +22,17 @@ class property<T, K>::impl : public base::impl {
         if (_subject.has_observer()) {
             if (auto lock = std::unique_lock<std::mutex>(_notify_mutex, std::try_to_lock)) {
                 if (lock.owns_lock()) {
-                    if (auto p = cast<property<T, K>>()) {
+                    if (auto property = cast<yas::property<T, K>>()) {
                         _subject.notify(property_method::will_change,
                                         yas::property<T, K>::change_context{
-                                            .old_value = _args.value, .new_value = val, .property = p});
+                                            .old_value = _args.value, .new_value = val, .property = property});
 
                         auto old_value = std::move(_args.value);
                         _args.value = std::move(val);
 
                         _subject.notify(property_method::did_change,
                                         yas::property<T, K>::change_context{
-                                            .old_value = old_value, .new_value = _args.value, .property = p});
+                                            .old_value = old_value, .new_value = _args.value, .property = property});
                     }
                 }
             }
