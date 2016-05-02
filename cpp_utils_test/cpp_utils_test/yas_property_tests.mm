@@ -175,15 +175,15 @@ struct test_class {
                                        }
                                    });
 
-    test_object.property1.set_value(1);
+    test_object.property1.set_value(11);
 
-    XCTAssertEqual(receive_value1, 1);
+    XCTAssertEqual(receive_value1, 11);
     XCTAssertEqual(receive_value2, 0);
 
-    test_object.property2.set_value(2);
+    test_object.property2.set_value(12);
 
-    XCTAssertEqual(receive_value1, 1);
-    XCTAssertEqual(receive_value2, 2);
+    XCTAssertEqual(receive_value1, 11);
+    XCTAssertEqual(receive_value2, 12);
 }
 
 - (void)test_recursive_guard {
