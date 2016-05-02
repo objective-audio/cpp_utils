@@ -25,9 +25,9 @@ struct property_args {
 
 template <typename T, typename K = null_key>
 class property : public base {
+   public:
     class impl;
 
-   public:
     struct change_context {
         T const &old_value;
         T const &new_value;
@@ -38,7 +38,8 @@ class property : public base {
     using observer_t = observer<change_context, property_method>;
 
     property();
-    explicit property(property_args<T, K>);
+    explicit property(property_args<T, K> const &);
+    explicit property(property_args<T, K> &&);
     property(std::nullptr_t);
 
     bool operator==(property const &) const;
@@ -47,7 +48,6 @@ class property : public base {
     bool operator!=(T const &) const;
 
     K const &key() const;
-    K &key();
 
     void set_value(T value);
     T const &value() const;

@@ -67,6 +67,14 @@ struct test_class {
     XCTAssertNotEqual(float_property.value(), value1);
 }
 
+- (void)test_create_property_by_copy_constructor {
+    property_args<float, int> args{.key = 1, .value = 2.0f};
+    property<float, int> property{args};
+
+    XCTAssertEqual(property.key(), 1);
+    XCTAssertEqual(property.value(), 2.0f);
+}
+
 - (void)test_make_property_with_key {
     int key = 1;
     float value = 2.0f;
@@ -167,15 +175,15 @@ struct test_class {
                                        }
                                    });
 
-    test_object.property1.set_value(1);
+    test_object.property1.set_value(11);
 
-    XCTAssertEqual(receive_value1, 1);
+    XCTAssertEqual(receive_value1, 11);
     XCTAssertEqual(receive_value2, 0);
 
-    test_object.property2.set_value(2);
+    test_object.property2.set_value(12);
 
-    XCTAssertEqual(receive_value1, 1);
-    XCTAssertEqual(receive_value2, 2);
+    XCTAssertEqual(receive_value1, 11);
+    XCTAssertEqual(receive_value2, 12);
 }
 
 - (void)test_recursive_guard {
@@ -291,6 +299,37 @@ struct test_class {
 
     XCTAssertTrue(will_called);
     XCTAssertTrue(did_called);
+}
+
+- (void)test_set_same_value {
+    yas::property<std::shared_ptr<int>> property({.value = nullptr});
+
+    bool called = false;
+    std::shared_ptr<int> called_value = nullptr;
+
+    auto observer = property.subject().make_observer(yas::property_method::did_change,
+                                                     [&called_value, &called](auto const &context) mutable {
+                                                         called_value = context.value.property.value();
+                                                         called = true;
+                                                     });
+
+    property.set_value(nullptr);
+
+    XCTAssertFalse(called);
+
+    auto value10 = std::make_shared<int>(10);
+
+    property.set_value(value10);
+
+    XCTAssertTrue(called);
+    XCTAssertEqual(*called_value, 10);
+
+    called = false;
+    called_value = nullptr;
+
+    property.set_value(value10);
+
+    XCTAssertFalse(called);
 }
 
 @end
