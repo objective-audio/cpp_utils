@@ -103,12 +103,10 @@ std::experimental::optional<U> result<T, U>::error_opt() const {
 template <typename Tpl, std::size_t N = std::tuple_size<typename std::remove_reference<Tpl>::type>::value - 1>
 struct _where_impl {
     static bool constexpr value(Tpl const &tpl) {
-        if (!_where_impl<Tpl, N - 1>::value(tpl)) {
+        if (!std::get<N>(tpl)) {
             return false;
-        } else if (std::get<N>(tpl)) {
-            return true;
         } else {
-            return false;
+            return _where_impl<Tpl, N - 1>::value(tpl);
         }
     }
 };
