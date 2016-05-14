@@ -24,6 +24,6 @@ class flex_ptr {
 
     flex_ptr(std::nullptr_t n = nullptr);
     template <typename T>
-    flex_ptr(const T *const p);
+    flex_ptr(T const *const p);
 };
 }
