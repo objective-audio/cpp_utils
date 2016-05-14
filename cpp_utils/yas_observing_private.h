@@ -49,7 +49,7 @@ class observer<T, Key>::impl : public base::impl {
         }
     };
 
-    std::unordered_map<const subject<T, Key> *, handler_holder> handlers;
+    std::unordered_map<subject<T, Key> const *, handler_holder> handlers;
 
     void call_handler(subject<T, Key> const &subject, Key const &key, T const &object) {
         if (handlers.count(&subject) > 0) {
