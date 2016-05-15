@@ -4,6 +4,8 @@
 
 #pragma once
 
+#include "yas_type_traits.h"
+
 namespace yas {
 template <typename T, typename K>
 class property<T, K>::impl : public base::impl {
@@ -19,30 +21,7 @@ class property<T, K>::impl : public base::impl {
     }
 
     void set_value(T val) {
-        if (_args.value != val && (_args.value || val)) {
-            if (_subject.has_observer()) {
-                if (auto lock = std::unique_lock<std::mutex>(_notify_mutex, std::try_to_lock)) {
-                    if (lock.owns_lock()) {
-                        if (auto property = cast<yas::property<T, K>>()) {
-                            _subject.notify(property_method::will_change,
-                                            yas::property<T, K>::change_context{
-                                                .old_value = _args.value, .new_value = val, .property = property});
-
-                            auto old_value = std::move(_args.value);
-                            _args.value = std::move(val);
-
-                            _subject.notify(
-                                property_method::did_change,
-                                yas::property<T, K>::change_context{
-                                    .old_value = old_value, .new_value = _args.value, .property = property});
-                        }
-                    }
-                }
-
-            } else {
-                _args.value = std::move(val);
-            }
-        }
+        _set_value(std::move(val));
     }
 
     T &value() {
@@ -57,6 +36,44 @@ class property<T, K>::impl : public base::impl {
     std::mutex _notify_mutex;
     property_args<T, K> _args;
     subject_t _subject;
+
+    template <typename U, typename std::enable_if_t<has_operator_bool<U>::value, std::nullptr_t> = nullptr>
+    void _set_value(U &&value) {
+        if (_args.value != value && (_args.value || value)) {
+            _set_value_primitive(std::move(value));
+        }
+    }
+
+    template <typename U, typename std::enable_if_t<!has_operator_bool<U>::value, std::nullptr_t> = nullptr>
+    void _set_value(U &&value) {
+        if (_args.value != value) {
+            _set_value_primitive(std::move(value));
+        }
+    }
+
+    void _set_value_primitive(T &&val) {
+        if (_subject.has_observer()) {
+            if (auto lock = std::unique_lock<std::mutex>(_notify_mutex, std::try_to_lock)) {
+                if (lock.owns_lock()) {
+                    if (auto property = cast<yas::property<T, K>>()) {
+                        _subject.notify(property_method::will_change,
+                                        yas::property<T, K>::change_context{
+                                            .old_value = _args.value, .new_value = val, .property = property});
+
+                        auto old_value = std::move(_args.value);
+                        _args.value = std::move(val);
+
+                        _subject.notify(property_method::did_change,
+                                        yas::property<T, K>::change_context{
+                                            .old_value = old_value, .new_value = _args.value, .property = property});
+                    }
+                }
+            }
+
+        } else {
+            _args.value = std::move(val);
+        }
+    }
 };
 
 template <typename T, typename K>
