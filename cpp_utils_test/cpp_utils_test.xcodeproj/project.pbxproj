@@ -62,6 +62,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		B602AFDA1CE83D5F00309B3A /* yas_type_traits.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = yas_type_traits.h; sourceTree = "<group>"; };
 		B60AAA251C5DAFD30074C6FA /* yas_chain.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = yas_chain.cpp; sourceTree = "<group>"; };
 		B60AAA261C5DAFD30074C6FA /* yas_chain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = yas_chain.h; sourceTree = "<group>"; };
 		B60AAA291C5DB6D60074C6FA /* yas_chain_tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = yas_chain_tests.mm; sourceTree = "<group>"; };
@@ -220,6 +221,7 @@
 				B6626AC21C15B4230038175B /* yas_stl_utils_private.h */,
 				B641BFAD1C2509FE00F742B4 /* yas_stl_utils.cpp */,
 				B6626AC11C15B4230038175B /* yas_stl_utils.h */,
+				B602AFDA1CE83D5F00309B3A /* yas_type_traits.h */,
 				B6626AD81C15B6EC0038175B /* yas_types.h */,
 				B637E6B21C5F807500C8D288 /* yas_unless.h */,
 				B60C5BD11C37F80100D7C886 /* yas_version.cpp */,

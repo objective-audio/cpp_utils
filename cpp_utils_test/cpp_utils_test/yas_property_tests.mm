@@ -332,4 +332,35 @@ struct test_class {
     XCTAssertFalse(called);
 }
 
+- (void)test_set_same_string_value {
+    yas::property<std::string> property;
+
+    bool called = false;
+    std::string called_value;
+
+    auto observer = property.subject().make_observer(yas::property_method::did_change,
+                                                     [&called_value, &called](auto const &context) mutable {
+                                                         called_value = context.value.property.value();
+                                                         called = true;
+                                                     });
+
+    property.set_value(std::string{});
+
+    XCTAssertFalse(called);
+
+    std::string value10 = "10";
+
+    property.set_value(value10);
+
+    XCTAssertTrue(called);
+    XCTAssertEqual(called_value, "10");
+
+    called = false;
+    called_value = std::string{};
+
+    property.set_value(value10);
+
+    XCTAssertFalse(called);
+}
+
 @end
