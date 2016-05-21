@@ -83,3 +83,7 @@ void base::set_impl_ptr(std::shared_ptr<impl> const &impl) {
 void base::set_impl_ptr(std::shared_ptr<impl> &&impl) {
     _impl = std::move(impl);
 }
+
+bool yas::is_same(base const &lhs, base const &rhs) {
+    return (!lhs && !rhs) || (lhs == rhs);
+}
