@@ -66,6 +66,8 @@ class base {
 template <typename T>
 bool is_kind_of(base const &);
 
+bool is_same(base const &, base const &);
+
 template <typename T>
 T cast(base const &);
 

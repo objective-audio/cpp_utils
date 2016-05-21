@@ -388,4 +388,27 @@ namespace test {
     XCTAssertTrue(wobj1 != wobj2);
 }
 
+- (void)test_is_same {
+    yas::test::derived1 obj1;
+    yas::test::derived1 obj2;
+    yas::test::derived1 obj3;
+    yas::test::derived1 obj4{nullptr};
+    yas::test::derived1 obj5{nullptr};
+
+    obj1.set_value(1.0);
+    obj2.set_value(1.0);
+    obj3.set_value(3.5);
+
+    XCTAssertTrue(is_same(obj1, obj1));
+    XCTAssertTrue(is_same(obj1, obj2));
+    XCTAssertTrue(is_same(obj2, obj1));
+    XCTAssertTrue(is_same(obj4, obj5));
+    XCTAssertTrue(is_same(obj5, obj4));
+
+    XCTAssertFalse(is_same(obj1, obj3));
+    XCTAssertFalse(is_same(obj1, obj4));
+    XCTAssertFalse(is_same(obj3, obj1));
+    XCTAssertFalse(is_same(obj4, obj1));
+}
+
 @end
