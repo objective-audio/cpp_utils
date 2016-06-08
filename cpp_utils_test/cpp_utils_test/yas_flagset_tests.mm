@@ -150,4 +150,36 @@ namespace test {
     XCTAssertFalse(flagset2.test(test::test_enum::flag_c));
 }
 
+- (void)test_and_test {
+    flagset<test::test_enum> const flagset1{{test::test_enum::flag_a, test::test_enum::flag_b}};
+    flagset<test::test_enum> flagset2;
+
+    flagset2.set(test::test_enum::flag_a);
+    XCTAssertTrue(flagset1.and_test(flagset2));
+
+    flagset2.flags.reset();
+    flagset2.set(test::test_enum::flag_b);
+    XCTAssertTrue(flagset1.and_test(flagset2));
+
+    flagset2.flags.reset();
+    flagset2.set(test::test_enum::flag_c);
+    XCTAssertFalse(flagset1.and_test(flagset2));
+
+    flagset2.flags.reset();
+    flagset2.set({test::test_enum::flag_a, test::test_enum::flag_b});
+    XCTAssertTrue(flagset1.and_test(flagset2));
+
+    flagset2.flags.reset();
+    flagset2.set({test::test_enum::flag_b, test::test_enum::flag_c});
+    XCTAssertTrue(flagset1.and_test(flagset2));
+
+    flagset2.flags.reset();
+    flagset2.set({test::test_enum::flag_a, test::test_enum::flag_c});
+    XCTAssertTrue(flagset1.and_test(flagset2));
+
+    flagset2.flags.reset();
+    flagset2.flags.set();
+    XCTAssertTrue(flagset1.and_test(flagset2));
+}
+
 @end

@@ -76,4 +76,10 @@ template <typename T, std::size_t Size>
 bool flagset<T, Size>::test(T const &flag) const {
     return flags.test(static_cast<flags_size_t>(flag));
 }
+
+template <typename T, std::size_t Size>
+bool flagset<T, Size>::and_test(flagset<T> const &rhs) const {
+    auto and_flags = flags & rhs.flags;
+    return and_flags.any();
+}
 }

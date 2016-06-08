@@ -34,6 +34,7 @@ class flagset {
     void reset(T const &);
     void reset(std::initializer_list<T> const &);
     bool test(T const &) const;
+    bool and_test(flagset<T> const &) const;
 };
 }
 
