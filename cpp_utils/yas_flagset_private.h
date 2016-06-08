@@ -39,12 +39,12 @@ flagset<T> &flagset<T, Size>::operator=(flagset<T> &&rhs) {
 }
 
 template <typename T, std::size_t Size>
-bool flagset<T, Size>::operator==(flagset const &rhs) {
+bool flagset<T, Size>::operator==(flagset const &rhs) const {
     return flags == rhs.flags;
 }
 
 template <typename T, std::size_t Size>
-bool flagset<T, Size>::operator!=(flagset const &rhs) {
+bool flagset<T, Size>::operator!=(flagset const &rhs) const {
     return flags != rhs.flags;
 }
 
