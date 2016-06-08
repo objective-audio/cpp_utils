@@ -73,7 +73,7 @@ void flagset<T, Size>::reset(std::initializer_list<T> const &list) {
 }
 
 template <typename T, std::size_t Size>
-bool flagset<T, Size>::test(T const &flag) {
+bool flagset<T, Size>::test(T const &flag) const {
     return flags.test(static_cast<flags_size_t>(flag));
 }
 }

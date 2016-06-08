@@ -33,7 +33,7 @@ class flagset {
     void set(std::initializer_list<T> const &);
     void reset(T const &);
     void reset(std::initializer_list<T> const &);
-    bool test(T const &);
+    bool test(T const &) const;
 };
 }
 
