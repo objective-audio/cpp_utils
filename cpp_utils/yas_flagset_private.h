@@ -39,12 +39,12 @@ flagset<T> &flagset<T, Size>::operator=(flagset<T> &&rhs) {
 }
 
 template <typename T, std::size_t Size>
-bool flagset<T, Size>::operator==(flagset const &rhs) {
+bool flagset<T, Size>::operator==(flagset const &rhs) const {
     return flags == rhs.flags;
 }
 
 template <typename T, std::size_t Size>
-bool flagset<T, Size>::operator!=(flagset const &rhs) {
+bool flagset<T, Size>::operator!=(flagset const &rhs) const {
     return flags != rhs.flags;
 }
 
@@ -73,7 +73,7 @@ void flagset<T, Size>::reset(std::initializer_list<T> const &list) {
 }
 
 template <typename T, std::size_t Size>
-bool flagset<T, Size>::test(T const &flag) {
+bool flagset<T, Size>::test(T const &flag) const {
     return flags.test(static_cast<flags_size_t>(flag));
 }
 }

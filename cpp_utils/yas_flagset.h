@@ -26,14 +26,14 @@ class flagset {
     flagset<T> &operator=(flagset<T> const &);
     flagset<T> &operator=(flagset<T> &&);
 
-    bool operator==(flagset const &);
-    bool operator!=(flagset const &);
+    bool operator==(flagset const &) const;
+    bool operator!=(flagset const &) const;
 
     void set(T const &);
     void set(std::initializer_list<T> const &);
     void reset(T const &);
     void reset(std::initializer_list<T> const &);
-    bool test(T const &);
+    bool test(T const &) const;
 };
 }
 
