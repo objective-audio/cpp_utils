@@ -18,15 +18,14 @@ enum class property_method {
 struct null_key {};
 
 template <typename T, typename K = null_key>
-struct property_args {
-    T value;
-    K key;
-};
-
-template <typename T, typename K = null_key>
 class property : public base {
    public:
     class impl;
+
+    struct args {
+        T value;
+        K key;
+    };
 
     struct change_context {
         T const &old_value;
@@ -38,8 +37,8 @@ class property : public base {
     using observer_t = observer<change_context, property_method>;
 
     property();
-    explicit property(property_args<T, K> const &);
-    explicit property(property_args<T, K> &&);
+    explicit property(args const &);
+    explicit property(args &&);
     property(std::nullptr_t);
 
     bool operator==(property const &) const;
