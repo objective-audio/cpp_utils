@@ -68,7 +68,7 @@ struct test_class {
 }
 
 - (void)test_create_property_by_copy_constructor {
-    property_args<float, int> args{.key = 1, .value = 2.0f};
+    property<float, int>::args args{.key = 1, .value = 2.0f};
     property<float, int> property{args};
 
     XCTAssertEqual(property.key(), 1);

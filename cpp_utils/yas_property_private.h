@@ -10,10 +10,10 @@ namespace yas {
 template <typename T, typename K>
 class property<T, K>::impl : public base::impl {
    public:
-    impl(property_args<T, K> const &args) : _args(args) {
+    impl(args const &args) : _args(args) {
     }
 
-    impl(property_args<T, K> &&args) : _args(std::move(args)) {
+    impl(args &&args) : _args(std::move(args)) {
     }
 
     K &key() {
@@ -34,7 +34,7 @@ class property<T, K>::impl : public base::impl {
 
    private:
     std::mutex _notify_mutex;
-    property_args<T, K> _args;
+    args _args;
     subject_t _subject;
 
     template <typename U, typename std::enable_if_t<has_operator_bool<U>::value, std::nullptr_t> = nullptr>
@@ -77,15 +77,15 @@ class property<T, K>::impl : public base::impl {
 };
 
 template <typename T, typename K>
-property<T, K>::property() : property(property_args<T, K>{}) {
+property<T, K>::property() : property(args{}) {
 }
 
 template <typename T, typename K>
-property<T, K>::property(property_args<T, K> const &args) : base(std::make_shared<impl>(args)) {
+property<T, K>::property(args const &args) : base(std::make_shared<impl>(args)) {
 }
 
 template <typename T, typename K>
-property<T, K>::property(property_args<T, K> &&args) : base(std::make_shared<impl>(std::move(args))) {
+property<T, K>::property(args &&args) : base(std::make_shared<impl>(std::move(args))) {
 }
 
 template <typename T, typename K>
