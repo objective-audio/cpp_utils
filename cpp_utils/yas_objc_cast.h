@@ -4,6 +4,8 @@
 
 #pragma once
 
+#include <objc/NSObject.h>
+
 namespace yas {
 template <typename T>
 T *objc_cast(id const objc_obj) {
