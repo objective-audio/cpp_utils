@@ -23,6 +23,8 @@
 		B63C48B81C3945AE00B63598 /* yas_each_dictionary_tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = B63C48B61C3945AE00B63598 /* yas_each_dictionary_tests.mm */; };
 		B641BFAE1C2509FE00F742B4 /* yas_stl_utils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B641BFAD1C2509FE00F742B4 /* yas_stl_utils.cpp */; };
 		B641BFAF1C2509FE00F742B4 /* yas_stl_utils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B641BFAD1C2509FE00F742B4 /* yas_stl_utils.cpp */; };
+		B64617C41D1E7E7E0051DFA2 /* yas_objc_cast_tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = B64617C31D1E7E7E0051DFA2 /* yas_objc_cast_tests.mm */; };
+		B64617C51D1E7E7E0051DFA2 /* yas_objc_cast_tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = B64617C31D1E7E7E0051DFA2 /* yas_objc_cast_tests.mm */; };
 		B65BF9181C946F1600856B6A /* yas_protocol.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B65BF9161C946F1600856B6A /* yas_protocol.cpp */; };
 		B65BF9191C946F1600856B6A /* yas_protocol.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B65BF9161C946F1600856B6A /* yas_protocol.cpp */; };
 		B65BF91C1C95072300856B6A /* yas_protocol_tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = B65BF91B1C95072300856B6A /* yas_protocol_tests.mm */; };
@@ -80,6 +82,8 @@
 		B63C48B31C393F7700B63598 /* yas_each_dictionary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = yas_each_dictionary.h; sourceTree = "<group>"; };
 		B63C48B61C3945AE00B63598 /* yas_each_dictionary_tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = yas_each_dictionary_tests.mm; sourceTree = "<group>"; };
 		B641BFAD1C2509FE00F742B4 /* yas_stl_utils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = yas_stl_utils.cpp; sourceTree = "<group>"; };
+		B64617C11D1E7DA20051DFA2 /* yas_objc_cast.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = yas_objc_cast.h; sourceTree = "<group>"; };
+		B64617C31D1E7E7E0051DFA2 /* yas_objc_cast_tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = yas_objc_cast_tests.mm; sourceTree = "<group>"; };
 		B65BF9161C946F1600856B6A /* yas_protocol.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = yas_protocol.cpp; sourceTree = "<group>"; };
 		B65BF9171C946F1600856B6A /* yas_protocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = yas_protocol.h; sourceTree = "<group>"; };
 		B65BF91A1C94776800856B6A /* yas_protocol_private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = yas_protocol_private.h; sourceTree = "<group>"; };
@@ -190,6 +194,7 @@
 				B60C5BD51C37FD2C00D7C886 /* yas_version_tests.mm */,
 				B6C62FA71D06E584001952EC /* yas_flagset_tests.mm */,
 				B66848511D14DBE200547947 /* yas_to_enum_tests.mm */,
+				B64617C31D1E7E7E0051DFA2 /* yas_objc_cast_tests.mm */,
 			);
 			path = cpp_utils_test;
 			sourceTree = "<group>";
@@ -216,6 +221,7 @@
 				B6C62FA41D06E438001952EC /* yas_flagset.h */,
 				B6626AB71C15B4230038175B /* yas_flex_ptr.cpp */,
 				B6626AB81C15B4230038175B /* yas_flex_ptr.h */,
+				B64617C11D1E7DA20051DFA2 /* yas_objc_cast.h */,
 				B6A5CA441CAD7A2600214DD6 /* yas_objc_ptr_private.h */,
 				B6CA03CC1CAD644900CC31FF /* yas_objc_ptr.h */,
 				B6A5CA491CAE191B00214DD6 /* yas_objc_ptr.mm */,
@@ -348,6 +354,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B65BF9181C946F1600856B6A /* yas_protocol.cpp in Sources */,
+				B64617C41D1E7E7E0051DFA2 /* yas_objc_cast_tests.mm in Sources */,
 				B63C48B41C393F7700B63598 /* yas_each_dictionary.cpp in Sources */,
 				B6626AD61C15B47C0038175B /* yas_base_tests.mm in Sources */,
 				B6C62FA81D06E584001952EC /* yas_flagset_tests.mm in Sources */,
@@ -383,6 +390,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B65BF9191C946F1600856B6A /* yas_protocol.cpp in Sources */,
+				B64617C51D1E7E7E0051DFA2 /* yas_objc_cast_tests.mm in Sources */,
 				B63C48B51C393F7700B63598 /* yas_each_dictionary.cpp in Sources */,
 				B6626AE91C15B92B0038175B /* yas_result_tests.mm in Sources */,
 				B6C62FA91D06E584001952EC /* yas_flagset_tests.mm in Sources */,
