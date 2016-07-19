@@ -43,5 +43,7 @@ class operation_queue : public base {
 
     void suspend();
     void resume();
+
+    bool is_operating() const;
 };
 }

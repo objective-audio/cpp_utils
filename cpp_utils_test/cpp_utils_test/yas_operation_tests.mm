@@ -8,6 +8,7 @@
 #import "yas_operation.h"
 
 using namespace std::chrono_literals;
+using namespace yas;
 
 @interface yas_operation_tests : XCTestCase
 
@@ -26,9 +27,9 @@ using namespace std::chrono_literals;
 - (void)test_call_one_operation {
     XCTestExpectation *exe_ex = [self expectationWithDescription:@"call execution"];
 
-    yas::operation_queue queue;
-    yas::operation operation([exe_ex](yas::operation const &ope) { [exe_ex fulfill]; });
-    queue.push_back(operation);
+    operation_queue queue;
+    operation op([exe_ex](operation const &) { [exe_ex fulfill]; });
+    queue.push_back(op);
 
     [self waitForExpectationsWithTimeout:1.0 handler:nil];
 }
@@ -39,17 +40,17 @@ using namespace std::chrono_literals;
     std::atomic<int> count;
     count = 0;
 
-    yas::operation_queue queue;
+    operation_queue queue;
 
-    yas::operation operation_1([self, &count, exe_ex](yas::operation const &op) {
+    operation operation_1([self, &count, exe_ex](operation const &op) {
         XCTAssertEqual(count.load(), 0);
         ++count;
     });
-    yas::operation operation_2([self, &count, exe_ex](yas::operation const &op) {
+    operation operation_2([self, &count, exe_ex](operation const &op) {
         XCTAssertEqual(count.load(), 1);
         ++count;
     });
-    yas::operation operation_3([self, &count, exe_ex](yas::operation const &op) {
+    operation operation_3([self, &count, exe_ex](operation const &op) {
         XCTAssertEqual(count.load(), 2);
         ++count;
         [exe_ex fulfill];
@@ -67,18 +68,18 @@ using namespace std::chrono_literals;
 - (void)test_suspend {
     XCTestExpectation *exe_ex = [self expectationWithDescription:@"call execution"];
 
-    yas::operation_queue queue;
+    operation_queue queue;
 
     queue.suspend();
 
     bool called = false;
 
-    yas::operation operation([&called, exe_ex](yas::operation const &ope) {
+    operation op([&called, exe_ex](operation const &) {
         called = true;
         [exe_ex fulfill];
     });
 
-    queue.push_back(operation);
+    queue.push_back(op);
 
     [NSThread sleepForTimeInterval:0.1];
 
@@ -97,19 +98,19 @@ using namespace std::chrono_literals;
     std::atomic<int> count;
     count = 0;
 
-    yas::operation_queue queue;
+    operation_queue queue;
 
     queue.suspend();
 
-    yas::operation operation_1([self, &count, exe_ex](yas::operation const &op) {
+    operation operation_1([self, &count, exe_ex](operation const &op) {
         XCTAssertEqual(count.load(), 0);
         ++count;
     });
-    yas::operation operation_2([self, &count, exe_ex](yas::operation const &op) {
+    operation operation_2([self, &count, exe_ex](operation const &op) {
         XCTAssertEqual(count.load(), 1);
         ++count;
     });
-    yas::operation operation_3([self, &count, exe_ex](yas::operation const &op) {
+    operation operation_3([self, &count, exe_ex](operation const &op) {
         XCTAssertEqual(count.load(), 2);
         ++count;
         [exe_ex fulfill];
@@ -127,17 +128,17 @@ using namespace std::chrono_literals;
 }
 
 - (void)test_operation_cancel {
-    yas::operation_queue queue;
+    operation_queue queue;
 
     queue.suspend();
 
     bool called = false;
 
-    yas::operation operation([&called](yas::operation const &op) { called = true; });
+    operation op([&called](operation const &) { called = true; });
 
-    queue.push_back(operation);
+    queue.push_back(op);
 
-    operation.cancel();
+    op.cancel();
 
     queue.resume();
 
@@ -147,17 +148,17 @@ using namespace std::chrono_literals;
 }
 
 - (void)test_cancel_operation_from_queue {
-    yas::operation_queue queue;
+    operation_queue queue;
 
     queue.suspend();
 
     bool called = false;
 
-    yas::operation operation([&called](yas::operation const &op) { called = true; });
+    operation op([&called](operation const &) { called = true; });
 
-    queue.push_back(operation);
+    queue.push_back(op);
 
-    queue.cancel(operation);
+    queue.cancel(op);
 
     queue.resume();
 
@@ -167,7 +168,7 @@ using namespace std::chrono_literals;
 }
 
 - (void)test_cancel_current_operation {
-    yas::operation_queue queue;
+    operation_queue queue;
 
     queue.suspend();
 
@@ -179,18 +180,18 @@ using namespace std::chrono_literals;
     auto wait_future = wait_promise.get_future();
     auto end_future = end_promise.get_future();
 
-    yas::operation operation([self, &start_promise, &wait_future, &end_promise](yas::operation const &op) {
+    operation op([self, &start_promise, &wait_future, &end_promise](operation const &op) {
         start_promise.set_value();
         wait_future.get();
         end_promise.set_value(op.is_canceled());
     });
 
-    queue.push_back(operation);
+    queue.push_back(op);
     queue.resume();
 
     start_future.get();
 
-    queue.cancel(operation);
+    queue.cancel(op);
 
     wait_promise.set_value();
 
@@ -198,8 +199,8 @@ using namespace std::chrono_literals;
 }
 
 - (void)test_null_created {
-    yas::operation_queue queue{nullptr};
-    yas::operation operation{nullptr};
+    operation_queue queue{nullptr};
+    operation operation{nullptr};
 
     XCTAssertFalse(queue);
     XCTAssertFalse(operation);
@@ -211,42 +212,42 @@ using namespace std::chrono_literals;
     std::atomic<int> count;
     count = 0;
 
-    yas::operation_queue queue{3};
+    operation_queue queue{3};
 
     queue.suspend();
 
-    yas::operation operation_1a(
-        [self, &count](yas::operation const &op) {
+    operation operation_1a(
+        [self, &count](operation const &op) {
             XCTAssertEqual(count.load(), 0);
             ++count;
         },
         {.priority = 0});
-    yas::operation operation_1b(
-        [self, &count](yas::operation const &op) {
+    operation operation_1b(
+        [self, &count](operation const &op) {
             XCTAssertEqual(count.load(), 1);
             ++count;
         },
         {.priority = 0});
-    yas::operation operation_2a(
-        [self, &count](yas::operation const &op) {
+    operation operation_2a(
+        [self, &count](operation const &op) {
             XCTAssertEqual(count.load(), 2);
             ++count;
         },
         {.priority = 1});
-    yas::operation operation_2b(
-        [self, &count](yas::operation const &op) {
+    operation operation_2b(
+        [self, &count](operation const &op) {
             XCTAssertEqual(count.load(), 3);
             ++count;
         },
         {.priority = 1});
-    yas::operation operation_3a(
-        [self, &count](yas::operation const &op) {
+    operation operation_3a(
+        [self, &count](operation const &op) {
             XCTAssertEqual(count.load(), 4);
             ++count;
         },
         {.priority = 2});
-    yas::operation operation_3b(
-        [self, &count, exe_ex](yas::operation const &op) {
+    operation operation_3b(
+        [self, &count, exe_ex](operation const &op) {
             XCTAssertEqual(count.load(), 5);
             ++count;
             [exe_ex fulfill];
@@ -268,19 +269,19 @@ using namespace std::chrono_literals;
 }
 
 - (void)test_wait {
-    yas::operation_queue queue;
+    operation_queue queue;
 
     queue.suspend();
 
     bool called = false;
 
-    yas::operation operation([&called](yas::operation const &op) {
+    operation op([&called](operation const &) {
         std::this_thread::sleep_for(100ms);
 
         called = true;
     });
 
-    queue.push_back(operation);
+    queue.push_back(op);
 
     queue.resume();
 
@@ -290,24 +291,24 @@ using namespace std::chrono_literals;
 }
 
 - (void)test_wait_failed {
-    yas::operation_queue queue;
+    operation_queue queue;
 
     queue.suspend();
 
-    yas::operation operation([](yas::operation const &op) {});
+    operation op([](operation const &) {});
 
-    queue.push_back(operation);
+    queue.push_back(op);
 
     XCTAssertThrows(queue.wait_until_all_operations_are_finished());
 }
 
 - (void)test_cancel_by_push_cancel_id {
-    yas::operation_queue queue;
+    operation_queue queue;
 
-    yas::base cancel_id_a{nullptr};
-    yas::base cancel_id_b{nullptr};
-    cancel_id_a.set_impl_ptr(std::make_shared<yas::base::impl>());
-    cancel_id_b.set_impl_ptr(std::make_shared<yas::base::impl>());
+    base cancel_id_a{nullptr};
+    base cancel_id_b{nullptr};
+    cancel_id_a.set_impl_ptr(std::make_shared<base::impl>());
+    cancel_id_b.set_impl_ptr(std::make_shared<base::impl>());
 
     bool called_a_1 = false;
     bool called_a_2 = false;
@@ -315,11 +316,11 @@ using namespace std::chrono_literals;
     bool called_n_1 = false;
     bool called_n_2 = false;
 
-    yas::operation op_a_1{[&called_a_1](auto const &op) { called_a_1 = true; }, {.push_cancel_id = cancel_id_a}};
-    yas::operation op_a_2{[&called_a_2](auto const &op) { called_a_2 = true; }, {.push_cancel_id = cancel_id_a}};
-    yas::operation op_b{[&called_b](auto const &op) { called_b = true; }, {.push_cancel_id = cancel_id_b}};
-    yas::operation op_n_1{[&called_n_1](auto const &op) { called_n_1 = true; }};
-    yas::operation op_n_2{[&called_n_2](auto const &op) { called_n_2 = true; }};
+    operation op_a_1{[&called_a_1](auto const &op) { called_a_1 = true; }, {.push_cancel_id = cancel_id_a}};
+    operation op_a_2{[&called_a_2](auto const &op) { called_a_2 = true; }, {.push_cancel_id = cancel_id_a}};
+    operation op_b{[&called_b](auto const &op) { called_b = true; }, {.push_cancel_id = cancel_id_b}};
+    operation op_n_1{[&called_n_1](auto const &op) { called_n_1 = true; }};
+    operation op_n_2{[&called_n_2](auto const &op) { called_n_2 = true; }};
 
     queue.suspend();
 
@@ -341,16 +342,16 @@ using namespace std::chrono_literals;
 }
 
 - (void)test_cancel_different_priority {
-    yas::operation_queue queue{2};
+    operation_queue queue{2};
 
-    yas::base cancel_id{nullptr};
-    cancel_id.set_impl_ptr(std::make_shared<yas::base::impl>());
+    base cancel_id{nullptr};
+    cancel_id.set_impl_ptr(std::make_shared<base::impl>());
 
     bool called_1 = false;
     bool called_2 = false;
 
-    yas::operation op_1{[&called_1](auto const &op) { called_1 = true; }, {.priority = 0, .push_cancel_id = cancel_id}};
-    yas::operation op_2{[&called_2](auto const &op) { called_2 = true; }, {.priority = 1, .push_cancel_id = cancel_id}};
+    operation op_1{[&called_1](auto const &op) { called_1 = true; }, {.priority = 0, .push_cancel_id = cancel_id}};
+    operation op_2{[&called_2](auto const &op) { called_2 = true; }, {.priority = 1, .push_cancel_id = cancel_id}};
 
     queue.suspend();
 
@@ -363,6 +364,48 @@ using namespace std::chrono_literals;
 
     XCTAssertFalse(called_1);
     XCTAssertTrue(called_2);
+}
+
+- (void)test_is_operating_by_current_operation {
+    operation_queue queue{1};
+
+    XCTAssertFalse(queue.is_operating());
+
+    std::promise<void> promise;
+    auto future = promise.get_future();
+
+    operation op{[&future](auto const &op) { future.get(); }};
+    queue.push_back(std::move(op));
+
+    XCTAssertTrue(queue.is_operating());
+
+    promise.set_value();
+
+    queue.wait_until_all_operations_are_finished();
+
+    XCTAssertFalse(queue.is_operating());
+}
+
+- (void)test_is_operating_by_operations {
+    operation_queue queue{1};
+
+    queue.suspend();
+
+    XCTAssertFalse(queue.is_operating());
+
+    std::promise<void> promise;
+    auto future = promise.get_future();
+
+    operation op{[&promise](auto const &op) { promise.set_value(); }};
+    queue.push_back(std::move(op));
+
+    XCTAssertTrue(queue.is_operating());
+
+    queue.resume();
+
+    future.get();
+
+    XCTAssertFalse(queue.is_operating());
 }
 
 @end

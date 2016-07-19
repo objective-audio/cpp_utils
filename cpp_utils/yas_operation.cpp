@@ -193,6 +193,22 @@ class operation_queue::impl : public base::impl {
         }
     }
 
+    bool is_operating() {
+        std::lock_guard<std::recursive_mutex> lock(_mutex);
+
+        if (_current_operation) {
+            return true;
+        }
+
+        for (auto const &dq : _operations) {
+            if (dq.size() > 0) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
    private:
     operation _current_operation = nullptr;
     std::vector<std::deque<operation>> _operations;
@@ -278,4 +294,8 @@ void operation_queue::suspend() {
 
 void operation_queue::resume() {
     impl_ptr<impl>()->resume();
+}
+
+bool operation_queue::is_operating() const {
+    return impl_ptr<impl>()->is_operating();
 }
