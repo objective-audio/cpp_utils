@@ -65,6 +65,10 @@
 		B6CA03D21CAD6E1600CC31FF /* yas_objc_ptr_tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = B6CA03D01CAD6E1600CC31FF /* yas_objc_ptr_tests.mm */; };
 		B6E745FA1C2EEEB700464402 /* yas_each_index_tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = B6E745F91C2EEEB700464402 /* yas_each_index_tests.mm */; };
 		B6E745FB1C2EEEB700464402 /* yas_each_index_tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = B6E745F91C2EEEB700464402 /* yas_each_index_tests.mm */; };
+		B6F58D1A1D67F1FE00807724 /* yas_delaying_caller.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B6F58D181D67F1FE00807724 /* yas_delaying_caller.cpp */; };
+		B6F58D1B1D67F1FE00807724 /* yas_delaying_caller.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B6F58D181D67F1FE00807724 /* yas_delaying_caller.cpp */; };
+		B6F58D1D1D680C5C00807724 /* yas_delaying_caller_tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = B6F58D1C1D680C5C00807724 /* yas_delaying_caller_tests.mm */; };
+		B6F58D1E1D680C5C00807724 /* yas_delaying_caller_tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = B6F58D1C1D680C5C00807724 /* yas_delaying_caller_tests.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -134,6 +138,9 @@
 		B6E745F61C2EE02B00464402 /* yas_each_index.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = yas_each_index.h; sourceTree = "<group>"; };
 		B6E745F91C2EEEB700464402 /* yas_each_index_tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = yas_each_index_tests.mm; sourceTree = "<group>"; };
 		B6E745FC1C2F823900464402 /* yas_each_index_private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = yas_each_index_private.h; sourceTree = "<group>"; };
+		B6F58D181D67F1FE00807724 /* yas_delaying_caller.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = yas_delaying_caller.cpp; sourceTree = "<group>"; };
+		B6F58D191D67F1FE00807724 /* yas_delaying_caller.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = yas_delaying_caller.h; sourceTree = "<group>"; };
+		B6F58D1C1D680C5C00807724 /* yas_delaying_caller_tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = yas_delaying_caller_tests.mm; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -195,6 +202,7 @@
 				B6C62FA71D06E584001952EC /* yas_flagset_tests.mm */,
 				B66848511D14DBE200547947 /* yas_to_enum_tests.mm */,
 				B64617C31D1E7E7E0051DFA2 /* yas_objc_cast_tests.mm */,
+				B6F58D1C1D680C5C00807724 /* yas_delaying_caller_tests.mm */,
 			);
 			path = cpp_utils_test;
 			sourceTree = "<group>";
@@ -246,6 +254,8 @@
 				B637E6B21C5F807500C8D288 /* yas_unless.h */,
 				B60C5BD11C37F80100D7C886 /* yas_version.cpp */,
 				B60C5BD21C37F80100D7C886 /* yas_version.h */,
+				B6F58D181D67F1FE00807724 /* yas_delaying_caller.cpp */,
+				B6F58D191D67F1FE00807724 /* yas_delaying_caller.h */,
 			);
 			name = cpp_utils;
 			path = ../cpp_utils;
@@ -356,6 +366,7 @@
 				B65BF9181C946F1600856B6A /* yas_protocol.cpp in Sources */,
 				B64617C41D1E7E7E0051DFA2 /* yas_objc_cast_tests.mm in Sources */,
 				B63C48B41C393F7700B63598 /* yas_each_dictionary.cpp in Sources */,
+				B6F58D1D1D680C5C00807724 /* yas_delaying_caller_tests.mm in Sources */,
 				B6626AD61C15B47C0038175B /* yas_base_tests.mm in Sources */,
 				B6C62FA81D06E584001952EC /* yas_flagset_tests.mm in Sources */,
 				B6E745FA1C2EEEB700464402 /* yas_each_index_tests.mm in Sources */,
@@ -378,6 +389,7 @@
 				B6626AD41C15B47C0038175B /* yas_result_tests.mm in Sources */,
 				B60C5BD61C37FD2C00D7C886 /* yas_version_tests.mm in Sources */,
 				B6626AD01C15B47C0038175B /* yas_stl_utils_tests.mm in Sources */,
+				B6F58D1A1D67F1FE00807724 /* yas_delaying_caller.cpp in Sources */,
 				B6626AD11C15B47C0038175B /* yas_flex_pointer_tests.mm in Sources */,
 				B641BFAE1C2509FE00F742B4 /* yas_stl_utils.cpp in Sources */,
 				B60AAA2A1C5DB6D60074C6FA /* yas_chain_tests.mm in Sources */,
@@ -392,6 +404,7 @@
 				B65BF9191C946F1600856B6A /* yas_protocol.cpp in Sources */,
 				B64617C51D1E7E7E0051DFA2 /* yas_objc_cast_tests.mm in Sources */,
 				B63C48B51C393F7700B63598 /* yas_each_dictionary.cpp in Sources */,
+				B6F58D1E1D680C5C00807724 /* yas_delaying_caller_tests.mm in Sources */,
 				B6626AE91C15B92B0038175B /* yas_result_tests.mm in Sources */,
 				B6C62FA91D06E584001952EC /* yas_flagset_tests.mm in Sources */,
 				B6E745FB1C2EEEB700464402 /* yas_each_index_tests.mm in Sources */,
@@ -414,6 +427,7 @@
 				B6626AEA1C15B92B0038175B /* yas_property_tests.mm in Sources */,
 				B60C5BD71C37FD2C00D7C886 /* yas_version_tests.mm in Sources */,
 				B6626AE51C15B9270038175B /* yas_stl_utils_tests.mm in Sources */,
+				B6F58D1B1D67F1FE00807724 /* yas_delaying_caller.cpp in Sources */,
 				B6626AF11C15B93B0038175B /* yas_operation.cpp in Sources */,
 				B641BFAF1C2509FE00F742B4 /* yas_stl_utils.cpp in Sources */,
 				B60AAA2B1C5DB6D60074C6FA /* yas_chain_tests.mm in Sources */,
