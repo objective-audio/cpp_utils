@@ -14,6 +14,7 @@ class delaying_caller {
     delaying_caller();
 
     void request(handler_f);
+    void cancel();
 
     void push();
     void pop();
