@@ -65,4 +65,20 @@ using namespace yas;
     XCTAssertTrue(called_2);
 }
 
+- (void)test_cancel {
+    delaying_caller caller;
+
+    bool called = false;
+
+    caller.push();
+
+    caller.request([&called]() { called = true; });
+
+    caller.cancel();
+
+    caller.pop();
+
+    XCTAssertFalse(called);
+}
+
 @end

@@ -25,6 +25,10 @@ void delaying_caller::request(handler_f handler) {
     }
 }
 
+void delaying_caller::cancel() {
+    _handler = nullptr;
+}
+
 void delaying_caller::push() {
     ++_push_count;
 }
