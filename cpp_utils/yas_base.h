@@ -79,9 +79,16 @@ class weak {
 
     weak(weak<T> const &);
     weak(weak<T> &&);
+
+    template <typename U>
+    weak(weak<U> const &);
+
     weak<T> &operator=(weak<T> const &);
     weak<T> &operator=(weak<T> &&);
     weak<T> &operator=(T const &);
+
+    template <typename U>
+    weak<T> &operator=(weak<U> const &);
 
     explicit operator bool() const;
 

@@ -51,6 +51,12 @@ weak<T>::weak(T const &obj) : _impl(obj.impl_ptr()) {
 }
 
 template <typename T>
+template <typename U>
+weak<T>::weak(weak<U> const &wobj) : _impl(wobj.lock().impl_ptr()) {
+    static_assert(std::is_base_of<T, U>(), "base class is not T.");
+}
+
+template <typename T>
 weak<T>::weak(weak<T> const &) = default;
 
 template <typename T>
@@ -65,6 +71,16 @@ weak<T> &weak<T>::operator=(weak<T> &&) = default;
 template <typename T>
 weak<T> &weak<T>::operator=(T const &obj) {
     _impl = obj.impl_ptr();
+
+    return *this;
+}
+
+template <typename T>
+template <typename U>
+weak<T> &weak<T>::operator=(weak<U> const &wobj) {
+    static_assert(std::is_base_of<T, U>(), "base class is not T.");
+
+    _impl = wobj.lock().impl_ptr();
 
     return *this;
 }
