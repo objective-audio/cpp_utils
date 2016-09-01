@@ -411,4 +411,14 @@ namespace test {
     XCTAssertFalse(is_same(obj4, obj1));
 }
 
+- (void)test_weak_upcast_construct {
+    yas::test::derived3 obj;
+
+    auto weak_obj = to_weak(obj);
+
+    yas::weak<yas::test::derived3base> weak_base_obj{weak_obj};
+
+    XCTAssertTrue(weak_base_obj);
+}
+
 @end
