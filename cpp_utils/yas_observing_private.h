@@ -9,8 +9,6 @@
 #include <unordered_set>
 #include "yas_stl_utils.h"
 
-using namespace std::experimental;
-
 namespace yas {
 
 #pragma mark - impl
@@ -19,14 +17,14 @@ template <typename T, typename Key>
 class observer<T, Key>::impl : public base::impl {
    public:
     class handler_holder {
-        std::unordered_map<optional<Key>, handler_f const> functions;
+        std::unordered_map<std::experimental::optional<Key>, handler_f const> functions;
 
        public:
-        void add_handler(optional<Key> const &key, handler_f &&handler) {
+        void add_handler(std::experimental::optional<Key> const &key, handler_f &&handler) {
             functions.insert(std::make_pair(key, std::move(handler)));
         }
 
-        void remove_handler(optional<Key> const &key) {
+        void remove_handler(std::experimental::optional<Key> const &key) {
             if (functions.count(key) > 0) {
                 functions.erase(key);
             }
@@ -68,10 +66,10 @@ template <typename T, typename Key>
 class subject<T, Key>::impl {
    public:
     using observer_set_t = std::unordered_set<weak<observer<T, Key>>>;
-    using observers_t = std::unordered_map<optional<Key>, observer_set_t>;
+    using observers_t = std::unordered_map<std::experimental::optional<Key>, observer_set_t>;
     observers_t observers;
 
-    void add_observer(observer<T, Key> const &obs, optional<Key> const &key) {
+    void add_observer(observer<T, Key> const &obs, std::experimental::optional<Key> const &key) {
         if (observers.count(key) == 0) {
             observers.insert(std::make_pair(key, observer_set_t()));
         }
@@ -80,7 +78,7 @@ class subject<T, Key>::impl {
         set.insert(weak<observer<T, Key>>(obs));
     }
 
-    void remove_observer(observer<T, Key> const &observer, optional<Key> const &key) {
+    void remove_observer(observer<T, Key> const &observer, std::experimental::optional<Key> const &key) {
         if (observers.count(key) > 0) {
             auto &set = observers.at(key);
 
