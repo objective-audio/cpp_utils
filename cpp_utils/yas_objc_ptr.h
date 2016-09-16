@@ -17,7 +17,7 @@ struct objc_ptr_impl : public base::impl {
     objc_ptr_impl();
     objc_ptr_impl(id const obj);
 
-    ~objc_ptr_impl();
+    virtual ~objc_ptr_impl() final;
 
     void set_object(id const obj);
     void move_object(id const obj);
