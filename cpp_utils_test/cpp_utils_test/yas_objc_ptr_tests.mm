@@ -63,7 +63,7 @@ static int _objc_object_count = 0;
     XCTAssertEqual(_objc_object_count, 0);
 }
 
-- (void)test_set_objec_object_on_strong_container {
+- (void)test_set_objc_object_on_strong_container {
     YASObjCTestObject *objcObject = [[YASObjCTestObject alloc] init];
 
     auto objc_obj = objc_ptr<>{nil};
@@ -235,6 +235,8 @@ static int _objc_object_count = 0;
 
     XCTAssertEqual(_objc_object_count, 0);
 }
+
+#pragma mark -
 
 - (void)test_direct_set {
     YASObjCTestObject *objcObject = [[YASObjCTestObject alloc] init];
