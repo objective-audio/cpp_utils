@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include <functional>
 #include <memory>
 #include <mutex>
 #include "yas_base.h"
@@ -35,6 +36,7 @@ class property : public base {
 
     using subject_t = subject<change_context, property_method>;
     using observer_t = observer<change_context, property_method>;
+    using validator_t = std::function<bool(T const &)>;
 
     property();
     explicit property(args const &);
@@ -51,6 +53,9 @@ class property : public base {
     void set_value(T value);
     T const &value() const;
     T &value();
+
+    void set_validator(validator_t);
+    validator_t const &validator() const;
 
     subject_t &subject();
 };
