@@ -363,4 +363,24 @@ struct test_class {
     XCTAssertFalse(called);
 }
 
+- (void)test_set_validator {
+    yas::property<std::string> property;
+
+    XCTAssertFalse(property.validator());
+
+    property.set_validator([](auto const &value) { return true; });
+
+    XCTAssertTrue(property.validator());
+}
+
+- (void)test_validation {
+    yas::property<std::string> property;
+
+    property.set_validator([](auto const &value) { return value != "no"; });
+
+    XCTAssertNoThrow(property.set_value("yes"));
+    XCTAssertNoThrow(property.set_value(""));
+    XCTAssertThrows(property.set_value("no"));
+}
+
 @end

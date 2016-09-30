@@ -10,6 +10,8 @@ namespace yas {
 template <typename T, typename K>
 class property<T, K>::impl : public base::impl {
    public:
+    validator_t _validator;
+
     impl(args const &args) : _args(args) {
     }
 
@@ -52,6 +54,10 @@ class property<T, K>::impl : public base::impl {
     }
 
     void _set_value_primitive(T &&val) {
+        if (_validator && !_validator(val)) {
+            throw "validation failed";
+        }
+
         if (_subject.has_observer()) {
             if (auto lock = std::unique_lock<std::mutex>(_notify_mutex, std::try_to_lock)) {
                 if (lock.owns_lock()) {
@@ -130,6 +136,16 @@ T const &property<T, K>::value() const {
 template <typename T, typename K>
 T &property<T, K>::value() {
     return impl_ptr<impl>()->value();
+}
+
+template <typename T, typename K>
+void property<T, K>::set_validator(validator_t validator) {
+    impl_ptr<impl>()->_validator = std::move(validator);
+}
+
+template <typename T, typename K>
+typename property<T, K>::validator_t const &property<T, K>::validator() const {
+    return impl_ptr<impl>()->_validator;
 }
 
 template <typename T, typename K>
