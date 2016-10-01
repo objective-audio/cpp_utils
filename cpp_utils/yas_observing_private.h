@@ -238,6 +238,10 @@ void subject<T, Key>::notify(Key const &key) const {
 
 template <typename T, typename Key>
 void subject<T, Key>::notify(Key const &key, T const &object) const {
+    if (!_impl->has_observer()) {
+        return;
+    }
+
     if (_impl->observers.count(key) > 0) {
         for (auto &weak_observer : _impl->observers.at(key)) {
             if (observer<T, Key> obs = weak_observer.lock()) {
