@@ -23,11 +23,6 @@ class property : public base {
    public:
     class impl;
 
-    struct args {
-        T value;
-        K key;
-    };
-
     struct change_context {
         T const &old_value;
         T const &new_value;
@@ -37,6 +32,12 @@ class property : public base {
     using subject_t = subject<change_context, property_method>;
     using observer_t = observer<change_context, property_method>;
     using validator_t = std::function<bool(T const &)>;
+
+    struct args {
+        T value;
+        K key;
+        validator_t validator = nullptr;
+    };
 
     property();
     explicit property(args const &);

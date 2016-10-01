@@ -10,8 +10,6 @@ namespace yas {
 template <typename T, typename K>
 class property<T, K>::impl : public base::impl {
    public:
-    validator_t _validator;
-
     impl(args const &args) : _args(args) {
     }
 
@@ -22,12 +20,20 @@ class property<T, K>::impl : public base::impl {
         return _args.key;
     }
 
-    void set_value(T val) {
+    void set_value(T &&val) {
         _set_value(std::move(val));
     }
 
     T &value() {
         return _args.value;
+    }
+
+    void set_validator(validator_t &&validator) {
+        _args.validator = std::move(validator);
+    }
+
+    validator_t &validator() {
+        return _args.validator;
     }
 
     subject_t &subject() {
@@ -54,7 +60,7 @@ class property<T, K>::impl : public base::impl {
     }
 
     void _set_value_primitive(T &&val) {
-        if (_validator && !_validator(val)) {
+        if (_args.validator && !_args.validator(val)) {
             throw "validation failed";
         }
 
@@ -140,12 +146,12 @@ T &property<T, K>::value() {
 
 template <typename T, typename K>
 void property<T, K>::set_validator(validator_t validator) {
-    impl_ptr<impl>()->_validator = std::move(validator);
+    impl_ptr<impl>()->set_validator(std::move(validator));
 }
 
 template <typename T, typename K>
 typename property<T, K>::validator_t const &property<T, K>::validator() const {
-    return impl_ptr<impl>()->_validator;
+    return impl_ptr<impl>()->validator();
 }
 
 template <typename T, typename K>
