@@ -67,6 +67,21 @@ struct test_class {
     XCTAssertNotEqual(float_property.value(), value1);
 }
 
+- (void)test_create_property_with_validator {
+    bool called = false;
+
+    yas::property<float> property{{.value = 1.0f, .validator = [&called](auto const &value) {
+                                       called = true;
+                                       return true;
+                                   }}};
+
+    XCTAssertTrue(property.validator());
+
+    property.set_value(2.0f);
+
+    XCTAssertTrue(called);
+}
+
 - (void)test_create_property_by_copy_constructor {
     property<float, int>::args args{.key = 1, .value = 2.0f};
     property<float, int> property{args};
