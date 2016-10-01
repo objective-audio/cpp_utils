@@ -10,14 +10,17 @@ namespace yas {
 template <typename T, typename K>
 class property<T, K>::impl : public base::impl {
    public:
-    impl(args const &args) : _args(args) {
+    impl(args const &args) : _value(args.value), _key(args.key), _validator(args.validator) {
+        _validate(_value);
     }
 
-    impl(args &&args) : _args(std::move(args)) {
+    impl(args &&args)
+        : _value(std::move(args.value)), _key(std::move(args.key)), _validator(std::move(args.validator)) {
+        _validate(_value);
     }
 
     K &key() {
-        return _args.key;
+        return _key;
     }
 
     void set_value(T &&val) {
@@ -25,15 +28,16 @@ class property<T, K>::impl : public base::impl {
     }
 
     T &value() {
-        return _args.value;
+        return _value;
     }
 
     void set_validator(validator_t &&validator) {
-        _args.validator = std::move(validator);
+        _validator = std::move(validator);
+        _validate(_value);
     }
 
     validator_t &validator() {
-        return _args.validator;
+        return _validator;
     }
 
     subject_t &subject() {
@@ -41,28 +45,28 @@ class property<T, K>::impl : public base::impl {
     }
 
    private:
+    T _value;
+    K _key;
+    validator_t _validator = nullptr;
     std::mutex _notify_mutex;
-    args _args;
     subject_t _subject;
 
     template <typename U, typename std::enable_if_t<has_operator_bool<U>::value, std::nullptr_t> = nullptr>
     void _set_value(U &&value) {
-        if (_args.value != value && (_args.value || value)) {
+        if (_value != value && (_value || value)) {
             _set_value_primitive(std::move(value));
         }
     }
 
     template <typename U, typename std::enable_if_t<!has_operator_bool<U>::value, std::nullptr_t> = nullptr>
     void _set_value(U &&value) {
-        if (_args.value != value) {
+        if (_value != value) {
             _set_value_primitive(std::move(value));
         }
     }
 
     void _set_value_primitive(T &&val) {
-        if (_args.validator && !_args.validator(val)) {
-            throw "validation failed";
-        }
+        _validate(val);
 
         if (_subject.has_observer()) {
             if (auto lock = std::unique_lock<std::mutex>(_notify_mutex, std::try_to_lock)) {
@@ -70,20 +74,26 @@ class property<T, K>::impl : public base::impl {
                     if (auto property = cast<yas::property<T, K>>()) {
                         _subject.notify(property_method::will_change,
                                         yas::property<T, K>::change_context{
-                                            .old_value = _args.value, .new_value = val, .property = property});
+                                            .old_value = _value, .new_value = val, .property = property});
 
-                        auto old_value = std::move(_args.value);
-                        _args.value = std::move(val);
+                        auto old_value = std::move(_value);
+                        _value = std::move(val);
 
                         _subject.notify(property_method::did_change,
                                         yas::property<T, K>::change_context{
-                                            .old_value = old_value, .new_value = _args.value, .property = property});
+                                            .old_value = old_value, .new_value = _value, .property = property});
                     }
                 }
             }
 
         } else {
-            _args.value = std::move(val);
+            _value = std::move(val);
+        }
+    }
+
+    void _validate(T &value) {
+        if (_validator && !_validator(value)) {
+            throw "validation failed";
         }
     }
 };
