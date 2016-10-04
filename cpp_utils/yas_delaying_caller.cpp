@@ -16,7 +16,7 @@ void delaying_caller::request(handler_f handler) {
 
     if (_push_count == 0) {
         if (_handler) {
-            throw "_handler always exists";
+            throw "_handler always exists.";
         }
 
         handler();

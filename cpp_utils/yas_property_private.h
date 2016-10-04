@@ -85,7 +85,6 @@ class property<T, K>::impl : public base::impl {
                     }
                 }
             }
-
         } else {
             _value = std::move(val);
         }
@@ -93,7 +92,7 @@ class property<T, K>::impl : public base::impl {
 
     void _validate(T &value) {
         if (_validator && !_validator(value)) {
-            throw "validation failed";
+            throw "validation failed.";
         }
     }
 };
