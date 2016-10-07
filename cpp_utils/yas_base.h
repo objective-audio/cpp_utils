@@ -98,6 +98,7 @@ class weak {
     bool operator!=(weak const &rhs) const;
 
     T lock() const;
+    void lock(std::function<void(T &)> const &) const;
 
     void reset();
 

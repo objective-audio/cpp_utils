@@ -170,6 +170,25 @@ namespace test {
     }
 }
 
+- (void)test_lock_in_function {
+    yas::test::derived1 derived;
+    
+    derived.set_value(2.0f);
+    
+    auto weak = yas::to_weak(derived);
+    
+    float previous_value = 0.0f;
+    
+    weak.lock([&previous_value](auto &derived){
+        previous_value = derived.value();
+        
+        derived.set_value(3.0f);
+    });
+    
+    XCTAssertEqual(previous_value, 2.0f);
+    XCTAssertEqual(derived.value(), 3.0f);
+}
+
 - (void)test_cast_success {
     yas::test::derived1 derived;
     yas::base base = derived;
