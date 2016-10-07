@@ -131,6 +131,13 @@ T weak<T>::lock() const {
 }
 
 template <typename T>
+void weak<T>::lock(std::function<void(T &)> const &func) const {
+    if (auto obj = lock()) {
+        func(obj);
+    }
+}
+
+template <typename T>
 void weak<T>::reset() {
     _impl.reset();
 }
