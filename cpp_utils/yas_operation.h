@@ -8,8 +8,6 @@
 #include "yas_operation_protocol.h"
 
 namespace yas {
-class operation;
-
 class operation : public base {
    public:
     class impl;
