@@ -80,4 +80,25 @@ template <typename T>
 each_index<T> make_each(T const start, T const end) {
     return each_index<T>(start, end);
 }
+
+#pragma mark - fast_each
+
+template <typename T>
+fast_each<T, enable_if_integral_t<T>>::fast_each(T const end) : fast_each(0, end) {
+}
+
+template <typename T>
+fast_each<T, enable_if_integral_t<T>>::fast_each(T const start, T const end)
+    : _start(start), _end(start > end ? start : end), _index(start), _next(start) {
+}
+
+template <typename T>
+fast_each<T> make_fast_each(T const end) {
+    return fast_each<T>(end);
+}
+
+template <typename T>
+fast_each<T> make_fast_each(T const start, T const end) {
+    return fast_each<T>(start, end);
+}
 }
