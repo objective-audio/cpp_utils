@@ -11,28 +11,52 @@ ptr_enumerator<T>::ptr_enumerator(T *pointer, length_t const length)
 }
 
 template <typename T>
-T const *const *ptr_enumerator<T>::ptr() const {
+ptr_enumerator<T>::ptr_enumerator(std::vector<T> &vec) : ptr_enumerator(vec.data(), static_cast<length_t>(vec.size())) {
+}
+
+template <typename T>
+T const *const *ptr_enumerator<T>::ptr_ptr() const {
     return _ptr_ptr;
 }
 
 template <typename T>
-T *const *ptr_enumerator<T>::ptr() {
+T *const *ptr_enumerator<T>::ptr_ptr() {
     return _ptr_ptr;
 }
 
 template <typename T>
-typename ptr_enumerator<T>::index_t const *ptr_enumerator<T>::index() const {
+typename ptr_enumerator<T>::index_t const *ptr_enumerator<T>::index_ptr() const {
     return &_index;
 }
 
 template <typename T>
-void ptr_enumerator<T>::move() {
-    yas_ptr_enumerator_move(*this);
+bool ptr_enumerator<T>::has_value() const {
+    return yas_ptr_enumerator_has_value(*this);
 }
 
 template <typename T>
-void ptr_enumerator<T>::stop() {
-    yas_ptr_enumerator_stop(*this);
+T const &ptr_enumerator<T>::value() const {
+    return yas_ptr_enumerator_value(*this);
+}
+
+template <typename T>
+T &ptr_enumerator<T>::value() {
+    return yas_ptr_enumerator_value(*this);
+}
+
+template <typename T>
+void ptr_enumerator<T>::set_value(T const &value) {
+    yas_ptr_enumerator_value(*this) = value;
+}
+
+template <typename T>
+void ptr_enumerator<T>::set_value(T &&value) {
+    yas_ptr_enumerator_value(*this) = std::move(value);
+}
+
+template <typename T>
+typename ptr_enumerator<T>::index_t ptr_enumerator<T>::index() const {
+    return yas_ptr_enumerator_index(*this);
 }
 
 template <typename T>
@@ -44,6 +68,16 @@ void ptr_enumerator<T>::set_index(uint32_t const index) {
     }
     _index = index;
     _ptr = _top_ptr + index;
+}
+
+template <typename T>
+void ptr_enumerator<T>::move() {
+    yas_ptr_enumerator_move(*this);
+}
+
+template <typename T>
+void ptr_enumerator<T>::stop() {
+    yas_ptr_enumerator_stop(*this);
 }
 
 template <typename T>
