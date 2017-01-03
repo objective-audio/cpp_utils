@@ -5,6 +5,8 @@
 #pragma once
 
 namespace yas {
+#pragma mark - ptr
+
 template <typename T>
 ptr_enumerator<T>::ptr_enumerator(T *pointer, length_t const length)
     : _ptr(pointer), _top_ptr(pointer), _ptr_ptr(&_ptr), _index(0), length(length) {
@@ -90,5 +92,26 @@ template <typename T>
 ptr_enumerator<T> &ptr_enumerator<T>::operator++() {
     yas_ptr_enumerator_move(*this);
     return *this;
+}
+
+#pragma mark - index
+
+template <typename T>
+fast_each<T, enable_if_integral_t<T>>::fast_each(T const end) : fast_each(0, end) {
+}
+
+template <typename T>
+fast_each<T, enable_if_integral_t<T>>::fast_each(T const start, T const end)
+    : _end(start > end ? start : end), _index(start), _next(start) {
+}
+
+template <typename T>
+fast_each<T> make_fast_each(T const end) {
+    return fast_each<T>(end);
+}
+
+template <typename T>
+fast_each<T> make_fast_each(T const start, T const end) {
+    return fast_each<T>(start, end);
 }
 }

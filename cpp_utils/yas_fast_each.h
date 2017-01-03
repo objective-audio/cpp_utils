@@ -9,6 +9,9 @@
 
 namespace yas {
 template <typename T>
+using enable_if_integral_t = typename std::enable_if_t<std::is_integral<T>::value>;
+
+template <typename T>
 struct ptr_enumerator {
     using index_t = uint32_t;
     using length_t = uint32_t;
@@ -41,6 +44,26 @@ struct ptr_enumerator {
     index_t _index;
     length_t const length;
 };
+
+template <typename T, typename Enable = void>
+class fast_each;
+
+template <typename T>
+class fast_each<T, enable_if_integral_t<T>> {
+   public:
+    fast_each(T const end);
+    fast_each(T const start, T const end);
+
+    T _end;
+    T _index;
+    T _next;
+};
+
+template <typename T>
+fast_each<T> make_fast_each(T const end);
+
+template <typename T>
+fast_each<T> make_fast_each(T const start, T const end);
 }
 
 #define yas_ptr_enumerator_move(__v)      \
@@ -61,5 +84,10 @@ struct ptr_enumerator {
 #define yas_ptr_enumerator_value(__v) (*(__v)._ptr)
 #define yas_ptr_enumerator_index(__v) ((__v)._index)
 #define yas_ptr_enumerator_has_value(__v) ((__v)._ptr != nullptr)
+
+#define yas_fast_each_stop(__v) \
+    { (__v)._next = (__v)._end; }
+#define yas_fast_each_index(__v) (__v)._index
+#define yas_fast_each_next(__v) (((__v)._index = (__v)._next++) < (__v)._end)
 
 #include "yas_fast_each_private.h"

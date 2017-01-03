@@ -3,7 +3,7 @@
 //
 
 #import <XCTest/XCTest.h>
-#import "yas_each_index.h"
+#import "yas_fast_each.h"
 
 using namespace yas;
 
@@ -26,7 +26,6 @@ using namespace yas;
 
     XCTAssertEqual(each._index, 0);
     XCTAssertEqual(each._next, 0);
-    XCTAssertEqual(each._start, 0);
     XCTAssertEqual(each._end, 4);
 }
 
@@ -35,7 +34,6 @@ using namespace yas;
 
     XCTAssertEqual(each._index, 1);
     XCTAssertEqual(each._next, 1);
-    XCTAssertEqual(each._start, 1);
     XCTAssertEqual(each._end, 3);
 }
 
