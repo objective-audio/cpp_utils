@@ -148,9 +148,9 @@
 		B6DF84801D8B814C00A2EE48 /* yas_cf_ref.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = yas_cf_ref.h; sourceTree = "<group>"; };
 		B6DF84831D8B816200A2EE48 /* yas_cf_ref_private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = yas_cf_ref_private.h; sourceTree = "<group>"; };
 		B6DF84841D8B81C800A2EE48 /* yas_cf_ref_tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = yas_cf_ref_tests.mm; sourceTree = "<group>"; };
-		B6E0CB3A1E17CB5E00329906 /* yas_ptr_enumerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = yas_ptr_enumerator.h; sourceTree = "<group>"; };
+		B6E0CB3A1E17CB5E00329906 /* yas_fast_each.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = yas_fast_each.h; sourceTree = "<group>"; };
 		B6E0CB3D1E17D4C300329906 /* yas_ptr_enumrator_tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = yas_ptr_enumrator_tests.mm; sourceTree = "<group>"; };
-		B6E0CB401E18A2B000329906 /* yas_ptr_enumerator_private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = yas_ptr_enumerator_private.h; sourceTree = "<group>"; };
+		B6E0CB401E18A2B000329906 /* yas_fast_each_private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = yas_fast_each_private.h; sourceTree = "<group>"; };
 		B6E745F61C2EE02B00464402 /* yas_each_index.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = yas_each_index.h; sourceTree = "<group>"; };
 		B6E745F91C2EEEB700464402 /* yas_each_index_tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = yas_each_index_tests.mm; sourceTree = "<group>"; };
 		B6E745FC1C2F823900464402 /* yas_each_index_private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = yas_each_index_private.h; sourceTree = "<group>"; };
@@ -262,8 +262,8 @@
 				B6D0DDE41C8164460086AA8E /* yas_operation_protocol.h */,
 				B6626ABB1C15B4230038175B /* yas_operation.cpp */,
 				B6626ABC1C15B4230038175B /* yas_operation.h */,
-				B6E0CB3A1E17CB5E00329906 /* yas_ptr_enumerator.h */,
-				B6E0CB401E18A2B000329906 /* yas_ptr_enumerator_private.h */,
+				B6E0CB3A1E17CB5E00329906 /* yas_fast_each.h */,
+				B6E0CB401E18A2B000329906 /* yas_fast_each_private.h */,
 				B6626ABE1C15B4230038175B /* yas_property_private.h */,
 				B6626ABD1C15B4230038175B /* yas_property.h */,
 				B65BF91A1C94776800856B6A /* yas_protocol_private.h */,

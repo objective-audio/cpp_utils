@@ -3,7 +3,7 @@
 //
 
 #import <XCTest/XCTest.h>
-#import "yas_ptr_enumerator.h"
+#import "yas_fast_each.h"
 #import <array>
 
 using namespace yas;
