@@ -113,47 +113,63 @@ using namespace yas;
 - (void)test_fast_each_pointer_next {
     std::array<int16_t, 3> array{5, 6, 7};
     auto each = make_fast_each(array.data(), array.size());
-    
+
     XCTAssertTrue(yas_fast_each_next(each));
-    
+
     XCTAssertEqual(yas_fast_each_index(each), 0);
     XCTAssertEqual(yas_fast_each_value(each), 5);
     XCTAssertEqual(&yas_fast_each_value(each), &array[0]);
-    
+
     XCTAssertTrue(yas_fast_each_next(each));
-    
+
     XCTAssertEqual(yas_fast_each_index(each), 1);
     XCTAssertEqual(yas_fast_each_value(each), 6);
     XCTAssertEqual(&yas_fast_each_value(each), &array[1]);
-    
+
     XCTAssertTrue(yas_fast_each_next(each));
-    
+
     XCTAssertEqual(yas_fast_each_index(each), 2);
     XCTAssertEqual(yas_fast_each_value(each), 7);
     XCTAssertEqual(&yas_fast_each_value(each), &array[2]);
-    
+
     XCTAssertFalse(yas_fast_each_next(each));
 }
 
 - (void)test_fast_each_pointer_stop {
     std::array<int16_t, 3> array{0, 1, 2};
     auto each = make_fast_each(array.data(), array.size());
-    
+
     auto count = 0;
     auto last_value = -1;
-    
+
     while (yas_fast_each_next(each)) {
         if (yas_fast_each_index(each) == 1) {
             yas_fast_each_stop(each)
         }
-        
+
         last_value = yas_fast_each_value(each);
-        
+
         ++count;
     }
-    
+
     XCTAssertEqual(count, 2);
     XCTAssertEqual(last_value, 1);
+}
+
+- (void)test_fast_each_pointer_write {
+    std::vector<int8_t> vec;
+    vec.resize(4, 0);
+
+    auto each = make_fast_each(vec.data(), vec.size());
+
+    while (yas_fast_each_next(each)) {
+        yas_fast_each_value(each) = yas_fast_each_index(each);
+    }
+
+    XCTAssertEqual(vec[0], 0);
+    XCTAssertEqual(vec[1], 1);
+    XCTAssertEqual(vec[2], 2);
+    XCTAssertEqual(vec[3], 3);
 }
 
 @end
