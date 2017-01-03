@@ -65,10 +65,9 @@ struct fast_each<T, enable_if_pointer_t<T>> {
     fast_each(T, std::size_t const length);
 
     T _ptr;
-    T _top_ptr;
-    T *_ptr_ptr;
+    std::size_t _end;
     std::size_t _index;
-    std::size_t const length;
+    std::size_t _next;
 };
 
 template <typename T>
@@ -78,7 +77,7 @@ template <typename T>
 fast_each<T> make_fast_each(T const start, T const end);
 
 template <typename T>
-fast_each<T> make_fast_each(T ptr, std::size_t const length);
+fast_each<T> make_fast_each(T ptr, std::size_t const end);
 }
 
 #define yas_ptr_enumerator_move(__v)          \
@@ -110,5 +109,6 @@ fast_each<T> make_fast_each(T ptr, std::size_t const length);
     { (__v)._next = (__v)._end; }
 #define yas_fast_each_index(__v) (__v)._index
 #define yas_fast_each_next(__v) (((__v)._index = (__v)._next++) < (__v)._end)
+#define yas_fast_each_value(__v) ((__v)._ptr[(__v)._index])
 
 #include "yas_fast_each_private.h"

@@ -115,15 +115,15 @@ fast_each<T> make_fast_each(T const start, T const end) {
     return fast_each<T>(start, end);
 }
 
-template <typename T>
-fast_each<T> make_fast_each(T ptr, std::size_t const length) {
-    return fast_each<T>(ptr, length);
-}
-
 #pragma mark - pointer
 
 template <typename T>
-fast_each<T, enable_if_pointer_t<T>>::fast_each(T ptr, std::size_t const length)
-    : _ptr(ptr), _top_ptr(ptr), _ptr_ptr(&_ptr), _index(0), length(length) {
+fast_each<T, enable_if_pointer_t<T>>::fast_each(T ptr, std::size_t const end)
+    : _ptr(ptr), _end(end), _index(0), _next(0) {
+}
+
+template <typename T>
+fast_each<T> make_fast_each(T ptr, std::size_t const length) {
+    return fast_each<T>(ptr, length);
 }
 }
