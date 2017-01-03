@@ -10,6 +10,8 @@
 namespace yas {
 template <typename T>
 using enable_if_integral_t = typename std::enable_if_t<std::is_integral<T>::value>;
+template <typename T>
+using enable_if_pointer_t = typename std::enable_if_t<std::is_pointer<T>::value>;
 
 template <typename T>
 struct ptr_enumerator {
@@ -49,8 +51,7 @@ template <typename T, typename Enable = void>
 class fast_each;
 
 template <typename T>
-class fast_each<T, enable_if_integral_t<T>> {
-   public:
+struct fast_each<T, enable_if_integral_t<T>> {
     fast_each(T const end);
     fast_each(T const start, T const end);
 
@@ -60,10 +61,24 @@ class fast_each<T, enable_if_integral_t<T>> {
 };
 
 template <typename T>
+struct fast_each<T, enable_if_pointer_t<T>> {
+    fast_each(T, std::size_t const length);
+
+    T _ptr;
+    T _top_ptr;
+    T *_ptr_ptr;
+    std::size_t _index;
+    std::size_t const length;
+};
+
+template <typename T>
 fast_each<T> make_fast_each(T const end);
 
 template <typename T>
 fast_each<T> make_fast_each(T const start, T const end);
+
+template <typename T>
+fast_each<T> make_fast_each(T ptr, std::size_t const length);
 }
 
 #define yas_ptr_enumerator_move(__v)      \
