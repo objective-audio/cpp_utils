@@ -81,20 +81,26 @@ template <typename T>
 fast_each<T> make_fast_each(T ptr, std::size_t const length);
 }
 
-#define yas_ptr_enumerator_move(__v)      \
-    if (++(__v)._index >= (__v).length) { \
-        (__v)._ptr = nullptr;             \
-    } else {                              \
-        ++(__v)._ptr;                     \
+#define yas_ptr_enumerator_move(__v)          \
+    {                                         \
+        if (++(__v)._index >= (__v).length) { \
+            (__v)._ptr = nullptr;             \
+        } else {                              \
+            ++(__v)._ptr;                     \
+        }                                     \
     }
 
 #define yas_ptr_enumerator_stop(__v) \
-    (__v)._ptr = nullptr;            \
-    (__v)._index = (__v).length;
+    {                                \
+        (__v)._ptr = nullptr;        \
+        (__v)._index = (__v).length; \
+    }
 
 #define yas_ptr_enumerator_reset(__v) \
-    (__v)._index = 0;                 \
-    (__v)._ptr = (__v)._top_ptr;
+    {                                 \
+        (__v)._index = 0;             \
+        (__v)._ptr = (__v)._top_ptr;  \
+    }
 
 #define yas_ptr_enumerator_value(__v) (*(__v)._ptr)
 #define yas_ptr_enumerator_index(__v) ((__v)._index)
