@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B60477B81E1B31C000195A0F /* yas_fast_each_tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = B60477B71E1B31C000195A0F /* yas_fast_each_tests.mm */; };
+		B60477B91E1B31CA00195A0F /* yas_fast_each_tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = B60477B71E1B31C000195A0F /* yas_fast_each_tests.mm */; };
 		B60AAA271C5DAFD30074C6FA /* yas_chain.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B60AAA251C5DAFD30074C6FA /* yas_chain.cpp */; };
 		B60AAA281C5DAFD30074C6FA /* yas_chain.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B60AAA251C5DAFD30074C6FA /* yas_chain.cpp */; };
 		B60AAA2A1C5DB6D60074C6FA /* yas_chain_tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = B60AAA291C5DB6D60074C6FA /* yas_chain_tests.mm */; };
@@ -79,6 +81,7 @@
 
 /* Begin PBXFileReference section */
 		B602AFDA1CE83D5F00309B3A /* yas_type_traits.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = yas_type_traits.h; sourceTree = "<group>"; };
+		B60477B71E1B31C000195A0F /* yas_fast_each_tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = yas_fast_each_tests.mm; sourceTree = "<group>"; };
 		B60AAA251C5DAFD30074C6FA /* yas_chain.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = yas_chain.cpp; sourceTree = "<group>"; };
 		B60AAA261C5DAFD30074C6FA /* yas_chain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = yas_chain.h; sourceTree = "<group>"; };
 		B60AAA291C5DB6D60074C6FA /* yas_chain_tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = yas_chain_tests.mm; sourceTree = "<group>"; };
@@ -202,6 +205,7 @@
 				B60AAA291C5DB6D60074C6FA /* yas_chain_tests.mm */,
 				B63C48B61C3945AE00B63598 /* yas_each_dictionary_tests.mm */,
 				B6E745F91C2EEEB700464402 /* yas_each_index_tests.mm */,
+				B60477B71E1B31C000195A0F /* yas_fast_each_tests.mm */,
 				B6626AC91C15B47C0038175B /* yas_flex_pointer_tests.mm */,
 				B6CA03D01CAD6E1600CC31FF /* yas_objc_ptr_tests.mm */,
 				B6626ACA1C15B47C0038175B /* yas_observing_tests.mm */,
@@ -400,6 +404,7 @@
 				B6626AC61C15B4230038175B /* yas_flex_ptr.cpp in Sources */,
 				B6626AC71C15B4230038175B /* yas_operation.cpp in Sources */,
 				B60AAA271C5DAFD30074C6FA /* yas_chain.cpp in Sources */,
+				B60477B81E1B31C000195A0F /* yas_fast_each_tests.mm in Sources */,
 				B6DF84811D8B814C00A2EE48 /* yas_cf_ref.cpp in Sources */,
 				B6626AD71C15B47C0038175B /* yas_operation_tests.mm in Sources */,
 				B6626AD51C15B47C0038175B /* yas_property_tests.mm in Sources */,
@@ -446,6 +451,7 @@
 				B6626AEB1C15B92B0038175B /* yas_base_tests.mm in Sources */,
 				B6626AE81C15B92B0038175B /* yas_cf_tests.mm in Sources */,
 				B6626AEC1C15B92B0038175B /* yas_operation_tests.mm in Sources */,
+				B60477B91E1B31CA00195A0F /* yas_fast_each_tests.mm in Sources */,
 				B65BF91D1C95072300856B6A /* yas_protocol_tests.mm in Sources */,
 				B66848531D14DBE200547947 /* yas_to_enum_tests.mm in Sources */,
 				B6E0CB3F1E17D4C300329906 /* yas_ptr_enumrator_tests.mm in Sources */,
