@@ -1,12 +1,11 @@
 //
-//  yas_ptr_enumerator.h
+//  yas_fast_each.h
 //
 
 #pragma once
 
 #include <vector>
 #include <string>
-#include <vector>
 
 namespace yas {
 template <typename T>
@@ -63,4 +62,4 @@ struct ptr_enumerator {
 #define yas_ptr_enumerator_index(__v) ((__v)._index)
 #define yas_ptr_enumerator_has_value(__v) ((__v)._ptr != nullptr)
 
-#include "yas_ptr_enumerator_private.h"
+#include "yas_fast_each_private.h"

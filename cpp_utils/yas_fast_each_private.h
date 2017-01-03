@@ -1,5 +1,5 @@
 //
-//  yas_ptr_enumerator_private.h
+//  yas_fast_each_private.h
 //
 
 #pragma once
