@@ -59,6 +59,10 @@
 		B6626AF11C15B93B0038175B /* yas_operation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B6626ABB1C15B4230038175B /* yas_operation.cpp */; };
 		B66848521D14DBE200547947 /* yas_to_enum_tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = B66848511D14DBE200547947 /* yas_to_enum_tests.mm */; };
 		B66848531D14DBE200547947 /* yas_to_enum_tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = B66848511D14DBE200547947 /* yas_to_enum_tests.mm */; };
+		B671F78F1E4223E200C8866B /* yas_boolean.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B671F78D1E4223E200C8866B /* yas_boolean.cpp */; };
+		B671F7901E4223E200C8866B /* yas_boolean.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B671F78D1E4223E200C8866B /* yas_boolean.cpp */; };
+		B671F7921E42240400C8866B /* yas_boolean_tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = B671F7911E42240400C8866B /* yas_boolean_tests.mm */; };
+		B671F7931E42240400C8866B /* yas_boolean_tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = B671F7911E42240400C8866B /* yas_boolean_tests.mm */; };
 		B6A5CA4B1CAE191B00214DD6 /* yas_objc_ptr.mm in Sources */ = {isa = PBXBuildFile; fileRef = B6A5CA491CAE191B00214DD6 /* yas_objc_ptr.mm */; };
 		B6A5CA4C1CAE191B00214DD6 /* yas_objc_ptr.mm in Sources */ = {isa = PBXBuildFile; fileRef = B6A5CA491CAE191B00214DD6 /* yas_objc_ptr.mm */; };
 		B6C62FA81D06E584001952EC /* yas_flagset_tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = B6C62FA71D06E584001952EC /* yas_flagset_tests.mm */; };
@@ -133,6 +137,9 @@
 		B6626ADD1C15B8EF0038175B /* cpp_utils_test_ios.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = cpp_utils_test_ios.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B66848501D14DB3500547947 /* yas_to_bool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = yas_to_bool.h; sourceTree = "<group>"; };
 		B66848511D14DBE200547947 /* yas_to_enum_tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = yas_to_enum_tests.mm; sourceTree = "<group>"; };
+		B671F78D1E4223E200C8866B /* yas_boolean.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = yas_boolean.cpp; sourceTree = "<group>"; };
+		B671F78E1E4223E200C8866B /* yas_boolean.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = yas_boolean.h; sourceTree = "<group>"; };
+		B671F7911E42240400C8866B /* yas_boolean_tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = yas_boolean_tests.mm; sourceTree = "<group>"; };
 		B6A5CA441CAD7A2600214DD6 /* yas_objc_ptr_private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = yas_objc_ptr_private.h; sourceTree = "<group>"; };
 		B6A5CA491CAE191B00214DD6 /* yas_objc_ptr.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = yas_objc_ptr.mm; sourceTree = "<group>"; };
 		B6C62FA31D06E438001952EC /* yas_flagset_private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = yas_flagset_private.h; sourceTree = "<group>"; };
@@ -218,6 +225,7 @@
 				B64617C31D1E7E7E0051DFA2 /* yas_objc_cast_tests.mm */,
 				B6F58D1C1D680C5C00807724 /* yas_delaying_caller_tests.mm */,
 				B6DF84841D8B81C800A2EE48 /* yas_cf_ref_tests.mm */,
+				B671F7911E42240400C8866B /* yas_boolean_tests.mm */,
 			);
 			path = cpp_utils_test;
 			sourceTree = "<group>";
@@ -225,6 +233,8 @@
 		B6626AAE1C15B4230038175B /* cpp_utils */ = {
 			isa = PBXGroup;
 			children = (
+				B671F78D1E4223E200C8866B /* yas_boolean.cpp */,
+				B671F78E1E4223E200C8866B /* yas_boolean.h */,
 				B6626AB11C15B4230038175B /* yas_base_private.h */,
 				B6626AAF1C15B4230038175B /* yas_base.cpp */,
 				B6626AB01C15B4230038175B /* yas_base.h */,
@@ -399,6 +409,8 @@
 				B6CA03D11CAD6E1600CC31FF /* yas_objc_ptr_tests.mm in Sources */,
 				B6626AC61C15B4230038175B /* yas_flex_ptr.cpp in Sources */,
 				B6626AC71C15B4230038175B /* yas_operation.cpp in Sources */,
+				B671F7921E42240400C8866B /* yas_boolean_tests.mm in Sources */,
+				B671F78F1E4223E200C8866B /* yas_boolean.cpp in Sources */,
 				B60AAA271C5DAFD30074C6FA /* yas_chain.cpp in Sources */,
 				B60477B81E1B31C000195A0F /* yas_fast_each_tests.mm in Sources */,
 				B6DF84811D8B814C00A2EE48 /* yas_cf_ref.cpp in Sources */,
@@ -440,6 +452,8 @@
 				B6CA03D21CAD6E1600CC31FF /* yas_objc_ptr_tests.mm in Sources */,
 				B6626AEE1C15B93B0038175B /* yas_cf_utils.mm in Sources */,
 				B6626AE61C15B92B0038175B /* yas_flex_pointer_tests.mm in Sources */,
+				B671F7931E42240400C8866B /* yas_boolean_tests.mm in Sources */,
+				B671F7901E4223E200C8866B /* yas_boolean.cpp in Sources */,
 				B60AAA281C5DAFD30074C6FA /* yas_chain.cpp in Sources */,
 				B6DF84821D8B814C00A2EE48 /* yas_cf_ref.cpp in Sources */,
 				B6626AE71C15B92B0038175B /* yas_observing_tests.mm in Sources */,
