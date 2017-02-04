@@ -7,17 +7,22 @@
 namespace yas {
 struct boolean {
     boolean();
-    
+
     boolean(bool const);
 
     boolean(boolean const &);
-    boolean(boolean &&rhs) noexcept;
+    boolean(boolean &&) noexcept;
 
-    boolean &operator=(boolean const &rhs);
-    boolean &operator=(boolean &&rhs);
+    boolean &operator=(boolean const &);
+    boolean &operator=(boolean &&);
 
-    bool operator==(boolean const &rhs) const;
-    bool operator!=(boolean const &rhs) const;
+    bool operator==(boolean const &) const;
+    bool operator!=(boolean const &) const;
+
+    bool operator<(boolean const &) const;
+    bool operator<=(boolean const &) const;
+    bool operator>(boolean const &) const;
+    bool operator>=(boolean const &) const;
 
     explicit operator bool() const;
 

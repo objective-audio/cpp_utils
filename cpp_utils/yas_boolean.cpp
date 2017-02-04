@@ -37,6 +37,22 @@ bool boolean::operator!=(boolean const &rhs) const {
     return _value != rhs._value;
 }
 
+bool boolean::operator<(boolean const &rhs) const {
+    return _value < rhs._value;
+}
+
+bool boolean::operator<=(boolean const &rhs) const {
+    return _value <= rhs._value;
+}
+
+bool boolean::operator>(boolean const &rhs) const {
+    return _value > rhs._value;
+}
+
+bool boolean::operator>=(boolean const &rhs) const {
+    return _value >= rhs._value;
+}
+
 boolean::operator bool() const {
     return _value;
 }
