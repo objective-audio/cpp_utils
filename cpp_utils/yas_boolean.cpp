@@ -56,3 +56,7 @@ bool boolean::operator>=(boolean const &rhs) const {
 boolean::operator bool() const {
     return _value;
 }
+
+std::string yas::to_string(boolean const &boolean) {
+    return boolean != false ? "true" : "false";
+}
