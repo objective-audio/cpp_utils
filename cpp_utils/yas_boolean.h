@@ -4,6 +4,8 @@
 
 #pragma once
 
+#include <string>
+
 namespace yas {
 struct boolean {
     boolean();
@@ -29,4 +31,6 @@ struct boolean {
    private:
     bool _value;
 };
+    
+std::string to_string(boolean const &);
 }
