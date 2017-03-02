@@ -44,14 +44,16 @@ using namespace yas;
     XCTAssertTrue(flag);
 }
 
-- (void)test_construct_with_false {
-    boolean flag{false};
+- (void)test_copy_constructor_with_bool {
+    bool true_flag = true;
+    boolean flag{true_flag};
 
-    XCTAssertFalse(flag);
+    XCTAssertTrue(flag);
 }
 
-- (void)test_construct_with_true {
-    boolean flag{true};
+- (void)test_move_constructor_with_bool {
+    bool true_flag = true;
+    boolean flag{std::move(true_flag)};
 
     XCTAssertTrue(flag);
 }
