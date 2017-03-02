@@ -10,10 +10,11 @@ namespace yas {
 struct boolean {
     boolean();
 
-    boolean(bool const);
-
     boolean(boolean const &);
     boolean(boolean &&) noexcept;
+
+    boolean(bool const &);
+    boolean(bool &&) noexcept;
 
     boolean &operator=(boolean const &);
     boolean &operator=(boolean &&);
@@ -31,6 +32,6 @@ struct boolean {
    private:
     bool _value;
 };
-    
+
 std::string to_string(boolean const &);
 }

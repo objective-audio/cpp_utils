@@ -10,13 +10,16 @@ using namespace yas;
 boolean::boolean() : _value(false) {
 }
 
-boolean::boolean(bool const b) : _value(b) {
-}
-
 boolean::boolean(boolean const &rhs) : _value(rhs._value) {
 }
 
 boolean::boolean(boolean &&rhs) noexcept : _value(std::move(rhs._value)) {
+}
+
+boolean::boolean(bool const &b) : _value(b) {
+}
+
+boolean::boolean(bool &&b) noexcept : _value(std::move(b)) {
 }
 
 boolean &boolean::operator=(boolean const &rhs) {
