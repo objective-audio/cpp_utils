@@ -412,4 +412,9 @@ struct test_class {
     XCTAssertThrows(create_property_failed());
 }
 
+- (void)test_property_method_to_string {
+    XCTAssertEqual(yas::to_string(yas::property_method::will_change), "will_change");
+    XCTAssertEqual(yas::to_string(yas::property_method::did_change), "did_change");
+}
+
 @end
