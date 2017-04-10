@@ -10,12 +10,17 @@ namespace yas {
 template <typename T, typename K>
 class property<T, K>::impl : public base::impl {
    public:
-    impl(args const &args) : _value(args.value), _key(args.key), _validator(args.validator) {
+    impl(args const &args) : _value(args.value), _key(args.key), _validator(args.validator), _limiter(args.limiter) {
+        _limit(_value);
         _validate(_value);
     }
 
     impl(args &&args)
-        : _value(std::move(args.value)), _key(std::move(args.key)), _validator(std::move(args.validator)) {
+        : _value(std::move(args.value)),
+          _key(std::move(args.key)),
+          _validator(std::move(args.validator)),
+          _limiter(std::move(args.limiter)) {
+        _limit(_value);
         _validate(_value);
     }
 
@@ -40,6 +45,18 @@ class property<T, K>::impl : public base::impl {
         return _validator;
     }
 
+    void set_limiter(limiter_t &&limiter) {
+        _limiter = std::move(limiter);
+
+        if (_limiter) {
+            _set_value(_value);
+        }
+    }
+
+    limiter_t &limiter() {
+        return _limiter;
+    }
+
     subject_t &subject() {
         return _subject;
     }
@@ -48,21 +65,32 @@ class property<T, K>::impl : public base::impl {
     T _value;
     K _key;
     validator_t _validator = nullptr;
+    limiter_t _limiter = nullptr;
     std::mutex _notify_mutex;
     subject_t _subject;
 
     template <typename U, typename std::enable_if_t<has_operator_bool<U>::value, std::nullptr_t> = nullptr>
     void _set_value(U &&value) {
-        if (_value != value && (_value || value)) {
-            _set_value_primitive(std::move(value));
+        T limited_value = _limit(std::move(value));
+
+        if (_value == limited_value) {
+            return;
+        }
+
+        if (_value || limited_value) {
+            _set_value_primitive(std::move(limited_value));
         }
     }
 
     template <typename U, typename std::enable_if_t<!has_operator_bool<U>::value, std::nullptr_t> = nullptr>
     void _set_value(U &&value) {
-        if (_value != value) {
-            _set_value_primitive(std::move(value));
+        T limited_value = _limit(std::move(value));
+
+        if (_value == limited_value) {
+            return;
         }
+
+        _set_value_primitive(std::move(limited_value));
     }
 
     void _set_value_primitive(T &&val) {
@@ -94,6 +122,20 @@ class property<T, K>::impl : public base::impl {
         if (_validator && !_validator(value)) {
             throw "validation failed.";
         }
+    }
+
+    T _limit(T const &value) {
+        if (_limiter) {
+            return _limiter(value);
+        }
+        return value;
+    }
+
+    T _limit(T &&value) {
+        if (_limiter) {
+            return _limiter(value);
+        }
+        return std::move(value);
     }
 };
 
@@ -161,6 +203,16 @@ void property<T, K>::set_validator(validator_t validator) {
 template <typename T, typename K>
 typename property<T, K>::validator_t const &property<T, K>::validator() const {
     return impl_ptr<impl>()->validator();
+}
+
+template <typename T, typename K>
+void property<T, K>::set_limiter(limiter_t limiter) {
+    impl_ptr<impl>()->set_limiter(std::move(limiter));
+}
+
+template <typename T, typename K>
+typename property<T, K>::limiter_t const &property<T, K>::limiter() const {
+    return impl_ptr<impl>()->limiter();
 }
 
 template <typename T, typename K>
