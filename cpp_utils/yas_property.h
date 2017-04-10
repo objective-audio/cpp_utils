@@ -32,11 +32,13 @@ class property : public base {
     using subject_t = subject<change_context, property_method>;
     using observer_t = observer<change_context, property_method>;
     using validator_t = std::function<bool(T const &)>;
+    using limiter_t = std::function<T(T const &)>;
 
     struct args {
         T value;
         K key;
         validator_t validator = nullptr;
+        limiter_t limiter = nullptr;
     };
 
     property();
@@ -57,6 +59,9 @@ class property : public base {
 
     void set_validator(validator_t);
     validator_t const &validator() const;
+    
+    void set_limiter(limiter_t);
+    limiter_t const &limiter() const;
 
     subject_t &subject();
 };
