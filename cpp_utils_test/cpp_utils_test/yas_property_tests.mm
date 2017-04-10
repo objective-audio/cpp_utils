@@ -388,7 +388,7 @@ struct test_class {
     XCTAssertTrue(property.validator());
 }
 
-- (void)test_validation_set {
+- (void)test_validation_set_value {
     yas::property<std::string> property;
 
     property.set_validator([](auto const &value) { return value != "no"; });
@@ -410,6 +410,44 @@ struct test_class {
     };
 
     XCTAssertThrows(create_property_failed());
+}
+
+- (void)test_set_limiter {
+    yas::property<std::string> property;
+
+    XCTAssertFalse(property.limiter());
+
+    property.set_limiter([](std::string const &value) { return value; });
+
+    XCTAssertTrue(property.limiter());
+}
+
+- (void)test_set_limiter_and_limit_value {
+    yas::property<std::string> property{{.value = "test_value"}};
+
+    XCTAssertEqual(property.value(), "test_value");
+
+    property.set_limiter([](std::string const &value) { return ""; });
+
+    XCTAssertEqual(property.value(), "");
+}
+
+- (void)test_limitation_set_value {
+    yas::property<int> property{{.value = 10, .limiter = [](int const &value) {
+                                     if (value < 0) {
+                                         return 0;
+                                     }
+                                     return value;
+                                 }}};
+
+    property.set_value(1);
+    XCTAssertEqual(property.value(), 1);
+
+    property.set_value(0);
+    XCTAssertEqual(property.value(), 0);
+
+    property.set_value(-1);
+    XCTAssertEqual(property.value(), 0);
 }
 
 - (void)test_property_method_to_string {
