@@ -42,7 +42,6 @@ using namespace yas;
 
 - (void)test_make_fast_each_index_with_end {
     int32_t end = 3;
-    ;
     auto each = make_fast_each(end);
 
     XCTAssertEqual(each._index, 0);
