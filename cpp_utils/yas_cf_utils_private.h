@@ -50,8 +50,8 @@ std::vector<T> yas::to_vector(CFArrayRef const array, F function) {
     vector.reserve(count);
 
     auto each = make_each(count);
-    while (yas_fast_each_next(each)) {
-        vector.emplace_back(function(CFArrayGetValueAtIndex(array, yas_fast_each_index(each))));
+    while (yas_each_next(each)) {
+        vector.emplace_back(function(CFArrayGetValueAtIndex(array, yas_each_index(each))));
     }
 
     return vector;
