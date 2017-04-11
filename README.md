@@ -124,12 +124,6 @@ for (auto &pair : yas::each_dictionary{(__bridge CFDictionaryRef)dict}) {
 }
 ```
 
-## yas_each_index
-
-deprecated
-
-`iterator`でインデックスを扱えるようにするクラス。fast_eachの使用を推奨。
-
 ## yas_exception
 
 例外を発生させる関数群。
