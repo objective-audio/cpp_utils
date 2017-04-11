@@ -3,7 +3,7 @@
 //
 
 #include "yas_each_dictionary.h"
-#include "yas_each_index.h"
+#include "yas_fast_each.h"
 
 using namespace yas;
 
@@ -52,7 +52,9 @@ each_dictionary::each_dictionary(CFDictionaryRef const dict)
 
     CFDictionaryGetKeysAndValues(dict, keys.data(), values.data());
 
-    for (auto &idx : make_each(count)) {
+    auto each = make_each(count);
+    while (yas_each_next(each)) {
+        auto const &idx = yas_each_index(each);
         _keys_and_values->emplace_back(std::make_pair(keys.at(idx), values.at(idx)));
     }
 }

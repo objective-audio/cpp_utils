@@ -37,19 +37,19 @@ struct fast_each<T, enable_if_pointer_t<T>> {
 };
 
 template <typename T>
-fast_each<T> make_fast_each(T const end);
+fast_each<T> make_each(T const end);
 
 template <typename T>
-fast_each<T> make_fast_each(T const start, T const end);
+fast_each<T> make_each(T const start, T const end);
 
 template <typename T>
-fast_each<T> make_fast_each(T ptr, std::size_t const end);
+fast_each<T> make_each(T ptr, std::size_t const end);
 }
 
-#define yas_fast_each_stop(__v) \
+#define yas_each_stop(__v) \
     { (__v)._next = (__v)._end; }
-#define yas_fast_each_index(__v) (__v)._index
-#define yas_fast_each_next(__v) (((__v)._index = (__v)._next++) < (__v)._end)
-#define yas_fast_each_value(__v) ((__v)._ptr[(__v)._index])
+#define yas_each_index(__v) (__v)._index
+#define yas_each_next(__v) (((__v)._index = (__v)._next++) < (__v)._end)
+#define yas_each_value(__v) ((__v)._ptr[(__v)._index])
 
 #include "yas_fast_each_private.h"
