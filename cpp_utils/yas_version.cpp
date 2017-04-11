@@ -32,7 +32,7 @@ static comparison_result compare(version const &lhs, version const &rhs) {
     auto rhs_size = rhs_numbers.size();
     auto max_size = std::max(lhs_size, rhs_size);
 
-    auto each = make_fast_each(max_size);
+    auto each = make_each(max_size);
     while (yas_fast_each_next(each)) {
         auto const &idx = yas_fast_each_index(each);
         if (idx < lhs_size && idx < rhs_size) {

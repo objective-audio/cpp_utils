@@ -37,13 +37,13 @@ struct fast_each<T, enable_if_pointer_t<T>> {
 };
 
 template <typename T>
-fast_each<T> make_fast_each(T const end);
+fast_each<T> make_each(T const end);
 
 template <typename T>
-fast_each<T> make_fast_each(T const start, T const end);
+fast_each<T> make_each(T const start, T const end);
 
 template <typename T>
-fast_each<T> make_fast_each(T ptr, std::size_t const end);
+fast_each<T> make_each(T ptr, std::size_t const end);
 }
 
 #define yas_fast_each_stop(__v) \
