@@ -49,7 +49,7 @@ std::vector<T> yas::to_vector(CFArrayRef const array, F function) {
     std::vector<T> vector;
     vector.reserve(count);
 
-    auto each = make_each(count);
+    auto each = make_fast_each(count);
     while (yas_fast_each_next(each)) {
         vector.emplace_back(function(CFArrayGetValueAtIndex(array, yas_fast_each_index(each))));
     }

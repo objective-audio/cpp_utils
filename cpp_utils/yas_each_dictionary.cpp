@@ -52,7 +52,7 @@ each_dictionary::each_dictionary(CFDictionaryRef const dict)
 
     CFDictionaryGetKeysAndValues(dict, keys.data(), values.data());
 
-    auto each = make_each(count);
+    auto each = make_fast_each(count);
     while (yas_fast_each_next(each)) {
         auto const &idx = yas_fast_each_index(each);
         _keys_and_values->emplace_back(std::make_pair(keys.at(idx), values.at(idx)));
