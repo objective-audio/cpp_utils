@@ -72,12 +72,12 @@ each_index<T, enable_if_integral_t<T>>::each_index::iterator each_index<T, enabl
 }
 
 template <typename T>
-each_index<T> make_each(T const end) {
+each_index<T> make_each_index(T const end) {
     return each_index<T>(end);
 }
 
 template <typename T>
-each_index<T> make_each(T const start, T const end) {
+each_index<T> make_each_index(T const start, T const end) {
     return each_index<T>(start, end);
 }
 }

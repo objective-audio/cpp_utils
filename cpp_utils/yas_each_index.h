@@ -50,10 +50,10 @@ class each_index<T, enable_if_integral_t<T>> {
 };
 
 template <typename T>
-each_index<T> make_each(T const end);
+each_index<T> make_each_index(T const end);
 
 template <typename T>
-each_index<T> make_each(T const start, T const end);
+each_index<T> make_each_index(T const start, T const end);
 }
 
 #include "yas_each_index_private.h"

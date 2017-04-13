@@ -92,7 +92,7 @@
 - (void)test_make_each {
     std::size_t count = 0;
 
-    for (auto const &idx : yas::make_each(3)) {
+    for (auto const &idx : yas::make_each_index(3)) {
         XCTAssertEqual(idx, count);
         ++count;
     }
@@ -103,7 +103,7 @@
 - (void)test_make_each_with_end {
     std::size_t count = 4;
 
-    for (auto const &idx : yas::make_each(4, 7)) {
+    for (auto const &idx : yas::make_each_index(4, 7)) {
         XCTAssertEqual(idx, count);
         ++count;
     }
