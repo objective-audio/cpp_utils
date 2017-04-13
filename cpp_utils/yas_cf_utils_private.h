@@ -5,7 +5,7 @@
 #pragma once
 
 #include <CoreFoundation/CoreFoundation.h>
-#include "yas_fast_each.h"
+#include "yas_each_index.h"
 
 template <typename T>
 void yas::set_cf_property(T &_property, T const &value) {
@@ -49,9 +49,8 @@ std::vector<T> yas::to_vector(CFArrayRef const array, F function) {
     std::vector<T> vector;
     vector.reserve(count);
 
-    auto each = make_each(count);
-    while (yas_each_next(each)) {
-        vector.emplace_back(function(CFArrayGetValueAtIndex(array, yas_each_index(each))));
+    for (auto const &idx : yas::make_each_index(count)) {
+        vector.emplace_back(function(CFArrayGetValueAtIndex(array, idx)));
     }
 
     return vector;

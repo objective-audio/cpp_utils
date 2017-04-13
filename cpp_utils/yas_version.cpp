@@ -3,7 +3,7 @@
 //
 
 #include <sstream>
-#include "yas_fast_each.h"
+#include "yas_each_index.h"
 #include "yas_stl_utils.h"
 #include "yas_version.h"
 
@@ -32,9 +32,7 @@ static comparison_result compare(version const &lhs, version const &rhs) {
     auto rhs_size = rhs_numbers.size();
     auto max_size = std::max(lhs_size, rhs_size);
 
-    auto each = make_each(max_size);
-    while (yas_each_next(each)) {
-        auto const &idx = yas_each_index(each);
+    for (auto &idx : make_each_index(max_size)) {
         if (idx < lhs_size && idx < rhs_size) {
             auto &lhs_val = lhs_numbers[idx];
             auto &rhs_val = rhs_numbers[idx];
