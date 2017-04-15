@@ -355,6 +355,25 @@ if (!result2) { // 通る
 
 STLをサポートする関数群。
 
+* **min_empty_key** -> mapのkeyで使われていない最小の整数を返す。keyは整数型のみ。
+* **index** -> vectorの要素のインデックスを返す。見つからなければ`nullopt`を返す。
+* **filter** -> predicateでtrueを返した要素だけのコレクションを返す。predicateの引数は要素の値そのもの。
+* **erase_if** -> predicateでtrueを返した要素をコレクションから削除する。predicateの引数はイテレータ。
+* **erase_if_exists** -> keyに一致するmapの要素を削除する。
+* **for_each** -> functionを要素の数だけ繰り返す。functionの引数はイテレータ。
+* **connect** -> 2つのvectorを合体したvectorを返す。
+* **move_back_insert** -> 第2引数のvectorを第1引数のvectorの後ろにmoveして連結する。
+* **move_insert** -> 要素をコレクションにmoveしてinsertする。第3引数
+* **pull** -> unordered_mapの要素を取得して削除する。
+* **replace** -> mapの要素を置き換える。
+* **to_vector** -> コレクションの要素を元にvectorを作る
+* **to_unordered_set** -> vectorからunordered_setを作る。
+* **to_map** -> vectorからmapを作る。functionでは要素からkeyを返す。
+* **to_lower** -> 小文字にした文字列を返す。
+* **replaced** -> sourceに含まれるtargetをreplacementに置き換えた文字列を返す。
+* **joined** -> componentsをseparatorでつなげた文字列を返す。
+* **to_weak** -> std::shared_ptrをstd::weak_ptrに変換する。
+
 ## yas_to_bool
 
 enumの値をboolに変換する。数値的に0であればfalse、0以外であればtrueを返す。
