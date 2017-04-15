@@ -4,15 +4,11 @@
 
 #pragma once
 
+#include "yas_type_traits.h"
 #include <vector>
 #include <string>
 
 namespace yas {
-template <typename T>
-using enable_if_integral_t = typename std::enable_if_t<std::is_integral<T>::value>;
-template <typename T>
-using enable_if_pointer_t = typename std::enable_if_t<std::is_pointer<T>::value>;
-
 template <typename T, typename Enable = void>
 class fast_each;
 

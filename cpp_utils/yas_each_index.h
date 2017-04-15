@@ -4,12 +4,10 @@
 
 #pragma once
 
+#include "yas_type_traits.h"
 #include <iterator>
 
 namespace yas {
-template <typename T>
-using enable_if_integral_t = typename std::enable_if_t<std::is_integral<T>::value>;
-
 template <typename T>
 class each_index_iterator : public std::iterator<std::input_iterator_tag, T> {
    public:
