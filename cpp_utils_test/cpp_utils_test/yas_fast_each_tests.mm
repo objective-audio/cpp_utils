@@ -5,6 +5,7 @@
 #import <XCTest/XCTest.h>
 #import "yas_fast_each.h"
 #import <array>
+#import <vector>
 
 using namespace yas;
 

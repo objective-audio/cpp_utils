@@ -5,8 +5,6 @@
 #pragma once
 
 #include "yas_type_traits.h"
-#include <vector>
-#include <string>
 
 namespace yas {
 template <typename T, typename Enable = void>
