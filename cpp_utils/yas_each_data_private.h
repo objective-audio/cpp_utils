@@ -19,4 +19,10 @@ each_data<T>::each_data(T **ptrs, std::size_t const frame_length, std::size_t co
       _next_ptr_idx(0),
       _next_ch_idx(0) {
 }
+
+template <typename T>
+each_data<T> make_each_data(T **ptrs, std::size_t const frame_length, std::size_t const ptr_count,
+                            std::size_t const ptr_stride) {
+    return each_data<T>{ptrs, frame_length, ptr_count, ptr_stride};
+}
 }
