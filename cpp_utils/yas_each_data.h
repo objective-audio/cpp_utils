@@ -25,6 +25,10 @@ struct each_data {
     std::size_t _next_ptr_idx;
     std::size_t _next_ch_idx;
 };
+
+template <typename T>
+each_data<T> make_each_data(T **ptrs, std::size_t const frame_length, std::size_t const ptr_count,
+                            std::size_t const ptr_stride);
 }
 
 #define yas_each_data_stop(__v)             \
