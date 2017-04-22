@@ -5,6 +5,7 @@
 #pragma once
 
 #include <cstddef>
+#include <vector>
 
 namespace yas {
 template <typename T>
@@ -13,9 +14,8 @@ struct each_data {
     std::size_t ptr_idx;
     std::size_t ch_idx;
 
-    each_data(T **, std::size_t const frame_length, std::size_t const ptr_count, std::size_t const ptr_stride);
-
-    T **_ptrs;
+    each_data(T *const *const, std::size_t const frame_length, std::size_t const ptr_count,
+              std::size_t const ptr_stride);
 
     std::size_t _end_frm_idx;
     std::size_t _end_ptr_idx;
@@ -24,6 +24,9 @@ struct each_data {
     std::size_t _next_frm_idx;
     std::size_t _next_ptr_idx;
     std::size_t _next_ch_idx;
+
+    std::vector<T *> _vecs;
+    T **_ptrs;
 };
 
 template <typename T>
@@ -31,8 +34,8 @@ each_data<T> make_each_data(T **ptrs, std::size_t const frame_length, std::size_
                             std::size_t const ptr_stride);
 }
 
-#define yas_each_data_stop(__v)             \
-    do {                                    \
+#define yas_each_data_stop(__v)                   \
+    do {                                          \
         (__v)._next_frm_idx = (__v)._end_frm_idx; \
         (__v)._next_ptr_idx = (__v)._end_ptr_idx; \
         (__v)._next_ch_idx = (__v)._end_ch_idx;   \
