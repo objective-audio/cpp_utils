@@ -112,6 +112,23 @@ caller.request([](){
 }); // カウントが0なので、この時点ですぐに処理が呼ばれる
 ```
 
+## yas_each_data
+
+インターリーブ・非インターリーブの違いを吸収してバイトデータを走査するためのクラス。
+
+```cpp
+std::array<int8_t, 4> array_a{1, 2, 5, 6};
+std::array<int8_t, 4> array_b{3, 4, 7, 8};
+std::array<int8_t *, 2> array{array_a.data(), array_b.data()};
+
+auto each_data = yas::make_each_data(array.data(), 2, 2, 2);
+
+while (yas_each_data_next(each_data)) {
+    std::cout << "idx:" << std::to_string(yas_each_data_index(each_data));
+    std::cout << " value:" << std::to_string(yas_each_data_value(each_data)) << std::endl;
+}
+```
+
 ## yas_each_dictionary
 
 `CFDirectoryRef`を`iterator`で扱えるようにするクラス。
@@ -126,9 +143,7 @@ for (auto &pair : yas::each_dictionary{(__bridge CFDictionaryRef)dict}) {
 
 ## yas_each_index
 
-deprecated
-
-`iterator`でインデックスを扱えるようにするクラス。fast_eachの使用を推奨。
+`iterator`で整数のインデックスを扱えるようにするクラス。
 
 ## yas_exception
 
