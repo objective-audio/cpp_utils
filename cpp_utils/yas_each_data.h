@@ -70,4 +70,6 @@ each_data<T> make_each_data(T **ptrs, std::size_t const frame_length, std::size_
 
 #define yas_each_data_value(__v) ((__v)._ptrs[(__v).ptr_idx][(__v).frm_idx * (__v)._end_ch_idx + (__v).ch_idx])
 
+#define yas_each_data_ptr(__v) (&yas_each_data_value(__v))
+
 #include "yas_each_data_private.h"

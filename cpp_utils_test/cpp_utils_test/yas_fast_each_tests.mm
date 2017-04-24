@@ -81,7 +81,7 @@ using namespace yas;
 
     while (yas_each_next(each)) {
         if (yas_each_index(each) == 5) {
-            yas_each_stop(each)
+            yas_each_stop(each);
         }
 
         ++count;
@@ -144,7 +144,7 @@ using namespace yas;
 
     while (yas_each_next(each)) {
         if (yas_each_index(each) == 1) {
-            yas_each_stop(each)
+            yas_each_stop(each);
         }
 
         last_value = yas_each_value(each);
@@ -170,6 +170,16 @@ using namespace yas;
     XCTAssertEqual(vec[1], 1);
     XCTAssertEqual(vec[2], 2);
     XCTAssertEqual(vec[3], 3);
+}
+
+- (void)test_fast_each_ptr {
+    std::vector<int8_t> vec{1, 2};
+    
+    auto each = make_fast_each(vec.data(), vec.size());
+    
+    yas_each_next(each);
+    XCTAssertEqual(yas_each_ptr(each)[0], 1);
+    XCTAssertEqual(yas_each_ptr(each)[1], 2);
 }
 
 @end
