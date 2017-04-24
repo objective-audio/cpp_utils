@@ -350,4 +350,25 @@ using namespace yas;
     XCTAssertFalse(yas_each_data_next(each));
 }
 
+- (void)test_ptr {
+    std::vector<int8_t> vec0{1, 2, 5, 6};
+    std::vector<int8_t> vec1{3, 4, 7, 8};
+    std::vector<int8_t *> vecs{vec0.data(), vec1.data()};
+
+    auto each = make_each_data(vecs.data(), 2, 2, 2);
+
+    yas_each_data_next(each);
+    XCTAssertEqual(yas_each_data_ptr(each)[0], 1);
+    XCTAssertEqual(yas_each_data_ptr(each)[1], 2);
+    yas_each_data_next(each);
+    XCTAssertEqual(yas_each_data_ptr(each)[0], 2);
+    XCTAssertEqual(yas_each_data_ptr(each)[1], 5);
+    yas_each_data_next(each);
+    XCTAssertEqual(yas_each_data_ptr(each)[0], 3);
+    XCTAssertEqual(yas_each_data_ptr(each)[1], 4);
+    yas_each_data_next(each);
+    XCTAssertEqual(yas_each_data_ptr(each)[0], 4);
+    XCTAssertEqual(yas_each_data_ptr(each)[1], 7);
+}
+
 @end
