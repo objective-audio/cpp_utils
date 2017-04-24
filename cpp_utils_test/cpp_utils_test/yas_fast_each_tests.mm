@@ -81,7 +81,7 @@ using namespace yas;
 
     while (yas_each_next(each)) {
         if (yas_each_index(each) == 5) {
-            yas_each_stop(each)
+            yas_each_stop(each);
         }
 
         ++count;
@@ -144,7 +144,7 @@ using namespace yas;
 
     while (yas_each_next(each)) {
         if (yas_each_index(each) == 1) {
-            yas_each_stop(each)
+            yas_each_stop(each);
         }
 
         last_value = yas_each_value(each);
