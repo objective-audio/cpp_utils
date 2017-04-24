@@ -172,4 +172,14 @@ using namespace yas;
     XCTAssertEqual(vec[3], 3);
 }
 
+- (void)test_fast_each_ptr {
+    std::vector<int8_t> vec{1, 2};
+    
+    auto each = make_fast_each(vec.data(), vec.size());
+    
+    yas_each_next(each);
+    XCTAssertEqual(yas_each_ptr(each)[0], 1);
+    XCTAssertEqual(yas_each_ptr(each)[1], 2);
+}
+
 @end
