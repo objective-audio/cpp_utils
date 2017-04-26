@@ -371,4 +371,33 @@ using namespace yas;
     XCTAssertEqual(yas_each_data_ptr(each)[1], 7);
 }
 
+- (void)test_const_each_data {
+    std::vector<int8_t> vec0{1, 2, 5, 6};
+    std::vector<int8_t> vec1{3, 4, 7, 8};
+    std::vector<int8_t *> vecs{vec0.data(), vec1.data()};
+
+    int8_t const *const *const ptrs = vecs.data();
+
+    auto each = make_each_data(ptrs, 2, 2, 2);
+
+    XCTAssertTrue(yas_each_data_next(each));
+    XCTAssertEqual(yas_each_data_value(each), 1);
+    //    yas_each_data_value(each) = 10; // error
+    XCTAssertTrue(yas_each_data_next(each));
+    XCTAssertEqual(yas_each_data_value(each), 2);
+    XCTAssertTrue(yas_each_data_next(each));
+    XCTAssertEqual(yas_each_data_value(each), 3);
+    XCTAssertTrue(yas_each_data_next(each));
+    XCTAssertEqual(yas_each_data_value(each), 4);
+    XCTAssertTrue(yas_each_data_next(each));
+    XCTAssertEqual(yas_each_data_value(each), 5);
+    XCTAssertTrue(yas_each_data_next(each));
+    XCTAssertEqual(yas_each_data_value(each), 6);
+    XCTAssertTrue(yas_each_data_next(each));
+    XCTAssertEqual(yas_each_data_value(each), 7);
+    XCTAssertTrue(yas_each_data_next(each));
+    XCTAssertEqual(yas_each_data_value(each), 8);
+    XCTAssertFalse(yas_each_data_next(each));
+}
+
 @end

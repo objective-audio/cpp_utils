@@ -14,7 +14,7 @@ struct each_data {
     std::size_t ptr_idx;
     std::size_t ch_idx;
 
-    each_data(T *const *const, std::size_t const frame_length, std::size_t const ptr_count,
+    each_data(T *const *const ptrs, std::size_t const frame_length, std::size_t const ptr_count,
               std::size_t const ptr_stride);
 
     std::size_t _end_frm_idx;
@@ -30,8 +30,33 @@ struct each_data {
 };
 
 template <typename T>
-each_data<T> make_each_data(T **ptrs, std::size_t const frame_length, std::size_t const ptr_count,
+struct const_each_data {
+    std::size_t frm_idx;
+    std::size_t ptr_idx;
+    std::size_t ch_idx;
+
+    const_each_data(T const *const *const ptrs, std::size_t const frame_length, std::size_t const ptr_count,
+                    std::size_t const ptr_stride);
+
+    std::size_t _end_frm_idx;
+    std::size_t _end_ptr_idx;
+    std::size_t _end_ch_idx;
+
+    std::size_t _next_frm_idx;
+    std::size_t _next_ptr_idx;
+    std::size_t _next_ch_idx;
+
+    std::vector<T const *> _vecs;
+    T const **_ptrs;
+};
+
+template <typename T>
+each_data<T> make_each_data(T *const *const ptrs, std::size_t const frame_length, std::size_t const ptr_count,
                             std::size_t const ptr_stride);
+
+template <typename T>
+const_each_data<T> make_each_data(T const *const *const ptrs, std::size_t const frame_length,
+                                  std::size_t const ptr_count, std::size_t const ptr_stride);
 }
 
 #define yas_each_data_stop(__v)                   \
