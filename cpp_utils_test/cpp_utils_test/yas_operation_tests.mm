@@ -92,6 +92,18 @@ using namespace yas;
     XCTAssertTrue(called);
 }
 
+- (void)test_is_suspended {
+    operation_queue queue;
+
+    queue.suspend();
+
+    XCTAssertTrue(queue.is_suspended());
+
+    queue.resume();
+
+    XCTAssertFalse(queue.is_suspended());
+}
+
 - (void)test_insert_to_top {
     XCTestExpectation *exe_ex = [self expectationWithDescription:@"call execution"];
 

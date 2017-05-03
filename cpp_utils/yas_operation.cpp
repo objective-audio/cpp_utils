@@ -192,6 +192,10 @@ class operation_queue::impl : public base::impl {
             _start_next_operation_if_needed();
         }
     }
+    
+    bool is_suspended() const {
+        return _suspended;
+    }
 
     bool is_operating() {
         std::lock_guard<std::recursive_mutex> lock(_mutex);
@@ -294,6 +298,10 @@ void operation_queue::suspend() {
 
 void operation_queue::resume() {
     impl_ptr<impl>()->resume();
+}
+
+bool operation_queue::is_suspended() const {
+    return impl_ptr<impl>()->is_suspended();
 }
 
 bool operation_queue::is_operating() const {
