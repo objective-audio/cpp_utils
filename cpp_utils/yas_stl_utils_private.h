@@ -43,6 +43,11 @@ std::experimental::optional<std::size_t> index(std::vector<T> const &vector, T c
     }
 }
 
+template <typename T>
+bool contains(std::vector<T> const &vector, T const &value) {
+    return std::find(vector.begin(), vector.end(), value) != vector.end();
+}
+
 template <typename T, typename P>
 T filter(T const &collection, P predicate) {
     T filtered;

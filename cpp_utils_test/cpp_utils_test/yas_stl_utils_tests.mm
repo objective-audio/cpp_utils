@@ -385,4 +385,12 @@
     XCTAssertEqual(set.size(), 0);
 }
 
+- (void)test_contains {
+    std::vector<std::string> vec{"a"};
+
+    XCTAssertTrue(yas::contains(vec, std::string("a")));
+    XCTAssertFalse(yas::contains(vec, std::string("")));
+    XCTAssertFalse(yas::contains(vec, std::string("b")));
+}
+
 @end

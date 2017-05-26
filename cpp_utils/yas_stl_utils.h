@@ -19,6 +19,9 @@ std::experimental::optional<T> min_empty_key(std::map<T, U> const &map);
 template <typename T>
 std::experimental::optional<std::size_t> index(std::vector<T> const &vector, T const &value);
 
+template <typename T>
+bool contains(std::vector<T> const &vector, T const &value);
+
 template <typename T, typename P>
 T filter(T const &collection, P predicate);
 
