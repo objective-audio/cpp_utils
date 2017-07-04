@@ -28,6 +28,7 @@ class result {
     explicit operator bool() const;
 
     bool is_success() const;
+    bool is_error() const;
 
     T const &value() const;
     T &value();

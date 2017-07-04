@@ -64,7 +64,17 @@ bool result<T, U>::is_success() const {
         return false;
     } else {
         throw std::logic_error(std::string(__PRETTY_FUNCTION__) + " : value or error are not found.");
+    }
+}
+
+template <typename T, typename U>
+bool result<T, U>::is_error() const {
+    if (_error) {
+        return true;
+    } else if (_value) {
         return false;
+    } else {
+        throw std::logic_error(std::string(__PRETTY_FUNCTION__) + " : value or error are not found.");
     }
 }
 

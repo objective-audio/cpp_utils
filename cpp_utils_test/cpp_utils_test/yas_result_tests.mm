@@ -28,6 +28,7 @@ using namespace yas;
 
     XCTAssertTrue(result);
     XCTAssertTrue(result.is_success());
+    XCTAssertFalse(result.is_error());
     XCTAssertEqual(result.value(), std::string("test_value"));
 
     XCTAssertNotEqual(value, result.value());
@@ -39,6 +40,7 @@ using namespace yas;
 
     XCTAssertTrue(result);
     XCTAssertTrue(result.is_success());
+    XCTAssertFalse(result.is_error());
     XCTAssertEqual(result.value(), std::string("test_value"));
 
     XCTAssertEqual(value, result.value());
@@ -49,6 +51,7 @@ using namespace yas;
 
     XCTAssertTrue(result);
     XCTAssertTrue(result.is_success());
+    XCTAssertFalse(result.is_error());
     XCTAssertEqual(result.value(), nullptr);
 }
 
@@ -58,6 +61,7 @@ using namespace yas;
 
     XCTAssertFalse(result);
     XCTAssertFalse(result.is_success());
+    XCTAssertTrue(result.is_error());
     XCTAssertEqual(result.error(), std::string("test_error"));
 
     XCTAssertNotEqual(error, result.error());
@@ -69,6 +73,7 @@ using namespace yas;
 
     XCTAssertFalse(result);
     XCTAssertFalse(result.is_success());
+    XCTAssertTrue(result.is_error());
     XCTAssertEqual(result.error(), std::string("test_error"));
 
     XCTAssertEqual(error, result.error());
