@@ -244,6 +244,12 @@
     XCTAssertEqual(destination, "destination_text");
 }
 
+- (void)test_replaced_double {
+    auto source = "src_text_src_text";
+    auto destination = yas::replaced(source, "src", "dst");
+    XCTAssertEqual(destination, "dst_text_dst_text");
+}
+
 - (void)test_replaced_plural {
     auto source = "a_text_a_text_a";
     auto destination = yas::replaced(source, "a", "b");
