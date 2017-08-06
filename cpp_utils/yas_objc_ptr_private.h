@@ -22,6 +22,11 @@ objc_ptr<T, enable_if_id_t<T>> &objc_ptr<T, enable_if_id_t<T>>::operator=(T cons
 }
 
 template <typename T>
+T objc_ptr<T, enable_if_id_t<T>>::operator*() const noexcept {
+    return this->object();
+}
+
+template <typename T>
 objc_ptr<T, enable_if_id_t<T>>::operator bool() const {
     auto imp_ptr = impl_ptr<objc_ptr_impl>();
     return imp_ptr && imp_ptr->object();

@@ -353,4 +353,14 @@ static int _objc_object_count = 0;
     XCTAssertEqual(_objc_object_count, 0);
 }
 
+- (void)test_asterisk {
+    auto objc_obj = make_objc_ptr([[YASObjCTestObject alloc] init]);
+
+    XCTAssertEqualObjects(*objc_obj, objc_obj.object());
+
+    objc_obj.set_object(nil);
+
+    XCTAssertNil(*objc_obj);
+}
+
 @end
