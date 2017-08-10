@@ -8,7 +8,7 @@
 #include <functional>
 
 namespace yas {
-class timer : base {
+class timer : public base {
     class impl;
 
    public:
