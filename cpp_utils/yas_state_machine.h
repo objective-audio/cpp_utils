@@ -27,6 +27,8 @@ class state_machine : public base {
     void register_state(T key, handler_f handler);
 
     void change_state(T key);
+
+    T const &current_state() const;
 };
 }
 

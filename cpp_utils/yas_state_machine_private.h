@@ -18,6 +18,7 @@ template <typename T>
 struct state_machine<T>::impl : base::impl {
     std::unordered_map<T, handler_f> handlers;
     changer changer;
+    T current;
 
     void prepare(state_machine &machine) {
         this->changer.weak_machine = to_weak(machine);
@@ -34,6 +35,7 @@ struct state_machine<T>::impl : base::impl {
     void change_state(T &&key) {
         auto &handlers = this->handlers;
         if (handlers.count(key) > 0) {
+            this->current = key;
             handlers.at(key)(this->changer);
         } else {
             throw std::invalid_argument("handler not found.");
@@ -58,5 +60,10 @@ void state_machine<T>::register_state(T key, handler_f handler) {
 template <typename T>
 void state_machine<T>::change_state(T key) {
     impl_ptr<impl>()->change_state(std::move(key));
+}
+
+template <typename T>
+T const &state_machine<T>::current_state() const {
+    return impl_ptr<impl>()->current;
 }
 }
