@@ -13,6 +13,15 @@ void state_machine<T>::changer::change(T const &key) const {
 }
 
 template <typename T>
+T const &state_machine<T>::changer::current() const {
+    if (auto machine = weak_machine.lock()) {
+        return machine.current_state();
+    }
+
+    throw std::runtime_error("state_machine lock failed.");
+}
+
+template <typename T>
 struct state_machine<T>::impl : base::impl {
     std::unordered_map<T, handler_f> handlers;
     changer changer;

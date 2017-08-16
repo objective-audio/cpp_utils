@@ -65,15 +65,13 @@ using namespace yas;
 
     std::vector<std::string> called_state_names;
 
-    machine.register_state(state_name_a,
-                           [&called_state_names, &state_name_a](state_machine<std::string>::changer const &changer) {
-                               called_state_names.push_back(state_name_a);
-                           });
+    machine.register_state(state_name_a, [&called_state_names](state_machine<std::string>::changer const &changer) {
+        called_state_names.push_back(changer.current());
+    });
 
-    machine.register_state(state_name_b,
-                           [&called_state_names, &state_name_b](state_machine<std::string>::changer const &changer) {
-                               called_state_names.push_back(state_name_b);
-                           });
+    machine.register_state(state_name_b, [&called_state_names](state_machine<std::string>::changer const &changer) {
+        called_state_names.push_back(changer.current());
+    });
 
     machine.change_state(state_name_a);
 
@@ -98,11 +96,11 @@ using namespace yas;
     std::vector<test_state> called_state_names;
 
     machine.register_state(test_state::a, [&called_state_names](state_machine<test_state>::changer const &changer) {
-        called_state_names.push_back(test_state::a);
+        called_state_names.push_back(changer.current());
     });
 
     machine.register_state(test_state::b, [&called_state_names](state_machine<test_state>::changer const &changer) {
-        called_state_names.push_back(test_state::b);
+        called_state_names.push_back(changer.current());
     });
 
     machine.change_state(test_state::a);

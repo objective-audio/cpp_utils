@@ -18,6 +18,8 @@ class state_machine : public base {
         weak<state_machine> weak_machine;
 
         void change(T const &key) const;
+        
+        T const &current() const;
     };
 
     using handler_f = std::function<void(changer const &)>;
