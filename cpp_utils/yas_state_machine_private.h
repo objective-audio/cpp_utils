@@ -4,8 +4,6 @@
 
 #pragma once
 
-#include <unordered_map>
-
 namespace yas {
 template <typename T>
 void state_machine<T>::changer::change(T const &key) const {
@@ -46,6 +44,14 @@ struct state_machine<T>::impl : base::impl {
 template <typename T>
 state_machine<T>::state_machine() : base(std::make_shared<impl>()) {
     impl_ptr<impl>()->prepare(*this);
+}
+
+template <typename T>
+state_machine<T>::state_machine(T initial, std::unordered_map<T, handler_f> handlers) : base(std::make_shared<impl>()) {
+    auto imp = impl_ptr<impl>();
+    imp->prepare(*this);
+    imp->handlers = std::move(handlers);
+    imp->change_state(std::move(initial));
 }
 
 template <typename T>
