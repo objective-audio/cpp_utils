@@ -4,8 +4,6 @@
 
 #pragma once
 
-#include <unordered_map>
-
 namespace yas {
 template <typename T>
 void state_machine<T>::changer::change(T const &key) const {
@@ -15,9 +13,19 @@ void state_machine<T>::changer::change(T const &key) const {
 }
 
 template <typename T>
+T const &state_machine<T>::changer::current() const {
+    if (auto machine = weak_machine.lock()) {
+        return machine.current_state();
+    }
+
+    throw std::runtime_error("state_machine lock failed.");
+}
+
+template <typename T>
 struct state_machine<T>::impl : base::impl {
     std::unordered_map<T, handler_f> handlers;
     changer changer;
+    T current;
 
     void prepare(state_machine &machine) {
         this->changer.weak_machine = to_weak(machine);
@@ -34,6 +42,7 @@ struct state_machine<T>::impl : base::impl {
     void change_state(T &&key) {
         auto &handlers = this->handlers;
         if (handlers.count(key) > 0) {
+            this->current = key;
             handlers.at(key)(this->changer);
         } else {
             throw std::invalid_argument("handler not found.");
@@ -44,6 +53,14 @@ struct state_machine<T>::impl : base::impl {
 template <typename T>
 state_machine<T>::state_machine() : base(std::make_shared<impl>()) {
     impl_ptr<impl>()->prepare(*this);
+}
+
+template <typename T>
+state_machine<T>::state_machine(T initial, std::unordered_map<T, handler_f> handlers) : base(std::make_shared<impl>()) {
+    auto imp = impl_ptr<impl>();
+    imp->prepare(*this);
+    imp->handlers = std::move(handlers);
+    imp->change_state(std::move(initial));
 }
 
 template <typename T>
@@ -58,5 +75,15 @@ void state_machine<T>::register_state(T key, handler_f handler) {
 template <typename T>
 void state_machine<T>::change_state(T key) {
     impl_ptr<impl>()->change_state(std::move(key));
+}
+
+template <typename T>
+T const &state_machine<T>::current_state() const {
+    return impl_ptr<impl>()->current;
+}
+
+template <typename T>
+state_machine<T> make_state_machine(T initial, typename state_machine<T>::handlers_t handlers) {
+    return state_machine<T>{std::move(initial), std::move(handlers)};
 }
 }
