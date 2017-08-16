@@ -31,13 +31,29 @@ using namespace yas;
 
     machine.register_state(state_name_a, [](auto const &) {});
     machine.register_state(state_name_b, [](auto const &) {});
-    
+
     machine.change_state(state_name_a);
-    
+
     XCTAssertEqual(machine.current_state(), state_name_a);
-    
+
     machine.change_state(state_name_b);
-    
+
+    XCTAssertEqual(machine.current_state(), state_name_b);
+}
+
+- (void)test_make_state_machine {
+    std::string const state_name_a = "state_a";
+    std::string const state_name_b = "state_b";
+
+    state_machine<std::string>::handlers_t handlers{{state_name_a, [](auto const &) {}},
+                                                    {state_name_b, [](auto const &) {}}};
+
+    auto machine = make_state_machine(state_name_a, {std::move(handlers)});
+
+    XCTAssertEqual(machine.current_state(), state_name_a);
+
+    machine.change_state(state_name_b);
+
     XCTAssertEqual(machine.current_state(), state_name_b);
 }
 

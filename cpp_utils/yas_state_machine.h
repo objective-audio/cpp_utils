@@ -21,6 +21,7 @@ class state_machine : public base {
     };
 
     using handler_f = std::function<void(changer const &)>;
+    using handlers_t = std::unordered_map<T, typename state_machine<T>::handler_f>;
 
     state_machine();
     explicit state_machine(T initial, std::unordered_map<T, handler_f> handlers);
@@ -32,6 +33,9 @@ class state_machine : public base {
 
     T const &current_state() const;
 };
+
+template <typename T>
+state_machine<T> make_state_machine(T initial, typename state_machine<T>::handlers_t handlers);
 }
 
 #include "yas_state_machine_private.h"

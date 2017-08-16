@@ -72,4 +72,9 @@ template <typename T>
 T const &state_machine<T>::current_state() const {
     return impl_ptr<impl>()->current;
 }
+
+template <typename T>
+state_machine<T> make_state_machine(T initial, typename state_machine<T>::handlers_t handlers) {
+    return state_machine<T>{std::move(initial), std::move(handlers)};
+}
 }
