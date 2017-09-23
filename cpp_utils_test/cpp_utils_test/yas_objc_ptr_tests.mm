@@ -108,6 +108,18 @@ static int _objc_object_count = 0;
     XCTAssertEqual(_objc_object_count, 0);
 }
 
+- (void)test_objc_ptr_constructor_with_func {
+    {
+        yas::objc_ptr<YASObjCTestObject *> container(
+            []() { return yas_autorelease([[YASObjCTestObject alloc] init]); });
+
+        XCTAssertNotNil(container.object());
+        XCTAssertEqual([container.object() retainCount], 1);
+    }
+
+    XCTAssertEqual(_objc_object_count, 0);
+}
+
 #pragma mark - copy
 
 - (void)test_copy {

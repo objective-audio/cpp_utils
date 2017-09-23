@@ -16,6 +16,13 @@ objc_ptr<T, enable_if_id_t<T>>::objc_ptr(T const obj) : base(std::make_shared<ob
 }
 
 template <typename T>
+objc_ptr<T, enable_if_id_t<T>>::objc_ptr(std::function<T(void)> const &func) : objc_ptr() {
+    @autoreleasepool {
+        this->set_object(func());
+    }
+}
+
+template <typename T>
 objc_ptr<T, enable_if_id_t<T>> &objc_ptr<T, enable_if_id_t<T>>::operator=(T const obj) {
     set_impl_ptr(std::make_shared<objc_ptr_impl>(obj));
     return *this;
