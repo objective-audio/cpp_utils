@@ -39,6 +39,7 @@ class objc_ptr<T, enable_if_id_t<T>> : public base {
    public:
     objc_ptr();
     explicit objc_ptr(T const);
+    explicit objc_ptr(std::function<T(void)> const &func);
 
     objc_ptr &operator=(T const);
     T operator*() const noexcept;
