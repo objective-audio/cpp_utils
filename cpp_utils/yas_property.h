@@ -16,8 +16,6 @@ enum class property_method {
     did_change,
 };
 
-struct null_key {};
-
 template <typename K, typename T>
 class property : public base {
    public:
