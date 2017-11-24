@@ -18,7 +18,7 @@ enum class property_method {
 
 struct null_key {};
 
-template <typename T, typename K = null_key>
+template <typename K, typename T>
 class property : public base {
    public:
     class impl;
@@ -59,15 +59,15 @@ class property : public base {
 
     void set_validator(validator_t);
     validator_t const &validator() const;
-    
+
     void set_limiter(limiter_t);
     limiter_t const &limiter() const;
 
     subject_t &subject();
 };
 
-template <typename T, typename K = null_key>
-property<T, K> make_property(T value, K key = null_key{});
+template <typename K, typename T>
+property<K, T> make_property(K key, T value);
 
 std::string to_string(yas::property_method const method);
 }
