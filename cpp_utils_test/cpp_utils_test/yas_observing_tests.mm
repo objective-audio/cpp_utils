@@ -28,10 +28,10 @@ using namespace yas;
     std::string const key2("key2");
 
     bool called = false;
-    subject<int> subject;
+    subject<std::string, int> subject;
 
     {
-        observer<int> observer;
+        observer<std::string, int> observer;
 
         observer.add_handler(subject, key, [&called](auto const &context) {
             if (context.key == "key" && context.value == 100) {
@@ -73,8 +73,8 @@ using namespace yas;
     std::string const key2("key2");
     std::string const key3("key3");
 
-    subject<int> subject;
-    observer<int> observer;
+    subject<std::string, int> subject;
+    observer<std::string, int> observer;
 
     bool called1 = false;
     bool called2 = false;
@@ -117,9 +117,9 @@ using namespace yas;
 
     std::string const key("key");
 
-    subject<int> subject;
-    observer<int> observer1;
-    observer<int> observer2;
+    subject<std::string, int> subject;
+    observer<std::string, int> observer1;
+    observer<std::string, int> observer2;
 
     bool called1 = false;
     bool called2 = false;
@@ -146,9 +146,9 @@ using namespace yas;
 
     std::string const key("key");
 
-    subject<int> subject1;
-    subject<int> subject2;
-    observer<int> observer;
+    subject<std::string, int> subject1;
+    subject<std::string, int> subject2;
+    observer<std::string, int> observer;
 
     bool called1 = false;
     bool called2 = false;
@@ -180,8 +180,8 @@ using namespace yas;
 }
 
 - (void)test_wild_card {
-    subject<std::string> subject;
-    observer<std::string> observer;
+    subject<std::string, std::string> subject;
+    observer<std::string, std::string> observer;
 
     std::string key00 = "30";
     std::string key10 = "10";
@@ -219,8 +219,8 @@ using namespace yas;
 }
 
 - (void)test_remove_wild_card {
-    subject<std::string> subject;
-    observer<std::string> observer;
+    subject<std::string, std::string> subject;
+    observer<std::string, std::string> observer;
 
     std::string key10 = "10";
     std::string key20 = "20";
@@ -257,11 +257,11 @@ using namespace yas;
     static std::string const property_method2 = "p2";
 
     struct test_class {
-        subject<std::string> property1;
-        subject<std::string> property2;
+        subject<std::string, std::string> property1;
+        subject<std::string, std::string> property2;
 
-        observer<std::string> dispatcher;
-        subject<std::string> properties_subject;
+        observer<std::string, std::string> dispatcher;
+        subject<std::string, std::string> properties_subject;
 
         test_class() : dispatcher(make_subject_dispatcher(properties_subject, {&property1, &property2})) {
         }
@@ -275,7 +275,7 @@ using namespace yas;
     std::string value1 = "";
     std::string value2 = "";
 
-    observer<std::string> observer;
+    observer<std::string, std::string> observer;
     observer.add_wild_card_handler(test_object.properties_subject, [&value1, &value2](auto const &context) {
         if (context.key == property_method1) {
             value1 = context.value;
@@ -298,8 +298,8 @@ using namespace yas;
 
     bool called = false;
 
-    subject<int> subject;
-    observer<int> observer;
+    subject<std::string, int> subject;
+    observer<std::string, int> observer;
 
     observer.add_handler(subject, key, [&called](auto const &context) {
         if (context.key == "key" && context.value == 100) {
@@ -327,10 +327,10 @@ using namespace yas;
 
     bool called = false;
 
-    subject<int> subject;
+    subject<std::string, int> subject;
 
     {
-        observer<int> observer;
+        observer<std::string, int> observer;
 
         observer.add_handler(subject, key, [&called](auto const &context) {
             if (context.key == "key" && context.value == 100) {
@@ -357,10 +357,10 @@ using namespace yas;
 
     bool called = false;
 
-    observer<int> observer;
+    observer<std::string, int> observer;
 
     {
-        subject<int> subject;
+        subject<std::string, int> subject;
 
         observer.add_handler(subject, key, [&called](auto const &context) {
             if (context.key == "key" && context.value == 100) {
@@ -377,7 +377,7 @@ using namespace yas;
 }
 
 - (void)test_make_observer {
-    subject<int> subject;
+    subject<std::string, int> subject;
     const int sender = 101;
     int receiver = 0;
     std::string key = "key";
@@ -393,7 +393,7 @@ using namespace yas;
 }
 
 - (void)test_make_wild_card_observer {
-    subject<int> subject;
+    subject<std::string, int> subject;
     int receiver = 0;
     std::string key1 = "key1";
     std::string key2 = "key2";
@@ -419,7 +419,7 @@ using namespace yas;
 
 - (void)test_observer_hold_by_base {
     base base{nullptr};
-    subject<int> subject;
+    subject<std::string, int> subject;
     bool called = false;
 
     base = subject.make_observer("key", [&called](auto const &) { called = true; });
@@ -437,7 +437,7 @@ using namespace yas;
 }
 
 - (void)test_subject_has_observer {
-    subject<int> subject;
+    subject<std::string, int> subject;
 
     XCTAssertFalse(subject.has_observer());
 
@@ -453,7 +453,7 @@ using namespace yas;
 - (void)test_enum_key {
     enum class test_enum { type1, type2 };
 
-    subject<int, test_enum> subject;
+    subject<test_enum, int> subject;
 
     {
         bool called = false;

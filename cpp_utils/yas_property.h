@@ -29,8 +29,8 @@ class property : public base {
         property const &property;
     };
 
-    using subject_t = subject<change_context, property_method>;
-    using observer_t = observer<change_context, property_method>;
+    using subject_t = subject<property_method, change_context>;
+    using observer_t = observer<property_method, change_context>;
     using validator_t = std::function<bool(T const &)>;
     using limiter_t = std::function<T(T const &)>;
 
