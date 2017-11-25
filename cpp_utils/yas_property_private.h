@@ -7,8 +7,8 @@
 #include "yas_type_traits.h"
 
 namespace yas {
-template <typename T, typename K>
-class property<T, K>::impl : public base::impl {
+template <typename K, typename T>
+class property<K, T>::impl : public base::impl {
    public:
     impl(args const &args) : _value(args.value), _key(args.key), _validator(args.validator), _limiter(args.limiter) {
         _limit(_value);
@@ -99,16 +99,16 @@ class property<T, K>::impl : public base::impl {
         if (_subject.has_observer()) {
             if (auto lock = std::unique_lock<std::mutex>(_notify_mutex, std::try_to_lock)) {
                 if (lock.owns_lock()) {
-                    if (auto property = cast<yas::property<T, K>>()) {
+                    if (auto property = cast<yas::property<K, T>>()) {
                         _subject.notify(property_method::will_change,
-                                        yas::property<T, K>::change_context{
+                                        yas::property<K, T>::change_context{
                                             .old_value = _value, .new_value = val, .property = property});
 
                         auto old_value = std::move(_value);
                         _value = std::move(val);
 
                         _subject.notify(property_method::did_change,
-                                        yas::property<T, K>::change_context{
+                                        yas::property<K, T>::change_context{
                                             .old_value = old_value, .new_value = _value, .property = property});
                     }
                 }
@@ -139,99 +139,99 @@ class property<T, K>::impl : public base::impl {
     }
 };
 
-template <typename T, typename K>
-property<T, K>::property() : property(args{}) {
+template <typename K, typename T>
+property<K, T>::property() : property(args{}) {
 }
 
-template <typename T, typename K>
-property<T, K>::property(args const &args) : base(std::make_shared<impl>(args)) {
+template <typename K, typename T>
+property<K, T>::property(args const &args) : base(std::make_shared<impl>(args)) {
 }
 
-template <typename T, typename K>
-property<T, K>::property(args &&args) : base(std::make_shared<impl>(std::move(args))) {
+template <typename K, typename T>
+property<K, T>::property(args &&args) : base(std::make_shared<impl>(std::move(args))) {
 }
 
-template <typename T, typename K>
-property<T, K>::property(std::nullptr_t) : base(nullptr) {
+template <typename K, typename T>
+property<K, T>::property(std::nullptr_t) : base(nullptr) {
 }
 
-template <typename T, typename K>
-bool property<T, K>::operator==(property const &rhs) const {
+template <typename K, typename T>
+bool property<K, T>::operator==(property const &rhs) const {
     return impl_ptr() && rhs.impl_ptr() && (impl_ptr() == rhs.impl_ptr());
 }
 
-template <typename T, typename K>
-bool property<T, K>::operator!=(property const &rhs) const {
+template <typename K, typename T>
+bool property<K, T>::operator!=(property const &rhs) const {
     return !impl_ptr() || !rhs.impl_ptr() || (impl_ptr() != rhs.impl_ptr());
 }
 
-template <typename T, typename K>
-bool property<T, K>::operator==(T const &rhs) const {
+template <typename K, typename T>
+bool property<K, T>::operator==(T const &rhs) const {
     return impl_ptr<impl>()->value() == rhs;
 }
 
-template <typename T, typename K>
-bool property<T, K>::operator!=(T const &rhs) const {
+template <typename K, typename T>
+bool property<K, T>::operator!=(T const &rhs) const {
     return impl_ptr<impl>()->value() != rhs;
 }
 
-template <typename T, typename K>
-K const &property<T, K>::key() const {
+template <typename K, typename T>
+K const &property<K, T>::key() const {
     return impl_ptr<impl>()->key();
 }
 
-template <typename T, typename K>
-void property<T, K>::set_value(T value) {
+template <typename K, typename T>
+void property<K, T>::set_value(T value) {
     impl_ptr<impl>()->set_value(std::move(value));
 }
 
-template <typename T, typename K>
-T const &property<T, K>::value() const {
+template <typename K, typename T>
+T const &property<K, T>::value() const {
     return impl_ptr<impl>()->value();
 }
 
-template <typename T, typename K>
-T &property<T, K>::value() {
+template <typename K, typename T>
+T &property<K, T>::value() {
     return impl_ptr<impl>()->value();
 }
 
-template <typename T, typename K>
-void property<T, K>::set_validator(validator_t validator) {
+template <typename K, typename T>
+void property<K, T>::set_validator(validator_t validator) {
     impl_ptr<impl>()->set_validator(std::move(validator));
 }
 
-template <typename T, typename K>
-typename property<T, K>::validator_t const &property<T, K>::validator() const {
+template <typename K, typename T>
+typename property<K, T>::validator_t const &property<K, T>::validator() const {
     return impl_ptr<impl>()->validator();
 }
 
-template <typename T, typename K>
-void property<T, K>::set_limiter(limiter_t limiter) {
+template <typename K, typename T>
+void property<K, T>::set_limiter(limiter_t limiter) {
     impl_ptr<impl>()->set_limiter(std::move(limiter));
 }
 
-template <typename T, typename K>
-typename property<T, K>::limiter_t const &property<T, K>::limiter() const {
+template <typename K, typename T>
+typename property<K, T>::limiter_t const &property<K, T>::limiter() const {
     return impl_ptr<impl>()->limiter();
 }
 
-template <typename T, typename K>
-typename property<T, K>::subject_t &property<T, K>::subject() {
+template <typename K, typename T>
+typename property<K, T>::subject_t &property<K, T>::subject() {
     return impl_ptr<impl>()->subject();
 }
 
-template <typename T, typename K>
-bool operator==(T const &lhs, property<T, K> const &rhs) {
+template <typename K, typename T>
+bool operator==(T const &lhs, property<K, T> const &rhs) {
     return lhs == rhs.value();
 }
 
-template <typename T, typename K>
-bool operator!=(T const &lhs, property<T, K> const &rhs) {
+template <typename K, typename T>
+bool operator!=(T const &lhs, property<K, T> const &rhs) {
     return lhs != rhs.value();
 }
 
-template <typename T, typename K>
-property<T, K> make_property(T value, K key) {
-    return property<T, K>{{.key = std::move(key), .value = std::move(value)}};
+template <typename K, typename T>
+property<K, T> make_property(K key, T value) {
+    return property<K, T>{{.key = std::move(key), .value = std::move(value)}};
 }
 }

@@ -13,7 +13,7 @@ enum class test_key {
 };
 
 struct test_class {
-    using property_t = yas::property<int, test_key>;
+    using property_t = yas::property<test_key, int>;
 
     property_t property1;
     property_t property2;
@@ -43,18 +43,10 @@ struct test_class {
 }
 
 - (void)test_create_property {
-    yas::property<float> float_property;
-
-    float_property.set_value(1.0f);
-
-    XCTAssertEqual(float_property.value(), 1.0f);
-}
-
-- (void)test_create_property_with_key {
     int key = 1;
     float value1 = 1.5;
 
-    yas::property<float, int> float_property({.value = value1, .key = key});
+    yas::property<int, float> float_property({.value = value1, .key = key});
 
     XCTAssertEqual(key, float_property.key());
     XCTAssertEqual(float_property.value(), value1);
@@ -70,10 +62,10 @@ struct test_class {
 - (void)test_create_property_with_validator {
     bool called = false;
 
-    yas::property<float> property{{.value = 1.0f, .validator = [&called](auto const &value) {
-                                       called = true;
-                                       return true;
-                                   }}};
+    yas::property<int, float> property{{.value = 1.0f, .validator = [&called](auto const &value) {
+                                            called = true;
+                                            return true;
+                                        }}};
 
     XCTAssertTrue(property.validator());
 
@@ -83,8 +75,8 @@ struct test_class {
 }
 
 - (void)test_create_property_by_copy_constructor {
-    property<float, int>::args args{.key = 1, .value = 2.0f};
-    property<float, int> property{args};
+    property<int, float>::args args{.key = 1, .value = 2.0f};
+    property<int, float> property{args};
 
     XCTAssertEqual(property.key(), 1);
     XCTAssertEqual(property.value(), 2.0f);
@@ -94,23 +86,12 @@ struct test_class {
     int key = 1;
     float value = 2.0f;
 
-    auto property = make_property(value, key);
+    auto property = make_property(key, value);
 
     XCTAssertEqual(property.key(), 1);
     XCTAssertEqual(property.value(), 2.0f);
 
     XCTAssertTrue(typeid(property.key()) == typeid(int));
-    XCTAssertTrue(typeid(property.value()) == typeid(float));
-}
-
-- (void)test_make_property_without_key {
-    float value = 3.0f;
-
-    auto property = make_property(value);
-
-    XCTAssertEqual(property.value(), 3.0f);
-
-    XCTAssertTrue(typeid(property.key()) == typeid(null_key));
     XCTAssertTrue(typeid(property.value()) == typeid(float));
 }
 
@@ -231,16 +212,16 @@ struct test_class {
 }
 
 - (void)test_equal {
-    yas::property<float> property1;
-    yas::property<float> property2;
+    yas::property<int, float> property1;
+    yas::property<int, float> property2;
 
     XCTAssertTrue(property1 == property1);
     XCTAssertFalse(property1 == property2);
 }
 
 - (void)test_not_equal {
-    yas::property<float> property1;
-    yas::property<float> property2;
+    yas::property<int, float> property1;
+    yas::property<int, float> property2;
 
     XCTAssertFalse(property1 != property1);
     XCTAssertTrue(property1 != property2);
@@ -249,8 +230,8 @@ struct test_class {
 - (void)test_equal_to_value_true {
     float value = 3.0f;
 
-    yas::property<float, int> property1{{.key = 1, .value = value}};
-    yas::property<float, int> property2{{.key = 2, .value = value}};
+    yas::property<int, float> property1{{.key = 1, .value = value}};
+    yas::property<int, float> property2{{.key = 2, .value = value}};
 
     XCTAssertTrue(property1 == value);
     XCTAssertTrue(value == property1);
@@ -260,8 +241,8 @@ struct test_class {
     float value1 = 3.0f;
     float value2 = 5.0f;
 
-    yas::property<float, int> property1{{.key = 1, .value = value1}};
-    yas::property<float, int> property2{{.key = 2, .value = value2}};
+    yas::property<int, float> property1{{.key = 1, .value = value1}};
+    yas::property<int, float> property2{{.key = 2, .value = value2}};
 
     XCTAssertFalse(property1 == value2);
     XCTAssertFalse(value1 == property2);
@@ -271,8 +252,8 @@ struct test_class {
     float value1 = 3.0f;
     float value2 = 5.0f;
 
-    yas::property<float, int> property1{{.key = 1, .value = value1}};
-    yas::property<float, int> property2{{.key = 2, .value = value2}};
+    yas::property<int, float> property1{{.key = 1, .value = value1}};
+    yas::property<int, float> property2{{.key = 2, .value = value2}};
 
     XCTAssertTrue(property1 != value2);
     XCTAssertTrue(value1 != property2);
@@ -281,15 +262,15 @@ struct test_class {
 - (void)test_not_equal_to_value_false {
     float value = 3.0f;
 
-    yas::property<float, int> property1{{.key = 1, .value = value}};
-    yas::property<float, int> property2{{.key = 2, .value = value}};
+    yas::property<int, float> property1{{.key = 1, .value = value}};
+    yas::property<int, float> property2{{.key = 2, .value = value}};
 
     XCTAssertFalse(property1 != value);
     XCTAssertFalse(value != property1);
 }
 
 - (void)test_change_context {
-    yas::property<int> property{{.value = 1}};
+    yas::property<int, int> property{{.value = 1}};
 
     bool will_called = false;
     bool did_called = false;
@@ -317,7 +298,7 @@ struct test_class {
 }
 
 - (void)test_set_same_value {
-    yas::property<std::shared_ptr<int>> property({.value = nullptr});
+    yas::property<int, std::shared_ptr<int>> property({.value = nullptr});
 
     bool called = false;
     std::shared_ptr<int> called_value = nullptr;
@@ -348,7 +329,7 @@ struct test_class {
 }
 
 - (void)test_set_same_string_value {
-    yas::property<std::string> property;
+    yas::property<int, std::string> property;
 
     bool called = false;
     std::string called_value;
@@ -379,7 +360,7 @@ struct test_class {
 }
 
 - (void)test_set_validator {
-    yas::property<std::string> property;
+    yas::property<int, std::string> property;
 
     XCTAssertFalse(property.validator());
 
@@ -389,7 +370,7 @@ struct test_class {
 }
 
 - (void)test_validation_set_value {
-    yas::property<std::string> property;
+    yas::property<int, std::string> property;
 
     property.set_validator([](auto const &value) { return value != "no"; });
 
@@ -400,20 +381,20 @@ struct test_class {
 
 - (void)test_validation_construct {
     auto create_property_success = []() {
-        yas::property<std::string> property{{.value = "", .validator = [](auto const &) { return true; }}};
+        yas::property<int, std::string> property{{.value = "", .validator = [](auto const &) { return true; }}};
     };
 
     XCTAssertNoThrow(create_property_success());
 
     auto create_property_failed = []() {
-        yas::property<std::string> property{{.value = "", .validator = [](auto const &) { return false; }}};
+        yas::property<int, std::string> property{{.value = "", .validator = [](auto const &) { return false; }}};
     };
 
     XCTAssertThrows(create_property_failed());
 }
 
 - (void)test_set_limiter {
-    yas::property<std::string> property;
+    yas::property<int, std::string> property;
 
     XCTAssertFalse(property.limiter());
 
@@ -423,7 +404,7 @@ struct test_class {
 }
 
 - (void)test_set_limiter_and_limit_value {
-    yas::property<std::string> property{{.value = "test_value"}};
+    yas::property<int, std::string> property{{.value = "test_value"}};
 
     XCTAssertEqual(property.value(), "test_value");
 
@@ -433,12 +414,12 @@ struct test_class {
 }
 
 - (void)test_limitation_set_value {
-    yas::property<int> property{{.value = 10, .limiter = [](int const &value) {
-                                     if (value < 0) {
-                                         return 0;
-                                     }
-                                     return value;
-                                 }}};
+    yas::property<int, int> property{{.value = 10, .limiter = [](int const &value) {
+                                          if (value < 0) {
+                                              return 0;
+                                          }
+                                          return value;
+                                      }}};
 
     property.set_value(1);
     XCTAssertEqual(property.value(), 1);
