@@ -15,7 +15,11 @@ std::string yas::to_string(CFStringRef const &cf_string) {
 
 CFStringRef yas::to_cf_object(std::string const &string) {
     CFStringRef cf_string = CFStringCreateWithCString(kCFAllocatorDefault, string.c_str(), kCFStringEncodingUTF8);
-    CFAutorelease(cf_string);
+    if (cf_string) {
+        CFAutorelease(cf_string);
+    } else {
+        cf_string = CFSTR("");
+    }
     return cf_string;
 }
 

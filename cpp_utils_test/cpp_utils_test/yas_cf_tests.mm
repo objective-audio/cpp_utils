@@ -56,6 +56,16 @@
     XCTAssertEqual(result, kCFCompareEqualTo);
 }
 
+- (void)testStringToCFStringFailed {
+    std::string string("\202");
+
+    CFStringRef cf_string = yas::to_cf_object(string);
+
+    CFComparisonResult result = CFStringCompare(cf_string, CFSTR(""), kNilOptions);
+
+    XCTAssertEqual(result, kCFCompareEqualTo);
+}
+
 - (void)testCFStringToString {
     CFStringRef cf_string = CFSTR("test_cf_string");
 
