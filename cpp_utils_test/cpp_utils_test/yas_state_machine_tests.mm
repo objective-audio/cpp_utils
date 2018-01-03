@@ -115,4 +115,31 @@ using namespace yas;
     XCTAssertEqual(called_state_names.at(1), test_state::b);
 }
 
+- (void)test_change_state_by_changer {
+    enum class test_state {
+        a,
+        b,
+    };
+
+    state_machine<test_state> machine;
+
+    std::vector<test_state> called_state_names;
+
+    machine.register_state(test_state::a, [&called_state_names](state_machine<test_state>::changer const &changer) {
+        called_state_names.push_back(changer.current());
+        changer.change(test_state::b);
+    });
+
+    machine.register_state(test_state::b, [&called_state_names](state_machine<test_state>::changer const &changer) {
+        called_state_names.push_back(changer.current());
+    });
+
+    machine.change_state(test_state::a);
+
+    XCTAssertEqual(called_state_names.size(), 2);
+
+    XCTAssertEqual(called_state_names.at(0), test_state::a);
+    XCTAssertEqual(called_state_names.at(1), test_state::b);
+}
+
 @end
