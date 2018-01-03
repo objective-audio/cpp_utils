@@ -23,7 +23,7 @@ T const &state_machine<T>::changer::current() const {
 
 template <typename T>
 struct state_machine<T>::impl : base::impl {
-    std::unordered_map<T, handler_f> handlers;
+    std::unordered_map<T, entered_handler_f> handlers;
     changer changer;
     T current;
 
@@ -31,7 +31,7 @@ struct state_machine<T>::impl : base::impl {
         this->changer.weak_machine = to_weak(machine);
     }
 
-    void register_state(T &&key, handler_f &&handler) {
+    void register_state(T &&key, entered_handler_f &&handler) {
         if (this->handlers.count(key) > 0) {
             throw std::invalid_argument("key is already exists.");
         }
@@ -56,7 +56,8 @@ state_machine<T>::state_machine() : base(std::make_shared<impl>()) {
 }
 
 template <typename T>
-state_machine<T>::state_machine(T initial, std::unordered_map<T, handler_f> handlers) : base(std::make_shared<impl>()) {
+state_machine<T>::state_machine(T initial, std::unordered_map<T, entered_handler_f> handlers)
+    : base(std::make_shared<impl>()) {
     auto imp = impl_ptr<impl>();
     imp->prepare(*this);
     imp->handlers = std::move(handlers);
@@ -68,7 +69,7 @@ state_machine<T>::state_machine(std::nullptr_t) : base(nullptr) {
 }
 
 template <typename T>
-void state_machine<T>::register_state(T key, handler_f handler) {
+void state_machine<T>::register_state(T key, entered_handler_f handler) {
     impl_ptr<impl>()->register_state(std::move(key), std::move(handler));
 }
 
@@ -83,7 +84,7 @@ T const &state_machine<T>::current_state() const {
 }
 
 template <typename T>
-state_machine<T> make_state_machine(T initial, typename state_machine<T>::handlers_t handlers) {
+state_machine<T> make_state_machine(T initial, typename state_machine<T>::entered_handlers_t handlers) {
     return state_machine<T>{std::move(initial), std::move(handlers)};
 }
 }

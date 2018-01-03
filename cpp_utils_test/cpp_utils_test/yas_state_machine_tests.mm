@@ -45,8 +45,8 @@ using namespace yas;
     std::string const state_name_a = "state_a";
     std::string const state_name_b = "state_b";
 
-    state_machine<std::string>::handlers_t handlers{{state_name_a, [](auto const &) {}},
-                                                    {state_name_b, [](auto const &) {}}};
+    state_machine<std::string>::entered_handlers_t handlers{{state_name_a, [](auto const &) {}},
+                                                            {state_name_b, [](auto const &) {}}};
 
     auto machine = make_state_machine(state_name_a, {std::move(handlers)});
 
