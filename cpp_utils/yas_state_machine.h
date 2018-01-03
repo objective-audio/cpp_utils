@@ -26,7 +26,7 @@ class state_machine : public base {
     using handlers_t = std::unordered_map<T, typename state_machine<T>::handler_f>;
 
     state_machine();
-    explicit state_machine(T initial, std::unordered_map<T, handler_f> handlers);
+    state_machine(T initial, std::unordered_map<T, handler_f> handlers);
     state_machine(std::nullptr_t);
 
     void register_state(T key, handler_f handler);
