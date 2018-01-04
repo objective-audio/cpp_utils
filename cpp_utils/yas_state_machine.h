@@ -27,7 +27,7 @@ class state_machine : public base {
     using entered_handlers_t =
         std::unordered_map<State, typename state_machine<State, Method, Return>::entered_handler_f>;
     using method_handler_f = std::function<void(changer const &)>;
-    using returned_handler_f = std::function<Return(changer const &)>;
+    using returned_handler_f = std::function<Return(void)>;
 
     state_machine();
     state_machine(std::nullptr_t);

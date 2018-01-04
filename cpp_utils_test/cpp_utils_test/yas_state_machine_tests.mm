@@ -185,9 +185,9 @@ using namespace yas;
     test_state_machine_t machine;
 
     machine.register_state(test_state::a, [](auto const &changer) {});
-    machine.register_returned_method(test_state::a, test_method::a, [](auto const &changer) { return 1; });
+    machine.register_returned_method(test_state::a, test_method::a, []() { return 1; });
     machine.register_state(test_state::b, [](auto const &changer) {});
-    machine.register_returned_method(test_state::b, test_method::a, [](auto const &changer) { return 2; });
+    machine.register_returned_method(test_state::b, test_method::a, []() { return 2; });
 
     machine.change(test_state::a);
 

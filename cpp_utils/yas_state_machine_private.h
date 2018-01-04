@@ -106,7 +106,7 @@ struct state_machine<State, Method, Return>::impl : base::impl {
 
         auto &handler = handlers.at(method);
 
-        return handler(this->changer);
+        return handler();
     }
 };
 
