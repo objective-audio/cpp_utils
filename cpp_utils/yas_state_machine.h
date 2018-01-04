@@ -7,9 +7,10 @@
 #include "yas_base.h"
 #include <functional>
 #include <unordered_map>
+#include <string>
 
 namespace yas {
-template <typename S, typename M = int, typename R = std::nullptr_t>
+template <typename S = std::string, typename M = std::string, typename R = std::nullptr_t>
 class state_machine : public base {
     struct impl;
 

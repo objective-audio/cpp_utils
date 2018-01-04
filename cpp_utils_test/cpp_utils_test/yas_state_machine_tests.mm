@@ -48,7 +48,7 @@ using namespace yas;
     state_machine<std::string>::entered_handlers_t handlers{{state_name_a, [](auto const &) {}},
                                                             {state_name_b, [](auto const &) {}}};
 
-    auto machine = make_state_machine<std::string, int>(state_name_a, {std::move(handlers)});
+    auto machine = make_state_machine<std::string, std::string>(state_name_a, {std::move(handlers)});
 
     XCTAssertEqual(machine.current_state(), state_name_a);
 
