@@ -30,7 +30,6 @@ class state_machine : public base {
     using returned_handler_f = std::function<Return(changer const &)>;
 
     state_machine();
-    state_machine(State initial, entered_handlers_t handlers);
     state_machine(std::nullptr_t);
 
     void register_state(State const &, entered_handler_f);

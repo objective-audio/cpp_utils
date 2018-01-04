@@ -116,16 +116,6 @@ state_machine<State, Method, Return>::state_machine() : base(std::make_shared<im
 }
 
 template <typename State, typename Method, typename Return>
-state_machine<State, Method, Return>::state_machine(State initial,
-                                                    std::unordered_map<State, entered_handler_f> handlers)
-    : base(std::make_shared<impl>()) {
-    auto imp = impl_ptr<impl>();
-    imp->prepare(*this);
-    imp->entered_handlers = std::move(handlers);
-    imp->change(std::move(initial));
-}
-
-template <typename State, typename Method, typename Return>
 state_machine<State, Method, Return>::state_machine(std::nullptr_t) : base(nullptr) {
 }
 
