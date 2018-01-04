@@ -29,9 +29,9 @@ class state_machine : public base {
     state_machine(S initial_state, entered_handlers_t handlers);
     state_machine(std::nullptr_t);
 
-    void register_state(S state, entered_handler_f handler);
+    void register_state(S const &state, entered_handler_f handler);
 
-    void change_state(S state);
+    void change_state(S const &state);
 
     S const &current_state() const;
 };

@@ -31,19 +31,19 @@ struct state_machine<S, M, R>::impl : base::impl {
         this->changer.weak_machine = to_weak(machine);
     }
 
-    void register_state(S &&key, entered_handler_f &&handler) {
+    void register_state(S const &key, entered_handler_f &&handler) {
         if (this->handlers.count(key) > 0) {
             throw std::invalid_argument("key is already exists.");
         }
 
-        this->handlers.emplace(std::move(key), std::move(handler));
+        this->handlers.emplace(key, std::move(handler));
     }
 
-    void change_state(S &&key) {
+    void change_state(S const &state) {
         auto &handlers = this->handlers;
-        if (handlers.count(key) > 0) {
-            this->current = key;
-            handlers.at(key)(this->changer);
+        if (handlers.count(state) > 0) {
+            this->current = state;
+            handlers.at(state)(this->changer);
         } else {
             throw std::invalid_argument("handler not found.");
         }
@@ -69,13 +69,13 @@ state_machine<S, M, R>::state_machine(std::nullptr_t) : base(nullptr) {
 }
 
 template <typename S, typename M, typename R>
-void state_machine<S, M, R>::register_state(S key, entered_handler_f handler) {
-    impl_ptr<impl>()->register_state(std::move(key), std::move(handler));
+void state_machine<S, M, R>::register_state(S const &state, entered_handler_f handler) {
+    impl_ptr<impl>()->register_state(state, std::move(handler));
 }
 
 template <typename S, typename M, typename R>
-void state_machine<S, M, R>::change_state(S key) {
-    impl_ptr<impl>()->change_state(std::move(key));
+void state_machine<S, M, R>::change_state(S const &state) {
+    impl_ptr<impl>()->change_state(state);
 }
 
 template <typename S, typename M, typename R>
