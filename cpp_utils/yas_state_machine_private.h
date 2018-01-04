@@ -56,7 +56,7 @@ struct state_machine<State, Method, Return>::impl : base::impl {
 
     void register_returned_method(State const &state, Method const &method, returned_handler_f handler) {
         if (this->returned_handlers.count(state) == 0) {
-            this->returned_handlers.emplace(state, std::unordered_map<Method, method_handler_f>());
+            this->returned_handlers.emplace(state, std::unordered_map<Method, returned_handler_f>());
         }
 
         auto &handlers = this->returned_handlers.at(state);
@@ -133,7 +133,7 @@ void state_machine<State, Method, Return>::register_method(State const &state, M
 template <typename State, typename Method, typename Return>
 void state_machine<State, Method, Return>::register_returned_method(State const &state, Method const &method,
                                                                     returned_handler_f handler) {
-    impl_ptr<impl>()->register_returned(state, method, std::move(handler));
+    impl_ptr<impl>()->register_returned_method(state, method, std::move(handler));
 }
 
 template <typename State, typename Method, typename Return>
