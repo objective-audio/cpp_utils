@@ -7,9 +7,10 @@
 #include "yas_base.h"
 #include <functional>
 #include <unordered_map>
+#include <string>
 
 namespace yas {
-template <typename T>
+template <typename State = std::string, typename Method = std::string, typename Return = std::nullptr_t>
 class state_machine : public base {
     struct impl;
 
@@ -17,27 +18,30 @@ class state_machine : public base {
     struct changer {
         weak<state_machine> weak_machine;
 
-        void change(T const &key) const;
-        
-        T const &current() const;
+        void change(State const &) const;
+
+        State const &current() const;
     };
 
-    using handler_f = std::function<void(changer const &)>;
-    using handlers_t = std::unordered_map<T, typename state_machine<T>::handler_f>;
+    using entered_handler_f = std::function<void(changer const &)>;
+    using entered_handlers_t =
+        std::unordered_map<State, typename state_machine<State, Method, Return>::entered_handler_f>;
+    using method_handler_f = std::function<void(changer const &)>;
+    using returned_handler_f = std::function<Return(void)>;
 
     state_machine();
-    explicit state_machine(T initial, std::unordered_map<T, handler_f> handlers);
     state_machine(std::nullptr_t);
 
-    void register_state(T key, handler_f handler);
+    void register_state(State const &, entered_handler_f);
+    void register_method(State const &state, Method const &, method_handler_f);
+    void register_returned_method(State const &state, Method const &, returned_handler_f);
 
-    void change_state(T key);
+    void change(State const &state);
+    void perform(Method const &method);
+    Return perform_returned(Method const &method);
 
-    T const &current_state() const;
+    State const &current_state() const;
 };
-
-template <typename T>
-state_machine<T> make_state_machine(T initial, typename state_machine<T>::handlers_t handlers);
 }
 
 #include "yas_state_machine_private.h"

@@ -5,15 +5,15 @@
 #pragma once
 
 namespace yas {
-template <typename T>
-void state_machine<T>::changer::change(T const &key) const {
+template <typename State, typename Method, typename Return>
+void state_machine<State, Method, Return>::changer::change(State const &key) const {
     if (auto machine = weak_machine.lock()) {
-        machine.change_state(key);
+        machine.change(key);
     }
 }
 
-template <typename T>
-T const &state_machine<T>::changer::current() const {
+template <typename State, typename Method, typename Return>
+State const &state_machine<State, Method, Return>::changer::current() const {
     if (auto machine = weak_machine.lock()) {
         return machine.current_state();
     }
@@ -21,69 +21,138 @@ T const &state_machine<T>::changer::current() const {
     throw std::runtime_error("state_machine lock failed.");
 }
 
-template <typename T>
-struct state_machine<T>::impl : base::impl {
-    std::unordered_map<T, handler_f> handlers;
+template <typename State, typename Method, typename Return>
+struct state_machine<State, Method, Return>::impl : base::impl {
+    std::unordered_map<State, entered_handler_f> entered_handlers;
+    std::unordered_map<State, std::unordered_map<Method, method_handler_f>> method_handlers;
+    std::unordered_map<State, std::unordered_map<Method, returned_handler_f>> returned_handlers;
     changer changer;
-    T current;
+    State current;
 
     void prepare(state_machine &machine) {
         this->changer.weak_machine = to_weak(machine);
     }
 
-    void register_state(T &&key, handler_f &&handler) {
-        if (this->handlers.count(key) > 0) {
+    void register_state(State const &state, entered_handler_f &&handler) {
+        if (this->entered_handlers.count(state) > 0) {
             throw std::invalid_argument("key is already exists.");
         }
 
-        this->handlers.emplace(std::move(key), std::move(handler));
+        this->entered_handlers.emplace(state, std::move(handler));
     }
 
-    void change_state(T &&key) {
-        auto &handlers = this->handlers;
-        if (handlers.count(key) > 0) {
-            this->current = key;
-            handlers.at(key)(this->changer);
+    void register_method(State const &state, Method const &method, method_handler_f handler) {
+        if (this->method_handlers.count(state) == 0) {
+            this->method_handlers.emplace(state, std::unordered_map<Method, method_handler_f>());
+        }
+
+        auto &handlers = this->method_handlers.at(state);
+        if (handlers.count(method) > 0) {
+            throw std::invalid_argument("method is already exists.");
+        }
+
+        handlers.emplace(method, std::move(handler));
+    }
+
+    void register_returned_method(State const &state, Method const &method, returned_handler_f handler) {
+        if (this->returned_handlers.count(state) == 0) {
+            this->returned_handlers.emplace(state, std::unordered_map<Method, returned_handler_f>());
+        }
+
+        auto &handlers = this->returned_handlers.at(state);
+        if (handlers.count(method) > 0) {
+            throw std::invalid_argument("method is already exists.");
+        }
+
+        handlers.emplace(method, std::move(handler));
+    }
+
+    void change(State const &state) {
+        auto &handlers = this->entered_handlers;
+        if (handlers.count(state) > 0) {
+            this->current = state;
+            handlers.at(state)(this->changer);
         } else {
             throw std::invalid_argument("handler not found.");
         }
     }
+
+    void perform(Method const &method) {
+        if (this->method_handlers.count(this->current) == 0) {
+            return;
+        }
+
+        auto &handlers = this->method_handlers.at(this->current);
+
+        if (handlers.count(method) == 0) {
+            return;
+        }
+
+        auto &handler = handlers.at(method);
+
+        handler(this->changer);
+    }
+
+    Return perform_returned(Method const &method) {
+        if (this->returned_handlers.count(this->current) == 0) {
+            throw std::runtime_error("handler not found.");
+        }
+
+        auto &handlers = this->returned_handlers.at(this->current);
+
+        if (handlers.count(method) == 0) {
+            throw std::runtime_error("handler not found.");
+        }
+
+        auto &handler = handlers.at(method);
+
+        return handler();
+    }
 };
 
-template <typename T>
-state_machine<T>::state_machine() : base(std::make_shared<impl>()) {
+template <typename State, typename Method, typename Return>
+state_machine<State, Method, Return>::state_machine() : base(std::make_shared<impl>()) {
     impl_ptr<impl>()->prepare(*this);
 }
 
-template <typename T>
-state_machine<T>::state_machine(T initial, std::unordered_map<T, handler_f> handlers) : base(std::make_shared<impl>()) {
-    auto imp = impl_ptr<impl>();
-    imp->prepare(*this);
-    imp->handlers = std::move(handlers);
-    imp->change_state(std::move(initial));
+template <typename State, typename Method, typename Return>
+state_machine<State, Method, Return>::state_machine(std::nullptr_t) : base(nullptr) {
 }
 
-template <typename T>
-state_machine<T>::state_machine(std::nullptr_t) : base(nullptr) {
+template <typename State, typename Method, typename Return>
+void state_machine<State, Method, Return>::register_state(State const &state, entered_handler_f handler) {
+    impl_ptr<impl>()->register_state(state, std::move(handler));
 }
 
-template <typename T>
-void state_machine<T>::register_state(T key, handler_f handler) {
-    impl_ptr<impl>()->register_state(std::move(key), std::move(handler));
+template <typename State, typename Method, typename Return>
+void state_machine<State, Method, Return>::register_method(State const &state, Method const &method,
+                                                           method_handler_f handler) {
+    impl_ptr<impl>()->register_method(state, method, std::move(handler));
 }
 
-template <typename T>
-void state_machine<T>::change_state(T key) {
-    impl_ptr<impl>()->change_state(std::move(key));
+template <typename State, typename Method, typename Return>
+void state_machine<State, Method, Return>::register_returned_method(State const &state, Method const &method,
+                                                                    returned_handler_f handler) {
+    impl_ptr<impl>()->register_returned_method(state, method, std::move(handler));
 }
 
-template <typename T>
-T const &state_machine<T>::current_state() const {
+template <typename State, typename Method, typename Return>
+void state_machine<State, Method, Return>::change(State const &state) {
+    impl_ptr<impl>()->change(state);
+}
+
+template <typename State, typename Method, typename Return>
+void state_machine<State, Method, Return>::perform(Method const &method) {
+    impl_ptr<impl>()->perform(method);
+}
+
+template <typename State, typename Method, typename Return>
+Return state_machine<State, Method, Return>::perform_returned(Method const &method) {
+    return impl_ptr<impl>()->perform_returned(method);
+}
+
+template <typename State, typename Method, typename Return>
+State const &state_machine<State, Method, Return>::current_state() const {
     return impl_ptr<impl>()->current;
-}
-
-template <typename T>
-state_machine<T> make_state_machine(T initial, typename state_machine<T>::handlers_t handlers) {
-    return state_machine<T>{std::move(initial), std::move(handlers)};
 }
 }
