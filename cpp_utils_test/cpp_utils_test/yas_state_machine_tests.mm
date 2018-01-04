@@ -24,7 +24,7 @@ using namespace yas;
 }
 
 - (void)test_current_state {
-    state_machine<std::string> machine;
+    state_machine<> machine;
 
     std::string const state_name_a = "state_a";
     std::string const state_name_b = "state_b";
@@ -45,8 +45,8 @@ using namespace yas;
     std::string const state_name_a = "state_a";
     std::string const state_name_b = "state_b";
 
-    state_machine<std::string>::entered_handlers_t handlers{{state_name_a, [](auto const &) {}},
-                                                            {state_name_b, [](auto const &) {}}};
+    state_machine<>::entered_handlers_t handlers{{state_name_a, [](auto const &) {}},
+                                                 {state_name_b, [](auto const &) {}}};
 
     auto machine = make_state_machine<std::string, std::string>(state_name_a, {std::move(handlers)});
 
@@ -58,7 +58,7 @@ using namespace yas;
 }
 
 - (void)test_change_string_key {
-    state_machine<std::string> machine;
+    state_machine<> machine;
 
     std::string const state_name_a = "state_a";
     std::string const state_name_b = "state_b";
