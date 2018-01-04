@@ -41,22 +41,6 @@ using namespace yas;
     XCTAssertEqual(machine.current_state(), state_name_b);
 }
 
-- (void)test_make_state_machine {
-    std::string const state_name_a = "state_a";
-    std::string const state_name_b = "state_b";
-
-    state_machine<>::entered_handlers_t handlers{{state_name_a, [](auto const &) {}},
-                                                 {state_name_b, [](auto const &) {}}};
-
-    auto machine = make_state_machine<std::string, std::string>(state_name_a, {std::move(handlers)});
-
-    XCTAssertEqual(machine.current_state(), state_name_a);
-
-    machine.change(state_name_b);
-
-    XCTAssertEqual(machine.current_state(), state_name_b);
-}
-
 - (void)test_change_string_key {
     state_machine<> machine;
 

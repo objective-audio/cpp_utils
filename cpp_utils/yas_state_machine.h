@@ -43,10 +43,6 @@ class state_machine : public base {
 
     State const &current_state() const;
 };
-
-template <typename State, typename Method, typename Return = std::nullptr_t>
-state_machine<State, Method, Return> make_state_machine(
-    State initial, typename state_machine<State, Method, Return>::entered_handlers_t handlers);
 }
 
 #include "yas_state_machine_private.h"

@@ -165,10 +165,4 @@ template <typename State, typename Method, typename Return>
 State const &state_machine<State, Method, Return>::current_state() const {
     return impl_ptr<impl>()->current;
 }
-
-template <typename State, typename Method, typename Return>
-state_machine<State, Method, Return> make_state_machine(
-    State initial, typename state_machine<State, Method, Return>::entered_handlers_t handlers) {
-    return state_machine<State, Method, Return>{std::move(initial), std::move(handlers)};
-}
 }
