@@ -5,15 +5,15 @@
 #pragma once
 
 namespace yas {
-template <typename T>
-void state_machine<T>::changer::change(T const &key) const {
+template <typename S, typename R>
+void state_machine<S, R>::changer::change(S const &key) const {
     if (auto machine = weak_machine.lock()) {
         machine.change_state(key);
     }
 }
 
-template <typename T>
-T const &state_machine<T>::changer::current() const {
+template <typename S, typename R>
+S const &state_machine<S, R>::changer::current() const {
     if (auto machine = weak_machine.lock()) {
         return machine.current_state();
     }
@@ -21,17 +21,17 @@ T const &state_machine<T>::changer::current() const {
     throw std::runtime_error("state_machine lock failed.");
 }
 
-template <typename T>
-struct state_machine<T>::impl : base::impl {
-    std::unordered_map<T, entered_handler_f> handlers;
+template <typename S, typename R>
+struct state_machine<S, R>::impl : base::impl {
+    std::unordered_map<S, entered_handler_f> handlers;
     changer changer;
-    T current;
+    S current;
 
     void prepare(state_machine &machine) {
         this->changer.weak_machine = to_weak(machine);
     }
 
-    void register_state(T &&key, entered_handler_f &&handler) {
+    void register_state(S &&key, entered_handler_f &&handler) {
         if (this->handlers.count(key) > 0) {
             throw std::invalid_argument("key is already exists.");
         }
@@ -39,7 +39,7 @@ struct state_machine<T>::impl : base::impl {
         this->handlers.emplace(std::move(key), std::move(handler));
     }
 
-    void change_state(T &&key) {
+    void change_state(S &&key) {
         auto &handlers = this->handlers;
         if (handlers.count(key) > 0) {
             this->current = key;
@@ -50,13 +50,13 @@ struct state_machine<T>::impl : base::impl {
     }
 };
 
-template <typename T>
-state_machine<T>::state_machine() : base(std::make_shared<impl>()) {
+template <typename S, typename R>
+state_machine<S, R>::state_machine() : base(std::make_shared<impl>()) {
     impl_ptr<impl>()->prepare(*this);
 }
 
-template <typename T>
-state_machine<T>::state_machine(T initial, std::unordered_map<T, entered_handler_f> handlers)
+template <typename S, typename R>
+state_machine<S, R>::state_machine(S initial, std::unordered_map<S, entered_handler_f> handlers)
     : base(std::make_shared<impl>()) {
     auto imp = impl_ptr<impl>();
     imp->prepare(*this);
@@ -64,27 +64,27 @@ state_machine<T>::state_machine(T initial, std::unordered_map<T, entered_handler
     imp->change_state(std::move(initial));
 }
 
-template <typename T>
-state_machine<T>::state_machine(std::nullptr_t) : base(nullptr) {
+template <typename S, typename R>
+state_machine<S, R>::state_machine(std::nullptr_t) : base(nullptr) {
 }
 
-template <typename T>
-void state_machine<T>::register_state(T key, entered_handler_f handler) {
+template <typename S, typename R>
+void state_machine<S, R>::register_state(S key, entered_handler_f handler) {
     impl_ptr<impl>()->register_state(std::move(key), std::move(handler));
 }
 
-template <typename T>
-void state_machine<T>::change_state(T key) {
+template <typename S, typename R>
+void state_machine<S, R>::change_state(S key) {
     impl_ptr<impl>()->change_state(std::move(key));
 }
 
-template <typename T>
-T const &state_machine<T>::current_state() const {
+template <typename S, typename R>
+S const &state_machine<S, R>::current_state() const {
     return impl_ptr<impl>()->current;
 }
 
-template <typename T>
-state_machine<T> make_state_machine(T initial, typename state_machine<T>::entered_handlers_t handlers) {
-    return state_machine<T>{std::move(initial), std::move(handlers)};
+template <typename S, typename R>
+state_machine<S, R> make_state_machine(S initial, typename state_machine<S, R>::entered_handlers_t handlers) {
+    return state_machine<S, R>{std::move(initial), std::move(handlers)};
 }
 }

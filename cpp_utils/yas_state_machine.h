@@ -9,7 +9,7 @@
 #include <unordered_map>
 
 namespace yas {
-template <typename T>
+template <typename S, typename R = std::nullptr_t>
 class state_machine : public base {
     struct impl;
 
@@ -17,27 +17,27 @@ class state_machine : public base {
     struct changer {
         weak<state_machine> weak_machine;
 
-        void change(T const &) const;
-        
-        T const &current() const;
+        void change(S const &) const;
+
+        S const &current() const;
     };
 
     using entered_handler_f = std::function<void(changer const &)>;
-    using entered_handlers_t = std::unordered_map<T, typename state_machine<T>::entered_handler_f>;
+    using entered_handlers_t = std::unordered_map<S, typename state_machine<S, R>::entered_handler_f>;
 
     state_machine();
-    state_machine(T initial, entered_handlers_t handlers);
+    state_machine(S initial_state, entered_handlers_t handlers);
     state_machine(std::nullptr_t);
 
-    void register_state(T key, entered_handler_f handler);
+    void register_state(S state, entered_handler_f handler);
 
-    void change_state(T key);
+    void change_state(S state);
 
-    T const &current_state() const;
+    S const &current_state() const;
 };
 
-template <typename T>
-state_machine<T> make_state_machine(T initial, typename state_machine<T>::entered_handlers_t handlers);
+template <typename S, typename R = std::nullptr_t>
+state_machine<S, R> make_state_machine(S initial, typename state_machine<S, R>::entered_handlers_t handlers);
 }
 
 #include "yas_state_machine_private.h"
