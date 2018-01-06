@@ -1,16 +1,16 @@
 //
-//  yas_value_private.h
+//  yas_any_private.h
 //
 
 #pragma once
 
 namespace yas {
-struct value::impl_base {
+struct any::impl_base {
     virtual std::type_info const &type() const = 0;
 };
 
 template <typename T>
-struct value::impl : impl_base {
+struct any::impl : impl_base {
     T _value;
 
     impl(T const &val) : _value(val) {
@@ -25,7 +25,7 @@ struct value::impl : impl_base {
 };
 
 template <typename T>
-T const &value::get() const {
+T const &any::get() const {
     if (auto ip = std::dynamic_pointer_cast<impl<T>>(this->_impl_ptr)) {
         return ip->_value;
     }
@@ -35,23 +35,23 @@ T const &value::get() const {
 }
 
 template <typename T>
-struct value_factory : value {
-    value_factory(T const &val) : value(std::make_shared<impl<T>>(val)) {
+struct any_factory : any {
+    any_factory(T const &val) : any(std::make_shared<impl<T>>(val)) {
     }
 
-    value_factory(T &&val) : value(std::make_shared<impl<T>>(std::move(val))) {
+    any_factory(T &&val) : any(std::make_shared<impl<T>>(std::move(val))) {
     }
 };
 
 template <typename T>
-value make_value(T const &val) {
-    value_factory<T> factory{val};
+any make_any(T const &val) {
+    any_factory<T> factory{val};
     return factory;
 }
 
 template <typename T>
-value make_value(T &&val) {
-    value_factory<T> factory{std::move(val)};
+any make_any(T &&val) {
+    any_factory<T> factory{std::move(val)};
     return factory;
 }
 }

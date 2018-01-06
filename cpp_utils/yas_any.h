@@ -1,5 +1,5 @@
 //
-//  yas_value.h
+//  yas_any.h
 //
 
 #pragma once
@@ -7,7 +7,7 @@
 #include <memory>
 
 namespace yas {
-struct value {
+struct any {
     struct impl_base;
     using impl_base_ptr = std::shared_ptr<impl_base>;
 
@@ -18,20 +18,20 @@ struct value {
 
     template <typename T>
     T const &get() const;
-    
-    static value const &null();
+
+    static any const &null();
 
    protected:
-    value(impl_base_ptr &&);
+    any(impl_base_ptr &&);
 
    private:
     impl_base_ptr _impl_ptr;
 };
 
 template <typename T>
-value make_value(T const &);
+any make_any(T const &);
 template <typename T>
-value make_value(T &&);
+any make_any(T &&);
 }
 
-#include "yas_value_private.h"
+#include "yas_any_private.h"
