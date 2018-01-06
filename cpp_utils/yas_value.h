@@ -18,6 +18,8 @@ struct value {
 
     template <typename T>
     T const &get() const;
+    
+    static value const &null();
 
    protected:
     value(impl_base_ptr &&);
