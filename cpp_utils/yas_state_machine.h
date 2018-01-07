@@ -33,6 +33,7 @@ class state_machine : public base {
     using unreturned_handler_f = std::function<void(context const &)>;
 
     state_machine();
+    explicit state_machine(State const &);
     state_machine(std::nullptr_t);
 
     void register_entered(State const &, entered_handler_f);

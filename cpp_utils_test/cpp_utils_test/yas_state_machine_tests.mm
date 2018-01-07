@@ -290,9 +290,7 @@ using namespace yas;
         a,
     };
 
-    using test_state_machine_t = state_machine<test_state>;
-
-    test_state_machine_t machine;
+    state_machine<test_state> machine;
 
     std::vector<any> values;
 
@@ -302,6 +300,17 @@ using namespace yas;
 
     XCTAssertEqual(values.size(), 1);
     XCTAssertEqual(values.at(0).get<int>(), 5);
+}
+
+- (void)test_initial_state {
+    enum class test_state {
+        a,
+        b,
+    };
+
+    state_machine<test_state> machine{test_state::b};
+
+    XCTAssertEqual(machine.current_state(), test_state::b);
 }
 
 @end

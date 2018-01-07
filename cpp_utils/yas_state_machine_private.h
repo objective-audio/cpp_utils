@@ -32,7 +32,7 @@ struct state_machine<State, Method>::impl : base::impl {
     std::unordered_map<State, std::unordered_map<Method, method_handler_f>> method_handlers;
     State current;
 
-    void prepare(state_machine &machine) {
+    impl(State const &state) : current(state) {
     }
 
     void register_entered(State const &state, entered_handler_f &&handler) {
@@ -83,8 +83,11 @@ struct state_machine<State, Method>::impl : base::impl {
 };
 
 template <typename State, typename Method>
-state_machine<State, Method>::state_machine() : base(std::make_shared<impl>()) {
-    impl_ptr<impl>()->prepare(*this);
+state_machine<State, Method>::state_machine() : base(std::make_shared<impl>(State{})) {
+}
+
+template <typename State, typename Method>
+state_machine<State, Method>::state_machine(State const &state) : base(std::make_shared<impl>(state)) {
 }
 
 template <typename State, typename Method>
