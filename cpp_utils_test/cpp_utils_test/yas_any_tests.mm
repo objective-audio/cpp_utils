@@ -21,15 +21,33 @@ using namespace yas;
     [super tearDown];
 }
 
-- (void)test_make_any_by_move {
-    auto const value = make_any(1.0);
-    XCTAssertEqual(value.get<double>(), 1.0);
+- (void)test_construct {
+    any any{1.0};
+
+    XCTAssertEqual(any.get<double>(), 1.0);
 }
 
-- (void)test_make_any_by_copy {
-    double const val = 1.0;
-    auto const value = make_any(val);
-    XCTAssertEqual(value.get<double>(), val);
+- (void)test_construct2 {
+    any any = 2.0;
+
+    XCTAssertEqual(any.get<double>(), 2.0);
+}
+
+- (void)test_assing_any {
+    any any1{4.0};
+    any any2{5};
+
+    any2 = any1;
+
+    XCTAssertEqual(any2.get<double>(), 4.0);
+}
+
+- (void)test_assign_value {
+    any any = 1;
+
+    any = 3.0;
+
+    XCTAssertEqual(any.get<double>(), 3.0);
 }
 
 @end
