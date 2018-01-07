@@ -176,8 +176,8 @@ using namespace yas;
 
     test_state_machine_t machine;
 
-    machine.register_returned(test_state::a, test_method::a, [](auto const &) { return make_any<int>(1); });
-    machine.register_returned(test_state::b, test_method::a, [](auto const &) { return make_any<int>(2); });
+    machine.register_returned(test_state::a, test_method::a, [](auto const &) { return any(int(1)); });
+    machine.register_returned(test_state::b, test_method::a, [](auto const &) { return any(int(2)); });
 
     XCTAssertEqual(machine.perform(test_method::a).get<int>(), 1);
 
@@ -236,20 +236,20 @@ using namespace yas;
     machine.register_returned(test_state::a, test_method::a, [](auto const &context) {
         any const &any_value = context.value;
         auto int_value = any_value.get<int>();
-        return make_any(int_value + 10);
+        return any(int_value + 10);
     });
 
     machine.register_returned(test_state::b, test_method::a, [](auto const &context) {
         any const &any_value = context.value;
         auto int_value = any_value.get<int>();
-        return make_any(int_value + 20);
+        return any(int_value + 20);
     });
 
-    XCTAssertEqual(machine.perform(test_method::a, make_any<int>(1)).get<int>(), 11);
+    XCTAssertEqual(machine.perform(test_method::a, any(int(1))).get<int>(), 11);
 
     machine.change(test_state::b);
 
-    XCTAssertEqual(machine.perform(test_method::a, make_any<int>(1)).get<int>(), 21);
+    XCTAssertEqual(machine.perform(test_method::a, any(int(1))).get<int>(), 21);
 }
 
 - (void)test_perform_unreturned_with_value {
@@ -274,13 +274,13 @@ using namespace yas;
     machine.register_unreturned(test_state::b, test_method::a,
                                 [&values](auto const &context) { values.push_back(context.value); });
 
-    XCTAssertTrue(machine.perform(test_method::a, make_any<int>(1)).type() == typeid(std::nullptr_t));
+    XCTAssertTrue(machine.perform(test_method::a, any(int(1))).type() == typeid(std::nullptr_t));
     XCTAssertEqual(values.size(), 1);
     XCTAssertEqual(values.at(0).get<int>(), 1);
 
     machine.change(test_state::b);
 
-    XCTAssertTrue(machine.perform(test_method::a, make_any<int>(2)).type() == typeid(std::nullptr_t));
+    XCTAssertTrue(machine.perform(test_method::a, any(int(2))).type() == typeid(std::nullptr_t));
     XCTAssertEqual(values.size(), 2);
     XCTAssertEqual(values.at(1).get<int>(), 2);
 }
@@ -298,7 +298,7 @@ using namespace yas;
 
     machine.register_entered(test_state::a, [&values](auto const &context) { values.push_back(context.value); });
 
-    machine.change(test_state::a, make_any<int>(5));
+    machine.change(test_state::a, any(int(5)));
 
     XCTAssertEqual(values.size(), 1);
     XCTAssertEqual(values.at(0).get<int>(), 5);

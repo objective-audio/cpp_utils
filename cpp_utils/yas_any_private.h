@@ -25,6 +25,16 @@ struct any::impl : impl_base {
 };
 
 template <typename T>
+any::any(T const &val) : _impl_ptr(std::make_shared<impl<T>>(val)) {
+}
+
+template <typename T>
+any any::operator=(T const &rhs) {
+    this->_impl_ptr = std::make_shared<impl<T>>(rhs);
+    return *this;
+}
+
+template <typename T>
 T const &any::get() const {
     if (auto ip = std::dynamic_pointer_cast<impl<T>>(this->_impl_ptr)) {
         return ip->_value;
@@ -42,16 +52,4 @@ struct any_factory : any {
     any_factory(T &&val) : any(std::make_shared<impl<T>>(std::move(val))) {
     }
 };
-
-template <typename T>
-any make_any(T const &val) {
-    any_factory<T> factory{val};
-    return factory;
-}
-
-template <typename T>
-any make_any(T &&val) {
-    any_factory<T> factory{std::move(val)};
-    return factory;
-}
 }

@@ -14,6 +14,14 @@ struct any {
     template <typename T>
     struct impl;
 
+    template <typename T>
+    any(T const &);
+
+    any operator=(any const &);
+
+    template <typename T>
+    any operator=(T const &);
+
     std::type_info const &type() const;
 
     template <typename T>
@@ -27,11 +35,6 @@ struct any {
    private:
     impl_base_ptr _impl_ptr;
 };
-
-template <typename T>
-any make_any(T const &);
-template <typename T>
-any make_any(T &&);
 }
 
 #include "yas_any_private.h"
