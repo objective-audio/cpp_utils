@@ -29,7 +29,7 @@ State const &state_machine<State, Method>::context::current() const {
 template <typename State, typename Method>
 struct state_machine<State, Method>::impl : base::impl {
     std::unordered_map<State, entered_handler_f> entered_handlers;
-    std::unordered_map<State, std::unordered_map<Method, method_handler_f>> method_handlers;
+    std::unordered_map<State, std::unordered_map<Method, returned_handler_f>> method_handlers;
     State current;
 
     impl(State const &state) : current(state) {
@@ -43,9 +43,9 @@ struct state_machine<State, Method>::impl : base::impl {
         this->entered_handlers.emplace(state, std::move(handler));
     }
 
-    void set_returned(State const &state, Method const &method, method_handler_f handler) {
+    void set_returned(State const &state, Method const &method, returned_handler_f handler) {
         if (this->method_handlers.count(state) == 0) {
-            this->method_handlers.emplace(state, std::unordered_map<Method, method_handler_f>());
+            this->method_handlers.emplace(state, std::unordered_map<Method, returned_handler_f>());
         }
 
         auto &handlers = this->method_handlers.at(state);
@@ -104,7 +104,7 @@ void state_machine<State, Method>::set_entered(State const &state, entered_handl
 }
 
 template <typename State, typename Method>
-void state_machine<State, Method>::set_returned(State const &state, Method const &method, method_handler_f handler) {
+void state_machine<State, Method>::set_returned(State const &state, Method const &method, returned_handler_f handler) {
     impl_ptr<impl>()->set_returned(state, method, std::move(handler));
 }
 
