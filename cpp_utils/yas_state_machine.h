@@ -36,9 +36,9 @@ class state_machine : public base {
     explicit state_machine(State const &);
     state_machine(std::nullptr_t);
 
-    void register_entered(State const &, entered_handler_f);
-    void register_returned(State const &, Method const &, method_handler_f);
-    void register_unreturned(State const &, Method const &, unreturned_handler_f);
+    void set_entered(State const &, entered_handler_f);
+    void set_returned(State const &, Method const &, method_handler_f);
+    void set_unreturned(State const &, Method const &, unreturned_handler_f);
 
     void change(State const &);
     void change(State const &, any const &);
