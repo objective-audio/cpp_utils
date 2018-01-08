@@ -57,6 +57,10 @@ struct state_machine<State, Method>::impl : base::impl {
     }
 
     void change(state_machine &machine, State const &state, any const &value) {
+        if (this->current == state) {
+            return;
+        }
+
         this->current = state;
 
         auto &handlers = this->entered_handlers;

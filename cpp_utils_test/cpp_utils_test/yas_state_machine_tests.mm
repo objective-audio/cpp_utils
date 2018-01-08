@@ -287,6 +287,7 @@ using namespace yas;
 
 - (void)test_entered_with_value {
     enum class test_state {
+        initial,
         a,
     };
 
@@ -311,6 +312,31 @@ using namespace yas;
     state_machine<test_state> machine{test_state::b};
 
     XCTAssertEqual(machine.current_state(), test_state::b);
+}
+
+- (void)test_change_same_state {
+    enum class test_state {
+        a,
+        b,
+    };
+
+    state_machine<test_state> machine{test_state::a};
+
+    std::vector<test_state> called_states;
+
+    machine.register_entered(test_state::a,
+                             [&called_states](auto const &context) { called_states.push_back(test_state::a); });
+    machine.register_entered(test_state::b,
+                             [&called_states](auto const &context) { called_states.push_back(test_state::b); });
+
+    machine.change(test_state::b);
+
+    XCTAssertEqual(called_states.size(), 1);
+    XCTAssertEqual(called_states.at(0), test_state::b);
+
+    machine.change(test_state::b);
+
+    XCTAssertEqual(called_states.size(), 1);
 }
 
 @end
