@@ -35,7 +35,7 @@ struct state_machine<State, Method>::impl : base::impl {
     impl(State const &state) : current(state) {
     }
 
-    void register_entered(State const &state, entered_handler_f &&handler) {
+    void set_entered(State const &state, entered_handler_f &&handler) {
         if (this->entered_handlers.count(state) > 0) {
             throw std::invalid_argument("key is already exists.");
         }
@@ -43,7 +43,7 @@ struct state_machine<State, Method>::impl : base::impl {
         this->entered_handlers.emplace(state, std::move(handler));
     }
 
-    void register_returned(State const &state, Method const &method, method_handler_f handler) {
+    void set_returned(State const &state, Method const &method, method_handler_f handler) {
         if (this->method_handlers.count(state) == 0) {
             this->method_handlers.emplace(state, std::unordered_map<Method, method_handler_f>());
         }
@@ -99,20 +99,19 @@ state_machine<State, Method>::state_machine(std::nullptr_t) : base(nullptr) {
 }
 
 template <typename State, typename Method>
-void state_machine<State, Method>::register_entered(State const &state, entered_handler_f handler) {
-    impl_ptr<impl>()->register_entered(state, std::move(handler));
+void state_machine<State, Method>::set_entered(State const &state, entered_handler_f handler) {
+    impl_ptr<impl>()->set_entered(state, std::move(handler));
 }
 
 template <typename State, typename Method>
-void state_machine<State, Method>::register_returned(State const &state, Method const &method,
-                                                     method_handler_f handler) {
-    impl_ptr<impl>()->register_returned(state, method, std::move(handler));
+void state_machine<State, Method>::set_returned(State const &state, Method const &method, method_handler_f handler) {
+    impl_ptr<impl>()->set_returned(state, method, std::move(handler));
 }
 
 template <typename State, typename Method>
-void state_machine<State, Method>::register_unreturned(State const &state, Method const &method,
-                                                       unreturned_handler_f handler) {
-    this->register_returned(state, method, [handler](auto const &context) {
+void state_machine<State, Method>::set_unreturned(State const &state, Method const &method,
+                                                  unreturned_handler_f handler) {
+    this->set_returned(state, method, [handler](auto const &context) {
         handler(context);
         return any::null();
     });

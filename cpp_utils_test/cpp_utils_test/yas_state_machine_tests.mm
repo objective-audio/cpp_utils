@@ -48,10 +48,10 @@ using namespace yas;
 
     std::vector<std::string> called_state_names;
 
-    machine.register_entered(
+    machine.set_entered(
         state_name_a, [&called_state_names](auto const &context) { called_state_names.push_back(context.current()); });
 
-    machine.register_entered(
+    machine.set_entered(
         state_name_b, [&called_state_names](auto const &context) { called_state_names.push_back(context.current()); });
 
     machine.change(state_name_a);
@@ -77,10 +77,10 @@ using namespace yas;
 
     std::vector<test_state> called_state_names;
 
-    machine.register_entered(
+    machine.set_entered(
         test_state::a, [&called_state_names](auto const &context) { called_state_names.push_back(context.current()); });
 
-    machine.register_entered(
+    machine.set_entered(
         test_state::b, [&called_state_names](auto const &context) { called_state_names.push_back(context.current()); });
 
     machine.change(test_state::a);
@@ -106,12 +106,12 @@ using namespace yas;
 
     std::vector<test_state> called_state_names;
 
-    machine.register_entered(test_state::a, [&called_state_names](auto const &context) {
+    machine.set_entered(test_state::a, [&called_state_names](auto const &context) {
         called_state_names.push_back(context.current());
         context.change(test_state::b);
     });
 
-    machine.register_entered(
+    machine.set_entered(
         test_state::b, [&called_state_names](auto const &context) { called_state_names.push_back(context.current()); });
 
     XCTAssertEqual(called_state_names.size(), 0);
@@ -140,12 +140,10 @@ using namespace yas;
 
     std::vector<std::string> called_method_names;
 
-    machine.register_unreturned(test_state::a, test_method::a, [&called_method_names](auto const &) {
-        called_method_names.push_back("state_a_method_a");
-    });
-    machine.register_unreturned(test_state::b, test_method::a, [&called_method_names](auto const &) {
-        called_method_names.push_back("state_b_method_a");
-    });
+    machine.set_unreturned(test_state::a, test_method::a,
+                           [&called_method_names](auto const &) { called_method_names.push_back("state_a_method_a"); });
+    machine.set_unreturned(test_state::b, test_method::a,
+                           [&called_method_names](auto const &) { called_method_names.push_back("state_b_method_a"); });
 
     XCTAssertEqual(called_method_names.size(), 0);
 
@@ -176,8 +174,8 @@ using namespace yas;
 
     test_state_machine_t machine;
 
-    machine.register_returned(test_state::a, test_method::a, [](auto const &) { return any(int(1)); });
-    machine.register_returned(test_state::b, test_method::a, [](auto const &) { return any(int(2)); });
+    machine.set_returned(test_state::a, test_method::a, [](auto const &) { return any(int(1)); });
+    machine.set_returned(test_state::b, test_method::a, [](auto const &) { return any(int(2)); });
 
     XCTAssertEqual(machine.perform(test_method::a).get<int>(), 1);
 
@@ -203,10 +201,9 @@ using namespace yas;
 
     std::vector<test_state> called_states;
 
-    machine.register_entered(test_state::a, [&called_states](auto const &) { called_states.push_back(test_state::a); });
-    machine.register_unreturned(test_state::a, test_method::a,
-                                [](auto const &context) { context.change(test_state::b); });
-    machine.register_entered(test_state::b, [&called_states](auto const &) { called_states.push_back(test_state::b); });
+    machine.set_entered(test_state::a, [&called_states](auto const &) { called_states.push_back(test_state::a); });
+    machine.set_unreturned(test_state::a, test_method::a, [](auto const &context) { context.change(test_state::b); });
+    machine.set_entered(test_state::b, [&called_states](auto const &) { called_states.push_back(test_state::b); });
 
     machine.change(test_state::a);
 
@@ -233,13 +230,13 @@ using namespace yas;
 
     test_state_machine_t machine;
 
-    machine.register_returned(test_state::a, test_method::a, [](auto const &context) {
+    machine.set_returned(test_state::a, test_method::a, [](auto const &context) {
         any const &any_value = context.value;
         auto int_value = any_value.get<int>();
         return any(int_value + 10);
     });
 
-    machine.register_returned(test_state::b, test_method::a, [](auto const &context) {
+    machine.set_returned(test_state::b, test_method::a, [](auto const &context) {
         any const &any_value = context.value;
         auto int_value = any_value.get<int>();
         return any(int_value + 20);
@@ -268,11 +265,11 @@ using namespace yas;
 
     std::vector<any> values;
 
-    machine.register_unreturned(test_state::a, test_method::a,
-                                [&values](auto const &context) { values.push_back(context.value); });
+    machine.set_unreturned(test_state::a, test_method::a,
+                           [&values](auto const &context) { values.push_back(context.value); });
 
-    machine.register_unreturned(test_state::b, test_method::a,
-                                [&values](auto const &context) { values.push_back(context.value); });
+    machine.set_unreturned(test_state::b, test_method::a,
+                           [&values](auto const &context) { values.push_back(context.value); });
 
     XCTAssertTrue(machine.perform(test_method::a, any(int(1))).type() == typeid(std::nullptr_t));
     XCTAssertEqual(values.size(), 1);
@@ -295,7 +292,7 @@ using namespace yas;
 
     std::vector<any> values;
 
-    machine.register_entered(test_state::a, [&values](auto const &context) { values.push_back(context.value); });
+    machine.set_entered(test_state::a, [&values](auto const &context) { values.push_back(context.value); });
 
     machine.change(test_state::a, any(int(5)));
 
@@ -324,10 +321,10 @@ using namespace yas;
 
     std::vector<test_state> called_states;
 
-    machine.register_entered(test_state::a,
-                             [&called_states](auto const &context) { called_states.push_back(test_state::a); });
-    machine.register_entered(test_state::b,
-                             [&called_states](auto const &context) { called_states.push_back(test_state::b); });
+    machine.set_entered(test_state::a,
+                        [&called_states](auto const &context) { called_states.push_back(test_state::a); });
+    machine.set_entered(test_state::b,
+                        [&called_states](auto const &context) { called_states.push_back(test_state::b); });
 
     machine.change(test_state::b);
 
