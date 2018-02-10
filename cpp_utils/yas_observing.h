@@ -62,8 +62,8 @@ class subject {
     void notify(Key const &key) const;
     void notify(Key const &key, T const &object) const;
 
-    observer<Key, T> make_observer(Key const &key, typename observer<Key, T>::handler_f const &handler);
-    observer<Key, T> make_wild_card_observer(typename observer<Key, T>::handler_f const &handler);
+    [[nodiscard]] observer<Key, T> make_observer(Key const &key, typename observer<Key, T>::handler_f const &handler);
+    [[nodiscard]] observer<Key, T> make_wild_card_observer(typename observer<Key, T>::handler_f const &handler);
 
    private:
     class impl;
