@@ -12,7 +12,7 @@ base::impl::impl() = default;
 base::impl::~impl() = default;
 
 bool base::impl::is_equal(std::shared_ptr<impl> const &rhs) const {
-    return false;
+    return this->identifier() == rhs->identifier();
 }
 
 uintptr_t base::impl::identifier() const {
