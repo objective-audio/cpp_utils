@@ -15,6 +15,10 @@ bool base::impl::is_equal(std::shared_ptr<impl> const &rhs) const {
     return this->identifier() == rhs->identifier();
 }
 
+bool base::impl::is_less(std::shared_ptr<impl> const &rhs) const {
+    return this->identifier() < rhs->identifier();
+}
+
 uintptr_t base::impl::identifier() const {
     return reinterpret_cast<uintptr_t>(this);
 }
@@ -55,7 +59,7 @@ bool base::operator!=(std::nullptr_t) const {
 
 bool base::operator<(base const &rhs) const {
     if (_impl && rhs._impl) {
-        return _impl < rhs._impl;
+        return _impl->is_less(rhs._impl);
     }
     return false;
 }
