@@ -22,6 +22,13 @@ namespace test {
                     return false;
                 }
             }
+
+            bool is_less(std::shared_ptr<base::impl> const &rhs) const override {
+                if (auto casted_rhs = std::dynamic_pointer_cast<impl>(rhs)) {
+                    return this->value < casted_rhs->value;
+                }
+                return false;
+            }
         };
 
         derived1() : super_class(std::make_shared<impl>()) {
@@ -172,19 +179,19 @@ namespace test {
 
 - (void)test_lock_in_function {
     yas::test::derived1 derived;
-    
+
     derived.set_value(2.0f);
-    
+
     auto weak = yas::to_weak(derived);
-    
+
     float previous_value = 0.0f;
-    
-    weak.lock([&previous_value](auto &derived){
+
+    weak.lock([&previous_value](auto &derived) {
         previous_value = derived.value();
-        
+
         derived.set_value(3.0f);
     });
-    
+
     XCTAssertEqual(previous_value, 2.0f);
     XCTAssertEqual(derived.value(), 3.0f);
 }
@@ -428,6 +435,17 @@ namespace test {
     XCTAssertFalse(is_same(obj1, obj4));
     XCTAssertFalse(is_same(obj3, obj1));
     XCTAssertFalse(is_same(obj4, obj1));
+}
+
+- (void)test_is_less {
+    yas::test::derived1 obj1;
+    yas::test::derived1 obj2;
+
+    obj1.set_value(1.0);
+    obj2.set_value(2.0);
+
+    XCTAssertTrue(obj1 < obj2);
+    XCTAssertFalse(obj2 < obj1);
 }
 
 - (void)test_weak_upcast_construct {
