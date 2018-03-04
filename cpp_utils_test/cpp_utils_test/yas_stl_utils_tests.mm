@@ -399,4 +399,26 @@
     XCTAssertFalse(yas::contains(vec, std::string("b")));
 }
 
+- (void)test_split {
+    std::string text = "a,b,cd,efg";
+
+    std::vector<std::string> splited = yas::split(text, ',');
+
+    XCTAssertEqual(splited.size(), 4);
+    XCTAssertEqual(splited.at(0), "a");
+    XCTAssertEqual(splited.at(1), "b");
+    XCTAssertEqual(splited.at(2), "cd");
+    XCTAssertEqual(splited.at(3), "efg");
+}
+
+- (void)test_split_2 {
+    std::string text = ",1,";
+
+    std::vector<std::string> splited = yas::split(text, ',');
+
+    XCTAssertEqual(splited.size(), 2);
+    XCTAssertEqual(splited.at(0), "");
+    XCTAssertEqual(splited.at(1), "1");
+}
+
 @end
