@@ -67,6 +67,7 @@ std::unordered_map<K, T> to_map(std::vector<T> collection, F function);
 std::string to_lower(std::string);
 std::string replaced(std::string source, std::string const &target, std::string const &replacement);
 std::string joined(std::vector<std::string> const &components, std::string const &separator);
+std::vector<std::string> split(std::string const &text, char const separator);
 
 template <typename T, typename F>
 std::string joined(T const &collection, std::string const &separator, F function);

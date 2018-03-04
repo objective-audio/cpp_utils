@@ -33,3 +33,13 @@ std::string yas::joined(std::vector<std::string> const &components, std::string 
     }
     return stream.str();
 }
+
+std::vector<std::string> yas::split(std::string const &text, char const separator) {
+    std::vector<std::string> result;
+    std::stringstream stream(text);
+    std::string buffer;
+    while (std::getline(stream, buffer, separator)) {
+        result.emplace_back(std::move(buffer));
+    }
+    return result;
+}
