@@ -124,6 +124,41 @@ using namespace yas;
     XCTAssertEqual(called_state_names.at(1), test_state::b);
 }
 
+- (void)test_change_by_context_with_value {
+    enum class test_state {
+        initial,
+        a,
+        b,
+    };
+
+    state_machine<test_state> machine;
+
+    std::vector<test_state> called_state_names;
+
+    machine.set_entered(test_state::a, [&called_state_names](auto const &context) {
+        called_state_names.push_back(context.current());
+        context.change(test_state::b, int(10));
+    });
+
+    auto called_value = any::null();
+
+    machine.set_entered(test_state::b, [&called_state_names, &called_value](auto const &context) {
+        called_state_names.push_back(context.current());
+        called_value = context.value;
+    });
+
+    XCTAssertEqual(called_state_names.size(), 0);
+
+    machine.change(test_state::a);
+
+    XCTAssertEqual(called_state_names.size(), 2);
+
+    XCTAssertEqual(called_state_names.at(0), test_state::a);
+    XCTAssertEqual(called_state_names.at(1), test_state::b);
+
+    XCTAssertEqual(called_value.get<int>(), 10);
+}
+
 - (void)test_perform_unreturned_method {
     enum class test_state {
         a,

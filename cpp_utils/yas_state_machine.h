@@ -22,6 +22,7 @@ class state_machine : public base {
         any const value;
 
         void change(State const &) const;
+        void change(State const &, any const &) const;
         State const &current() const;
 
        private:
