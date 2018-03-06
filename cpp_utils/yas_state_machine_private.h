@@ -11,9 +11,16 @@ state_machine<State, Method>::context::context(state_machine machine, any const 
 }
 
 template <typename State, typename Method>
-void state_machine<State, Method>::context::change(State const &key) const {
+void state_machine<State, Method>::context::change(State const &state) const {
     if (auto machine = this->_weak_machine.lock()) {
-        machine.change(key);
+        machine.change(state);
+    }
+}
+
+template <typename State, typename Method>
+void state_machine<State, Method>::context::change(State const &state, any const &value) const {
+    if (auto machine = this->_weak_machine.lock()) {
+        machine.change(state, value);
     }
 }
 
