@@ -13,7 +13,10 @@ class fast_each;
 template <typename T>
 struct fast_each<T, enable_if_integral_t<T>> {
     fast_each(T const end);
-    fast_each(T const start, T const end);
+    fast_each(T const begin, T const end);
+
+    void reset(T const end);
+    void reset(T const begin, T const end);
 
     T _end;
     T _index;
@@ -22,7 +25,9 @@ struct fast_each<T, enable_if_integral_t<T>> {
 
 template <typename T>
 struct fast_each<T, enable_if_pointer_t<T>> {
-    fast_each(T, std::size_t const length);
+    fast_each(T, std::size_t const end);
+
+    void reset(T, std::size_t const end);
 
     T _ptr;
     std::size_t _end;
@@ -34,7 +39,7 @@ template <typename T>
 fast_each<T> make_fast_each(T const end);
 
 template <typename T>
-fast_each<T> make_fast_each(T const start, T const end);
+fast_each<T> make_fast_each(T const begin, T const end);
 
 template <typename T>
 fast_each<T> make_fast_each(T ptr, std::size_t const end);
