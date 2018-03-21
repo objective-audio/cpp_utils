@@ -26,6 +26,7 @@ struct fast_each<T, enable_if_integral_t<T>> {
 template <typename T>
 struct fast_each<T, enable_if_pointer_t<T>> {
     fast_each(T, std::size_t const end);
+    fast_each();
 
     void reset(T, std::size_t const end);
 

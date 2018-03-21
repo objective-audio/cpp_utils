@@ -47,6 +47,10 @@ fast_each<T, enable_if_pointer_t<T>>::fast_each(T ptr, std::size_t const end)
 }
 
 template <typename T>
+fast_each<T, enable_if_pointer_t<T>>::fast_each() : _ptr(nullptr), _end(0), _index(0), _next(0) {
+}
+
+template <typename T>
 void fast_each<T, enable_if_pointer_t<T>>::reset(T ptr, std::size_t const end) {
     this->_ptr = ptr;
     this->_end = end;
