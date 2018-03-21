@@ -232,7 +232,7 @@ using namespace yas;
     XCTAssertFalse(yas_each_next(each));
 
     std::vector<int8_t> vec2{5, 6};
-    
+
     each.reset(vec2.data(), vec2.size());
 
     XCTAssertTrue(yas_each_next(each));
