@@ -135,6 +135,16 @@ using namespace yas;
     XCTAssertEqual(each._ptr, array.data());
     XCTAssertEqual(each._index, 0);
     XCTAssertEqual(each._end, 2);
+    XCTAssertEqual(each._next, 0);
+}
+
+- (void)test_create_fast_each_nullptr {
+    fast_each<int8_t *> each{};
+
+    XCTAssertFalse(each._ptr);
+    XCTAssertEqual(each._index, 0);
+    XCTAssertEqual(each._end, 0);
+    XCTAssertEqual(each._next, 0);
 }
 
 - (void)test_make_fast_each_pointer {
