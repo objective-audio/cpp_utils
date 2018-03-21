@@ -90,6 +90,42 @@ using namespace yas;
     XCTAssertEqual(count, 6);
 }
 
+- (void)test_fast_each_index_reset {
+    auto each = fast_each<int16_t>{2};
+
+    XCTAssertTrue(yas_each_next(each));
+    XCTAssertTrue(yas_each_next(each));
+    XCTAssertFalse(yas_each_next(each));
+
+    each.reset(3);
+
+    XCTAssertEqual(yas_each_index(each), 0);
+    XCTAssertTrue(yas_each_next(each));
+    XCTAssertTrue(yas_each_next(each));
+    XCTAssertTrue(yas_each_next(each));
+    XCTAssertFalse(yas_each_next(each));
+}
+
+- (void)test_fast_each_index_reset_with_range {
+    auto each = fast_each<int16_t>{1, 3};
+
+    XCTAssertEqual(yas_each_index(each), 1);
+    XCTAssertTrue(yas_each_next(each));
+    XCTAssertEqual(yas_each_index(each), 1);
+    XCTAssertTrue(yas_each_next(each));
+    XCTAssertEqual(yas_each_index(each), 2);
+    XCTAssertFalse(yas_each_next(each));
+
+    each.reset(10, 12);
+
+    XCTAssertEqual(yas_each_index(each), 10);
+    XCTAssertTrue(yas_each_next(each));
+    XCTAssertEqual(yas_each_index(each), 10);
+    XCTAssertTrue(yas_each_next(each));
+    XCTAssertEqual(yas_each_index(each), 11);
+    XCTAssertFalse(yas_each_next(each));
+}
+
 #pragma mark -
 
 - (void)test_create_fast_each_pointer {
@@ -174,12 +210,36 @@ using namespace yas;
 
 - (void)test_fast_each_ptr {
     std::vector<int8_t> vec{1, 2};
-    
+
     auto each = make_fast_each(vec.data(), vec.size());
-    
+
     yas_each_next(each);
     XCTAssertEqual(yas_each_ptr(each)[0], 1);
     XCTAssertEqual(yas_each_ptr(each)[1], 2);
+}
+
+- (void)test_fast_each_ptr_reset {
+    std::vector<int8_t> vec{1, 2, 3};
+
+    auto each = make_fast_each(vec.data(), vec.size());
+
+    XCTAssertTrue(yas_each_next(each));
+    XCTAssertEqual(yas_each_value(each), 1);
+    XCTAssertTrue(yas_each_next(each));
+    XCTAssertEqual(yas_each_value(each), 2);
+    XCTAssertTrue(yas_each_next(each));
+    XCTAssertEqual(yas_each_value(each), 3);
+    XCTAssertFalse(yas_each_next(each));
+
+    std::vector<int8_t> vec2{5, 6};
+    
+    each.reset(vec2.data(), vec2.size());
+
+    XCTAssertTrue(yas_each_next(each));
+    XCTAssertEqual(yas_each_value(each), 5);
+    XCTAssertTrue(yas_each_next(each));
+    XCTAssertEqual(yas_each_value(each), 6);
+    XCTAssertFalse(yas_each_next(each));
 }
 
 @end
