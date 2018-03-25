@@ -62,7 +62,10 @@ using namespace yas;
     std::vector<int> dst_vec{0, 0, 0};
 
     data_copy<int> data_copy{.src_data = make_const_data(src_vec), .dst_data = make_data(dst_vec), .length = 3};
-    data_copy.execute();
+
+    auto const result = data_copy.execute();
+
+    XCTAssertTrue(result.is_success());
 
     XCTAssertEqual(dst_vec.at(0), 10);
     XCTAssertEqual(dst_vec.at(1), 11);
@@ -74,7 +77,10 @@ using namespace yas;
     std::vector<float> dst_vec{0, 0, 0};
 
     data_copy<float> data_copy{.src_data = make_const_data(src_vec), .dst_data = make_data(dst_vec), .length = 3};
-    data_copy.execute();
+
+    auto const result = data_copy.execute();
+
+    XCTAssertTrue(result.is_success());
 
     XCTAssertEqual(dst_vec.at(0), 2.0f);
     XCTAssertEqual(dst_vec.at(1), 4.0f);
@@ -86,7 +92,10 @@ using namespace yas;
     std::vector<double> dst_vec{0, 0, 0};
 
     data_copy<double> data_copy{.src_data = make_const_data(src_vec), .dst_data = make_data(dst_vec), .length = 3};
-    data_copy.execute();
+
+    auto const result = data_copy.execute();
+
+    XCTAssertTrue(result.is_success());
 
     XCTAssertEqual(dst_vec.at(0), 1.0);
     XCTAssertEqual(dst_vec.at(1), 0.5);
@@ -102,7 +111,9 @@ using namespace yas;
                              .src_begin_idx = 1,
                              .dst_begin_idx = 2,
                              .length = 2};
-    data_copy.execute();
+    auto const result = data_copy.execute();
+
+    XCTAssertTrue(result.is_success());
 
     XCTAssertEqual(dst_vec.at(0), 0);
     XCTAssertEqual(dst_vec.at(1), 0);
@@ -121,7 +132,9 @@ using namespace yas;
                              .dst_begin_idx = 2,
                              .length = 2};
 
-    data_copy.execute();
+    auto const result = data_copy.execute();
+
+    XCTAssertTrue(result.is_success());
 
     XCTAssertEqual(dst_vec.at(0), 0);
     XCTAssertEqual(dst_vec.at(1), 0);
@@ -150,7 +163,9 @@ using namespace yas;
                                .dst_begin_idx = 2,
                                .length = 2};
 
-    data_copy.execute();
+    auto const result = data_copy.execute();
+
+    XCTAssertTrue(result.is_success());
 
     XCTAssertEqual(dst_vec.at(0), 0);
     XCTAssertEqual(dst_vec.at(1), 0);
@@ -179,7 +194,9 @@ using namespace yas;
                                 .dst_begin_idx = 2,
                                 .length = 2};
 
-    data_copy.execute();
+    auto const result = data_copy.execute();
+
+    XCTAssertTrue(result.is_success());
 
     XCTAssertEqual(dst_vec.at(0), 0);
     XCTAssertEqual(dst_vec.at(1), 0);
@@ -208,7 +225,9 @@ using namespace yas;
                              .dst_begin_idx = 4,
                              .length = 3};
 
-    data_copy.execute_cyclical();
+    auto const result = data_copy.execute_cyclical();
+
+    XCTAssertTrue(result.is_success());
 
     XCTAssertEqual(dst_vec.at(0), 21);
     XCTAssertEqual(dst_vec.at(1), 22);
@@ -227,7 +246,10 @@ using namespace yas;
                              .dst_begin_idx = 3,
                              .length = 2};
 
-    data_copy.execute_cyclical();
+    auto const result = data_copy.execute_cyclical();
+
+    XCTAssertTrue(result.is_success());
+    XCTAssertEqual(result.value(), 1);
 
     XCTAssertEqual(dst_vec.at(0), 104);
     XCTAssertEqual(dst_vec.at(1), 0);
@@ -256,7 +278,10 @@ using namespace yas;
                                .dst_begin_idx = 3,
                                .length = 2};
 
-    data_copy.execute_cyclical();
+    auto const result = data_copy.execute_cyclical();
+
+    XCTAssertTrue(result.is_success());
+    XCTAssertEqual(result.value(), 1);
 
     XCTAssertEqual(dst_vec.at(0), 32.0f);
     XCTAssertEqual(dst_vec.at(1), 0);
@@ -285,7 +310,10 @@ using namespace yas;
                                 .dst_begin_idx = 3,
                                 .length = 2};
 
-    data_copy.execute_cyclical();
+    auto const result = data_copy.execute_cyclical();
+
+    XCTAssertTrue(result.is_success());
+    XCTAssertEqual(result.value(), 1);
 
     XCTAssertEqual(dst_vec.at(0), 0.25);
     XCTAssertEqual(dst_vec.at(1), 0);

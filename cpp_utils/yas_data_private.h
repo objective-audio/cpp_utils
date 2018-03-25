@@ -25,7 +25,7 @@ void copy(data_copy<T> &data_copy) {
 }
 
 template <typename T>
-void copy_cyclical_memcpy(data_copy<T> &data_copy) {
+std::size_t copy_cyclical_memcpy(data_copy<T> &data_copy) {
     int const src_length = static_cast<int>(data_copy.src_data.length);
     int const dst_length = static_cast<int>(data_copy.dst_data.length);
     int src_idx = static_cast<int>(data_copy.src_begin_idx);
@@ -42,10 +42,12 @@ void copy_cyclical_memcpy(data_copy<T> &data_copy) {
         dst_idx = (dst_idx + copy_length) % dst_length;
         src_idx = src_idx + copy_length;
     }
+
+    return dst_idx;
 }
 
 template <typename T>
-void copy_cyclical(data_copy<T> &data_copy) {
+std::size_t copy_cyclical(data_copy<T> &data_copy) {
     T const *const src_ptr = data_copy.src_data.ptr;
     T *const dst_ptr = data_copy.dst_data.ptr;
     std::size_t const &src_stride = data_copy.src_data.stride;
@@ -58,6 +60,8 @@ void copy_cyclical(data_copy<T> &data_copy) {
         auto const dst_idx = (data_copy.dst_begin_idx + idx) % dst_length;
         dst_ptr[dst_idx * dst_stride] = src_ptr[(data_copy.src_begin_idx + idx) * src_stride];
     }
+
+    return (data_copy.dst_begin_idx + data_copy.length) % dst_length;
 }
 }
 
@@ -132,29 +136,27 @@ typename data_copy<T>::result_t data_copy<T>::execute() {
 }
 
 template <typename T>
-typename data_copy<T>::result_t data_copy<T>::execute_cyclical() {
+typename data_copy<T>::cyclical_result_t data_copy<T>::execute_cyclical() {
     if (this->length == 0) {
-        return result_t{nullptr};
+        return cyclical_result_t{this->dst_begin_idx};
     }
 
     if (!this->src_data.ptr || !this->dst_data.ptr) {
-        return result_t{error::invalid_data};
+        return cyclical_result_t{error::invalid_data};
     }
 
     if (this->src_data.stride == 0 || this->dst_data.stride == 0) {
-        return result_t{error::invalid_data};
+        return cyclical_result_t{error::invalid_data};
     }
 
     if (this->src_data.length < this->src_begin_idx + this->length) {
-        return result_t{error::out_of_range};
+        return cyclical_result_t{error::out_of_range};
     }
 
     if (this->src_data.stride == 1 && this->dst_data.stride == 1) {
-        data_copy_utils::copy_cyclical_memcpy(*this);
+        return cyclical_result_t{data_copy_utils::copy_cyclical_memcpy(*this)};
     } else {
-        data_copy_utils::copy_cyclical(*this);
+        return cyclical_result_t{data_copy_utils::copy_cyclical(*this)};
     }
-
-    return result_t{nullptr};
 }
 }

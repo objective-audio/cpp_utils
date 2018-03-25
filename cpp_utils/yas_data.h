@@ -50,6 +50,7 @@ struct data_copy {
     };
 
     using result_t = result<std::nullptr_t, error>;
+    using cyclical_result_t = result<std::size_t, error>;  // 成功した場合はdstの次の開始インデックスを返す
 
     const_data<T> src_data;
     data<T> dst_data;
@@ -58,7 +59,7 @@ struct data_copy {
     std::size_t length;
 
     result_t execute();
-    result_t execute_cyclical();
+    cyclical_result_t execute_cyclical();
 };
 }
 

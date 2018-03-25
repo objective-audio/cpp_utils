@@ -29,7 +29,7 @@ void copy(data_copy<double> &data_copy) {
 }
 
 template <>
-void copy_cyclical(data_copy<float> &data_copy) {
+std::size_t copy_cyclical(data_copy<float> &data_copy) {
     int const &src_stride = static_cast<int>(data_copy.src_data.stride);
     int const &dst_stride = static_cast<int>(data_copy.dst_data.stride);
     int const src_length = static_cast<int>(data_copy.src_data.length);
@@ -49,10 +49,12 @@ void copy_cyclical(data_copy<float> &data_copy) {
         dst_idx = (dst_idx + copy_length) % dst_length;
         src_idx = src_idx + copy_length;
     }
+
+    return dst_idx;
 }
 
 template <>
-void copy_cyclical(data_copy<double> &data_copy) {
+std::size_t copy_cyclical(data_copy<double> &data_copy) {
     int const &src_stride = static_cast<int>(data_copy.src_data.stride);
     int const &dst_stride = static_cast<int>(data_copy.dst_data.stride);
     int const src_length = static_cast<int>(data_copy.src_data.length);
@@ -72,5 +74,7 @@ void copy_cyclical(data_copy<double> &data_copy) {
         dst_idx = (dst_idx + copy_length) % dst_length;
         src_idx = src_idx + copy_length;
     }
+
+    return dst_idx;
 }
 }
