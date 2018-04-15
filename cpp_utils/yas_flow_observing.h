@@ -18,7 +18,7 @@ flow::node<T, T, T> begin_flow(subject<Key, T> &subject, Key const &key) {
         }
     });
 
-    sender.set_can_send_handler([weak_subject = to_weak(subject)]() { return weak_subject.operator bool(); });
+    sender.set_can_send_handler([weak_subject = to_weak(subject)]() { return !!weak_subject; });
 
     sender.set_send_handler([weak_subject = to_weak(subject), key, observer]() {
         if (yas::subject<Key, T> subj = weak_subject.lock()) {
