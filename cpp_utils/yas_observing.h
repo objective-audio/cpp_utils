@@ -68,9 +68,6 @@ class subject : public base {
     void notify(Key const &key) const;
     void notify(Key const &key, T const &object) const;
 
-    void set_object_handler(object_handler_f);
-    T object(Key const &) const;
-
     [[nodiscard]] observer<Key, T> make_value_observer(Key const &, value_handler_f const &);
     [[nodiscard]] observer<Key, T> make_observer(Key const &, wild_card_handler_f const &);
     [[nodiscard]] observer<Key, T> make_wild_card_observer(wild_card_handler_f const &);

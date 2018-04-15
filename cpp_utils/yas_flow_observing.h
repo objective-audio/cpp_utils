@@ -18,15 +18,7 @@ template <typename Key, typename T>
         }
     });
 
-    sender.set_can_send_handler([weak_subject = to_weak(subject)]() { return !!weak_subject; });
-
-    sender.set_send_handler([weak_subject = to_weak(subject), key, observer]() {
-        if (yas::subject<Key, T> subj = weak_subject.lock()) {
-            return subj.object(key);
-        } else {
-            throw std::runtime_error("subject is null.");
-        }
-    });
+    sender.set_can_send_handler([observer]() { return false; });
 
     return sender.begin_flow();
 }

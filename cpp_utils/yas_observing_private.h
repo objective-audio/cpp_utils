@@ -268,16 +268,6 @@ void subject<Key, T>::notify(Key const &key, T const &object) const {
 }
 
 template <typename Key, typename T>
-void subject<Key, T>::set_object_handler(object_handler_f handler) {
-    this->impl_ptr<impl>()->object_handler = std::move(handler);
-}
-
-template <typename Key, typename T>
-T subject<Key, T>::object(Key const &key) const {
-    return this->impl_ptr<impl>()->object_handler(key);
-}
-
-template <typename Key, typename T>
 observer<Key, T> subject<Key, T>::make_value_observer(Key const &key, value_handler_f const &handler) {
     observer<Key, T> obs;
     obs.add_handler(*this, key, [handler](auto const &context) { handler(context.value); });
