@@ -436,4 +436,31 @@ struct test_class {
     XCTAssertEqual(yas::to_string(yas::property_method::did_change), "did_change");
 }
 
+- (void)test_begin_flow {
+    property<std::nullptr_t, int> property{{.value = 10}};
+
+    int received = -1;
+
+    auto flow = property.begin_flow().execute([&received](int const &value) { received = value; }).end();
+
+    flow.sync();
+
+    XCTAssertEqual(received, 10);
+
+    property.set_value(20);
+
+    XCTAssertEqual(received, 20);
+}
+
+- (void)test_receive {
+    property<std::nullptr_t, int> property{{.value = 100}};
+
+    flow::sender<int> sender;
+    auto flow = sender.begin_flow().receive(property.receivable()).end();
+
+    sender.send_value(200);
+
+    XCTAssertEqual(property.value(), 200);
+}
+
 @end

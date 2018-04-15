@@ -95,13 +95,14 @@ struct receiver : base {
 }
 
 - (void)test_sync {
-    subject<std::string, int> subject;
-    subject.set_object_handler([](std::string const &key) { return std::stoi(key); });
+    flow::sender<int> sender;
+    sender.set_can_send_handler([]() { return true; });
+    sender.set_send_handler([]() { return 100; });
 
     int received = -1;
 
     auto flow =
-        begin_flow(subject, std::string("100")).execute([&received](int const &value) { received = value; }).end();
+        sender.begin_flow().execute([&received](int const &value) { received = value; }).end();
     flow.sync();
 
     XCTAssertEqual(received, 100);
