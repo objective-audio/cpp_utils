@@ -1,0 +1,138 @@
+//
+//  yas_flow_tests.mm
+//
+
+#import <XCTest/XCTest.h>
+#import "yas_flow.h"
+#import "yas_observing.h"
+#import "yas_flow_observing.h"
+
+using namespace yas;
+
+namespace yas::test {
+struct receiver : base {
+    struct impl : base::impl, flow::receivable<float>::impl {
+        std::function<void(float const &)> handler;
+
+        impl(std::function<void(float const &)> &&handler) : handler(std::move(handler)) {
+        }
+
+        void receive_value(float const &value) override {
+            handler(value);
+        }
+    };
+
+    receiver(std::function<void(float const &)> handler) : base(std::make_shared<impl>(std::move(handler))) {
+    }
+
+    receiver(std::nullptr_t) : base(nullptr) {
+    }
+
+    flow::receivable<float> receivable() {
+        return flow::receivable<float>{impl_ptr<flow::receivable<float>::impl>()};
+    }
+};
+}
+
+@interface yas_flow_tests : XCTestCase
+
+@end
+
+@implementation yas_flow_tests
+
+- (void)setUp {
+    [super setUp];
+}
+
+- (void)tearDown {
+    [super tearDown];
+}
+
+- (void)test_flow {
+    subject<std::string, float> subject;
+
+    float received_value = 0.0f;
+
+    auto node = begin_flow(subject, std::string("key"))
+                    .change<int>([](float const value) { return int(value * 10.0f); })
+                    .execute([&received_value](int const &value) { received_value = value; })
+                    .end();
+
+    XCTAssertEqual(received_value, 0.0f);
+    subject.notify("key", 1.0f);
+    XCTAssertEqual(received_value, 10.0f);
+    subject.notify("key", 2.0f);
+    XCTAssertEqual(received_value, 20.0f);
+}
+
+- (void)test_wait {
+    flow::sender<int> sender;
+
+    auto waitExp = [self expectationWithDescription:@"wait"];
+
+    CFAbsoluteTime begin = 0.0;
+    CFAbsoluteTime end = 0.0;
+    std::string result = "";
+
+    auto flow = sender.begin_flow()
+                    .execute([&begin](int const &value) { begin = CFAbsoluteTimeGetCurrent(); })
+                    .wait(0.1)
+                    .change<std::string>([](int const &value) { return std::to_string(value); })
+                    .wait(0.1)
+                    .execute([waitExp, &end, &result](std::string const &value) {
+                        result = value;
+                        end = CFAbsoluteTimeGetCurrent();
+                        [waitExp fulfill];
+                    })
+                    .end();
+
+    sender.send_value(10);
+
+    [self waitForExpectations:@[waitExp] timeout:5.0];
+
+    XCTAssertGreaterThan(end - begin, 0.15);
+    XCTAssertEqual(result, "10");
+}
+
+- (void)test_sync {
+    subject<std::string, int> subject;
+    subject.set_object_handler([](std::string const &key) { return std::stoi(key); });
+
+    int received = -1;
+
+    auto flow =
+        begin_flow(subject, std::string("100")).execute([&received](int const &value) { received = value; }).end();
+    flow.sync();
+
+    XCTAssertEqual(received, 100);
+}
+
+- (void)test_receive {
+    float received = 0.0f;
+
+    test::receiver receiver{[&received](float const &value) { received = value; }};
+
+    flow::sender<float> sender;
+
+    auto node = sender.begin_flow().receive(receiver.receivable()).end();
+
+    sender.send_value(3.0f);
+
+    XCTAssertEqual(received, 3.0f);
+}
+
+- (void)test_receive_by_end {
+    float received = 0.0f;
+
+    test::receiver receiver{[&received](float const &value) { received = value; }};
+
+    flow::sender<float> sender;
+
+    auto node = sender.begin_flow().end(receiver.receivable());
+
+    sender.send_value(4.0f);
+
+    XCTAssertEqual(received, 4.0f);
+}
+
+@end
