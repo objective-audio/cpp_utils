@@ -64,7 +64,7 @@ bool sender<T>::can_send() const {
     if (auto handler = impl_ptr<impl>()->_can_send_handler) {
         return handler();
     } else {
-        return true;
+        return false;
     }
 }
 
