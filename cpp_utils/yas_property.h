@@ -64,8 +64,8 @@ class property : public base {
 
     subject_t &subject();
 
-    flow::node<T, T, T> begin_flow();
-    flow::receivable<T> receivable();
+    [[nodiscard]] flow::node<T, T, T> begin_flow();
+    [[nodiscard]] flow::receivable<T> receivable();
 };
 
 template <typename K, typename T>
