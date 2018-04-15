@@ -9,6 +9,7 @@
 #include <mutex>
 #include "yas_base.h"
 #include "yas_observing.h"
+#include "yas_flow_observing.h"
 
 namespace yas {
 enum class property_method {
@@ -62,6 +63,9 @@ class property : public base {
     limiter_t const &limiter() const;
 
     subject_t &subject();
+
+    flow::node<T, T, T> begin_flow();
+    flow::receivable<T> receivable();
 };
 
 template <typename K, typename T>

@@ -8,7 +8,7 @@
 
 namespace yas {
 template <typename K, typename T>
-class property<K, T>::impl : public base::impl {
+class property<K, T>::impl : public base::impl, public flow::receivable<T>::impl {
    public:
     impl(args const &args) : _value(args.value), _key(args.key), _validator(args.validator), _limiter(args.limiter) {
         _limit(_value);
@@ -59,6 +59,10 @@ class property<K, T>::impl : public base::impl {
 
     subject_t &subject() {
         return _subject;
+    }
+
+    void receive_value(T const &value) override {
+        this->_set_value(value);
     }
 
    private:
@@ -218,6 +222,16 @@ typename property<K, T>::limiter_t const &property<K, T>::limiter() const {
 template <typename K, typename T>
 typename property<K, T>::subject_t &property<K, T>::subject() {
     return impl_ptr<impl>()->subject();
+}
+
+template <typename K, typename T>
+flow::node<T, T, T> property<K, T>::begin_flow() {
+    return begin_flow(this->subject(), property_method::did_change);
+}
+
+template <typename K, typename T>
+flow::receivable<T> property<K, T>::receivable() {
+    return flow::receivable<T>{impl_ptr<flow::receivable<T>::impl>()};
 }
 
 template <typename K, typename T>
