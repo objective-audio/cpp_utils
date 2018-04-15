@@ -101,8 +101,7 @@ struct receiver : base {
 
     int received = -1;
 
-    auto flow =
-        sender.begin_flow().execute([&received](int const &value) { received = value; }).end();
+    auto flow = sender.begin_flow().execute([&received](int const &value) { received = value; }).end();
     flow.sync();
 
     XCTAssertEqual(received, 100);
@@ -134,6 +133,25 @@ struct receiver : base {
     sender.send_value(4.0f);
 
     XCTAssertEqual(received, 4.0f);
+}
+
+- (void)test_guard {
+    int received = -1;
+
+    flow::sender<int> sender;
+
+    auto flow = sender.begin_flow()
+                    .guard([](int const &value) { return value % 2; })
+                    .execute([&received](int const &value) { received = value; })
+                    .end();
+
+    sender.send_value(2);
+
+    XCTAssertNotEqual(received, 2);
+
+    sender.send_value(3);
+
+    XCTAssertEqual(received, 3);
 }
 
 @end

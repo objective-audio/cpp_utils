@@ -61,6 +61,8 @@ struct node : base {
     node<Out, In, Begin> execute(std::function<void(In const &)>);
     node<Out, In, Begin> receive(receivable<In>);
 
+    node<Out, In, Begin> guard(std::function<bool(In const &)>);
+
     template <typename Next = Out>
     node<Next, In, Begin> change(std::function<Next(In const &)>);
 
@@ -68,7 +70,7 @@ struct node : base {
 
     node<std::nullptr_t, In, Begin> end();
     node<std::nullptr_t, In, Begin> end(receivable<In>);
-    
+
     void sync();
 };
 }

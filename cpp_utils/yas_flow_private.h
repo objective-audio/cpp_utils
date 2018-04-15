@@ -146,6 +146,27 @@ node<Out, In, Begin> node<Out, In, Begin>::receive(receivable<In> receiver) {
 }
 
 template <typename Out, typename In, typename Begin>
+node<Out, In, Begin> node<Out, In, Begin>::guard(std::function<bool(In const &value)> guard_handler) {
+#warning todo handlerを切り替えて呼ばなくできるようにする？
+    auto imp = impl_ptr<impl>();
+    flow::sender<Begin> &sender = imp->_sender;
+    auto weak_sender = to_weak(sender);
+    std::size_t const next_idx = sender.handlers_size() + 1;
+
+    sender.template push_handler<In>([
+        handler = imp->_handler, weak_sender, next_idx, guard_handler = std::move(guard_handler)
+    ](In const &value) mutable {
+        if (guard_handler(value)) {
+            if (auto sender = weak_sender.lock()) {
+                sender.template handler<Out>(next_idx)(value);
+            }
+        }
+    });
+
+    return node<Out, Out, Begin>(sender, [](Out const &value) { return value; });
+}
+
+template <typename Out, typename In, typename Begin>
 template <typename Next>
 node<Next, In, Begin> node<Out, In, Begin>::change(std::function<Next(In const &)> change_handler) {
     auto imp = impl_ptr<impl>();
