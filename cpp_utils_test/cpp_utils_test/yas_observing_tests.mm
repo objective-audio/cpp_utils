@@ -382,8 +382,8 @@ using namespace yas;
     int receiver = 0;
     std::string key = "key";
 
-    auto observer = subject.make_observer(key, [&receiver](auto const &context) {
-        if (context.key == "key" && context.value == 101) {
+    auto observer = subject.make_value_observer(key, [&receiver](int const &value) {
+        if (value == 101) {
             receiver = sender;
         }
     });
@@ -422,7 +422,7 @@ using namespace yas;
     subject<std::string, int> subject;
     bool called = false;
 
-    base = subject.make_observer("key", [&called](auto const &) { called = true; });
+    base = subject.make_value_observer("key", [&called](auto const &) { called = true; });
 
     subject.notify("key", 0);
 
@@ -441,7 +441,7 @@ using namespace yas;
 
     XCTAssertFalse(subject.has_observer());
 
-    if (auto observer = subject.make_observer("key", [](auto const &) {})) {
+    if (auto observer = subject.make_value_observer("key", [](auto const &) {})) {
         XCTAssertTrue(subject.has_observer());
     } else {
         XCTAssert(0);
@@ -459,9 +459,9 @@ using namespace yas;
         bool called = false;
         int value = 0;
 
-        auto observer = subject.make_observer(test_enum::type1, [&called, &value](auto const &context) {
+        auto observer = subject.make_value_observer(test_enum::type1, [&called, &value](int const &val) {
             called = true;
-            value = context.value;
+            value = val;
         });
 
         subject.notify(test_enum::type2, 1);
@@ -474,6 +474,38 @@ using namespace yas;
         XCTAssertTrue(called);
         XCTAssertEqual(value, 1);
     }
+}
+
+- (void)test_object {
+    subject<std::string, int> subject;
+
+    subject.set_object_handler([](std::string const &key) { return std::stoi(key); });
+
+    XCTAssertEqual(subject.object("2"), 2);
+}
+
+- (void)test_value_observer {
+    subject<std::string, int> subject;
+
+    int notified = -1;
+
+    auto observer = subject.make_value_observer("test_key", [&notified](int const &value) { notified = value; });
+
+    subject.notify("test_key", 2);
+
+    XCTAssertEqual(notified, 2);
+}
+
+- (void)test_notify_with_object_handler {
+    subject<std::string, int> subject{[](std::string const &key) { return std::stoi(key); }};
+
+    int notified = -1;
+
+    auto observer = subject.make_wild_card_observer([&notified](auto const &context) { notified = context.value; });
+
+    subject.notify("4");
+
+    XCTAssertEqual(notified, 4);
 }
 
 @end

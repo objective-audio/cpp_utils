@@ -276,18 +276,18 @@ struct test_class {
     bool did_called = false;
 
     auto will_observer =
-        property.subject().make_observer(property_method::will_change, [self, &will_called](auto const &context) {
-            XCTAssertEqual(context.value.old_value, 1);
-            XCTAssertEqual(context.value.new_value, 2);
-            XCTAssertEqual(context.value.property.value(), 1);
+        property.subject().make_value_observer(property_method::will_change, [self, &will_called](auto const &value) {
+            XCTAssertEqual(value.old_value, 1);
+            XCTAssertEqual(value.new_value, 2);
+            XCTAssertEqual(value.property.value(), 1);
             will_called = true;
         });
 
     auto did_observer =
-        property.subject().make_observer(property_method::did_change, [self, &did_called](auto const &context) {
-            XCTAssertEqual(context.value.old_value, 1);
-            XCTAssertEqual(context.value.new_value, 2);
-            XCTAssertEqual(context.value.property.value(), 2);
+        property.subject().make_value_observer(property_method::did_change, [self, &did_called](auto const &value) {
+            XCTAssertEqual(value.old_value, 1);
+            XCTAssertEqual(value.new_value, 2);
+            XCTAssertEqual(value.property.value(), 2);
             did_called = true;
         });
 
@@ -303,11 +303,11 @@ struct test_class {
     bool called = false;
     std::shared_ptr<int> called_value = nullptr;
 
-    auto observer = property.subject().make_observer(yas::property_method::did_change,
-                                                     [&called_value, &called](auto const &context) mutable {
-                                                         called_value = context.value.property.value();
-                                                         called = true;
-                                                     });
+    auto observer = property.subject().make_value_observer(yas::property_method::did_change,
+                                                           [&called_value, &called](auto const &value) mutable {
+                                                               called_value = value.property.value();
+                                                               called = true;
+                                                           });
 
     property.set_value(nullptr);
 
@@ -334,11 +334,11 @@ struct test_class {
     bool called = false;
     std::string called_value;
 
-    auto observer = property.subject().make_observer(yas::property_method::did_change,
-                                                     [&called_value, &called](auto const &context) mutable {
-                                                         called_value = context.value.property.value();
-                                                         called = true;
-                                                     });
+    auto observer = property.subject().make_value_observer(yas::property_method::did_change,
+                                                           [&called_value, &called](auto const &value) mutable {
+                                                               called_value = value.property.value();
+                                                               called = true;
+                                                           });
 
     property.set_value(std::string{});
 
