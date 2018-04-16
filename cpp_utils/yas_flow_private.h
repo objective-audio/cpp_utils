@@ -218,19 +218,14 @@ node<Out, Out, Begin> node<Out, In, Begin>::wait(double const time_interval) {
 }
 
 template <typename Out, typename In, typename Begin>
-node<std::nullptr_t, In, Begin> node<Out, In, Begin>::end() {
+observer<Begin> node<Out, In, Begin>::end() {
     auto &sender = impl_ptr<impl>()->_sender;
     sender.template push_handler<In>([handler = impl_ptr<impl>()->_handler](In const &value) { handler(value); });
-    return node<std::nullptr_t, In, Begin>(std::move(sender), [](In const &) { return nullptr; });
+    return observer<Begin>(std::move(sender));
 }
 
 template <typename Out, typename In, typename Begin>
-node<std::nullptr_t, In, Begin> node<Out, In, Begin>::end(receivable<In> receiver) {
+observer<Begin> node<Out, In, Begin>::end(receivable<In> receiver) {
     return this->receive(std::move(receiver)).end();
-}
-
-template <typename Out, typename In, typename Begin>
-void node<Out, In, Begin>::sync() {
-    impl_ptr<impl>()->_sender.send();
 }
 }

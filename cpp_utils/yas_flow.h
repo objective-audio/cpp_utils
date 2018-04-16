@@ -78,10 +78,8 @@ struct node : base {
 
     node<Out, Out, Begin> wait(double const);
 
-    node<std::nullptr_t, In, Begin> end();
-    node<std::nullptr_t, In, Begin> end(receivable<In>);
-
-    void sync();
+    observer<Begin> end();
+    observer<Begin> end(receivable<In>);
 };
 }
 
