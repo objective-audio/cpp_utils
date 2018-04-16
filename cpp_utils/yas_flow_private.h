@@ -24,6 +24,29 @@ void receivable<T>::receive_value(T const &value) {
     impl_ptr<impl>()->receive_value(value);
 }
 
+#pragma mark - observer
+
+template <typename Begin>
+struct observer<Begin>::impl : base::impl {
+    impl(sender<Begin> &&sender) : _sender(std::move(sender)) {
+    }
+
+    flow::sender<Begin> _sender;
+};
+
+template <typename Begin>
+observer<Begin>::observer(sender<Begin> sender) : base(std::make_shared<impl>(std::move(sender))) {
+}
+
+template <typename Begin>
+observer<Begin>::observer(std::nullptr_t) : base(nullptr) {
+}
+
+template <typename Begin>
+void observer<Begin>::sync() {
+    impl_ptr<impl>()->_sender.send();
+}
+
 #pragma mark - sender
 
 template <typename T>

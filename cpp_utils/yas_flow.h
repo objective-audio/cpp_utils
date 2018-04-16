@@ -49,6 +49,16 @@ struct sender : base {
     std::function<void(P const &)> const &handler(std::size_t const) const;
 };
 
+template <typename Begin>
+struct observer : base {
+    class impl;
+
+    observer(sender<Begin>);
+    observer(std::nullptr_t);
+
+    void sync();
+};
+
 template <typename Out, typename In, typename Begin>
 struct node : base {
     class impl;
