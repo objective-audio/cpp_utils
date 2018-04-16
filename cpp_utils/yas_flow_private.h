@@ -152,20 +152,20 @@ node<Out, In, Begin>::node(std::nullptr_t) : base(nullptr) {
 }
 
 template <typename Out, typename In, typename Begin>
-node<Out, In, Begin> node<Out, In, Begin>::execute(std::function<void(In const &)> exe_handler) {
+node<Out, In, Begin> node<Out, In, Begin>::perform(std::function<void(In const &)> perform_handler) {
     auto imp = impl_ptr<impl>();
     return node<Out, In, Begin>(
         std::move(imp->_sender),
-        [exe_handler = std::move(exe_handler), handler = std::move(imp->_handler)](In const &value) {
+        [perform_handler = std::move(perform_handler), handler = std::move(imp->_handler)](In const &value) {
             Out result = handler(value);
-            exe_handler(result);
+            perform_handler(result);
             return result;
         });
 }
 
 template <typename Out, typename In, typename Begin>
 node<Out, In, Begin> node<Out, In, Begin>::receive(receivable<In> receiver) {
-    return this->execute([receiver = std::move(receiver)](In const &value) mutable { receiver.receive_value(value); });
+    return this->perform([receiver = std::move(receiver)](In const &value) mutable { receiver.receive_value(value); });
 }
 
 template <typename Out, typename In, typename Begin>

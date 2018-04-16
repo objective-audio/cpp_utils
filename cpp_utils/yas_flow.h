@@ -68,7 +68,7 @@ struct node : base {
     node(sender<Begin>, std::function<Out(In const &)>);
     node(std::nullptr_t);
 
-    node<Out, In, Begin> execute(std::function<void(In const &)>);
+    node<Out, In, Begin> perform(std::function<void(In const &)>);
     node<Out, In, Begin> receive(receivable<In>);
 
     node<Out, In, Begin> guard(std::function<bool(In const &)>);

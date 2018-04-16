@@ -55,7 +55,7 @@ struct receiver : base {
 
     auto node = begin_flow(subject, std::string("key"))
                     .change<int>([](float const value) { return int(value * 10.0f); })
-                    .execute([&received_value](int const &value) { received_value = value; })
+                    .perform([&received_value](int const &value) { received_value = value; })
                     .end();
 
     XCTAssertEqual(received_value, 0.0f);
@@ -75,11 +75,11 @@ struct receiver : base {
     std::string result = "";
 
     auto flow = sender.begin_flow()
-                    .execute([&begin](int const &value) { begin = CFAbsoluteTimeGetCurrent(); })
+                    .perform([&begin](int const &value) { begin = CFAbsoluteTimeGetCurrent(); })
                     .wait(0.1)
                     .change<std::string>([](int const &value) { return std::to_string(value); })
                     .wait(0.1)
-                    .execute([waitExp, &end, &result](std::string const &value) {
+                    .perform([waitExp, &end, &result](std::string const &value) {
                         result = value;
                         end = CFAbsoluteTimeGetCurrent();
                         [waitExp fulfill];
@@ -101,7 +101,7 @@ struct receiver : base {
 
     int received = -1;
 
-    auto flow = sender.begin_flow().execute([&received](int const &value) { received = value; }).end();
+    auto flow = sender.begin_flow().perform([&received](int const &value) { received = value; }).end();
     flow.sync();
 
     XCTAssertEqual(received, 100);
@@ -142,7 +142,7 @@ struct receiver : base {
 
     auto flow = sender.begin_flow()
                     .guard([](int const &value) { return value % 2; })
-                    .execute([&received](int const &value) { received = value; })
+                    .perform([&received](int const &value) { received = value; })
                     .end();
 
     sender.send_value(2);

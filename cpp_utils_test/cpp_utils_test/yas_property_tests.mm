@@ -441,7 +441,7 @@ struct test_class {
 
     int received = -1;
 
-    auto flow = property.begin_flow().execute([&received](int const &value) { received = value; }).end();
+    auto flow = property.begin_flow().perform([&received](int const &value) { received = value; }).end();
 
     flow.sync();
 
