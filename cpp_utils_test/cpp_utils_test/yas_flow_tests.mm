@@ -54,7 +54,7 @@ struct receiver : base {
     float received_value = 0.0f;
 
     auto node = begin_flow(subject, std::string("key"))
-                    .change<int>([](float const value) { return int(value * 10.0f); })
+                    .convert<int>([](float const value) { return int(value * 10.0f); })
                     .perform([&received_value](int const &value) { received_value = value; })
                     .end();
 
@@ -77,7 +77,7 @@ struct receiver : base {
     auto flow = sender.begin_flow()
                     .perform([&begin](int const &value) { begin = CFAbsoluteTimeGetCurrent(); })
                     .wait(0.1)
-                    .change<std::string>([](int const &value) { return std::to_string(value); })
+                    .convert<std::string>([](int const &value) { return std::to_string(value); })
                     .wait(0.1)
                     .perform([waitExp, &end, &result](std::string const &value) {
                         result = value;
@@ -161,7 +161,7 @@ struct receiver : base {
     flow::sender<std::string> sub_sender;
 
     auto flow = sender.begin_flow()
-                    .change<std::string>([](int const &value) { return std::to_string(value); })
+                    .convert<std::string>([](int const &value) { return std::to_string(value); })
                     .merge(sub_sender)
                     .perform([&received](std::string const &value) { received = value; })
                     .end();
@@ -179,11 +179,13 @@ struct receiver : base {
     std::string received;
 
     flow::sender<int> sender;
-    flow::sender<std::string> sub_sender;
+    flow::sender<float> sub_sender;
 
-    auto sub_flow = sub_sender.begin_flow();
+    auto sub_flow =
+        sub_sender.begin_flow().convert<std::string>([](float const &value) { return std::to_string(int(value)); });
+
     auto flow = sender.begin_flow()
-                    .change<std::string>([](int const &value) { return std::to_string(value); })
+                    .convert<std::string>([](int const &value) { return std::to_string(value); })
                     .merge(sub_flow)
                     .perform([&received](std::string const &value) { received = value; })
                     .end();
@@ -192,9 +194,9 @@ struct receiver : base {
 
     XCTAssertEqual(received, "10");
 
-    sub_sender.send_value("test_text_2");
+    sub_sender.send_value(20.0f);
 
-    XCTAssertEqual(received, "test_text_2");
+    XCTAssertEqual(received, "20");
 }
 
 @end

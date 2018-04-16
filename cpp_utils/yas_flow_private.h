@@ -190,11 +190,11 @@ node<Out, In, Begin> node<Out, In, Begin>::guard(std::function<bool(In const &va
 
 template <typename Out, typename In, typename Begin>
 template <typename Next>
-node<Next, In, Begin> node<Out, In, Begin>::change(std::function<Next(In const &)> change_handler) {
+node<Next, In, Begin> node<Out, In, Begin>::convert(std::function<Next(In const &)> convert_handler) {
     auto imp = impl_ptr<impl>();
     return node<Next, In, Begin>(std::move(imp->_sender), [
-        change_handler = std::move(change_handler), handler = std::move(imp->_handler)
-    ](In const &value) { return change_handler(handler(value)); });
+        convert_handler = std::move(convert_handler), handler = std::move(imp->_handler)
+    ](In const &value) { return convert_handler(handler(value)); });
 }
 
 template <typename Out, typename In, typename Begin>
@@ -218,17 +218,22 @@ node<Out, Out, Begin> node<Out, In, Begin>::wait(double const time_interval) {
 }
 
 template <typename Out, typename In, typename Begin>
-node<Out, Out, Begin> node<Out, In, Begin>::merge(sender<Out> sub_sender) {
+template <typename SubIn, typename SubBegin>
+node<Out, Out, Begin> node<Out, In, Begin>::merge(node<Out, SubIn, SubBegin> sub_node) {
     auto imp = impl_ptr<impl>();
     flow::sender<Begin> &sender = imp->_sender;
     auto weak_sender = to_weak(sender);
     std::size_t const next_idx = sender.handlers_size() + 1;
 
-    sub_sender.template push_handler<Out>([weak_sender, next_idx](Out const &value) {
-        if (auto sender = weak_sender.lock()) {
-            sender.template handler<Out>(next_idx)(value);
-        }
-    });
+    auto sub_imp = sub_node.template impl_ptr<typename node<Out, SubIn, SubBegin>::impl>();
+    auto &sub_sender = sub_imp->_sender;
+
+    sub_sender.template push_handler<SubIn>(
+        [handler = sub_imp->_handler, weak_sender, next_idx](SubIn const &value) mutable {
+            if (auto sender = weak_sender.lock()) {
+                sender.template handler<Out>(next_idx)(handler(value));
+            }
+        });
 
     sender.template push_handler<In>(
         [handler = imp->_handler, weak_sender, next_idx, sub_sender](In const &value) mutable {
@@ -241,29 +246,8 @@ node<Out, Out, Begin> node<Out, In, Begin>::merge(sender<Out> sub_sender) {
 }
 
 template <typename Out, typename In, typename Begin>
-template <typename SubIn, typename SubBegin>
-node<Out, Out, Begin> node<Out, In, Begin>::merge(node<Out, SubIn, SubBegin> sub_node) {
-    auto imp = impl_ptr<impl>();
-    flow::sender<Begin> &sender = imp->_sender;
-    auto weak_sender = to_weak(sender);
-    std::size_t const next_idx = sender.handlers_size() + 1;
-
-    auto &sub_sender = sub_node.template impl_ptr<typename node<Out, SubIn, SubBegin>::impl>()->_sender;
-
-    sub_sender.template push_handler<SubIn>([weak_sender, next_idx](SubIn const &value) mutable {
-        if (auto sender = weak_sender.lock()) {
-            sender.template handler<Out>(next_idx)(value);
-        }
-    });
-
-    sender.template push_handler<In>(
-        [handler = imp->_handler, weak_sender, next_idx, sub_sender](In const &value) mutable {
-            if (auto sender = weak_sender.lock()) {
-                sender.template handler<Out>(next_idx)(handler(value));
-            }
-        });
-
-    return node<Out, Out, Begin>(sender, [](Out const &value) { return value; });
+node<Out, Out, Begin> node<Out, In, Begin>::merge(sender<Out> sub_sender) {
+    return this->merge(sub_sender.begin_flow());
 }
 
 template <typename Out, typename In, typename Begin>

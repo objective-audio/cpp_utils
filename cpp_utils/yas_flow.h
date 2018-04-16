@@ -74,13 +74,13 @@ struct node : base {
     node<Out, In, Begin> guard(std::function<bool(In const &)>);
 
     template <typename Next = Out>
-    node<Next, In, Begin> change(std::function<Next(In const &)>);
+    node<Next, In, Begin> convert(std::function<Next(In const &)>);
 
     node<Out, Out, Begin> wait(double const);
 
-    node<Out, Out, Begin> merge(sender<Out>);
     template <typename SubIn, typename SubBegin>
     node<Out, Out, Begin> merge(node<Out, SubIn, SubBegin>);
+    node<Out, Out, Begin> merge(sender<Out>);
 
     observer<Begin> end();
     observer<Begin> end(receivable<In>);
