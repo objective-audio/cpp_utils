@@ -79,6 +79,8 @@ struct node : base {
     node<Out, Out, Begin> wait(double const);
 
     node<Out, Out, Begin> merge(sender<Out>);
+    template <typename SubIn, typename SubBegin>
+    node<Out, Out, Begin> merge(node<Out, SubIn, SubBegin>);
 
     observer<Begin> end();
     observer<Begin> end(receivable<In>);

@@ -154,22 +154,47 @@ struct receiver : base {
     XCTAssertEqual(received, 3);
 }
 
-- (void)test_merge {
-    int received = -1;
+- (void)test_merge_by_sender {
+    std::string received;
 
     flow::sender<int> sender;
-    flow::sender<int> sub_sender;
+    flow::sender<std::string> sub_sender;
 
-    auto flow =
-        sender.begin_flow().merge(sub_sender).perform([&received](int const &value) { received = value; }).end();
+    auto flow = sender.begin_flow()
+                    .change<std::string>([](int const &value) { return std::to_string(value); })
+                    .merge(sub_sender)
+                    .perform([&received](std::string const &value) { received = value; })
+                    .end();
 
     sender.send_value(1);
 
-    XCTAssertEqual(received, 1);
+    XCTAssertEqual(received, "1");
 
-    sub_sender.send_value(2);
+    sub_sender.send_value("test_text_1");
 
-    XCTAssertEqual(received, 2);
+    XCTAssertEqual(received, "test_text_1");
+}
+
+- (void)test_merge_by_node {
+    std::string received;
+
+    flow::sender<int> sender;
+    flow::sender<std::string> sub_sender;
+
+    auto sub_flow = sub_sender.begin_flow();
+    auto flow = sender.begin_flow()
+                    .change<std::string>([](int const &value) { return std::to_string(value); })
+                    .merge(sub_flow)
+                    .perform([&received](std::string const &value) { received = value; })
+                    .end();
+
+    sender.send_value(10);
+
+    XCTAssertEqual(received, "10");
+
+    sub_sender.send_value("test_text_2");
+
+    XCTAssertEqual(received, "test_text_2");
 }
 
 @end
