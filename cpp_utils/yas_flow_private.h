@@ -147,7 +147,6 @@ node<Out, In, Begin> node<Out, In, Begin>::receive(receivable<In> receiver) {
 
 template <typename Out, typename In, typename Begin>
 node<Out, In, Begin> node<Out, In, Begin>::guard(std::function<bool(In const &value)> guard_handler) {
-#warning todo handlerを切り替えて呼ばなくできるようにする？
     auto imp = impl_ptr<impl>();
     flow::sender<Begin> &sender = imp->_sender;
     auto weak_sender = to_weak(sender);
