@@ -154,4 +154,22 @@ struct receiver : base {
     XCTAssertEqual(received, 3);
 }
 
+- (void)test_merge {
+    int received = -1;
+
+    flow::sender<int> sender;
+    flow::sender<int> sub_sender;
+
+    auto flow =
+        sender.begin_flow().merge(sub_sender).perform([&received](int const &value) { received = value; }).end();
+
+    sender.send_value(1);
+
+    XCTAssertEqual(received, 1);
+
+    sub_sender.send_value(2);
+
+    XCTAssertEqual(received, 2);
+}
+
 @end

@@ -78,6 +78,8 @@ struct node : base {
 
     node<Out, Out, Begin> wait(double const);
 
+    node<Out, Out, Begin> merge(sender<Out>);
+
     observer<Begin> end();
     observer<Begin> end(receivable<In>);
 };
