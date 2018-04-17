@@ -9,11 +9,15 @@
 namespace yas {
 template <typename State, typename Signal>
 struct flow::graph<State, Signal>::impl : base::impl {
+    State state;
     std::unordered_map<State, flow::observer<State>> observers;
+    
+    impl(State &&state) : state(std::move(state)) {
+    }
 };
 
 template <typename State, typename Signal>
-flow::graph<State, Signal>::graph() : base(std::make_shared<impl>()) {
+flow::graph<State, Signal>::graph(State state) : base(std::make_shared<impl>(std::move(state))) {
 }
 
 template <typename State, typename Signal>

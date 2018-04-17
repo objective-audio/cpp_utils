@@ -11,7 +11,7 @@ template <typename State, typename Signal>
 struct graph : base {
     class impl;
 
-    graph();
+    graph(State);
     graph(std::nullptr_t);
 
     flow::node<State, State, State> begin_flow();

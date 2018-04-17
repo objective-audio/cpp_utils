@@ -24,7 +24,7 @@ using namespace yas;
 - (void)test_graph {
     enum class test_state { a, b, c };
 
-    flow::graph<test_state, int> graph;
+    flow::graph<test_state, int> graph{test_state::a};
 
     auto flow_a = graph.begin_flow().perform([](test_state const &state) { NSLog(@"call state a"); }).end();
     auto flow_b = graph.begin_flow().perform([](test_state const &state) { NSLog(@"call state b"); }).end();
