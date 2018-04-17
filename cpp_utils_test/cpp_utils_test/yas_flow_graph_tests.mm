@@ -25,12 +25,23 @@ using namespace yas;
     enum class test_state { a, b, c };
 
     flow::graph<test_state, int> graph{test_state::a};
+    
+    XCTAssertEqual(graph.state(), test_state::a);
 
-    auto flow_a = graph.begin_flow().perform([](test_state const &state) { NSLog(@"call state a"); }).end();
-    auto flow_b = graph.begin_flow().perform([](test_state const &state) { NSLog(@"call state b"); }).end();
+    auto flow_a = graph.begin_flow()
+                      .perform([](int const &signal) { NSLog(@"call state a %@", @(signal)); })
+                      .convert<test_state>([](int const &value) { return test_state::b; })
+                      .end();
+
+    auto flow_b = graph.begin_flow()
+                      .perform([](int const &signal) { NSLog(@"call state b %@", @(signal)); })
+                      .convert<test_state>([](int const &value) { return test_state::c; })
+                      .end();
 
     graph.add_state(test_state::a, flow_a);
     graph.add_state(test_state::b, flow_b);
+    
+    
 }
 
 @end
