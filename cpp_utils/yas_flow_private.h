@@ -9,7 +9,7 @@
 
 namespace yas::flow {
 
-#pragma mark - receiver
+#pragma mark - receivable
 
 template <typename T>
 receivable<T>::receivable(std::shared_ptr<impl> impl) : protocol(std::move(impl)) {
@@ -22,6 +22,34 @@ receivable<T>::receivable(std::nullptr_t) : protocol(nullptr) {
 template <typename T>
 void receivable<T>::receive_value(T const &value) {
     impl_ptr<impl>()->receive_value(value);
+}
+    
+#pragma mark - flow::receiver
+
+template <typename T>
+struct flow::receiver<T>::impl : base::impl, flow::receivable<T>::impl {
+    std::function<void(T const &)> handler;
+
+    impl(std::function<void(T const &)> &&handler) : handler(std::move(handler)) {
+    }
+
+    void receive_value(T const &value) override {
+        this->handler(value);
+    }
+};
+
+template <typename T>
+flow::receiver<T>::receiver(std::function<void(T const &)> handler)
+    : base(std::make_shared<impl>(std::move(handler))) {
+}
+
+template <typename T>
+flow::receiver<T>::receiver(std::nullptr_t) : base(nullptr) {
+}
+
+template <typename T>
+flow::receivable<T> flow::receiver<T>::receivable() {
+    return flow::receivable<T>{impl_ptr<typename flow::receivable<T>::impl>()};
 }
 
 #pragma mark - observer

@@ -26,6 +26,16 @@ struct receivable : protocol {
 };
 
 template <typename T>
+struct receiver : base {
+    struct impl;
+
+    receiver(std::function<void(T const &)>);
+    receiver(std::nullptr_t);
+
+    flow::receivable<T> receivable();
+};
+
+template <typename T>
 struct sender : base {
     class impl;
 

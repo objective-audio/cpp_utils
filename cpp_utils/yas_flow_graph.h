@@ -7,16 +7,6 @@
 #include "yas_flow.h"
 
 namespace yas::flow {
-template <typename State>
-struct graph_receiver : base {
-    struct impl;
-
-    graph_receiver();
-    graph_receiver(std::nullptr_t);
-
-    flow::receivable<State> receivable();
-};
-
 template <typename State, typename Signal>
 struct graph : base {
     class impl;

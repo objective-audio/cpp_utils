@@ -199,4 +199,18 @@ struct receiver : base {
     XCTAssertEqual(received, "20");
 }
 
+- (void)test_receiver {
+    int received = -1;
+
+    flow::sender<int> sender;
+
+    flow::receiver<int> receiver{[&received](int const &value) { received = value; }};
+
+    auto flow = sender.begin_flow().end(receiver.receivable());
+
+    sender.send_value(100);
+
+    XCTAssertEqual(received, 100);
+}
+
 @end
