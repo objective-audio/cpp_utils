@@ -180,7 +180,7 @@ node<Out, In, Begin>::node(std::nullptr_t) : base(nullptr) {
 }
 
 template <typename Out, typename In, typename Begin>
-node<Out, In, Begin> node<Out, In, Begin>::perform(std::function<void(In const &)> perform_handler) {
+node<Out, In, Begin> node<Out, In, Begin>::perform(std::function<void(Out const &)> perform_handler) {
     auto imp = impl_ptr<impl>();
     return node<Out, In, Begin>(
         std::move(imp->_sender),
