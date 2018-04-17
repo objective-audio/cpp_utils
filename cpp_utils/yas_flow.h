@@ -35,7 +35,7 @@ struct sender : base {
     void send_value(T const &);
 
     void set_can_send_handler(std::function<bool(void)>);
-    bool can_send() const;
+    [[nodiscard]] bool can_send() const;
     void set_send_handler(std::function<T(void)>);
     void send() const;
 
@@ -68,22 +68,22 @@ struct node : base {
     node(sender<Begin>, std::function<Out(In const &)>);
     node(std::nullptr_t);
 
-    node<Out, In, Begin> perform(std::function<void(In const &)>);
-    node<Out, In, Begin> receive(receivable<In>);
+    [[nodiscard]] node<Out, In, Begin> perform(std::function<void(In const &)>);
+    [[nodiscard]] node<Out, In, Begin> receive(receivable<In>);
 
-    node<Out, In, Begin> guard(std::function<bool(In const &)>);
+    [[nodiscard]] node<Out, In, Begin> guard(std::function<bool(In const &)>);
 
     template <typename Next = Out>
-    node<Next, In, Begin> convert(std::function<Next(In const &)>);
+    [[nodiscard]] node<Next, In, Begin> convert(std::function<Next(In const &)>);
 
-    node<Out, Out, Begin> wait(double const);
+    [[nodiscard]] node<Out, Out, Begin> wait(double const);
 
     template <typename SubIn, typename SubBegin>
-    node<Out, Out, Begin> merge(node<Out, SubIn, SubBegin>);
-    node<Out, Out, Begin> merge(sender<Out>);
+    [[nodiscard]] node<Out, Out, Begin> merge(node<Out, SubIn, SubBegin>);
+    [[nodiscard]] node<Out, Out, Begin> merge(sender<Out>);
 
-    observer<Begin> end();
-    observer<Begin> end(receivable<In>);
+    [[nodiscard]] observer<Begin> end();
+    [[nodiscard]] observer<Begin> end(receivable<In>);
 };
 }
 
