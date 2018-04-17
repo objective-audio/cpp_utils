@@ -13,6 +13,9 @@ struct graph : base {
 
     graph();
     graph(std::nullptr_t);
+
+    flow::node<State, State, State> begin_flow();
+    void add_state(State, flow::observer<State>);
 };
 }
 
