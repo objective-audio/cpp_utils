@@ -200,6 +200,9 @@
 		B6B4EEEB1EB8B4B6002CD9BE /* yas_to_floating_point.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = yas_to_floating_point.h; sourceTree = "<group>"; };
 		B6B4EEEC1EB8B622002CD9BE /* yas_to_floating_point_tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = yas_to_floating_point_tests.mm; sourceTree = "<group>"; };
 		B6BFA9382082F4A600ADD43B /* yas_flow_observing.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = yas_flow_observing.h; sourceTree = "<group>"; };
+		B6BFA93C2085719800ADD43B /* yas_flow_graph.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = yas_flow_graph.h; sourceTree = "<group>"; };
+		B6BFA93D208571BC00ADD43B /* yas_flow_graph_private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = yas_flow_graph_private.h; sourceTree = "<group>"; };
+		B6BFA93E208571F100ADD43B /* yas_flow_observing_private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = yas_flow_observing_private.h; sourceTree = "<group>"; };
 		B6C62FA31D06E438001952EC /* yas_flagset_private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = yas_flagset_private.h; sourceTree = "<group>"; };
 		B6C62FA41D06E438001952EC /* yas_flagset.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = yas_flagset.h; sourceTree = "<group>"; };
 		B6C62FA71D06E584001952EC /* yas_flagset_tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = yas_flagset_tests.mm; sourceTree = "<group>"; };
@@ -352,6 +355,9 @@
 				B66A61FB207E53BF00AD1660 /* yas_flow.h */,
 				B66A6202207F977300AD1660 /* yas_flow_private.h */,
 				B6BFA9382082F4A600ADD43B /* yas_flow_observing.h */,
+				B6BFA93E208571F100ADD43B /* yas_flow_observing_private.h */,
+				B6BFA93C2085719800ADD43B /* yas_flow_graph.h */,
+				B6BFA93D208571BC00ADD43B /* yas_flow_graph_private.h */,
 				B64617C11D1E7DA20051DFA2 /* yas_objc_cast.h */,
 				B6A5CA441CAD7A2600214DD6 /* yas_objc_ptr_private.h */,
 				B6CA03CC1CAD644900CC31FF /* yas_objc_ptr.h */,
