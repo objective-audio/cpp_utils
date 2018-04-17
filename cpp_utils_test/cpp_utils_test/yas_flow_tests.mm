@@ -49,20 +49,20 @@ struct receiver : base {
 }
 
 - (void)test_flow {
-    subject<std::string, float> subject;
+    subject<std::string, int> subject;
 
-    float received_value = 0.0f;
+    std::string received_value = "";
 
     auto node = begin_flow(subject, std::string("key"))
-                    .convert<int>([](float const value) { return int(value * 10.0f); })
-                    .perform([&received_value](int const &value) { received_value = value; })
+                    .convert<std::string>([](int const value) { return std::to_string(value); })
+                    .perform([&received_value](std::string const &value) { received_value = value; })
                     .end();
 
-    XCTAssertEqual(received_value, 0.0f);
-    subject.notify("key", 1.0f);
-    XCTAssertEqual(received_value, 10.0f);
-    subject.notify("key", 2.0f);
-    XCTAssertEqual(received_value, 20.0f);
+    XCTAssertEqual(received_value, "");
+    subject.notify("key", 1);
+    XCTAssertEqual(received_value, "1");
+    subject.notify("key", 2);
+    XCTAssertEqual(received_value, "2");
 }
 
 - (void)test_wait {
