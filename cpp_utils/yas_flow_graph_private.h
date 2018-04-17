@@ -9,7 +9,7 @@ template <typename State, typename Signal>
 struct flow::graph<State, Signal>::impl : base::impl {};
 
 template <typename State, typename Signal>
-flow::graph<State, Signal>::graph() : baes(std::make_shared<impl>()) {
+flow::graph<State, Signal>::graph() : base(std::make_shared<impl>()) {
 }
 
 template <typename State, typename Signal>

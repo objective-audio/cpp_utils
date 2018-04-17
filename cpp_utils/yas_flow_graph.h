@@ -13,7 +13,7 @@ struct graph : base {
 
     graph();
     graph(std::nullptr_t);
-}
+};
 }
 
-#include "yas_flow_graph.private.h"
+#include "yas_flow_graph_private.h"
