@@ -51,7 +51,6 @@ struct sender : base {
 
     node<T, T, T> begin_flow();
 
-    // keeper
     template <typename P>
     void push_handler(std::function<void(P const &)>);
     std::size_t handlers_size() const;
