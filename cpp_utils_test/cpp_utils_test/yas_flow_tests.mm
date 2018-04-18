@@ -65,6 +65,29 @@ struct receiver : base {
     XCTAssertEqual(received_value, "2");
 }
 
+- (void)test_convert {
+    flow::sender<int> sender;
+
+    std::string received = "";
+
+    auto flow = sender.begin_flow()
+                    .guard([](int const &) { return true; })
+                    .convert<bool>([](int const &value) { return value > 0; })
+                    .guard([](bool const &) { return true; })
+                    .convert<std::string>([](bool const &value) { return value ? "true" : "false"; })
+                    .guard([](std::string const &) { return true; })
+                    .perform([&received](std::string const &value) { received = value; })
+                    .end();
+
+    sender.send_value(0);
+
+    XCTAssertEqual(received, "false");
+
+    sender.send_value(1);
+
+    XCTAssertEqual(received, "true");
+}
+
 - (void)test_wait {
     flow::sender<int> sender;
 
