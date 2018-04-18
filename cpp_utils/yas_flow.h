@@ -79,7 +79,7 @@ struct node : base {
     node(std::nullptr_t);
 
     [[nodiscard]] node<Out, In, Begin> perform(std::function<void(Out const &)>);
-    [[nodiscard]] node<Out, In, Begin> receive(receivable<In>);
+    [[nodiscard]] node<Out, In, Begin> receive(receivable<Out>);
 
     [[nodiscard]] node<Out, In, Begin> guard(std::function<bool(In const &)>);
 

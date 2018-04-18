@@ -192,8 +192,8 @@ node<Out, In, Begin> node<Out, In, Begin>::perform(std::function<void(Out const 
 }
 
 template <typename Out, typename In, typename Begin>
-node<Out, In, Begin> node<Out, In, Begin>::receive(receivable<In> receiver) {
-    return this->perform([receiver = std::move(receiver)](In const &value) mutable { receiver.receive_value(value); });
+node<Out, In, Begin> node<Out, In, Begin>::receive(receivable<Out> receiver) {
+    return this->perform([receiver = std::move(receiver)](Out const &value) mutable { receiver.receive_value(value); });
 }
 
 template <typename Out, typename In, typename Begin>

@@ -108,17 +108,19 @@ struct receiver : base {
 }
 
 - (void)test_receive {
-    float received = 0.0f;
+    std::string received = "";
 
-    test::receiver receiver{[&received](float const &value) { received = value; }};
+    flow::sender<int> sender;
+    flow::receiver<std::string> receiver{[&received](std::string const &value) { received = value; }};
 
-    flow::sender<float> sender;
+    auto node = sender.begin_flow()
+                    .convert<std::string>([](int const &value) { return std::to_string(value); })
+                    .receive(receiver.receivable())
+                    .end();
 
-    auto node = sender.begin_flow().receive(receiver.receivable()).end();
+    sender.send_value(3);
 
-    sender.send_value(3.0f);
-
-    XCTAssertEqual(received, 3.0f);
+    XCTAssertEqual(received, "3");
 }
 
 - (void)test_receive_by_end {
