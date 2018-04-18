@@ -139,22 +139,23 @@ struct receiver : base {
 }
 
 - (void)test_guard {
-    int received = -1;
+    float received = -1.0f;
 
     flow::sender<int> sender;
 
     auto flow = sender.begin_flow()
-                    .guard([](int const &value) { return value % 2; })
-                    .perform([&received](int const &value) { received = value; })
+                    .convert<float>([](int const &value) { return value; })
+                    .guard([](float const &value) { return value > 2.5f; })
+                    .perform([&received](float const &value) { received = value; })
                     .end();
 
     sender.send_value(2);
 
-    XCTAssertNotEqual(received, 2);
+    XCTAssertEqual(received, -1.0f);
 
     sender.send_value(3);
 
-    XCTAssertEqual(received, 3);
+    XCTAssertEqual(received, 3.0f);
 }
 
 - (void)test_merge_by_sender {

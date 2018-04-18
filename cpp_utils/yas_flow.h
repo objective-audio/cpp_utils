@@ -81,7 +81,7 @@ struct node : base {
     [[nodiscard]] node<Out, In, Begin> perform(std::function<void(Out const &)>);
     [[nodiscard]] node<Out, In, Begin> receive(receivable<Out>);
 
-    [[nodiscard]] node<Out, In, Begin> guard(std::function<bool(In const &)>);
+    [[nodiscard]] node<Out, Out, Begin> guard(std::function<bool(Out const &)>);
 
     template <typename Next = Out>
     [[nodiscard]] node<Next, In, Begin> convert(std::function<Next(In const &)>);

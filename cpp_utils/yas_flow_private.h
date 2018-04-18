@@ -23,7 +23,7 @@ template <typename T>
 void receivable<T>::receive_value(T const &value) {
     impl_ptr<impl>()->receive_value(value);
 }
-    
+
 #pragma mark - flow::receiver
 
 template <typename T>
@@ -39,8 +39,7 @@ struct flow::receiver<T>::impl : base::impl, flow::receivable<T>::impl {
 };
 
 template <typename T>
-flow::receiver<T>::receiver(std::function<void(T const &)> handler)
-    : base(std::make_shared<impl>(std::move(handler))) {
+flow::receiver<T>::receiver(std::function<void(T const &)> handler) : base(std::make_shared<impl>(std::move(handler))) {
 }
 
 template <typename T>
@@ -197,7 +196,7 @@ node<Out, In, Begin> node<Out, In, Begin>::receive(receivable<Out> receiver) {
 }
 
 template <typename Out, typename In, typename Begin>
-node<Out, In, Begin> node<Out, In, Begin>::guard(std::function<bool(In const &value)> guard_handler) {
+node<Out, Out, Begin> node<Out, In, Begin>::guard(std::function<bool(Out const &value)> guard_handler) {
     auto imp = impl_ptr<impl>();
     flow::sender<Begin> &sender = imp->_sender;
     auto weak_sender = to_weak(sender);
@@ -206,9 +205,10 @@ node<Out, In, Begin> node<Out, In, Begin>::guard(std::function<bool(In const &va
     sender.template push_handler<In>([
         handler = imp->_handler, weak_sender, next_idx, guard_handler = std::move(guard_handler)
     ](In const &value) mutable {
-        if (guard_handler(value)) {
+        auto const handled_value = handler(value);
+        if (guard_handler(handled_value)) {
             if (auto sender = weak_sender.lock()) {
-                sender.template handler<Out>(next_idx)(value);
+                sender.template handler<Out>(next_idx)(handled_value);
             }
         }
     });
