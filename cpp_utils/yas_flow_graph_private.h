@@ -49,6 +49,19 @@ struct flow::graph<State, Signal>::impl : base::impl {
         }};
     }
 
+    void add_state(State state, flow::sender<Signal> sender, flow::observer<Signal> observer) {
+        if (this->senders.count(state) > 0) {
+            throw std::runtime_error("sender state exists.");
+        }
+
+        if (this->observers.count(state) > 0) {
+            throw std::runtime_error("observer state exists.");
+        }
+
+        this->senders.emplace(state, std::move(sender));
+        this->observers.emplace(std::move(state), std::move(observer));
+    }
+
     void send_signal(Signal const &signal, bool is_continue) {
         if (!is_continue && this->is_running) {
             throw std::runtime_error("");
@@ -81,39 +94,26 @@ State const &flow::graph<State, Signal>::state() const {
 }
 
 template <typename State, typename Signal>
-void flow::graph<State, Signal>::add_state(State state, flow::sender<Signal> signal, flow::observer<Signal> observer) {
-    auto imp = impl_ptr<impl>();
-    if (imp->senders.count(state) > 0) {
-        throw std::runtime_error("sender state exists.");
-    }
-
-    if (imp->observers.count(state) > 0) {
-        throw std::runtime_error("observer state exists.");
-    }
-
-    imp->senders.emplace(state, std::move(signal));
-    imp->observers.emplace(std::move(state), std::move(observer));
-}
-
-template <typename State, typename Signal>
 void flow::graph<State, Signal>::add_break_state(State state, std::function<State(Signal)> handler) {
     flow::sender<Signal> sender;
+    auto imp = impl_ptr<impl>();
 
-    flow::receivable<State> receivable = impl_ptr<impl>()->pause_receiver.receivable();
+    flow::receivable<State> receivable = imp->pause_receiver.receivable();
 
     auto flow =
         sender.begin_flow()
             .template convert<State>([handler = std::move(handler)](Signal const &signal) { return handler(signal); })
             .end(std::move(receivable));
 
-    this->add_state(std::move(state), std::move(sender), std::move(flow));
+    imp->add_state(std::move(state), std::move(sender), std::move(flow));
 }
 
 template <typename State, typename Signal>
-void flow::graph<State, Signal>::add_continue_state(State state,
-                                                    std::function<State(Signal)> handler) {
+void flow::graph<State, Signal>::add_continue_state(State state, std::function<State(Signal)> handler) {
     flow::sender<Signal> sender;
-    flow::receivable<State> receivable = impl_ptr<impl>()->continue_receiver.receivable();
+    auto imp = impl_ptr<impl>();
+
+    flow::receivable<State> receivable = imp->continue_receiver.receivable();
 
     auto flow =
         sender.begin_flow()
@@ -126,7 +126,7 @@ void flow::graph<State, Signal>::add_continue_state(State state,
             })
             .end(std::move(receivable));
 
-    this->add_state(std::move(state), std::move(sender), std::move(flow));
+    imp->add_state(std::move(state), std::move(sender), std::move(flow));
 }
 
 template <typename State, typename Signal>
