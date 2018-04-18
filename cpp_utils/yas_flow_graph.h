@@ -17,7 +17,10 @@ struct graph : base {
     State const &state() const;
 
     flow::node<Signal, Signal, Signal> begin_flow();
+
     void add_state(State, flow::observer<Signal>);
+    
+    void send_signal(Signal const &);
 
     flow::receivable<State> pause_receivable();
 };
