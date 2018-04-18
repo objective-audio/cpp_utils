@@ -26,9 +26,9 @@ using namespace yas;
 
     flow::graph<test_state, int> graph{test_state::a};
 
-    graph.add_pause_state(test_state::a, [](int const &) { return test_state::b; });
+    graph.add_break_state(test_state::a, [](int const &) { return test_state::b; });
     graph.add_continue_state(test_state::b, [](int const &) { return test_state::c; });
-    graph.add_pause_state(test_state::c, [](int const &) { return test_state::a; });
+    graph.add_break_state(test_state::c, [](int const &) { return test_state::a; });
 
     XCTAssertEqual(graph.state(), test_state::a);
 

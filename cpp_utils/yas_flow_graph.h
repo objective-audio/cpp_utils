@@ -17,7 +17,7 @@ struct graph : base {
     State const &state() const;
 
     void add_state(State, flow::sender<Signal>, flow::observer<Signal>);
-    void add_pause_state(State, std::function<State(Signal)>);
+    void add_break_state(State, std::function<State(Signal)>);
     void add_continue_state(State, std::function<State(Signal)>);
 
     void send_signal(Signal const &);

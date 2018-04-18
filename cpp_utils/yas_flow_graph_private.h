@@ -96,7 +96,7 @@ void flow::graph<State, Signal>::add_state(State state, flow::sender<Signal> sig
 }
 
 template <typename State, typename Signal>
-void flow::graph<State, Signal>::add_pause_state(State state, std::function<State(Signal)> handler) {
+void flow::graph<State, Signal>::add_break_state(State state, std::function<State(Signal)> handler) {
     flow::sender<Signal> sender;
 
     flow::receivable<State> receivable = impl_ptr<impl>()->pause_receiver.receivable();
