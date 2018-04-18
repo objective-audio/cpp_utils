@@ -205,10 +205,10 @@ node<Out, Out, Begin> node<Out, In, Begin>::guard(std::function<bool(Out const &
     sender.template push_handler<In>([
         handler = imp->_handler, weak_sender, next_idx, guard_handler = std::move(guard_handler)
     ](In const &value) mutable {
-        auto const handled_value = handler(value);
-        if (guard_handler(handled_value)) {
+        auto const result = handler(value);
+        if (guard_handler(result)) {
             if (auto sender = weak_sender.lock()) {
-                sender.template handler<Out>(next_idx)(handled_value);
+                sender.template handler<Out>(next_idx)(result);
             }
         }
     });
@@ -218,7 +218,7 @@ node<Out, Out, Begin> node<Out, In, Begin>::guard(std::function<bool(Out const &
 
 template <typename Out, typename In, typename Begin>
 template <typename Next>
-node<Next, In, Begin> node<Out, In, Begin>::convert(std::function<Next(In const &)> convert_handler) {
+node<Next, In, Begin> node<Out, In, Begin>::convert(std::function<Next(Out const &)> convert_handler) {
     auto imp = impl_ptr<impl>();
     return node<Next, In, Begin>(std::move(imp->_sender), [
         convert_handler = std::move(convert_handler), handler = std::move(imp->_handler)
