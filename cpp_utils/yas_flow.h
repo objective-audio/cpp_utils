@@ -93,7 +93,7 @@ struct node : base {
     [[nodiscard]] node<Out, Out, Begin> merge(sender<Out>);
 
     [[nodiscard]] observer<Begin> end();
-    [[nodiscard]] observer<Begin> end(receivable<In>);
+    [[nodiscard]] observer<Begin> end(receivable<Out>);
 };
 }
 

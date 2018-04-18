@@ -286,7 +286,7 @@ observer<Begin> node<Out, In, Begin>::end() {
 }
 
 template <typename Out, typename In, typename Begin>
-observer<Begin> node<Out, In, Begin>::end(receivable<In> receiver) {
+observer<Begin> node<Out, In, Begin>::end(receivable<Out> receiver) {
     return this->receive(std::move(receiver)).end();
 }
 }
