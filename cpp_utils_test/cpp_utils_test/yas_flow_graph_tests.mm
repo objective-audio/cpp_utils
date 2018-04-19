@@ -21,26 +21,6 @@ using namespace yas;
     [super tearDown];
 }
 
-- (void)test_graph {
-    enum class test_state { a, b, c };
-
-    flow::graph<test_state, int> graph{test_state::a};
-
-    graph.add_break_state(test_state::a, [](int const &) { return test_state::b; });
-    graph.add_continue_state(test_state::b, [](int const &) { return test_state::c; });
-    graph.add_break_state(test_state::c, [](int const &) { return test_state::a; });
-
-    XCTAssertEqual(graph.state(), test_state::a);
-
-    graph.send_signal(0);
-
-    XCTAssertEqual(graph.state(), test_state::b);
-
-    graph.send_signal(0);
-
-    XCTAssertEqual(graph.state(), test_state::a);
-}
-
 - (void)test_graph2 {
     enum class test_state { a, b, c };
 
