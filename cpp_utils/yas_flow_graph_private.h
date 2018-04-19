@@ -30,9 +30,6 @@ struct flow::graph<State, Signal>::impl : base::impl, receivable<graph_next<Stat
     impl(State &&state) : state(std::move(state)) {
     }
 
-    void add_state(State state, flow::sender<Signal> sender, flow::observer<Signal> observer) {
-    }
-
     void add_state(flow::graph<State, Signal> &graph, State &&state,
                    std::function<std::pair<State, bool>(Signal const &)> &&handler) {
         if (this->senders.count(state) > 0) {
