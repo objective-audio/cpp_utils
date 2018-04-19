@@ -23,9 +23,9 @@ struct graph : base {
 
     State const &state() const;
 
+    void add_state(State, std::function<std::pair<State, bool>(Signal const &)>);
     void add_break_state(State, std::function<State(Signal)>);
     void add_continue_state(State, std::function<State(Signal)>);
-    void add_state(State, std::function<std::pair<State, bool>(Signal const &)>);
 
     void send_signal(Signal const &);
 };

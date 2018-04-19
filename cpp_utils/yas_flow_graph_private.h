@@ -72,20 +72,6 @@ State const &flow::graph<State, Signal>::state() const {
 }
 
 template <typename State, typename Signal>
-void flow::graph<State, Signal>::add_break_state(State state, std::function<State(Signal)> handler) {
-    this->add_state(std::move(state), [handler = std::move(handler)](Signal const &signal) {
-        return std::make_pair(handler(signal), false);
-    });
-}
-
-template <typename State, typename Signal>
-void flow::graph<State, Signal>::add_continue_state(State state, std::function<State(Signal)> handler) {
-    this->add_state(std::move(state), [handler = std::move(handler)](Signal const &signal) {
-        return std::make_pair(handler(signal), true);
-    });
-}
-
-template <typename State, typename Signal>
 void flow::graph<State, Signal>::add_state(State state, std::function<std::pair<State, bool>(Signal const &)> handler) {
     flow::sender<Signal> sender;
 
@@ -102,6 +88,20 @@ void flow::graph<State, Signal>::add_state(State state, std::function<std::pair<
             .end(std::move(receivable));
 
     impl_ptr<impl>()->add_state(std::move(state), std::move(sender), std::move(flow));
+}
+
+template <typename State, typename Signal>
+void flow::graph<State, Signal>::add_break_state(State state, std::function<State(Signal)> handler) {
+    this->add_state(std::move(state), [handler = std::move(handler)](Signal const &signal) {
+        return std::make_pair(handler(signal), false);
+    });
+}
+
+template <typename State, typename Signal>
+void flow::graph<State, Signal>::add_continue_state(State state, std::function<State(Signal)> handler) {
+    this->add_state(std::move(state), [handler = std::move(handler)](Signal const &signal) {
+        return std::make_pair(handler(signal), true);
+    });
 }
 
 template <typename State, typename Signal>
