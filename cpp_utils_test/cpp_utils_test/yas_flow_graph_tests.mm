@@ -41,4 +41,24 @@ using namespace yas;
     XCTAssertEqual(graph.state(), test_state::a);
 }
 
+- (void)test_graph2 {
+    enum class test_state { a, b, c };
+
+    flow::graph<test_state, int> graph{test_state::a};
+
+    graph.add_state(test_state::a, [](int const &signal) { return std::make_pair(test_state::b, false); });
+    graph.add_state(test_state::b, [](int const &signal) { return std::make_pair(test_state::c, true); });
+    graph.add_state(test_state::c, [](int const &signal) { return std::make_pair(test_state::a, false); });
+
+    XCTAssertEqual(graph.state(), test_state::a);
+
+    graph.send_signal(0);
+
+    XCTAssertEqual(graph.state(), test_state::b);
+
+    graph.send_signal(0);
+
+    XCTAssertEqual(graph.state(), test_state::a);
+}
+
 @end

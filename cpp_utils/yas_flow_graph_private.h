@@ -5,13 +5,22 @@
 #pragma once
 
 #include <unordered_map>
+#include <experimental/optional>
+
+namespace yas::flow {
+template <typename State, typename Signal>
+struct graph_next {
+    State state;
+    std::experimental::optional<Signal> signal = std::experimental::nullopt;
+};
+}
 
 namespace yas {
 
 #pragma mark - flow::graph
 
 template <typename State, typename Signal>
-struct flow::graph<State, Signal>::impl : base::impl, receivable<next>::impl {
+struct flow::graph<State, Signal>::impl : base::impl, receivable<graph_next<State, Signal>>::impl {
     State state;
     bool is_running = false;
     std::unordered_map<State, flow::sender<Signal>> senders;
@@ -36,16 +45,17 @@ struct flow::graph<State, Signal>::impl : base::impl, receivable<next>::impl {
 
         flow::sender<Signal> sender;
 
-        flow::receivable<next> receivable =
-            flow::receivable<next>{graph.impl_ptr<typename flow::receivable<next>::impl>()};
+        flow::receivable<graph_next<State, Signal>> receivable = flow::receivable<graph_next<State, Signal>>{
+            graph.impl_ptr<typename flow::receivable<graph_next<State, Signal>>::impl>()};
 
         auto observer = sender.begin_flow()
-                            .template convert<next>(
+                            .template convert<graph_next<State, Signal>>(
                                 [handler = std::move(handler), weak_graph = to_weak(graph)](Signal const &signal) {
                                     std::pair<State, bool> pair = handler(signal);
-                                    return next{.state = pair.first,
-                                                .signal = pair.second ? std::experimental::optional<Signal>(signal) :
-                                                                        std::experimental::nullopt};
+                                    return graph_next<State, Signal>{
+                                        .state = pair.first,
+                                        .signal = pair.second ? std::experimental::optional<Signal>(signal) :
+                                                                std::experimental::nullopt};
                                 })
                             .end(std::move(receivable));
 
@@ -69,7 +79,7 @@ struct flow::graph<State, Signal>::impl : base::impl, receivable<next>::impl {
         this->is_running = is_running;
     }
 
-    void receive_value(next const &next) override {
+    void receive_value(graph_next<State, Signal> const &next) override {
         this->set_state(next.state, false);
         if (next.signal) {
             this->send_signal(*next.signal, true);
