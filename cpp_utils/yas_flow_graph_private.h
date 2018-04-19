@@ -22,6 +22,10 @@ struct flow::graph<State, Signal>::impl : base::impl, receivable<next>::impl {
     }
 
     void add_state(State state, flow::sender<Signal> sender, flow::observer<Signal> observer) {
+    }
+
+    void add_state(flow::graph<State, Signal> &graph, State &&state,
+                   std::function<std::pair<State, bool>(Signal const &)> &&handler) {
         if (this->senders.count(state) > 0) {
             throw std::runtime_error("sender state exists.");
         }
@@ -29,6 +33,21 @@ struct flow::graph<State, Signal>::impl : base::impl, receivable<next>::impl {
         if (this->observers.count(state) > 0) {
             throw std::runtime_error("observer state exists.");
         }
+
+        flow::sender<Signal> sender;
+
+        flow::receivable<next> receivable =
+            flow::receivable<next>{graph.impl_ptr<typename flow::receivable<next>::impl>()};
+
+        auto observer = sender.begin_flow()
+                            .template convert<next>(
+                                [handler = std::move(handler), weak_graph = to_weak(graph)](Signal const &signal) {
+                                    std::pair<State, bool> pair = handler(signal);
+                                    return next{.state = pair.first,
+                                                .signal = pair.second ? std::experimental::optional<Signal>(signal) :
+                                                                        std::experimental::nullopt};
+                                })
+                            .end(std::move(receivable));
 
         this->senders.emplace(state, std::move(sender));
         this->observers.emplace(std::move(state), std::move(observer));
@@ -73,21 +92,7 @@ State const &flow::graph<State, Signal>::state() const {
 
 template <typename State, typename Signal>
 void flow::graph<State, Signal>::add_state(State state, std::function<std::pair<State, bool>(Signal const &)> handler) {
-    flow::sender<Signal> sender;
-
-    flow::receivable<next> receivable = flow::receivable<next>{impl_ptr<typename flow::receivable<next>::impl>()};
-
-    auto flow =
-        sender.begin_flow()
-            .template convert<next>([handler = std::move(handler), weak_graph = to_weak(*this)](Signal const &signal) {
-                std::pair<State, bool> pair = handler(signal);
-                return next{
-                    .state = pair.first,
-                    .signal = pair.second ? std::experimental::optional<Signal>(signal) : std::experimental::nullopt};
-            })
-            .end(std::move(receivable));
-
-    impl_ptr<impl>()->add_state(std::move(state), std::move(sender), std::move(flow));
+    impl_ptr<impl>()->add_state(*this, std::move(state), std::move(handler));
 }
 
 template <typename State, typename Signal>
