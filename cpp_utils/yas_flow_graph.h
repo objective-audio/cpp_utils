@@ -7,6 +7,17 @@
 #include "yas_flow.h"
 
 namespace yas::flow {
+template <typename State>
+struct graph_out {
+    State state;
+    bool is_continue;
+};
+
+template <typename State>
+graph_out<State> make_break(State state);
+template <typename State>
+graph_out<State> make_continue(State state, bool is_continue);
+
 template <typename State, typename Signal>
 struct graph : base {
     class impl;
@@ -16,7 +27,7 @@ struct graph : base {
 
     State const &state() const;
 
-    void add_state(State, std::function<std::pair<State, bool>(Signal const &)>);
+    void add_state(State, std::function<graph_out<State>(Signal const &)>);
 
     void send_signal(Signal const &);
 };

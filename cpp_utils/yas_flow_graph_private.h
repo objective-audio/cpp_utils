@@ -8,6 +8,16 @@
 #include <experimental/optional>
 
 namespace yas::flow {
+template <typename State>
+graph_out<State> make_break(State state) {
+    return graph_out<State>{.state = std::move(state), .is_continue = false};
+}
+
+template <typename State>
+graph_out<State> make_continue(State state) {
+    return graph_out<State>{.state = std::move(state), .is_continue = true};
+}
+
 template <typename State, typename Signal>
 struct graph_next {
     State state;
@@ -30,7 +40,7 @@ struct flow::graph<State, Signal>::impl : base::impl, receivable<graph_next<Stat
     }
 
     void add_state(flow::graph<State, Signal> &graph, State &&state,
-                   std::function<std::pair<State, bool>(Signal const &)> &&handler) {
+                   std::function<graph_out<State>(Signal const &)> &&handler) {
         if (this->senders.count(state) > 0) {
             throw std::runtime_error("sender state exists.");
         }
@@ -47,11 +57,11 @@ struct flow::graph<State, Signal>::impl : base::impl, receivable<graph_next<Stat
         auto observer = sender.begin_flow()
                             .template convert<graph_next<State, Signal>>(
                                 [handler = std::move(handler), weak_graph = to_weak(graph)](Signal const &signal) {
-                                    std::pair<State, bool> pair = handler(signal);
+                                    graph_out<State> graph_out = handler(signal);
                                     return graph_next<State, Signal>{
-                                        .state = pair.first,
-                                        .signal = pair.second ? std::experimental::optional<Signal>(signal) :
-                                                                std::experimental::nullopt};
+                                        .state = graph_out.state,
+                                        .signal = graph_out.is_continue ? std::experimental::optional<Signal>(signal) :
+                                                                          std::experimental::nullopt};
                                 })
                             .end(std::move(receivable));
 
@@ -94,7 +104,7 @@ State const &flow::graph<State, Signal>::state() const {
 }
 
 template <typename State, typename Signal>
-void flow::graph<State, Signal>::add_state(State state, std::function<std::pair<State, bool>(Signal const &)> handler) {
+void flow::graph<State, Signal>::add_state(State state, std::function<graph_out<State>(Signal const &)> handler) {
     impl_ptr<impl>()->add_state(*this, std::move(state), std::move(handler));
 }
 
