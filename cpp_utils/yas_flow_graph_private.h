@@ -73,33 +73,35 @@ State const &flow::graph<State, Signal>::state() const {
 
 template <typename State, typename Signal>
 void flow::graph<State, Signal>::add_break_state(State state, std::function<State(Signal)> handler) {
-    flow::sender<Signal> sender;
-    auto imp = impl_ptr<impl>();
-
-    flow::receivable<next> receivable = flow::receivable<next>{impl_ptr<typename flow::receivable<next>::impl>()};
-
-    auto flow = sender.begin_flow()
-                    .template convert<next>([handler = std::move(handler)](Signal const &signal) {
-                        return next{.state = handler(signal)};
-                    })
-                    .end(std::move(receivable));
-
-    imp->add_state(std::move(state), std::move(sender), std::move(flow));
+    this->add_state(std::move(state), [handler = std::move(handler)](Signal const &signal) {
+        return std::make_pair(handler(signal), false);
+    });
 }
 
 template <typename State, typename Signal>
 void flow::graph<State, Signal>::add_continue_state(State state, std::function<State(Signal)> handler) {
+    this->add_state(std::move(state), [handler = std::move(handler)](Signal const &signal) {
+        return std::make_pair(handler(signal), true);
+    });
+}
+
+template <typename State, typename Signal>
+void flow::graph<State, Signal>::add_state(State state, std::function<std::pair<State, bool>(Signal const &)> handler) {
     flow::sender<Signal> sender;
-    auto imp = impl_ptr<impl>();
 
     flow::receivable<next> receivable = flow::receivable<next>{impl_ptr<typename flow::receivable<next>::impl>()};
 
-    auto flow = sender.begin_flow()
-                    .template convert<next>([handler = std::move(handler), weak_graph = to_weak(*this)](
-                        Signal const &signal) { return next{.state = handler(signal), .signal = signal}; })
-                    .end(std::move(receivable));
+    auto flow =
+        sender.begin_flow()
+            .template convert<next>([handler = std::move(handler), weak_graph = to_weak(*this)](Signal const &signal) {
+                std::pair<State, bool> pair = handler(signal);
+                return next{
+                    .state = pair.first,
+                    .signal = pair.second ? std::experimental::optional<Signal>(signal) : std::experimental::nullopt};
+            })
+            .end(std::move(receivable));
 
-    imp->add_state(std::move(state), std::move(sender), std::move(flow));
+    impl_ptr<impl>()->add_state(std::move(state), std::move(sender), std::move(flow));
 }
 
 template <typename State, typename Signal>
