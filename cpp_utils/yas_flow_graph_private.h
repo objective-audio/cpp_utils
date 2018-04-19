@@ -25,7 +25,6 @@ struct flow::graph<State, Signal>::impl : base::impl, receivable<graph_next<Stat
     bool is_running = false;
     std::unordered_map<State, flow::sender<Signal>> senders;
     std::unordered_map<State, flow::observer<Signal>> observers;
-    std::experimental::optional<Signal> continue_signal;
 
     impl(State &&state) : state(std::move(state)) {
     }
@@ -71,13 +70,10 @@ struct flow::graph<State, Signal>::impl : base::impl, receivable<graph_next<Stat
         sender.send_value(signal);
     }
 
-    void set_state(State state, bool is_running) {
-        this->state = std::move(state);
-        this->is_running = is_running;
-    }
-
     void receive_value(graph_next<State, Signal> const &next) override {
-        this->set_state(next.state, false);
+        this->state = next.state;
+        this->is_running = false;
+
         if (next.signal) {
             this->send_signal(*next.signal, true);
         }
