@@ -5,11 +5,18 @@
 #pragma once
 
 #include "yas_flow.h"
+#include <experimental/optional>
 
 namespace yas::flow {
 template <typename State, typename Signal>
 struct graph : base {
     class impl;
+    
+#warning todo implに隠す？
+    struct next {
+        State state;
+        std::experimental::optional<Signal> signal = std::experimental::nullopt;
+    };
 
     graph(State);
     graph(std::nullptr_t);

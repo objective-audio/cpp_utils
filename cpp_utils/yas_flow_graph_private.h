@@ -5,48 +5,20 @@
 #pragma once
 
 #include <unordered_map>
-#include <experimental/optional>
 
 namespace yas {
 
 #pragma mark - flow::graph
 
 template <typename State, typename Signal>
-struct flow::graph<State, Signal>::impl : base::impl {
+struct flow::graph<State, Signal>::impl : base::impl, receivable<next>::impl {
     State state;
     bool is_running = false;
     std::unordered_map<State, flow::sender<Signal>> senders;
     std::unordered_map<State, flow::observer<Signal>> observers;
-    flow::receiver<State> pause_receiver = nullptr;
-    flow::receiver<State> continue_receiver = nullptr;
     std::experimental::optional<Signal> continue_signal;
 
     impl(State &&state) : state(std::move(state)) {
-    }
-
-    void prepare(flow::graph<State, Signal> &graph) {
-        auto weak_graph = to_weak(graph);
-
-        this->pause_receiver = {[weak_graph](State const &state) {
-            if (auto graph = weak_graph.lock()) {
-                graph.template impl_ptr<impl>()->set_state(state, false);
-            }
-        }};
-
-        this->continue_receiver = {[weak_graph](State const &state) {
-            if (auto graph = weak_graph.lock()) {
-                auto imp = graph.template impl_ptr<impl>();
-                imp->set_state(state, false);
-
-                if (!imp->continue_signal) {
-                    throw std::runtime_error("continue_signal is null.");
-                }
-
-                auto signal = std::move(imp->continue_signal);
-                imp->continue_signal = std::experimental::nullopt;
-                imp->send_signal(*signal, true);
-            }
-        }};
     }
 
     void add_state(State state, flow::sender<Signal> sender, flow::observer<Signal> observer) {
@@ -77,11 +49,17 @@ struct flow::graph<State, Signal>::impl : base::impl {
         this->state = std::move(state);
         this->is_running = is_running;
     }
+
+    void receive_value(next const &next) override {
+        this->set_state(next.state, false);
+        if (next.signal) {
+            this->send_signal(*next.signal, true);
+        }
+    }
 };
 
 template <typename State, typename Signal>
 flow::graph<State, Signal>::graph(State state) : base(std::make_shared<impl>(std::move(state))) {
-    impl_ptr<impl>()->prepare(*this);
 }
 
 template <typename State, typename Signal>
@@ -98,12 +76,13 @@ void flow::graph<State, Signal>::add_break_state(State state, std::function<Stat
     flow::sender<Signal> sender;
     auto imp = impl_ptr<impl>();
 
-    flow::receivable<State> receivable = imp->pause_receiver.receivable();
+    flow::receivable<next> receivable = flow::receivable<next>{impl_ptr<typename flow::receivable<next>::impl>()};
 
-    auto flow =
-        sender.begin_flow()
-            .template convert<State>([handler = std::move(handler)](Signal const &signal) { return handler(signal); })
-            .end(std::move(receivable));
+    auto flow = sender.begin_flow()
+                    .template convert<next>([handler = std::move(handler)](Signal const &signal) {
+                        return next{.state = handler(signal)};
+                    })
+                    .end(std::move(receivable));
 
     imp->add_state(std::move(state), std::move(sender), std::move(flow));
 }
@@ -113,18 +92,12 @@ void flow::graph<State, Signal>::add_continue_state(State state, std::function<S
     flow::sender<Signal> sender;
     auto imp = impl_ptr<impl>();
 
-    flow::receivable<State> receivable = imp->continue_receiver.receivable();
+    flow::receivable<next> receivable = flow::receivable<next>{impl_ptr<typename flow::receivable<next>::impl>()};
 
-    auto flow =
-        sender.begin_flow()
-            .template convert<State>([handler = std::move(handler), weak_graph = to_weak(*this)](Signal const &signal) {
-                State state = handler(signal);
-                if (auto graph = weak_graph.lock()) {
-                    graph.template impl_ptr<impl>()->continue_signal = signal;
-                }
-                return state;
-            })
-            .end(std::move(receivable));
+    auto flow = sender.begin_flow()
+                    .template convert<next>([handler = std::move(handler), weak_graph = to_weak(*this)](
+                        Signal const &signal) { return next{.state = handler(signal), .signal = signal}; })
+                    .end(std::move(receivable));
 
     imp->add_state(std::move(state), std::move(sender), std::move(flow));
 }
