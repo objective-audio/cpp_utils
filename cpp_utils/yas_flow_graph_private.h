@@ -5,7 +5,7 @@
 #pragma once
 
 #include <unordered_map>
-#include <experimental/optional>
+#include "yas_types.h"
 
 namespace yas::flow {
 template <typename State>
@@ -21,7 +21,7 @@ graph_out<State> make_continue(State state) {
 template <typename State, typename Signal>
 struct graph_next {
     State state;
-    std::experimental::optional<Signal> signal = std::experimental::nullopt;
+    std::experimental::optional<Signal> signal = nullopt;
 };
 }
 
@@ -54,16 +54,16 @@ struct flow::graph<State, Signal>::impl : base::impl, receivable<graph_next<Stat
         flow::receivable<graph_next<State, Signal>> receivable = flow::receivable<graph_next<State, Signal>>{
             graph.impl_ptr<typename flow::receivable<graph_next<State, Signal>>::impl>()};
 
-        auto observer = sender.begin_flow()
-                            .template convert<graph_next<State, Signal>>(
-                                [handler = std::move(handler), weak_graph = to_weak(graph)](Signal const &signal) {
-                                    graph_out<State> graph_out = handler(signal);
-                                    return graph_next<State, Signal>{
-                                        .state = graph_out.state,
-                                        .signal = graph_out.is_continue ? std::experimental::optional<Signal>(signal) :
-                                                                          std::experimental::nullopt};
-                                })
-                            .end(std::move(receivable));
+        auto observer =
+            sender.begin_flow()
+                .template convert<graph_next<State, Signal>>(
+                    [handler = std::move(handler), weak_graph = to_weak(graph)](Signal const &signal) {
+                        graph_out<State> graph_out = handler(signal);
+                        return graph_next<State, Signal>{
+                            .state = graph_out.state,
+                            .signal = graph_out.is_continue ? std::experimental::optional<Signal>(signal) : nullopt};
+                    })
+                .end(std::move(receivable));
 
         this->senders.emplace(state, std::move(sender));
         this->observers.emplace(std::move(state), std::move(observer));
