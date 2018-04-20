@@ -47,11 +47,17 @@ class observer : public base {
 };
 
 template <typename Key = std::string, typename T = std::nullptr_t>
-class subject {
+class subject : public base {
    public:
+    class impl;
+
     using observer_t = observer<Key, T>;
+    using object_handler_f = std::function<T(Key const &)>;
+    using value_handler_f = std::function<void(T const &)>;
+    using wild_card_handler_f = typename observer<Key, T>::handler_f;
 
     subject();
+    subject(object_handler_f);
     ~subject();
 
     bool operator==(subject const &) const;
@@ -62,18 +68,11 @@ class subject {
     void notify(Key const &key) const;
     void notify(Key const &key, T const &object) const;
 
-    [[nodiscard]] observer<Key, T> make_observer(Key const &key, typename observer<Key, T>::handler_f const &handler);
-    [[nodiscard]] observer<Key, T> make_wild_card_observer(typename observer<Key, T>::handler_f const &handler);
+    [[nodiscard]] observer<Key, T> make_value_observer(Key const &, value_handler_f const &);
+    [[nodiscard]] observer<Key, T> make_observer(Key const &, wild_card_handler_f const &);
+    [[nodiscard]] observer<Key, T> make_wild_card_observer(wild_card_handler_f const &);
 
    private:
-    class impl;
-    std::unique_ptr<impl> _impl;
-
-    subject(subject const &) = delete;
-    subject(subject &&) = delete;
-    subject &operator=(subject const &) = delete;
-    subject &operator=(subject &&) = delete;
-
     friend observer_t;
 };
 

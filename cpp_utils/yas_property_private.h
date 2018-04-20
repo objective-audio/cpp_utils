@@ -8,7 +8,7 @@
 
 namespace yas {
 template <typename K, typename T>
-class property<K, T>::impl : public base::impl {
+class property<K, T>::impl : public base::impl, public flow::receivable<T>::impl {
    public:
     impl(args const &args) : _value(args.value), _key(args.key), _validator(args.validator), _limiter(args.limiter) {
         _limit(_value);
@@ -59,6 +59,10 @@ class property<K, T>::impl : public base::impl {
 
     subject_t &subject() {
         return _subject;
+    }
+
+    void receive_value(T const &value) override {
+        this->_set_value(value);
     }
 
    private:
@@ -218,6 +222,39 @@ typename property<K, T>::limiter_t const &property<K, T>::limiter() const {
 template <typename K, typename T>
 typename property<K, T>::subject_t &property<K, T>::subject() {
     return impl_ptr<impl>()->subject();
+}
+
+template <typename K, typename T>
+flow::node<T, T, T> property<K, T>::begin_flow() {
+    flow::sender<T> sender;
+
+    subject_t &subject = this->subject();
+
+    auto observer = subject.make_value_observer(property_method::did_change,
+                                                [weak_sender = to_weak(sender)](change_context const &context) mutable {
+                                                    if (auto sender = weak_sender.lock()) {
+                                                        sender.send_value(context.new_value);
+                                                    }
+                                                });
+
+    auto weak_property = to_weak(*this);
+
+    sender.set_can_send_handler([weak_property]() { return !!weak_property; });
+
+    sender.set_send_handler([weak_property, observer]() {
+        if (auto property = weak_property.lock()) {
+            return property.value();
+        } else {
+            throw std::runtime_error("subject is null.");
+        }
+    });
+
+    return sender.begin_flow();
+}
+
+template <typename K, typename T>
+flow::receivable<T> property<K, T>::receivable() {
+    return flow::receivable<T>{impl_ptr<typename flow::receivable<T>::impl>()};
 }
 
 template <typename K, typename T>
