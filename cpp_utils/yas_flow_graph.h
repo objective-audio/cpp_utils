@@ -14,9 +14,9 @@ struct graph_out {
 };
 
 template <typename State>
-graph_out<State> make_break(State state);
+graph_out<State> break_next(State state);
 template <typename State>
-graph_out<State> make_continue(State state, bool is_continue);
+graph_out<State> continue_next(State state);
 
 template <typename State, typename Signal>
 struct graph : base {

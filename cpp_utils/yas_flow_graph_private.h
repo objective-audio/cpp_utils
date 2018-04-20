@@ -9,12 +9,12 @@
 
 namespace yas::flow {
 template <typename State>
-graph_out<State> make_break(State state) {
-    return graph_out<State>{.state = std::move(state), .is_continue = false};
+graph_out<State> break_next(State state) {
+    return graph_out<State>{.state = std::move(state)};
 }
 
 template <typename State>
-graph_out<State> make_continue(State state) {
+graph_out<State> continue_next(State state) {
     return graph_out<State>{.state = std::move(state), .is_continue = true};
 }
 
