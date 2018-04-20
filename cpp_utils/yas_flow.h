@@ -65,6 +65,8 @@ struct observer : base {
     observer(sender<Begin>);
     observer(std::nullptr_t);
 
+    flow::sender<Begin> &sender();
+
     void sync();
 };
 

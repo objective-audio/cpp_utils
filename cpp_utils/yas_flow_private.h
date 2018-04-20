@@ -55,18 +55,23 @@ flow::receivable<T> flow::receiver<T>::receivable() {
 
 template <typename Begin>
 struct observer<Begin>::impl : base::impl {
-    impl(sender<Begin> &&sender) : _sender(std::move(sender)) {
+    impl(flow::sender<Begin> &&sender) : _sender(std::move(sender)) {
     }
 
     flow::sender<Begin> _sender;
 };
 
 template <typename Begin>
-observer<Begin>::observer(sender<Begin> sender) : base(std::make_shared<impl>(std::move(sender))) {
+observer<Begin>::observer(flow::sender<Begin> sender) : base(std::make_shared<impl>(std::move(sender))) {
 }
 
 template <typename Begin>
 observer<Begin>::observer(std::nullptr_t) : base(nullptr) {
+}
+
+template <typename Begin>
+flow::sender<Begin> &observer<Begin>::sender() {
+    return impl_ptr<impl>()->_sender;
 }
 
 template <typename Begin>
