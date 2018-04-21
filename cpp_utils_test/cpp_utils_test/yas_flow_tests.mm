@@ -105,6 +105,32 @@ using namespace yas;
     XCTAssertEqual(received, 100);
 }
 
+- (void)test_sync_with_sub_sender {
+    flow::sender<int> sender;
+    sender.set_can_send_handler([]() { return true; });
+    sender.set_send_handler([]() { return 123; });
+
+    flow::sender<int> sub_sender;
+    sub_sender.set_can_send_handler([]() { return true; });
+    sub_sender.set_send_handler([]() { return 456; });
+
+    std::vector<std::pair<int, int>> received;
+
+    auto flow =
+        sender.begin_flow()
+            .combine(sub_sender.begin_flow())
+            .guard([](auto const &pair) { return pair.first && pair.second; })
+            .convert<std::pair<int, int>>([](auto const &pair) { return std::make_pair(*pair.first, *pair.second); })
+            .perform([&received](auto const &pair) { received.emplace_back(pair); })
+            .end();
+
+    flow.sync();
+
+    XCTAssertEqual(received.size(), 1);
+    XCTAssertEqual(received.at(0).first, 123);
+    XCTAssertEqual(received.at(0).second, 456);
+}
+
 - (void)test_receive {
     std::string received = "";
 
