@@ -9,31 +9,6 @@
 
 using namespace yas;
 
-namespace yas::test {
-struct receiver : base {
-    struct impl : base::impl, flow::receivable<float>::impl {
-        std::function<void(float const &)> handler;
-
-        impl(std::function<void(float const &)> &&handler) : handler(std::move(handler)) {
-        }
-
-        void receive_value(float const &value) override {
-            handler(value);
-        }
-    };
-
-    receiver(std::function<void(float const &)> handler) : base(std::make_shared<impl>(std::move(handler))) {
-    }
-
-    receiver(std::nullptr_t) : base(nullptr) {
-    }
-
-    flow::receivable<float> receivable() {
-        return flow::receivable<float>{impl_ptr<flow::receivable<float>::impl>()};
-    }
-};
-}
-
 @interface yas_flow_tests : XCTestCase
 
 @end
