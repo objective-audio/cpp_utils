@@ -105,7 +105,7 @@ using namespace yas;
     XCTAssertEqual(received, 100);
 }
 
-- (void)test_sync_with_sub_sender {
+- (void)test_sync_with_combined_sub_sender {
     flow::sender<int> sender;
     sender.set_can_send_handler([]() { return true; });
     sender.set_send_handler([]() { return 123; });
@@ -126,9 +126,34 @@ using namespace yas;
 
     flow.sync();
 
+    // 2つのsenderから来た値が両方揃ってから受け取った
     XCTAssertEqual(received.size(), 1);
     XCTAssertEqual(received.at(0).first, 123);
     XCTAssertEqual(received.at(0).second, 456);
+}
+
+- (void)test_sync_with_merged_sub_sender {
+    flow::sender<int> sender;
+    sender.set_can_send_handler([]() { return true; });
+    sender.set_send_handler([]() { return 78; });
+
+    flow::sender<int> sub_sender;
+    sub_sender.set_can_send_handler([]() { return true; });
+    sub_sender.set_send_handler([]() { return 90; });
+
+    std::vector<int> received;
+
+    auto flow = sender.begin_flow()
+                    .merge(sub_sender.begin_flow())
+                    .perform([&received](int const &value) { received.emplace_back(value); })
+                    .end();
+
+    flow.sync();
+
+    // main -> sub の順番で実行される
+    XCTAssertEqual(received.size(), 2);
+    XCTAssertEqual(received.at(0), 78);
+    XCTAssertEqual(received.at(1), 90);
 }
 
 - (void)test_receive {
