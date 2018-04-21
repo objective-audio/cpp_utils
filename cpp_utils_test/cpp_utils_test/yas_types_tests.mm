@@ -22,11 +22,11 @@ using namespace yas;
 }
 
 - (void)test_is_equal_optional_values {
-    std::experimental::optional<int> value_1_a{1};
-    std::experimental::optional<int> value_1_b{1};
-    std::experimental::optional<int> value_2{2};
-    std::experimental::optional<int> value_null_a{nullopt};
-    std::experimental::optional<int> value_null_b{nullopt};
+    opt_t<int> value_1_a{1};
+    opt_t<int> value_1_b{1};
+    opt_t<int> value_2{2};
+    opt_t<int> value_null_a{nullopt};
+    opt_t<int> value_null_b{nullopt};
 
     XCTAssertTrue(value_1_a == value_1_b);
     XCTAssertFalse(value_1_a == value_2);

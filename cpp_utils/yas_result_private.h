@@ -99,12 +99,12 @@ U &result<T, U>::error() {
 }
 
 template <typename T, typename U>
-std::experimental::optional<T> result<T, U>::value_opt() const {
+opt_t<T> result<T, U>::value_opt() const {
     return _value;
 }
 
 template <typename T, typename U>
-std::experimental::optional<U> result<T, U>::error_opt() const {
+opt_t<U> result<T, U>::error_opt() const {
     return _error;
 }
 

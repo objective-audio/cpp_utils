@@ -9,7 +9,7 @@
 
 namespace yas {
 template <typename T, typename U>
-std::experimental::optional<T> min_empty_key(std::map<T, U> const &map) {
+opt_t<T> min_empty_key(std::map<T, U> const &map) {
     auto map_size = map.size();
 
     if (map_size == 0) {
@@ -33,7 +33,7 @@ std::experimental::optional<T> min_empty_key(std::map<T, U> const &map) {
 }
 
 template <typename T>
-std::experimental::optional<std::size_t> index(std::vector<T> const &vector, T const &target) {
+opt_t<std::size_t> index(std::vector<T> const &vector, T const &target) {
     auto it = std::find_if(vector.begin(), vector.end(), [&target](auto const &value) { return target == value; });
 
     if (it != vector.end()) {
