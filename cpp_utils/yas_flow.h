@@ -72,6 +72,7 @@ struct sender : sender_base {
     std::size_t handlers_size() const;
     template <typename P>
     std::function<void(P const &)> const &handler(std::size_t const) const;
+    void add_sub_sender(sender_base);
 };
 
 template <typename Begin>

@@ -86,6 +86,7 @@ struct sender<T>::impl : sender_base::impl {
     std::vector<yas::any> _handlers;
     std::function<bool(void)> _can_send_handler;
     std::function<T(void)> _send_handler;
+    std::vector<sender_base> _sub_senders;
 
     void send_value(T const &value) {
         if (this->_handlers.size() > 0) {
@@ -106,6 +107,10 @@ struct sender<T>::impl : sender_base::impl {
     void send() override {
         if (this->can_send()) {
             this->send_value(this->_send_handler());
+        }
+
+        for (auto &sub_sender : this->_sub_senders) {
+            sub_sender.send();
         }
     }
 };
@@ -158,6 +163,11 @@ template <typename T>
 template <typename P>
 std::function<void(P const &)> const &sender<T>::handler(std::size_t const idx) const {
     return impl_ptr<impl>()->_handlers.at(idx).template get<std::function<void(P const &)>>();
+}
+
+template <typename T>
+void sender<T>::add_sub_sender(sender_base sub_sender) {
+    impl_ptr<impl>()->_sub_senders.emplace_back(std::move(sub_sender));
 }
 
 #pragma mark -
