@@ -82,10 +82,11 @@ void observer<Begin>::sync() {
 #pragma mark - sender
 
 template <typename T>
-struct sender<T>::impl : base::impl {
+struct sender<T>::impl : sender_base::impl {
     std::vector<yas::any> _handlers;
     std::function<bool(void)> _can_send_handler;
     std::function<T(void)> _send_handler;
+    std::vector<sender_base> _sub_senders;
 
     void send_value(T const &value) {
         if (this->_handlers.size() > 0) {
@@ -94,14 +95,32 @@ struct sender<T>::impl : base::impl {
             std::runtime_error("handler not found. must call the end.");
         }
     }
+
+    bool can_send() {
+        if (auto handler = this->_can_send_handler) {
+            return handler();
+        } else {
+            return false;
+        }
+    }
+
+    void send() override {
+        if (this->can_send()) {
+            this->send_value(this->_send_handler());
+        }
+
+        for (auto &sub_sender : this->_sub_senders) {
+            sub_sender.send();
+        }
+    }
 };
 
 template <typename T>
-sender<T>::sender() : base(std::make_shared<impl>()) {
+sender<T>::sender() : sender_base(std::make_shared<impl>()) {
 }
 
 template <typename T>
-sender<T>::sender(std::nullptr_t) : base(nullptr) {
+sender<T>::sender(std::nullptr_t) : sender_base(nullptr) {
 }
 
 template <typename T>
@@ -116,24 +135,12 @@ void sender<T>::set_can_send_handler(std::function<bool(void)> handler) {
 
 template <typename T>
 bool sender<T>::can_send() const {
-    if (auto handler = impl_ptr<impl>()->_can_send_handler) {
-        return handler();
-    } else {
-        return false;
-    }
+    return impl_ptr<impl>()->can_send();
 }
 
 template <typename T>
 void sender<T>::set_send_handler(std::function<T(void)> handler) {
     impl_ptr<impl>()->_send_handler = std::move(handler);
-}
-
-template <typename T>
-void sender<T>::send() const {
-    if (this->can_send()) {
-        auto imp = impl_ptr<impl>();
-        imp->send_value(imp->_send_handler());
-    }
 }
 
 template <typename T>
@@ -156,6 +163,11 @@ template <typename T>
 template <typename P>
 std::function<void(P const &)> const &sender<T>::handler(std::size_t const idx) const {
     return impl_ptr<impl>()->_handlers.at(idx).template get<std::function<void(P const &)>>();
+}
+
+template <typename T>
+void sender<T>::add_sub_sender(sender_base sub_sender) {
+    impl_ptr<impl>()->_sub_senders.emplace_back(std::move(sub_sender));
 }
 
 #pragma mark -
@@ -268,12 +280,13 @@ node<Out, Out, Begin> node<Out, In, Begin>::merge(node<Out, SubIn, SubBegin> sub
             }
         });
 
-    sender.template push_handler<In>(
-        [handler = imp->_handler, weak_sender, next_idx, sub_sender](In const &value) mutable {
-            if (auto sender = weak_sender.lock()) {
-                sender.template handler<Out>(next_idx)(handler(value));
-            }
-        });
+    sender.template push_handler<In>([handler = imp->_handler, weak_sender, next_idx](In const &value) mutable {
+        if (auto sender = weak_sender.lock()) {
+            sender.template handler<Out>(next_idx)(handler(value));
+        }
+    });
+
+    sender.add_sub_sender(std::move(sub_sender));
 
     return node<Out, Out, Begin>(sender, [](Out const &value) { return value; });
 }
@@ -304,12 +317,13 @@ node<std::pair<opt_t<Out>, opt_t<SubOut>>, std::pair<opt_t<Out>, opt_t<SubOut>>,
             }
         });
 
-    sender.template push_handler<In>(
-        [handler = imp->_handler, weak_sender, next_idx, sub_sender](In const &value) mutable {
-            if (auto sender = weak_sender.lock()) {
-                sender.template handler<opt_pair_t>(next_idx)(opt_pair_t(handler(value), nullopt));
-            }
-        });
+    sender.template push_handler<In>([handler = imp->_handler, weak_sender, next_idx](In const &value) mutable {
+        if (auto sender = weak_sender.lock()) {
+            sender.template handler<opt_pair_t>(next_idx)(opt_pair_t(handler(value), nullopt));
+        }
+    });
+
+    sender.add_sub_sender(std::move(sub_sender));
 
     return node<opt_pair_t, opt_pair_t, Begin>(sender, [opt_pair = opt_pair_t{}](opt_pair_t const &value) mutable {
         if (value.first) {

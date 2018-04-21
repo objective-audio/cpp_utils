@@ -36,8 +36,24 @@ struct receiver : base {
     flow::receivable<T> receivable();
 };
 
+struct sender_base : base {
+    struct impl : base::impl {
+        virtual void send() = 0;
+    };
+
+    sender_base(std::shared_ptr<impl> &&ptr) : base(std::move(ptr)) {
+    }
+
+    sender_base(std::nullptr_t) : base(nullptr) {
+    }
+
+    void send() {
+        impl_ptr<impl>()->send();
+    }
+};
+
 template <typename T>
-struct sender : base {
+struct sender : sender_base {
     class impl;
 
     sender();
@@ -48,7 +64,6 @@ struct sender : base {
     void set_can_send_handler(std::function<bool(void)>);
     [[nodiscard]] bool can_send() const;
     void set_send_handler(std::function<T(void)>);
-    void send() const;
 
     node<T, T, T> begin_flow();
 
@@ -57,6 +72,7 @@ struct sender : base {
     std::size_t handlers_size() const;
     template <typename P>
     std::function<void(P const &)> const &handler(std::size_t const) const;
+    void add_sub_sender(sender_base);
 };
 
 template <typename Begin>
