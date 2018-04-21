@@ -219,7 +219,7 @@ using namespace yas;
     flow::sender<int> main_sender;
     flow::sender<std::string> sub_sender;
 
-    using opt_pair_t = std::pair<std::experimental::optional<int>, std::experimental::optional<std::string>>;
+    using opt_pair_t = std::pair<opt_t<int>, opt_t<std::string>>;
 
     opt_pair_t received;
 
