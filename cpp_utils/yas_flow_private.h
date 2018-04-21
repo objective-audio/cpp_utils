@@ -82,7 +82,7 @@ void observer<Begin>::sync() {
 #pragma mark - sender
 
 template <typename T>
-struct sender<T>::impl : base::impl {
+struct sender<T>::impl : sender_base::impl {
     std::vector<yas::any> _handlers;
     std::function<bool(void)> _can_send_handler;
     std::function<T(void)> _send_handler;
@@ -94,14 +94,28 @@ struct sender<T>::impl : base::impl {
             std::runtime_error("handler not found. must call the end.");
         }
     }
+
+    bool can_send() {
+        if (auto handler = this->_can_send_handler) {
+            return handler();
+        } else {
+            return false;
+        }
+    }
+
+    void send() override {
+        if (this->can_send()) {
+            this->send_value(this->_send_handler());
+        }
+    }
 };
 
 template <typename T>
-sender<T>::sender() : base(std::make_shared<impl>()) {
+sender<T>::sender() : sender_base(std::make_shared<impl>()) {
 }
 
 template <typename T>
-sender<T>::sender(std::nullptr_t) : base(nullptr) {
+sender<T>::sender(std::nullptr_t) : sender_base(nullptr) {
 }
 
 template <typename T>
@@ -116,24 +130,12 @@ void sender<T>::set_can_send_handler(std::function<bool(void)> handler) {
 
 template <typename T>
 bool sender<T>::can_send() const {
-    if (auto handler = impl_ptr<impl>()->_can_send_handler) {
-        return handler();
-    } else {
-        return false;
-    }
+    return impl_ptr<impl>()->can_send();
 }
 
 template <typename T>
 void sender<T>::set_send_handler(std::function<T(void)> handler) {
     impl_ptr<impl>()->_send_handler = std::move(handler);
-}
-
-template <typename T>
-void sender<T>::send() const {
-    if (this->can_send()) {
-        auto imp = impl_ptr<impl>();
-        imp->send_value(imp->_send_handler());
-    }
 }
 
 template <typename T>
