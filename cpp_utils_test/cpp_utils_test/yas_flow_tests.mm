@@ -9,31 +9,6 @@
 
 using namespace yas;
 
-namespace yas::test {
-struct receiver : base {
-    struct impl : base::impl, flow::receivable<float>::impl {
-        std::function<void(float const &)> handler;
-
-        impl(std::function<void(float const &)> &&handler) : handler(std::move(handler)) {
-        }
-
-        void receive_value(float const &value) override {
-            handler(value);
-        }
-    };
-
-    receiver(std::function<void(float const &)> handler) : base(std::make_shared<impl>(std::move(handler))) {
-    }
-
-    receiver(std::nullptr_t) : base(nullptr) {
-    }
-
-    flow::receivable<float> receivable() {
-        return flow::receivable<float>{impl_ptr<flow::receivable<float>::impl>()};
-    }
-};
-}
-
 @interface yas_flow_tests : XCTestCase
 
 @end
@@ -238,6 +213,29 @@ struct receiver : base {
     sender.send_value(100);
 
     XCTAssertEqual(received, 100);
+}
+
+- (void)test_combine {
+    flow::sender<int> main_sender;
+    flow::sender<std::string> sub_sender;
+
+    using opt_pair_t = std::pair<opt_t<int>, opt_t<std::string>>;
+
+    opt_pair_t received;
+
+    auto sub_flow = sub_sender.begin_flow();
+    auto main_flow =
+        main_sender.begin_flow().combine(sub_flow).perform([&received](auto const &value) { received = value; }).end();
+
+    main_sender.send_value(1);
+
+    XCTAssertEqual(*received.first, 1);
+    XCTAssertFalse(!!received.second);
+
+    sub_sender.send_value("test_text");
+
+    XCTAssertEqual(*received.first, 1);
+    XCTAssertEqual(*received.second, "test_text");
 }
 
 @end

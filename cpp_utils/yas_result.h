@@ -7,6 +7,7 @@
 #include <experimental/optional>
 #include <memory>
 #include <string>
+#include "yas_types.h"
 
 namespace yas {
 template <typename T, typename U>
@@ -35,12 +36,12 @@ class result {
     U const &error() const;
     U &error();
 
-    std::experimental::optional<T> value_opt() const;
-    std::experimental::optional<U> error_opt() const;
+    opt_t<T> value_opt() const;
+    opt_t<U> error_opt() const;
 
    private:
-    std::experimental::optional<T> _value;
-    std::experimental::optional<U> _error;
+    opt_t<T> _value;
+    opt_t<U> _error;
 };
 
 template <typename... Args>

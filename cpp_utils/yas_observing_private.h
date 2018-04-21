@@ -8,6 +8,7 @@
 #include <unordered_map>
 #include <unordered_set>
 #include "yas_stl_utils.h"
+#include "yas_types.h"
 
 namespace yas {
 
@@ -17,14 +18,14 @@ template <typename Key, typename T>
 class observer<Key, T>::impl : public base::impl {
    public:
     class handler_holder {
-        std::unordered_map<std::experimental::optional<Key>, handler_f const> functions;
+        std::unordered_map<opt_t<Key>, handler_f const> functions;
 
        public:
-        void add_handler(std::experimental::optional<Key> const &key, handler_f &&handler) {
+        void add_handler(opt_t<Key> const &key, handler_f &&handler) {
             functions.insert(std::make_pair(key, std::move(handler)));
         }
 
-        void remove_handler(std::experimental::optional<Key> const &key) {
+        void remove_handler(opt_t<Key> const &key) {
             if (functions.count(key) > 0) {
                 functions.erase(key);
             }
@@ -67,11 +68,11 @@ class observer<Key, T>::impl : public base::impl {
 template <typename Key, typename T>
 struct subject<Key, T>::impl : base::impl {
     using observer_set_t = std::unordered_set<weak<observer<Key, T>>>;
-    using observers_t = std::unordered_map<std::experimental::optional<Key>, observer_set_t>;
+    using observers_t = std::unordered_map<opt_t<Key>, observer_set_t>;
     object_handler_f object_handler;
     observers_t observers;
 
-    void add_observer(observer<Key, T> const &obs, std::experimental::optional<Key> const &key) {
+    void add_observer(observer<Key, T> const &obs, opt_t<Key> const &key) {
         if (observers.count(key) == 0) {
             observers.insert(std::make_pair(key, observer_set_t()));
         }
@@ -80,7 +81,7 @@ struct subject<Key, T>::impl : base::impl {
         set.insert(weak<observer<Key, T>>(obs));
     }
 
-    void remove_observer(observer<Key, T> const &observer, std::experimental::optional<Key> const &key) {
+    void remove_observer(observer<Key, T> const &observer, opt_t<Key> const &key) {
         if (observers.count(key) > 0) {
             auto &set = observers.at(key);
 

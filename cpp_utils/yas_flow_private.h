@@ -284,6 +284,45 @@ node<Out, Out, Begin> node<Out, In, Begin>::merge(sender<Out> sub_sender) {
 }
 
 template <typename Out, typename In, typename Begin>
+template <typename SubOut, typename SubIn, typename SubBegin>
+node<std::pair<opt_t<Out>, opt_t<SubOut>>, std::pair<opt_t<Out>, opt_t<SubOut>>, Begin> node<Out, In, Begin>::combine(
+    node<SubOut, SubIn, SubBegin> sub_node) {
+    using opt_pair_t = std::pair<opt_t<Out>, opt_t<SubOut>>;
+
+    auto imp = impl_ptr<impl>();
+    flow::sender<Begin> &sender = imp->_sender;
+    auto weak_sender = to_weak(sender);
+    std::size_t const next_idx = sender.handlers_size() + 1;
+
+    auto sub_imp = sub_node.template impl_ptr<typename node<SubOut, SubIn, SubBegin>::impl>();
+    auto &sub_sender = sub_imp->_sender;
+
+    sub_sender.template push_handler<SubIn>(
+        [handler = sub_imp->_handler, weak_sender, next_idx](SubIn const &value) mutable {
+            if (auto sender = weak_sender.lock()) {
+                sender.template handler<opt_pair_t>(next_idx)(opt_pair_t{nullopt, handler(value)});
+            }
+        });
+
+    sender.template push_handler<In>(
+        [handler = imp->_handler, weak_sender, next_idx, sub_sender](In const &value) mutable {
+            if (auto sender = weak_sender.lock()) {
+                sender.template handler<opt_pair_t>(next_idx)(opt_pair_t(handler(value), nullopt));
+            }
+        });
+
+    return node<opt_pair_t, opt_pair_t, Begin>(sender, [opt_pair = opt_pair_t{}](opt_pair_t const &value) mutable {
+        if (value.first) {
+            opt_pair.first = value.first;
+        }
+        if (value.second) {
+            opt_pair.second = value.second;
+        }
+        return opt_pair;
+    });
+}
+
+template <typename Out, typename In, typename Begin>
 observer<Begin> node<Out, In, Begin>::end() {
     auto &sender = impl_ptr<impl>()->_sender;
     sender.template push_handler<In>([handler = impl_ptr<impl>()->_handler](In const &value) { handler(value); });

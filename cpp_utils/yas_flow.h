@@ -7,6 +7,7 @@
 #include "yas_base.h"
 #include "yas_protocol.h"
 #include "yas_any.h"
+#include "yas_types.h"
 #include <functional>
 
 namespace yas::flow {
@@ -92,6 +93,10 @@ struct node : base {
     template <typename SubIn, typename SubBegin>
     [[nodiscard]] node<Out, Out, Begin> merge(node<Out, SubIn, SubBegin>);
     [[nodiscard]] node<Out, Out, Begin> merge(sender<Out>);
+
+    template <typename SubOut, typename SubIn, typename SubBegin>
+    [[nodiscard]] node<std::pair<opt_t<Out>, opt_t<SubOut>>, std::pair<opt_t<Out>, opt_t<SubOut>>, Begin> combine(
+        node<SubOut, SubIn, SubBegin>);
 
     [[nodiscard]] observer<Begin> end();
     [[nodiscard]] observer<Begin> end(receivable<Out>);
