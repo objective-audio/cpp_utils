@@ -280,12 +280,13 @@ node<Out, Out, Begin> node<Out, In, Begin>::merge(node<Out, SubIn, SubBegin> sub
             }
         });
 
-    sender.template push_handler<In>(
-        [handler = imp->_handler, weak_sender, next_idx, sub_sender](In const &value) mutable {
-            if (auto sender = weak_sender.lock()) {
-                sender.template handler<Out>(next_idx)(handler(value));
-            }
-        });
+    sender.template push_handler<In>([handler = imp->_handler, weak_sender, next_idx](In const &value) mutable {
+        if (auto sender = weak_sender.lock()) {
+            sender.template handler<Out>(next_idx)(handler(value));
+        }
+    });
+
+    sender.add_sub_sender(std::move(sub_sender));
 
     return node<Out, Out, Begin>(sender, [](Out const &value) { return value; });
 }
@@ -316,12 +317,13 @@ node<std::pair<opt_t<Out>, opt_t<SubOut>>, std::pair<opt_t<Out>, opt_t<SubOut>>,
             }
         });
 
-    sender.template push_handler<In>(
-        [handler = imp->_handler, weak_sender, next_idx, sub_sender](In const &value) mutable {
-            if (auto sender = weak_sender.lock()) {
-                sender.template handler<opt_pair_t>(next_idx)(opt_pair_t(handler(value), nullopt));
-            }
-        });
+    sender.template push_handler<In>([handler = imp->_handler, weak_sender, next_idx](In const &value) mutable {
+        if (auto sender = weak_sender.lock()) {
+            sender.template handler<opt_pair_t>(next_idx)(opt_pair_t(handler(value), nullopt));
+        }
+    });
+
+    sender.add_sub_sender(std::move(sub_sender));
 
     return node<opt_pair_t, opt_pair_t, Begin>(sender, [opt_pair = opt_pair_t{}](opt_pair_t const &value) mutable {
         if (value.first) {
