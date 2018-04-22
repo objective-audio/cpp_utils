@@ -17,7 +17,7 @@ enum class property_method {
     did_change,
 };
 
-template <typename K, typename T>
+template <typename T>
 class property : public base {
    public:
     class impl;
@@ -36,7 +36,6 @@ class property : public base {
 
     struct args {
         T value;
-        K key;
         validator_t validator = nullptr;
         limiter_t limiter = nullptr;
     };
@@ -50,8 +49,6 @@ class property : public base {
     bool operator!=(property const &) const;
     bool operator==(T const &) const;
     bool operator!=(T const &) const;
-
-    K const &key() const;
 
     void set_value(T value);
     T const &value() const;
@@ -70,8 +67,8 @@ class property : public base {
     [[nodiscard]] flow::receivable<T> receivable();
 };
 
-template <typename K, typename T>
-property<K, T> make_property(K key, T value);
+template <typename T>
+property<T> make_property(T value);
 
 std::string to_string(yas::property_method const method);
 }

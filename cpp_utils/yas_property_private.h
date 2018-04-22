@@ -7,25 +7,18 @@
 #include "yas_type_traits.h"
 
 namespace yas {
-template <typename K, typename T>
-class property<K, T>::impl : public base::impl, public flow::receivable<T>::impl {
+template <typename T>
+class property<T>::impl : public base::impl, public flow::receivable<T>::impl {
    public:
-    impl(args const &args) : _value(args.value), _key(args.key), _validator(args.validator), _limiter(args.limiter) {
+    impl(args const &args) : _value(args.value), _validator(args.validator), _limiter(args.limiter) {
         _limit(_value);
         _validate(_value);
     }
 
     impl(args &&args)
-        : _value(std::move(args.value)),
-          _key(std::move(args.key)),
-          _validator(std::move(args.validator)),
-          _limiter(std::move(args.limiter)) {
+        : _value(std::move(args.value)), _validator(std::move(args.validator)), _limiter(std::move(args.limiter)) {
         _limit(_value);
         _validate(_value);
-    }
-
-    K &key() {
-        return _key;
     }
 
     void set_value(T &&val) {
@@ -67,7 +60,6 @@ class property<K, T>::impl : public base::impl, public flow::receivable<T>::impl
 
    private:
     T _value;
-    K _key;
     validator_t _validator = nullptr;
     limiter_t _limiter = nullptr;
     std::mutex _notify_mutex;
@@ -103,16 +95,16 @@ class property<K, T>::impl : public base::impl, public flow::receivable<T>::impl
         if (_subject.has_observer()) {
             if (auto lock = std::unique_lock<std::mutex>(_notify_mutex, std::try_to_lock)) {
                 if (lock.owns_lock()) {
-                    if (auto property = cast<yas::property<K, T>>()) {
+                    if (auto property = cast<yas::property<T>>()) {
                         _subject.notify(property_method::will_change,
-                                        yas::property<K, T>::change_context{
+                                        yas::property<T>::change_context{
                                             .old_value = _value, .new_value = val, .property = property});
 
                         auto old_value = std::move(_value);
                         _value = std::move(val);
 
                         _subject.notify(property_method::did_change,
-                                        yas::property<K, T>::change_context{
+                                        yas::property<T>::change_context{
                                             .old_value = old_value, .new_value = _value, .property = property});
                     }
                 }
@@ -143,89 +135,84 @@ class property<K, T>::impl : public base::impl, public flow::receivable<T>::impl
     }
 };
 
-template <typename K, typename T>
-property<K, T>::property() : property(args{}) {
+template <typename T>
+property<T>::property() : property(args{}) {
 }
 
-template <typename K, typename T>
-property<K, T>::property(args const &args) : base(std::make_shared<impl>(args)) {
+template <typename T>
+property<T>::property(args const &args) : base(std::make_shared<impl>(args)) {
 }
 
-template <typename K, typename T>
-property<K, T>::property(args &&args) : base(std::make_shared<impl>(std::move(args))) {
+template <typename T>
+property<T>::property(args &&args) : base(std::make_shared<impl>(std::move(args))) {
 }
 
-template <typename K, typename T>
-property<K, T>::property(std::nullptr_t) : base(nullptr) {
+template <typename T>
+property<T>::property(std::nullptr_t) : base(nullptr) {
 }
 
-template <typename K, typename T>
-bool property<K, T>::operator==(property const &rhs) const {
+template <typename T>
+bool property<T>::operator==(property const &rhs) const {
     return impl_ptr() && rhs.impl_ptr() && (impl_ptr() == rhs.impl_ptr());
 }
 
-template <typename K, typename T>
-bool property<K, T>::operator!=(property const &rhs) const {
+template <typename T>
+bool property<T>::operator!=(property const &rhs) const {
     return !impl_ptr() || !rhs.impl_ptr() || (impl_ptr() != rhs.impl_ptr());
 }
 
-template <typename K, typename T>
-bool property<K, T>::operator==(T const &rhs) const {
+template <typename T>
+bool property<T>::operator==(T const &rhs) const {
     return impl_ptr<impl>()->value() == rhs;
 }
 
-template <typename K, typename T>
-bool property<K, T>::operator!=(T const &rhs) const {
+template <typename T>
+bool property<T>::operator!=(T const &rhs) const {
     return impl_ptr<impl>()->value() != rhs;
 }
 
-template <typename K, typename T>
-K const &property<K, T>::key() const {
-    return impl_ptr<impl>()->key();
-}
-
-template <typename K, typename T>
-void property<K, T>::set_value(T value) {
+template <typename T>
+void property<T>::set_value(T value) {
     impl_ptr<impl>()->set_value(std::move(value));
 }
 
-template <typename K, typename T>
-T const &property<K, T>::value() const {
+template <typename T>
+T const &property<T>::value() const {
     return impl_ptr<impl>()->value();
 }
 
-template <typename K, typename T>
-T &property<K, T>::value() {
+template <typename T>
+T &property<T>::value() {
     return impl_ptr<impl>()->value();
 }
 
-template <typename K, typename T>
-void property<K, T>::set_validator(validator_t validator) {
+template <typename T>
+void property<T>::set_validator(validator_t validator) {
     impl_ptr<impl>()->set_validator(std::move(validator));
 }
 
-template <typename K, typename T>
-typename property<K, T>::validator_t const &property<K, T>::validator() const {
+template <typename T>
+typename property<T>::validator_t const &property<T>::validator() const {
     return impl_ptr<impl>()->validator();
 }
 
-template <typename K, typename T>
-void property<K, T>::set_limiter(limiter_t limiter) {
+template <typename T>
+void property<T>::set_limiter(limiter_t limiter) {
     impl_ptr<impl>()->set_limiter(std::move(limiter));
 }
 
-template <typename K, typename T>
-typename property<K, T>::limiter_t const &property<K, T>::limiter() const {
+template <typename T>
+typename property<T>::limiter_t const &property<T>::limiter() const {
     return impl_ptr<impl>()->limiter();
 }
 
-template <typename K, typename T>
-typename property<K, T>::subject_t &property<K, T>::subject() {
+template <typename T>
+typename property<T>::subject_t &property<T>::subject() {
     return impl_ptr<impl>()->subject();
 }
 
-template <typename K, typename T>
-flow::node<T, T, T> property<K, T>::begin_flow() {
+template <typename T>
+flow::node<T, T, T> property<T>::begin_flow() {
     flow::sender<T> sender;
 
     subject_t &subject = this->subject();
@@ -252,8 +239,8 @@ flow::node<T, T, T> property<K, T>::begin_flow() {
     return sender.begin_flow();
 }
 
-template <typename K, typename T>
-typename property<K, T>::flow_context_t property<K, T>::begin_context_flow() {
+template <typename T>
+typename property<T>::flow_context_t property<T>::begin_context_flow() {
     flow::sender<change_context> sender;
 
     subject_t &subject = this->subject();
@@ -281,23 +268,23 @@ typename property<K, T>::flow_context_t property<K, T>::begin_context_flow() {
     return sender.begin_flow();
 }
 
-template <typename K, typename T>
-flow::receivable<T> property<K, T>::receivable() {
+template <typename T>
+flow::receivable<T> property<T>::receivable() {
     return flow::receivable<T>{impl_ptr<typename flow::receivable<T>::impl>()};
 }
 
-template <typename K, typename T>
-bool operator==(T const &lhs, property<K, T> const &rhs) {
+template <typename T>
+bool operator==(T const &lhs, property<T> const &rhs) {
     return lhs == rhs.value();
 }
 
-template <typename K, typename T>
-bool operator!=(T const &lhs, property<K, T> const &rhs) {
+template <typename T>
+bool operator!=(T const &lhs, property<T> const &rhs) {
     return lhs != rhs.value();
 }
 
-template <typename K, typename T>
-property<K, T> make_property(K key, T value) {
-    return property<K, T>{{.key = std::move(key), .value = std::move(value)}};
+template <typename T>
+property<T> make_property(T value) {
+    return property<T>{{.value = std::move(value)}};
 }
 }
