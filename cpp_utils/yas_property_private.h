@@ -253,6 +253,35 @@ flow::node<T, T, T> property<K, T>::begin_flow() {
 }
 
 template <typename K, typename T>
+typename property<K, T>::flow_context_t property<K, T>::begin_context_flow() {
+    flow::sender<change_context> sender;
+
+    subject_t &subject = this->subject();
+
+    auto observer = subject.make_value_observer(property_method::did_change,
+                                                [weak_sender = to_weak(sender)](change_context const &context) mutable {
+                                                    if (auto sender = weak_sender.lock()) {
+                                                        sender.send_value(context);
+                                                    }
+                                                });
+
+    auto weak_property = to_weak(*this);
+
+    sender.set_can_send_handler([weak_property]() { return !!weak_property; });
+
+    sender.set_send_handler([weak_property, observer]() {
+        if (auto property = weak_property.lock()) {
+            auto const &value = property.value();
+            return change_context{.new_value = value, .old_value = value, .property = property};
+        } else {
+            throw std::runtime_error("subject is null.");
+        }
+    });
+
+    return sender.begin_flow();
+}
+
+template <typename K, typename T>
 flow::receivable<T> property<K, T>::receivable() {
     return flow::receivable<T>{impl_ptr<typename flow::receivable<T>::impl>()};
 }

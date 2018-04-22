@@ -452,6 +452,30 @@ struct test_class {
     XCTAssertEqual(received, 20);
 }
 
+- (void)test_begin_context_flow {
+    property<std::nullptr_t, int> property{{.value = 10}};
+
+    int received_old_value = -1;
+    int received_new_value = -1;
+
+    auto flow = property.begin_context_flow()
+                    .perform([&received_old_value, &received_new_value](auto const &value) {
+                        received_old_value = value.old_value;
+                        received_new_value = value.new_value;
+                    })
+                    .end();
+
+    flow.sync();
+
+    XCTAssertEqual(received_new_value, 10);
+    XCTAssertEqual(received_old_value, 10);
+
+    property.set_value(20);
+
+    XCTAssertEqual(received_new_value, 20);
+    XCTAssertEqual(received_old_value, 10);
+}
+
 - (void)test_receive {
     property<std::nullptr_t, int> property{{.value = 100}};
 

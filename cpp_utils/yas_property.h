@@ -32,6 +32,7 @@ class property : public base {
     using observer_t = observer<property_method, change_context>;
     using validator_t = std::function<bool(T const &)>;
     using limiter_t = std::function<T(T const &)>;
+    using flow_context_t = flow::node<change_context, change_context, change_context>;
 
     struct args {
         T value;
@@ -65,6 +66,7 @@ class property : public base {
     subject_t &subject();
 
     [[nodiscard]] flow::node<T, T, T> begin_flow();
+    [[nodiscard]] flow_context_t begin_context_flow();
     [[nodiscard]] flow::receivable<T> receivable();
 };
 
