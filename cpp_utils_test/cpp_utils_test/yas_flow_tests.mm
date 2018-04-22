@@ -43,6 +43,21 @@ using namespace yas;
 - (void)test_convert {
     flow::sender<int> sender;
 
+    int received = -1;
+
+    auto flow = sender.begin_flow()
+                    .convert([](int const &value) { return value + 1; })
+                    .perform([&received](int const &value) { received = value; })
+                    .end();
+
+    sender.send_value(10);
+
+    XCTAssertEqual(received, 11);
+}
+
+- (void)test_convert_type {
+    flow::sender<int> sender;
+
     std::string received = "";
 
     auto flow = sender.begin_flow()

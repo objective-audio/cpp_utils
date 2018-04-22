@@ -234,6 +234,11 @@ node<Out, Out, Begin> node<Out, In, Begin>::guard(std::function<bool(Out const &
 }
 
 template <typename Out, typename In, typename Begin>
+node<Out, In, Begin> node<Out, In, Begin>::convert(std::function<Out(Out const &)> convert_handler) {
+    return this->convert<Out>(std::move(convert_handler));
+}
+
+template <typename Out, typename In, typename Begin>
 template <typename Next>
 node<Next, In, Begin> node<Out, In, Begin>::convert(std::function<Next(Out const &)> convert_handler) {
     auto imp = impl_ptr<impl>();
