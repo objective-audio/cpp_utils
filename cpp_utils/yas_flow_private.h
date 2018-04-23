@@ -303,8 +303,8 @@ node<Out, Out, Begin> node<Out, In, Begin>::merge(sender<Out> sub_sender) {
 
 template <typename Out, typename In, typename Begin>
 template <typename SubOut, typename SubIn, typename SubBegin>
-node<std::pair<opt_t<Out>, opt_t<SubOut>>, std::pair<opt_t<Out>, opt_t<SubOut>>, Begin> node<Out, In, Begin>::combine(
-    node<SubOut, SubIn, SubBegin> sub_node) {
+[[nodiscard]] node<std::pair<opt_t<Out>, opt_t<SubOut>>, std::pair<opt_t<Out>, opt_t<SubOut>>, Begin>
+node<Out, In, Begin>::pair(node<SubOut, SubIn, SubBegin> sub_node) {
     using opt_pair_t = std::pair<opt_t<Out>, opt_t<SubOut>>;
 
     auto imp = impl_ptr<impl>();
@@ -330,7 +330,16 @@ node<std::pair<opt_t<Out>, opt_t<SubOut>>, std::pair<opt_t<Out>, opt_t<SubOut>>,
 
     sender.add_sub_sender(std::move(sub_sender));
 
-    return node<opt_pair_t, opt_pair_t, Begin>(sender, [opt_pair = opt_pair_t{}](opt_pair_t const &value) mutable {
+    return node<opt_pair_t, opt_pair_t, Begin>(sender, [](opt_pair_t const &value) { return value; });
+}
+
+template <typename Out, typename In, typename Begin>
+template <typename SubOut, typename SubIn, typename SubBegin>
+node<std::pair<opt_t<Out>, opt_t<SubOut>>, std::pair<opt_t<Out>, opt_t<SubOut>>, Begin> node<Out, In, Begin>::combine(
+    node<SubOut, SubIn, SubBegin> sub_node) {
+    using opt_pair_t = std::pair<opt_t<Out>, opt_t<SubOut>>;
+
+    return this->pair(std::move(sub_node)).convert([opt_pair = opt_pair_t{}](opt_pair_t const &value) mutable {
         if (value.first) {
             opt_pair.first = value.first;
         }

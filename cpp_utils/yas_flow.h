@@ -112,6 +112,10 @@ struct node : base {
     [[nodiscard]] node<Out, Out, Begin> merge(sender<Out>);
 
     template <typename SubOut, typename SubIn, typename SubBegin>
+    [[nodiscard]] node<std::pair<opt_t<Out>, opt_t<SubOut>>, std::pair<opt_t<Out>, opt_t<SubOut>>, Begin> pair(
+        node<SubOut, SubIn, SubBegin>);
+
+    template <typename SubOut, typename SubIn, typename SubBegin>
     [[nodiscard]] node<std::pair<opt_t<Out>, opt_t<SubOut>>, std::pair<opt_t<Out>, opt_t<SubOut>>, Begin> combine(
         node<SubOut, SubIn, SubBegin>);
 
