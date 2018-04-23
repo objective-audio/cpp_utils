@@ -281,6 +281,29 @@ using namespace yas;
     XCTAssertEqual(received, 100);
 }
 
+- (void)test_pair {
+    flow::sender<int> main_sender;
+    flow::sender<std::string> sub_sender;
+    
+    using opt_pair_t = std::pair<opt_t<int>, opt_t<std::string>>;
+    
+    opt_pair_t received;
+    
+    auto sub_flow = sub_sender.begin_flow();
+    auto main_flow =
+    main_sender.begin_flow().pair(sub_flow).perform([&received](auto const &value) { received = value; }).end();
+    
+    main_sender.send_value(1);
+    
+    XCTAssertEqual(*received.first, 1);
+    XCTAssertFalse(!!received.second);
+    
+    sub_sender.send_value("test_text");
+    
+    XCTAssertFalse(!!received.first);
+    XCTAssertEqual(*received.second, "test_text");
+}
+
 - (void)test_combine {
     flow::sender<int> main_sender;
     flow::sender<std::string> sub_sender;
