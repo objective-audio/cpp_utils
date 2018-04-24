@@ -28,7 +28,7 @@ using namespace yas;
 
     std::string received_value = "";
 
-    auto node = flow::begin_flow(subject, std::string("key"))
+    auto node = flow::begin(subject, std::string("key"))
                     .convert<std::string>([](int const value) { return std::to_string(value); })
                     .perform([&received_value](std::string const &value) { received_value = value; })
                     .end();
