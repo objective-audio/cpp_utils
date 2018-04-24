@@ -7,7 +7,7 @@
 #include "yas_flow.h"
 #include "yas_observing.h"
 
-namespace yas {
+namespace yas::flow {
 template <typename Key, typename T>
 [[nodiscard]] flow::node<T, T, T> begin_flow(subject<Key, T> &subject, Key const &key);
 }

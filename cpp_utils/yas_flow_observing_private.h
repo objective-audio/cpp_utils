@@ -4,7 +4,7 @@
 
 #pragma once
 
-namespace yas {
+namespace yas::flow {
 template <typename Key, typename T>
 flow::node<T, T, T> begin_flow(subject<Key, T> &subject, Key const &key) {
     flow::sender<T> sender;
