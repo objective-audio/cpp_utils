@@ -236,7 +236,7 @@ flow::node<T, T, T> property<T>::begin_flow() {
         }
     });
 
-    return sender.begin_flow();
+    return sender.begin();
 }
 
 template <typename T>
@@ -265,7 +265,7 @@ typename property<T>::flow_context_t property<T>::begin_context_flow() {
         }
     });
 
-    return sender.begin_flow();
+    return sender.begin();
 }
 
 template <typename T>

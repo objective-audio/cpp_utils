@@ -54,7 +54,7 @@ struct flow::graph<State, Signal>::impl : base::impl, receivable<graph_next<Stat
         flow::receivable<graph_next<State, Signal>> receivable = flow::receivable<graph_next<State, Signal>>{
             graph.impl_ptr<typename flow::receivable<graph_next<State, Signal>>::impl>()};
 
-        auto observer = sender.begin_flow()
+        auto observer = sender.begin()
                             .template convert<graph_next<State, Signal>>(
                                 [handler = std::move(handler), weak_graph = to_weak(graph)](Signal const &signal) {
                                     graph_out<State> graph_out = handler(signal);
