@@ -65,7 +65,7 @@ struct sender : sender_base {
     [[nodiscard]] bool can_send() const;
     void set_send_handler(std::function<T(void)>);
 
-    node<T, T, T> begin_flow();
+    node<T, T, T> begin();
 
     template <typename P>
     void push_handler(std::function<void(P const &)>);

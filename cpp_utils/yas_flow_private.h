@@ -144,7 +144,7 @@ void sender<T>::set_send_handler(std::function<T(void)> handler) {
 }
 
 template <typename T>
-node<T, T, T> sender<T>::begin_flow() {
+node<T, T, T> sender<T>::begin() {
     return node<T, T, T>(*this);
 }
 
@@ -172,7 +172,7 @@ void sender<T>::add_sub_sender(sender_base sub_sender) {
 
 template <typename T>
 node<T, T, T> begin() {
-    return flow::sender<T>{}.begin_flow();
+    return flow::sender<T>{}.begin();
 }
 
 #pragma mark -
@@ -303,7 +303,7 @@ node<Out, Out, Begin> node<Out, In, Begin>::merge(node<Out, SubIn, SubBegin> sub
 
 template <typename Out, typename In, typename Begin>
 node<Out, Out, Begin> node<Out, In, Begin>::merge(sender<Out> sub_sender) {
-    return this->merge(sub_sender.begin_flow());
+    return this->merge(sub_sender.begin());
 }
 
 template <typename Out, typename In, typename Begin>

@@ -167,7 +167,7 @@ struct test_class {
 - (void)test_recursive_guard {
     test_class test_object;
     test_class::property_t::observer_t observer;
-    
+
     observer.add_handler(test_object.properties_subject, yas::property_method::did_change,
                          [&test_object](auto const &context) {
                              if (context.value.property == test_object.property1) {
@@ -176,14 +176,14 @@ struct test_class {
                                  test_object.property1.set_value(context.value.property.value());
                              }
                          });
-    
+
     test_object.property1.set_value(10);
-    
+
     XCTAssertEqual(test_object.property1.value(), 10);
     XCTAssertEqual(test_object.property2.value(), 10);
-    
+
     test_object.property2.set_value(20);
-    
+
     XCTAssertEqual(test_object.property1.value(), 20);
     XCTAssertEqual(test_object.property2.value(), 20);
 }
@@ -456,7 +456,7 @@ struct test_class {
     property<int> property{{.value = 100}};
 
     flow::sender<int> sender;
-    auto flow = sender.begin_flow().receive(property.receivable()).end();
+    auto flow = sender.begin().receive(property.receivable()).end();
 
     sender.send_value(200);
 

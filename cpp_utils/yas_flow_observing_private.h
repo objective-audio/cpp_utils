@@ -17,6 +17,6 @@ flow::node<T, T, T> begin_flow(subject<Key, T> &subject, Key const &key) {
 
     sender.set_can_send_handler([observer]() { return false; });
 
-    return sender.begin_flow();
+    return sender.begin();
 }
 }
