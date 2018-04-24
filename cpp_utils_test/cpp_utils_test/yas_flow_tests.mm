@@ -40,10 +40,24 @@ using namespace yas;
     XCTAssertEqual(received_value, "2");
 }
 
-- (void)test_template_begin_flow {
+- (void)test_sender_begin {
     int received = -1;
 
-    auto flow = flow::begin_flow<int>().perform([&received](int const &value) { received = value; }).end();
+    flow::sender<int> sender;
+
+    auto flow = sender.begin_flow().perform([&received](int const &value) { received = value; }).end();
+
+    XCTAssertEqual(received, -1);
+
+    sender.send_value(2);
+
+    XCTAssertEqual(received, 2);
+}
+
+- (void)test_template_begin {
+    int received = -1;
+
+    auto flow = flow::begin<int>().perform([&received](int const &value) { received = value; }).end();
 
     XCTAssertEqual(received, -1);
 
@@ -296,22 +310,22 @@ using namespace yas;
 - (void)test_pair {
     flow::sender<int> main_sender;
     flow::sender<std::string> sub_sender;
-    
+
     using opt_pair_t = std::pair<opt_t<int>, opt_t<std::string>>;
-    
+
     opt_pair_t received;
-    
+
     auto sub_flow = sub_sender.begin_flow();
     auto main_flow =
-    main_sender.begin_flow().pair(sub_flow).perform([&received](auto const &value) { received = value; }).end();
-    
+        main_sender.begin_flow().pair(sub_flow).perform([&received](auto const &value) { received = value; }).end();
+
     main_sender.send_value(1);
-    
+
     XCTAssertEqual(*received.first, 1);
     XCTAssertFalse(!!received.second);
-    
+
     sub_sender.send_value("test_text");
-    
+
     XCTAssertFalse(!!received.first);
     XCTAssertEqual(*received.second, "test_text");
 }
