@@ -75,6 +75,9 @@ struct sender : sender_base {
     void add_sub_sender(sender_base);
 };
 
+template <typename T>
+node<T, T, T> begin_flow();
+
 template <typename Begin>
 struct observer : base {
     class impl;

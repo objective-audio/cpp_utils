@@ -170,6 +170,11 @@ void sender<T>::add_sub_sender(sender_base sub_sender) {
     impl_ptr<impl>()->_sub_senders.emplace_back(std::move(sub_sender));
 }
 
+template <typename T>
+node<T, T, T> begin_flow() {
+    return flow::sender<T>{}.begin_flow();
+}
+
 #pragma mark -
 
 template <typename Out, typename In, typename Begin>
