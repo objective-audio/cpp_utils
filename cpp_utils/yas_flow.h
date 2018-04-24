@@ -76,7 +76,7 @@ struct sender : sender_base {
 };
 
 template <typename T>
-node<T, T, T> begin_flow();
+node<T, T, T> begin();
 
 template <typename Begin>
 struct observer : base {

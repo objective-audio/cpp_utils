@@ -171,7 +171,7 @@ void sender<T>::add_sub_sender(sender_base sub_sender) {
 }
 
 template <typename T>
-node<T, T, T> begin_flow() {
+node<T, T, T> begin() {
     return flow::sender<T>{}.begin_flow();
 }
 
