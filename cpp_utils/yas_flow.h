@@ -92,12 +92,10 @@ struct sender : sender_base {
 
     [[nodiscard]] node<T, T, T> begin();
 
-    template <typename P>
-    void push_handler(std::function<void(P const &)>);
-    std::size_t handlers_size() const;
-    template <typename P>
-    std::function<void(P const &)> const &handler(std::size_t const) const;
-    void add_sub_sender(sender_base);
+    sender_manageable &manageable();
+
+   private:
+    sender_manageable _manageable = nullptr;
 };
 
 template <typename T>
