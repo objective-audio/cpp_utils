@@ -38,8 +38,8 @@ struct flow::graph<State, Signal>::impl : base::impl, receivable<graph_next<Stat
     impl(State &&state) : state(std::move(state)) {
     }
 
-    void add_state(flow::graph<State, Signal> &graph, State &&state,
-                   std::function<graph_out<State>(Signal const &)> &&handler) {
+    void add(flow::graph<State, Signal> &graph, State &&state,
+             std::function<graph_out<State>(Signal const &)> &&handler) {
         if (this->observers.count(state) > 0) {
             throw std::runtime_error("observer state exists.");
         }
@@ -97,8 +97,8 @@ State const &flow::graph<State, Signal>::state() const {
 }
 
 template <typename State, typename Signal>
-void flow::graph<State, Signal>::add_state(State state, std::function<graph_out<State>(Signal const &)> handler) {
-    impl_ptr<impl>()->add_state(*this, std::move(state), std::move(handler));
+void flow::graph<State, Signal>::add(State state, std::function<graph_out<State>(Signal const &)> handler) {
+    impl_ptr<impl>()->add(*this, std::move(state), std::move(handler));
 }
 
 template <typename State, typename Signal>
