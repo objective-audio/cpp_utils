@@ -83,7 +83,7 @@ void observer<Begin>::sync() {
 
 template <typename T>
 struct sender<T>::impl : sender_base::impl {
-    std::vector<yas::any> _handlers;
+    std::function<T(void)> _send_handler;
     std::function<bool(void)> _can_send_handler;
 
     void send_value(T const &value) {
@@ -129,7 +129,7 @@ struct sender<T>::impl : sender_base::impl {
     }
 
    private:
-    std::function<T(void)> _send_handler;
+    std::vector<yas::any> _handlers;
     std::vector<sender_base> _sub_senders;
 };
 
@@ -185,7 +185,7 @@ std::function<void(P const &)> const &sender<T>::handler(std::size_t const idx) 
 
 template <typename T>
 void sender<T>::add_sub_sender(sender_base sub_sender) {
-    impl_ptr<impl>()->_sub_senders.emplace_back(std::move(sub_sender));
+    impl_ptr<impl>()->add_sub_sender(std::move(sub_sender));
 }
 
 template <typename T>
