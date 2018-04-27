@@ -33,7 +33,6 @@ template <typename State, typename Signal>
 struct flow::graph<State, Signal>::impl : base::impl, receivable<graph_next<State, Signal>>::impl {
     State state;
     bool is_running = false;
-    std::unordered_map<State, flow::sender<Signal>> senders;
     std::unordered_map<State, flow::observer<Signal>> observers;
 
     impl(State &&state) : state(std::move(state)) {
@@ -41,10 +40,6 @@ struct flow::graph<State, Signal>::impl : base::impl, receivable<graph_next<Stat
 
     void add_state(flow::graph<State, Signal> &graph, State &&state,
                    std::function<graph_out<State>(Signal const &)> &&handler) {
-        if (this->senders.count(state) > 0) {
-            throw std::runtime_error("sender state exists.");
-        }
-
         if (this->observers.count(state) > 0) {
             throw std::runtime_error("observer state exists.");
         }
@@ -54,7 +49,7 @@ struct flow::graph<State, Signal>::impl : base::impl, receivable<graph_next<Stat
         flow::receivable<graph_next<State, Signal>> receivable = flow::receivable<graph_next<State, Signal>>{
             graph.impl_ptr<typename flow::receivable<graph_next<State, Signal>>::impl>()};
 
-        auto observer = sender.begin()
+        auto observer = flow::begin<Signal>()
                             .template convert<graph_next<State, Signal>>(
                                 [handler = std::move(handler), weak_graph = to_weak(graph)](Signal const &signal) {
                                     graph_out<State> graph_out = handler(signal);
@@ -64,7 +59,6 @@ struct flow::graph<State, Signal>::impl : base::impl, receivable<graph_next<Stat
                                 })
                             .end(std::move(receivable));
 
-        this->senders.emplace(state, std::move(sender));
         this->observers.emplace(std::move(state), std::move(observer));
     }
 
@@ -75,7 +69,7 @@ struct flow::graph<State, Signal>::impl : base::impl, receivable<graph_next<Stat
 
         this->is_running = true;
 
-        auto &sender = this->senders.at(this->state);
+        auto &sender = this->observers.at(this->state).sender();
         sender.send_value(signal);
     }
 
