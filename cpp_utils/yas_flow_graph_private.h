@@ -111,4 +111,9 @@ template <typename State, typename Signal>
 void flow::graph<State, Signal>::send_signal(Signal const &signal) {
     impl_ptr<impl>()->send_signal(signal);
 }
+
+template <typename State, typename Signal>
+bool flow::graph<State, Signal>::contains(State const &state) {
+    return impl_ptr<impl>()->observers.count(state) > 0;
+}
 }
