@@ -29,7 +29,7 @@ struct graph : base {
 
     void add(State, std::function<graph_out<State>(Signal const &)>);
 
-    void send_signal(Signal const &);
+    void run(Signal const &);
 
     bool contains(State const &);
 };

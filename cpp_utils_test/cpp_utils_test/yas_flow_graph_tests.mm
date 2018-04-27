@@ -32,11 +32,11 @@ using namespace yas;
 
     XCTAssertEqual(graph.state(), test_state::a);
 
-    graph.send_signal(0);
+    graph.run(0);
 
     XCTAssertEqual(graph.state(), test_state::b);
 
-    graph.send_signal(0);
+    graph.run(0);
 
     XCTAssertEqual(graph.state(), test_state::a);
 }

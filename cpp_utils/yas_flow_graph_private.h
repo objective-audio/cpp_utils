@@ -62,7 +62,7 @@ struct flow::graph<State, Signal>::impl : base::impl, receivable<graph_next<Stat
         this->observers.emplace(std::move(state), std::move(observer));
     }
 
-    void send_signal(Signal const &signal) {
+    void run(Signal const &signal) {
         if (this->is_running) {
             throw std::runtime_error("graph is running.");
         }
@@ -78,7 +78,7 @@ struct flow::graph<State, Signal>::impl : base::impl, receivable<graph_next<Stat
         this->is_running = false;
 
         if (next.signal) {
-            this->send_signal(*next.signal);
+            this->run(*next.signal);
         }
     }
 };
@@ -102,8 +102,8 @@ void flow::graph<State, Signal>::add(State state, std::function<graph_out<State>
 }
 
 template <typename State, typename Signal>
-void flow::graph<State, Signal>::send_signal(Signal const &signal) {
-    impl_ptr<impl>()->send_signal(signal);
+void flow::graph<State, Signal>::run(Signal const &signal) {
+    impl_ptr<impl>()->run(signal);
 }
 
 template <typename State, typename Signal>
