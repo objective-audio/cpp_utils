@@ -9,13 +9,13 @@
 
 namespace yas::flow {
 template <typename State>
-graph_out<State> wait(State state) {
-    return graph_out<State>{.state = std::move(state)};
+state_out<State> wait(State state) {
+    return state_out<State>{.state = std::move(state)};
 }
 
 template <typename State>
-graph_out<State> run(State state) {
-    return graph_out<State>{.state = std::move(state), .is_continue = true};
+state_out<State> run(State state) {
+    return state_out<State>{.state = std::move(state), .is_continue = true};
 }
 
 template <typename State, typename Signal>
@@ -39,7 +39,7 @@ struct flow::graph<State, Signal>::impl : base::impl, receivable<graph_next<Stat
     }
 
     void add(flow::graph<State, Signal> &graph, State &&state,
-             std::function<graph_out<State>(Signal const &)> &&handler) {
+             std::function<state_out<State>(Signal const &)> &&handler) {
         if (this->observers.count(state) > 0) {
             throw std::runtime_error("observer state exists.");
         }
@@ -52,10 +52,10 @@ struct flow::graph<State, Signal>::impl : base::impl, receivable<graph_next<Stat
         auto observer = flow::begin<Signal>()
                             .template convert<graph_next<State, Signal>>(
                                 [handler = std::move(handler), weak_graph = to_weak(graph)](Signal const &signal) {
-                                    graph_out<State> graph_out = handler(signal);
+                                    state_out<State> state_out = handler(signal);
                                     return graph_next<State, Signal>{
-                                        .state = graph_out.state,
-                                        .signal = graph_out.is_continue ? opt_t<Signal>(signal) : nullopt};
+                                        .state = state_out.state,
+                                        .signal = state_out.is_continue ? opt_t<Signal>(signal) : nullopt};
                                 })
                             .end(std::move(receivable));
 
@@ -97,7 +97,7 @@ State const &flow::graph<State, Signal>::state() const {
 }
 
 template <typename State, typename Signal>
-void flow::graph<State, Signal>::add(State state, std::function<graph_out<State>(Signal const &)> handler) {
+void flow::graph<State, Signal>::add(State state, std::function<state_out<State>(Signal const &)> handler) {
     impl_ptr<impl>()->add(*this, std::move(state), std::move(handler));
 }
 
