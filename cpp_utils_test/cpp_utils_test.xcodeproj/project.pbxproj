@@ -226,6 +226,7 @@
 		B6F58D181D67F1FE00807724 /* yas_delaying_caller.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = yas_delaying_caller.cpp; sourceTree = "<group>"; };
 		B6F58D191D67F1FE00807724 /* yas_delaying_caller.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = yas_delaying_caller.h; sourceTree = "<group>"; };
 		B6F58D1C1D680C5C00807724 /* yas_delaying_caller_tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = yas_delaying_caller_tests.mm; sourceTree = "<group>"; };
+		B6F9E47A20937FD6000B390E /* yas_flow_protocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = yas_flow_protocol.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -357,6 +358,7 @@
 				B6626AB71C15B4230038175B /* yas_flex_ptr.cpp */,
 				B6626AB81C15B4230038175B /* yas_flex_ptr.h */,
 				B66A61FB207E53BF00AD1660 /* yas_flow.h */,
+				B6F9E47A20937FD6000B390E /* yas_flow_protocol.h */,
 				B66A6202207F977300AD1660 /* yas_flow_private.h */,
 				B6BFA9382082F4A600ADD43B /* yas_flow_observing.h */,
 				B6BFA93E208571F100ADD43B /* yas_flow_observing_private.h */,
