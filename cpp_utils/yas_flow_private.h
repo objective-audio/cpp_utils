@@ -85,8 +85,6 @@ template <typename T>
 struct sender<T>::impl : sender_base::impl {
     std::vector<yas::any> _handlers;
     std::function<bool(void)> _can_send_handler;
-    std::function<T(void)> _send_handler;
-    std::vector<sender_base> _sub_senders;
 
     void send_value(T const &value) {
         if (this->_handlers.size() > 0) {
@@ -113,6 +111,26 @@ struct sender<T>::impl : sender_base::impl {
             sub_sender.send();
         }
     }
+
+    void push_handler(yas::any &&handler) {
+        this->_handlers.emplace_back(std::move(handler));
+    }
+
+    yas::any handler(std::size_t const idx) {
+        return this->_handlers.at(idx);
+    }
+
+    std::size_t handlers_size() {
+        return this->_handlers.size();
+    }
+
+    void add_sub_sender(sender_base &&sub_sender) {
+        this->_sub_senders.emplace_back(std::move(sub_sender));
+    }
+
+   private:
+    std::function<T(void)> _send_handler;
+    std::vector<sender_base> _sub_senders;
 };
 
 template <typename T>
@@ -151,18 +169,18 @@ node<T, T, T> sender<T>::begin() {
 template <typename T>
 template <typename P>
 void sender<T>::push_handler(std::function<void(P const &)> handler) {
-    impl_ptr<impl>()->_handlers.push_back(handler);
+    impl_ptr<impl>()->push_handler(std::move(handler));
 }
 
 template <typename T>
 std::size_t sender<T>::handlers_size() const {
-    return impl_ptr<impl>()->_handlers.size();
+    return impl_ptr<impl>()->handlers_size();
 }
 
 template <typename T>
 template <typename P>
 std::function<void(P const &)> const &sender<T>::handler(std::size_t const idx) const {
-    return impl_ptr<impl>()->_handlers.at(idx).template get<std::function<void(P const &)>>();
+    return impl_ptr<impl>()->handler(idx).template get<std::function<void(P const &)>>();
 }
 
 template <typename T>
