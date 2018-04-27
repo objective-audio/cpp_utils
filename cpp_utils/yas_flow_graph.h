@@ -8,15 +8,15 @@
 
 namespace yas::flow {
 template <typename State>
-struct graph_out {
+struct state_out {
     State state;
     bool is_continue;
 };
 
 template <typename State>
-graph_out<State> break_next(State state);
+state_out<State> wait(State state);
 template <typename State>
-graph_out<State> continue_next(State state);
+state_out<State> run(State state);
 
 template <typename State, typename Signal>
 struct graph : base {
@@ -27,9 +27,11 @@ struct graph : base {
 
     State const &state() const;
 
-    void add_state(State, std::function<graph_out<State>(Signal const &)>);
+    void add(State, std::function<state_out<State>(Signal const &)>);
 
-    void send_signal(Signal const &);
+    void run(Signal const &);
+
+    bool contains(State const &);
 };
 }
 

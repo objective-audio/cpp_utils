@@ -9,13 +9,13 @@
 
 namespace yas::flow {
 template <typename State>
-graph_out<State> break_next(State state) {
-    return graph_out<State>{.state = std::move(state)};
+state_out<State> wait(State state) {
+    return state_out<State>{.state = std::move(state)};
 }
 
 template <typename State>
-graph_out<State> continue_next(State state) {
-    return graph_out<State>{.state = std::move(state), .is_continue = true};
+state_out<State> run(State state) {
+    return state_out<State>{.state = std::move(state), .is_continue = true};
 }
 
 template <typename State, typename Signal>
@@ -33,18 +33,13 @@ template <typename State, typename Signal>
 struct flow::graph<State, Signal>::impl : base::impl, receivable<graph_next<State, Signal>>::impl {
     State state;
     bool is_running = false;
-    std::unordered_map<State, flow::sender<Signal>> senders;
     std::unordered_map<State, flow::observer<Signal>> observers;
 
     impl(State &&state) : state(std::move(state)) {
     }
 
-    void add_state(flow::graph<State, Signal> &graph, State &&state,
-                   std::function<graph_out<State>(Signal const &)> &&handler) {
-        if (this->senders.count(state) > 0) {
-            throw std::runtime_error("sender state exists.");
-        }
-
+    void add(flow::graph<State, Signal> &graph, State &&state,
+             std::function<state_out<State>(Signal const &)> &&handler) {
         if (this->observers.count(state) > 0) {
             throw std::runtime_error("observer state exists.");
         }
@@ -54,28 +49,27 @@ struct flow::graph<State, Signal>::impl : base::impl, receivable<graph_next<Stat
         flow::receivable<graph_next<State, Signal>> receivable = flow::receivable<graph_next<State, Signal>>{
             graph.impl_ptr<typename flow::receivable<graph_next<State, Signal>>::impl>()};
 
-        auto observer = sender.begin()
+        auto observer = flow::begin<Signal>()
                             .template convert<graph_next<State, Signal>>(
                                 [handler = std::move(handler), weak_graph = to_weak(graph)](Signal const &signal) {
-                                    graph_out<State> graph_out = handler(signal);
+                                    state_out<State> state_out = handler(signal);
                                     return graph_next<State, Signal>{
-                                        .state = graph_out.state,
-                                        .signal = graph_out.is_continue ? opt_t<Signal>(signal) : nullopt};
+                                        .state = state_out.state,
+                                        .signal = state_out.is_continue ? opt_t<Signal>(signal) : nullopt};
                                 })
                             .end(std::move(receivable));
 
-        this->senders.emplace(state, std::move(sender));
         this->observers.emplace(std::move(state), std::move(observer));
     }
 
-    void send_signal(Signal const &signal) {
+    void run(Signal const &signal) {
         if (this->is_running) {
             throw std::runtime_error("graph is running.");
         }
 
         this->is_running = true;
 
-        auto &sender = this->senders.at(this->state);
+        auto &sender = this->observers.at(this->state).sender();
         sender.send_value(signal);
     }
 
@@ -84,7 +78,7 @@ struct flow::graph<State, Signal>::impl : base::impl, receivable<graph_next<Stat
         this->is_running = false;
 
         if (next.signal) {
-            this->send_signal(*next.signal);
+            this->run(*next.signal);
         }
     }
 };
@@ -103,12 +97,17 @@ State const &flow::graph<State, Signal>::state() const {
 }
 
 template <typename State, typename Signal>
-void flow::graph<State, Signal>::add_state(State state, std::function<graph_out<State>(Signal const &)> handler) {
-    impl_ptr<impl>()->add_state(*this, std::move(state), std::move(handler));
+void flow::graph<State, Signal>::add(State state, std::function<state_out<State>(Signal const &)> handler) {
+    impl_ptr<impl>()->add(*this, std::move(state), std::move(handler));
 }
 
 template <typename State, typename Signal>
-void flow::graph<State, Signal>::send_signal(Signal const &signal) {
-    impl_ptr<impl>()->send_signal(signal);
+void flow::graph<State, Signal>::run(Signal const &signal) {
+    impl_ptr<impl>()->run(signal);
+}
+
+template <typename State, typename Signal>
+bool flow::graph<State, Signal>::contains(State const &state) {
+    return impl_ptr<impl>()->observers.count(state) > 0;
 }
 }
