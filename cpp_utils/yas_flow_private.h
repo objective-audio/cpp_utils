@@ -79,6 +79,18 @@ void observer<Begin>::sync() {
     impl_ptr<impl>()->_sender.send();
 }
 
+#pragma mark - sender_manageable
+
+template <typename P>
+void sender_manageable::push_handler(std::function<void(P const &)> handler) {
+    impl_ptr<impl>()->push_handler(std::move(handler));
+}
+
+template <typename P>
+std::function<void(P const &)> const &sender_manageable::handler(std::size_t const idx) const {
+    return impl_ptr<impl>()->handler(idx).template get<std::function<void(P const &)>>();
+}
+
 #pragma mark - sender
 
 template <typename T>
