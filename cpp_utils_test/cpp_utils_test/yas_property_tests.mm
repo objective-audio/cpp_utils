@@ -455,7 +455,7 @@ struct test_class {
 - (void)test_receive {
     property<int> property{{.value = 100}};
 
-    flow::sender<int> sender;
+    flow::input<int> sender;
     auto flow = sender.begin().receive(property.receivable()).end();
 
     sender.send_value(200);

@@ -55,14 +55,14 @@ flow::receivable<T> flow::receiver<T>::receivable() {
 
 template <typename Begin>
 struct observer<Begin>::impl : base::impl {
-    impl(flow::sender<Begin> &&sender) : _sender(std::move(sender)) {
+    impl(flow::input<Begin> &&sender) : _sender(std::move(sender)) {
     }
 
-    flow::sender<Begin> _sender;
+    flow::input<Begin> _sender;
 };
 
 template <typename Begin>
-observer<Begin>::observer(flow::sender<Begin> sender) : base(std::make_shared<impl>(std::move(sender))) {
+observer<Begin>::observer(flow::input<Begin> sender) : base(std::make_shared<impl>(std::move(sender))) {
 }
 
 template <typename Begin>
@@ -70,7 +70,7 @@ observer<Begin>::observer(std::nullptr_t) : base(nullptr) {
 }
 
 template <typename Begin>
-flow::sender<Begin> &observer<Begin>::sender() {
+flow::input<Begin> &observer<Begin>::sender() {
     return impl_ptr<impl>()->_sender;
 }
 
@@ -94,7 +94,7 @@ std::function<void(P const &)> const &input_manageable::handler(std::size_t cons
 #pragma mark - sender
 
 template <typename T>
-struct sender<T>::impl : input_base::impl, input_manageable::impl {
+struct input<T>::impl : input_base::impl, input_manageable::impl {
     std::function<T(void)> _send_handler;
     std::function<bool(void)> _can_send_handler;
 
@@ -146,40 +146,40 @@ struct sender<T>::impl : input_base::impl, input_manageable::impl {
 };
 
 template <typename T>
-sender<T>::sender() : input_base(std::make_shared<impl>()) {
+input<T>::input() : input_base(std::make_shared<impl>()) {
 }
 
 template <typename T>
-sender<T>::sender(std::nullptr_t) : input_base(nullptr) {
+input<T>::input(std::nullptr_t) : input_base(nullptr) {
 }
 
 template <typename T>
-void sender<T>::send_value(T const &value) {
+void input<T>::send_value(T const &value) {
     impl_ptr<impl>()->send_value(value);
 }
 
 template <typename T>
-void sender<T>::set_can_send_handler(std::function<bool(void)> handler) {
+void input<T>::set_can_send_handler(std::function<bool(void)> handler) {
     impl_ptr<impl>()->_can_send_handler = std::move(handler);
 }
 
 template <typename T>
-bool sender<T>::can_send() const {
+bool input<T>::can_send() const {
     return impl_ptr<impl>()->can_send();
 }
 
 template <typename T>
-void sender<T>::set_send_handler(std::function<T(void)> handler) {
+void input<T>::set_send_handler(std::function<T(void)> handler) {
     impl_ptr<impl>()->_send_handler = std::move(handler);
 }
 
 template <typename T>
-node<T, T, T> sender<T>::begin() {
+node<T, T, T> input<T>::begin() {
     return node<T, T, T>(*this);
 }
 
 template <typename T>
-input_manageable &sender<T>::manageable() {
+input_manageable &input<T>::manageable() {
     if (!this->_manageable) {
         this->_manageable = input_manageable{impl_ptr<input_manageable::impl>()};
     }
@@ -188,27 +188,27 @@ input_manageable &sender<T>::manageable() {
 
 template <typename T>
 node<T, T, T> begin() {
-    return flow::sender<T>{}.begin();
+    return flow::input<T>{}.begin();
 }
 
 #pragma mark -
 
 template <typename Out, typename In, typename Begin>
 struct node<Out, In, Begin>::impl : base::impl {
-    impl(sender<Begin> &&sender, std::function<Out(In const &)> &&handler)
+    impl(input<Begin> &&sender, std::function<Out(In const &)> &&handler)
         : _sender(std::move(sender)), _handler(std::move(handler)) {
     }
 
-    sender<Begin> _sender;
+    input<Begin> _sender;
     std::function<Out(In const &)> _handler;
 };
 
 template <typename Out, typename In, typename Begin>
-node<Out, In, Begin>::node(sender<Begin> sender) : node(std::move(sender), [](Begin const &value) { return value; }) {
+node<Out, In, Begin>::node(input<Begin> sender) : node(std::move(sender), [](Begin const &value) { return value; }) {
 }
 
 template <typename Out, typename In, typename Begin>
-node<Out, In, Begin>::node(sender<Begin> sender, std::function<Out(In const &)> handler)
+node<Out, In, Begin>::node(input<Begin> sender, std::function<Out(In const &)> handler)
     : base(std::make_shared<impl>(std::move(sender), std::move(handler))) {
 }
 
@@ -236,7 +236,7 @@ node<Out, In, Begin> node<Out, In, Begin>::receive(receivable<Out> receiver) {
 template <typename Out, typename In, typename Begin>
 node<Out, Out, Begin> node<Out, In, Begin>::guard(std::function<bool(Out const &value)> guard_handler) {
     auto imp = impl_ptr<impl>();
-    flow::sender<Begin> &sender = imp->_sender;
+    flow::input<Begin> &sender = imp->_sender;
     auto weak_sender = to_weak(sender);
     std::size_t const next_idx = sender.manageable().handlers_size() + 1;
 
@@ -271,7 +271,7 @@ node<Next, In, Begin> node<Out, In, Begin>::convert(std::function<Next(Out const
 template <typename Out, typename In, typename Begin>
 node<Out, Out, Begin> node<Out, In, Begin>::wait(double const time_interval) {
     auto imp = impl_ptr<impl>();
-    flow::sender<Begin> &sender = imp->_sender;
+    flow::input<Begin> &sender = imp->_sender;
     auto weak_sender = to_weak(sender);
     std::size_t const next_idx = sender.manageable().handlers_size() + 1;
 
@@ -292,7 +292,7 @@ template <typename Out, typename In, typename Begin>
 template <typename SubIn, typename SubBegin>
 node<Out, Out, Begin> node<Out, In, Begin>::merge(node<Out, SubIn, SubBegin> sub_node) {
     auto imp = impl_ptr<impl>();
-    flow::sender<Begin> &sender = imp->_sender;
+    flow::input<Begin> &sender = imp->_sender;
     auto weak_sender = to_weak(sender);
     std::size_t const next_idx = sender.manageable().handlers_size() + 1;
 
@@ -319,7 +319,7 @@ node<Out, Out, Begin> node<Out, In, Begin>::merge(node<Out, SubIn, SubBegin> sub
 }
 
 template <typename Out, typename In, typename Begin>
-node<Out, Out, Begin> node<Out, In, Begin>::merge(sender<Out> sub_sender) {
+node<Out, Out, Begin> node<Out, In, Begin>::merge(input<Out> sub_sender) {
     return this->merge(sub_sender.begin());
 }
 
@@ -330,7 +330,7 @@ node<Out, In, Begin>::pair(node<SubOut, SubIn, SubBegin> sub_node) {
     using opt_pair_t = std::pair<opt_t<Out>, opt_t<SubOut>>;
 
     auto imp = impl_ptr<impl>();
-    flow::sender<Begin> &sender = imp->_sender;
+    flow::input<Begin> &sender = imp->_sender;
     auto weak_sender = to_weak(sender);
     std::size_t const next_idx = sender.manageable().handlers_size() + 1;
 

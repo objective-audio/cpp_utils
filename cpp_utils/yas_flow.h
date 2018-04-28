@@ -24,11 +24,11 @@ struct receiver : base {
 };
 
 template <typename T>
-struct sender : input_base {
+struct input : input_base {
     class impl;
 
-    sender();
-    sender(std::nullptr_t);
+    input();
+    input(std::nullptr_t);
 
     void send_value(T const &);
 
@@ -51,10 +51,10 @@ template <typename Begin>
 struct observer : base {
     class impl;
 
-    observer(sender<Begin>);
+    observer(input<Begin>);
     observer(std::nullptr_t);
 
-    flow::sender<Begin> &sender();
+    flow::input<Begin> &sender();
 
     void sync();
 };
@@ -63,9 +63,9 @@ template <typename Out, typename In, typename Begin>
 struct node : base {
     class impl;
 
-    node(sender<Begin>);
+    node(input<Begin>);
     // private
-    node(sender<Begin>, std::function<Out(In const &)>);
+    node(input<Begin>, std::function<Out(In const &)>);
     node(std::nullptr_t);
 
     [[nodiscard]] node<Out, In, Begin> perform(std::function<void(Out const &)>);
@@ -81,7 +81,7 @@ struct node : base {
 
     template <typename SubIn, typename SubBegin>
     [[nodiscard]] node<Out, Out, Begin> merge(node<Out, SubIn, SubBegin>);
-    [[nodiscard]] node<Out, Out, Begin> merge(sender<Out>);
+    [[nodiscard]] node<Out, Out, Begin> merge(input<Out>);
 
     template <typename SubOut, typename SubIn, typename SubBegin>
     [[nodiscard]] node<std::pair<opt_t<Out>, opt_t<SubOut>>, std::pair<opt_t<Out>, opt_t<SubOut>>, Begin> pair(

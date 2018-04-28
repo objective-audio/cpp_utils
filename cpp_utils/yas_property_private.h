@@ -213,7 +213,7 @@ typename property<T>::subject_t &property<T>::subject() {
 
 template <typename T>
 flow::node<T, T, T> property<T>::begin_flow() {
-    flow::sender<T> sender;
+    flow::input<T> sender;
 
     subject_t &subject = this->subject();
 
@@ -241,7 +241,7 @@ flow::node<T, T, T> property<T>::begin_flow() {
 
 template <typename T>
 typename property<T>::flow_context_t property<T>::begin_context_flow() {
-    flow::sender<change_context> sender;
+    flow::input<change_context> sender;
 
     subject_t &subject = this->subject();
 

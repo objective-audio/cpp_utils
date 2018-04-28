@@ -43,7 +43,7 @@ using namespace yas;
 - (void)test_sender_begin {
     int received = -1;
 
-    flow::sender<int> sender;
+    flow::input<int> sender;
 
     auto flow = sender.begin().perform([&received](int const &value) { received = value; }).end();
 
@@ -58,7 +58,7 @@ using namespace yas;
     int received1 = -1;
     int received2 = -1;
 
-    flow::sender<int> sender;
+    flow::input<int> sender;
 
     auto flow1 = sender.begin().perform([&received1](int const &value) { received1 = value; }).end();
     auto flow2 = sender.begin().perform([&received2](int const &value) { received2 = value; }).end();
@@ -82,7 +82,7 @@ using namespace yas;
 }
 
 - (void)test_convert {
-    flow::sender<int> sender;
+    flow::input<int> sender;
 
     int received = -1;
 
@@ -97,7 +97,7 @@ using namespace yas;
 }
 
 - (void)test_convert_type {
-    flow::sender<int> sender;
+    flow::input<int> sender;
 
     std::string received = "";
 
@@ -120,7 +120,7 @@ using namespace yas;
 }
 
 - (void)test_wait {
-    flow::sender<int> sender;
+    flow::input<int> sender;
 
     auto waitExp = [self expectationWithDescription:@"wait"];
 
@@ -149,7 +149,7 @@ using namespace yas;
 }
 
 - (void)test_sync {
-    flow::sender<int> sender;
+    flow::input<int> sender;
     sender.set_can_send_handler([]() { return true; });
     sender.set_send_handler([]() { return 100; });
 
@@ -162,11 +162,11 @@ using namespace yas;
 }
 
 - (void)test_sync_with_combined_sub_sender {
-    flow::sender<int> sender;
+    flow::input<int> sender;
     sender.set_can_send_handler([]() { return true; });
     sender.set_send_handler([]() { return 123; });
 
-    flow::sender<int> sub_sender;
+    flow::input<int> sub_sender;
     sub_sender.set_can_send_handler([]() { return true; });
     sub_sender.set_send_handler([]() { return 456; });
 
@@ -189,11 +189,11 @@ using namespace yas;
 }
 
 - (void)test_sync_with_merged_sub_sender {
-    flow::sender<int> sender;
+    flow::input<int> sender;
     sender.set_can_send_handler([]() { return true; });
     sender.set_send_handler([]() { return 78; });
 
-    flow::sender<int> sub_sender;
+    flow::input<int> sub_sender;
     sub_sender.set_can_send_handler([]() { return true; });
     sub_sender.set_send_handler([]() { return 90; });
 
@@ -215,7 +215,7 @@ using namespace yas;
 - (void)test_receive {
     std::string received = "";
 
-    flow::sender<int> sender;
+    flow::input<int> sender;
     flow::receiver<std::string> receiver{[&received](std::string const &value) { received = value; }};
 
     auto node = sender.begin()
@@ -231,7 +231,7 @@ using namespace yas;
 - (void)test_receive_by_end {
     std::string received = "";
 
-    flow::sender<int> sender;
+    flow::input<int> sender;
     flow::receiver<std::string> receiver{[&received](std::string const &value) { received = value; }};
 
     auto flow = sender.begin()
@@ -246,7 +246,7 @@ using namespace yas;
 - (void)test_guard {
     float received = -1.0f;
 
-    flow::sender<int> sender;
+    flow::input<int> sender;
 
     auto flow = sender.begin()
                     .convert<float>([](int const &value) { return value; })
@@ -266,8 +266,8 @@ using namespace yas;
 - (void)test_merge_by_sender {
     std::string received;
 
-    flow::sender<int> sender;
-    flow::sender<std::string> sub_sender;
+    flow::input<int> sender;
+    flow::input<std::string> sub_sender;
 
     auto flow = sender.begin()
                     .convert<std::string>([](int const &value) { return std::to_string(value); })
@@ -287,8 +287,8 @@ using namespace yas;
 - (void)test_merge_by_node {
     std::string received;
 
-    flow::sender<int> sender;
-    flow::sender<float> sub_sender;
+    flow::input<int> sender;
+    flow::input<float> sub_sender;
 
     auto sub_flow =
         sub_sender.begin().convert<std::string>([](float const &value) { return std::to_string(int(value)); });
@@ -311,7 +311,7 @@ using namespace yas;
 - (void)test_receiver {
     int received = -1;
 
-    flow::sender<int> sender;
+    flow::input<int> sender;
 
     flow::receiver<int> receiver{[&received](int const &value) { received = value; }};
 
@@ -323,8 +323,8 @@ using namespace yas;
 }
 
 - (void)test_pair {
-    flow::sender<int> main_sender;
-    flow::sender<std::string> sub_sender;
+    flow::input<int> main_sender;
+    flow::input<std::string> sub_sender;
 
     using opt_pair_t = std::pair<opt_t<int>, opt_t<std::string>>;
 
@@ -346,8 +346,8 @@ using namespace yas;
 }
 
 - (void)test_combine {
-    flow::sender<int> main_sender;
-    flow::sender<std::string> sub_sender;
+    flow::input<int> main_sender;
+    flow::input<std::string> sub_sender;
 
     using opt_pair_t = std::pair<opt_t<int>, opt_t<std::string>>;
 

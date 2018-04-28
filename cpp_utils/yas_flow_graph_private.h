@@ -44,7 +44,7 @@ struct flow::graph<State, Signal>::impl : base::impl, receivable<graph_next<Stat
             throw std::runtime_error("observer state exists.");
         }
 
-        flow::sender<Signal> sender;
+        flow::input<Signal> sender;
 
         flow::receivable<graph_next<State, Signal>> receivable = flow::receivable<graph_next<State, Signal>>{
             graph.impl_ptr<typename flow::receivable<graph_next<State, Signal>>::impl>()};

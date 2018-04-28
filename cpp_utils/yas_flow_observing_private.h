@@ -7,7 +7,7 @@
 namespace yas::flow {
 template <typename Key, typename T>
 flow::node<T, T, T> begin(subject<Key, T> &subject, Key const &key) {
-    flow::sender<T> sender;
+    flow::input<T> sender;
 
     auto observer = subject.make_value_observer(key, [weak_sender = to_weak(sender)](T const &value) mutable {
         if (auto sender = weak_sender.lock()) {
