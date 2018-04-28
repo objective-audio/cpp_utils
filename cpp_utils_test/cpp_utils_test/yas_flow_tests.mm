@@ -54,6 +54,21 @@ using namespace yas;
     XCTAssertEqual(received, 2);
 }
 
+- (void)test_sender_many_begin {
+    int received1 = -1;
+    int received2 = -1;
+
+    flow::sender<int> sender;
+
+    auto flow1 = sender.begin().perform([&received1](int const &value) { received1 = value; }).end();
+    auto flow2 = sender.begin().perform([&received2](int const &value) { received2 = value; }).end();
+    
+    sender.send_value(3);
+    
+    XCTAssertEqual(received1, 3);
+    XCTAssertEqual(received2, 3);
+}
+
 - (void)test_template_begin {
     int received = -1;
 
