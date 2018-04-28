@@ -38,10 +38,10 @@ struct sender : input_base {
 
     [[nodiscard]] node<T, T, T> begin();
 
-    sender_manageable &manageable();
+    input_manageable &manageable();
 
    private:
-    sender_manageable _manageable = nullptr;
+    input_manageable _manageable = nullptr;
 };
 
 template <typename T>

@@ -79,22 +79,22 @@ void observer<Begin>::sync() {
     impl_ptr<impl>()->_sender.send();
 }
 
-#pragma mark - sender_manageable
+#pragma mark - input_manageable
 
 template <typename P>
-void sender_manageable::push_handler(std::function<void(P const &)> handler) {
+void input_manageable::push_handler(std::function<void(P const &)> handler) {
     impl_ptr<impl>()->push_handler(std::move(handler));
 }
 
 template <typename P>
-std::function<void(P const &)> const &sender_manageable::handler(std::size_t const idx) const {
+std::function<void(P const &)> const &input_manageable::handler(std::size_t const idx) const {
     return impl_ptr<impl>()->handler(idx).template get<std::function<void(P const &)>>();
 }
 
 #pragma mark - sender
 
 template <typename T>
-struct sender<T>::impl : input_base::impl, sender_manageable::impl {
+struct sender<T>::impl : input_base::impl, input_manageable::impl {
     std::function<T(void)> _send_handler;
     std::function<bool(void)> _can_send_handler;
 
@@ -179,9 +179,9 @@ node<T, T, T> sender<T>::begin() {
 }
 
 template <typename T>
-sender_manageable &sender<T>::manageable() {
+input_manageable &sender<T>::manageable() {
     if (!this->_manageable) {
-        this->_manageable = sender_manageable{impl_ptr<sender_manageable::impl>()};
+        this->_manageable = input_manageable{impl_ptr<input_manageable::impl>()};
     }
     return this->_manageable;
 }
