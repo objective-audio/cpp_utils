@@ -56,8 +56,8 @@ struct input_manageable : protocol {
     }
     template <typename P>
     std::function<void(P const &)> const &handler(std::size_t const) const;
-    void add_sub_input(input_base sub_sender) {
-        impl_ptr<impl>()->add_sub_input(std::move(sub_sender));
+    void add_sub_input(input_base sug_input) {
+        impl_ptr<impl>()->add_sub_input(std::move(sug_input));
     }
 };
 }
