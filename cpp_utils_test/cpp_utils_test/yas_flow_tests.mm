@@ -43,13 +43,13 @@ using namespace yas;
 - (void)test_sender_begin {
     int received = -1;
 
-    flow::input<int> sender;
+    flow::input<int> input;
 
-    auto flow = sender.begin().perform([&received](int const &value) { received = value; }).end();
+    auto flow = input.begin().perform([&received](int const &value) { received = value; }).end();
 
     XCTAssertEqual(received, -1);
 
-    sender.send_value(2);
+    input.send_value(2);
 
     XCTAssertEqual(received, 2);
 }
@@ -58,13 +58,13 @@ using namespace yas;
     int received1 = -1;
     int received2 = -1;
 
-    flow::input<int> sender;
+    flow::input<int> input;
 
-    auto flow1 = sender.begin().perform([&received1](int const &value) { received1 = value; }).end();
-    auto flow2 = sender.begin().perform([&received2](int const &value) { received2 = value; }).end();
-    
-    sender.send_value(3);
-    
+    auto flow1 = input.begin().perform([&received1](int const &value) { received1 = value; }).end();
+    auto flow2 = input.begin().perform([&received2](int const &value) { received2 = value; }).end();
+
+    input.send_value(3);
+
     XCTAssertEqual(received1, 3);
     XCTAssertEqual(received2, 3);
 }
@@ -82,26 +82,26 @@ using namespace yas;
 }
 
 - (void)test_convert {
-    flow::input<int> sender;
+    flow::input<int> input;
 
     int received = -1;
 
-    auto flow = sender.begin()
+    auto flow = input.begin()
                     .convert([](int const &value) { return value + 1; })
                     .perform([&received](int const &value) { received = value; })
                     .end();
 
-    sender.send_value(10);
+    input.send_value(10);
 
     XCTAssertEqual(received, 11);
 }
 
 - (void)test_convert_type {
-    flow::input<int> sender;
+    flow::input<int> input;
 
     std::string received = "";
 
-    auto flow = sender.begin()
+    auto flow = input.begin()
                     .guard([](int const &) { return true; })
                     .convert<bool>([](int const &value) { return value > 0; })
                     .guard([](bool const &) { return true; })
@@ -110,17 +110,17 @@ using namespace yas;
                     .perform([&received](std::string const &value) { received = value; })
                     .end();
 
-    sender.send_value(0);
+    input.send_value(0);
 
     XCTAssertEqual(received, "false");
 
-    sender.send_value(1);
+    input.send_value(1);
 
     XCTAssertEqual(received, "true");
 }
 
 - (void)test_wait {
-    flow::input<int> sender;
+    flow::input<int> input;
 
     auto waitExp = [self expectationWithDescription:@"wait"];
 
@@ -128,7 +128,7 @@ using namespace yas;
     CFAbsoluteTime end = 0.0;
     std::string result = "";
 
-    auto flow = sender.begin()
+    auto flow = input.begin()
                     .perform([&begin](int const &value) { begin = CFAbsoluteTimeGetCurrent(); })
                     .wait(0.1)
                     .convert<std::string>([](int const &value) { return std::to_string(value); })
@@ -140,7 +140,7 @@ using namespace yas;
                     })
                     .end();
 
-    sender.send_value(10);
+    input.send_value(10);
 
     [self waitForExpectations:@[waitExp] timeout:5.0];
 
@@ -149,32 +149,32 @@ using namespace yas;
 }
 
 - (void)test_sync {
-    flow::input<int> sender;
-    sender.set_can_send_handler([]() { return true; });
-    sender.set_send_handler([]() { return 100; });
+    flow::input<int> input;
+    input.set_can_send_handler([]() { return true; });
+    input.set_send_handler([]() { return 100; });
 
     int received = -1;
 
-    auto flow = sender.begin().perform([&received](int const &value) { received = value; }).end();
+    auto flow = input.begin().perform([&received](int const &value) { received = value; }).end();
     flow.sync();
 
     XCTAssertEqual(received, 100);
 }
 
-- (void)test_sync_with_combined_sub_sender {
-    flow::input<int> sender;
-    sender.set_can_send_handler([]() { return true; });
-    sender.set_send_handler([]() { return 123; });
+- (void)test_sync_with_combined_sub_input {
+    flow::input<int> input;
+    input.set_can_send_handler([]() { return true; });
+    input.set_send_handler([]() { return 123; });
 
-    flow::input<int> sub_sender;
-    sub_sender.set_can_send_handler([]() { return true; });
-    sub_sender.set_send_handler([]() { return 456; });
+    flow::input<int> sub_input;
+    sub_input.set_can_send_handler([]() { return true; });
+    sub_input.set_send_handler([]() { return 456; });
 
     std::vector<std::pair<int, int>> received;
 
     auto flow =
-        sender.begin()
-            .combine(sub_sender.begin())
+        input.begin()
+            .combine(sub_input.begin())
             .guard([](auto const &pair) { return pair.first && pair.second; })
             .convert<std::pair<int, int>>([](auto const &pair) { return std::make_pair(*pair.first, *pair.second); })
             .perform([&received](auto const &pair) { received.emplace_back(pair); })
@@ -182,25 +182,25 @@ using namespace yas;
 
     flow.sync();
 
-    // 2つのsenderから来た値が両方揃ってから受け取った
+    // 2つのinputから来た値が両方揃ってから受け取った
     XCTAssertEqual(received.size(), 1);
     XCTAssertEqual(received.at(0).first, 123);
     XCTAssertEqual(received.at(0).second, 456);
 }
 
-- (void)test_sync_with_merged_sub_sender {
-    flow::input<int> sender;
-    sender.set_can_send_handler([]() { return true; });
-    sender.set_send_handler([]() { return 78; });
+- (void)test_sync_with_merged_sub_input {
+    flow::input<int> input;
+    input.set_can_send_handler([]() { return true; });
+    input.set_send_handler([]() { return 78; });
 
-    flow::input<int> sub_sender;
-    sub_sender.set_can_send_handler([]() { return true; });
-    sub_sender.set_send_handler([]() { return 90; });
+    flow::input<int> sub_input;
+    sub_input.set_can_send_handler([]() { return true; });
+    sub_input.set_send_handler([]() { return 90; });
 
     std::vector<int> received;
 
-    auto flow = sender.begin()
-                    .merge(sub_sender.begin())
+    auto flow = input.begin()
+                    .merge(sub_input.begin())
                     .perform([&received](int const &value) { received.emplace_back(value); })
                     .end();
 
@@ -215,15 +215,15 @@ using namespace yas;
 - (void)test_receive {
     std::string received = "";
 
-    flow::input<int> sender;
+    flow::input<int> input;
     flow::receiver<std::string> receiver{[&received](std::string const &value) { received = value; }};
 
-    auto node = sender.begin()
+    auto node = input.begin()
                     .convert<std::string>([](int const &value) { return std::to_string(value); })
                     .receive(receiver.receivable())
                     .end();
 
-    sender.send_value(3);
+    input.send_value(3);
 
     XCTAssertEqual(received, "3");
 }
@@ -231,14 +231,14 @@ using namespace yas;
 - (void)test_receive_by_end {
     std::string received = "";
 
-    flow::input<int> sender;
+    flow::input<int> input;
     flow::receiver<std::string> receiver{[&received](std::string const &value) { received = value; }};
 
-    auto flow = sender.begin()
+    auto flow = input.begin()
                     .convert<std::string>([](int const &value) { return std::to_string(value); })
                     .end(receiver.receivable());
 
-    sender.send_value(4);
+    input.send_value(4);
 
     XCTAssertEqual(received, "4");
 }
@@ -246,40 +246,40 @@ using namespace yas;
 - (void)test_guard {
     float received = -1.0f;
 
-    flow::input<int> sender;
+    flow::input<int> input;
 
-    auto flow = sender.begin()
+    auto flow = input.begin()
                     .convert<float>([](int const &value) { return value; })
                     .guard([](float const &value) { return value > 2.5f; })
                     .perform([&received](float const &value) { received = value; })
                     .end();
 
-    sender.send_value(2);
+    input.send_value(2);
 
     XCTAssertEqual(received, -1.0f);
 
-    sender.send_value(3);
+    input.send_value(3);
 
     XCTAssertEqual(received, 3.0f);
 }
 
-- (void)test_merge_by_sender {
+- (void)test_merge_by_input {
     std::string received;
 
-    flow::input<int> sender;
-    flow::input<std::string> sub_sender;
+    flow::input<int> input;
+    flow::input<std::string> sub_input;
 
-    auto flow = sender.begin()
+    auto flow = input.begin()
                     .convert<std::string>([](int const &value) { return std::to_string(value); })
-                    .merge(sub_sender)
+                    .merge(sub_input)
                     .perform([&received](std::string const &value) { received = value; })
                     .end();
 
-    sender.send_value(1);
+    input.send_value(1);
 
     XCTAssertEqual(received, "1");
 
-    sub_sender.send_value("test_text_1");
+    sub_input.send_value("test_text_1");
 
     XCTAssertEqual(received, "test_text_1");
 }
@@ -287,23 +287,23 @@ using namespace yas;
 - (void)test_merge_by_node {
     std::string received;
 
-    flow::input<int> sender;
-    flow::input<float> sub_sender;
+    flow::input<int> input;
+    flow::input<float> sub_input;
 
     auto sub_flow =
-        sub_sender.begin().convert<std::string>([](float const &value) { return std::to_string(int(value)); });
+        sub_input.begin().convert<std::string>([](float const &value) { return std::to_string(int(value)); });
 
-    auto flow = sender.begin()
+    auto flow = input.begin()
                     .convert<std::string>([](int const &value) { return std::to_string(value); })
                     .merge(sub_flow)
                     .perform([&received](std::string const &value) { received = value; })
                     .end();
 
-    sender.send_value(10);
+    input.send_value(10);
 
     XCTAssertEqual(received, "10");
 
-    sub_sender.send_value(20.0f);
+    sub_input.send_value(20.0f);
 
     XCTAssertEqual(received, "20");
 }
@@ -311,58 +311,58 @@ using namespace yas;
 - (void)test_receiver {
     int received = -1;
 
-    flow::input<int> sender;
+    flow::input<int> input;
 
     flow::receiver<int> receiver{[&received](int const &value) { received = value; }};
 
-    auto flow = sender.begin().end(receiver.receivable());
+    auto flow = input.begin().end(receiver.receivable());
 
-    sender.send_value(100);
+    input.send_value(100);
 
     XCTAssertEqual(received, 100);
 }
 
 - (void)test_pair {
-    flow::input<int> main_sender;
-    flow::input<std::string> sub_sender;
+    flow::input<int> main_input;
+    flow::input<std::string> sub_input;
 
     using opt_pair_t = std::pair<opt_t<int>, opt_t<std::string>>;
 
     opt_pair_t received;
 
-    auto sub_flow = sub_sender.begin();
+    auto sub_flow = sub_input.begin();
     auto main_flow =
-        main_sender.begin().pair(sub_flow).perform([&received](auto const &value) { received = value; }).end();
+        main_input.begin().pair(sub_flow).perform([&received](auto const &value) { received = value; }).end();
 
-    main_sender.send_value(1);
+    main_input.send_value(1);
 
     XCTAssertEqual(*received.first, 1);
     XCTAssertFalse(!!received.second);
 
-    sub_sender.send_value("test_text");
+    sub_input.send_value("test_text");
 
     XCTAssertFalse(!!received.first);
     XCTAssertEqual(*received.second, "test_text");
 }
 
 - (void)test_combine {
-    flow::input<int> main_sender;
-    flow::input<std::string> sub_sender;
+    flow::input<int> main_input;
+    flow::input<std::string> sub_input;
 
     using opt_pair_t = std::pair<opt_t<int>, opt_t<std::string>>;
 
     opt_pair_t received;
 
-    auto sub_flow = sub_sender.begin();
+    auto sub_flow = sub_input.begin();
     auto main_flow =
-        main_sender.begin().combine(sub_flow).perform([&received](auto const &value) { received = value; }).end();
+        main_input.begin().combine(sub_flow).perform([&received](auto const &value) { received = value; }).end();
 
-    main_sender.send_value(1);
+    main_input.send_value(1);
 
     XCTAssertEqual(*received.first, 1);
     XCTAssertFalse(!!received.second);
 
-    sub_sender.send_value("test_text");
+    sub_input.send_value("test_text");
 
     XCTAssertEqual(*received.first, 1);
     XCTAssertEqual(*received.second, "test_text");
