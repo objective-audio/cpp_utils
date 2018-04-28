@@ -4,27 +4,14 @@
 
 #pragma once
 
-#include "yas_base.h"
-#include "yas_protocol.h"
 #include "yas_any.h"
 #include "yas_types.h"
+#include "yas_flow_protocol.h"
 #include <functional>
 
 namespace yas::flow {
 template <typename Out, typename In, typename Begin>
 struct node;
-
-template <typename T>
-struct receivable : protocol {
-    struct impl : protocol::impl {
-        virtual void receive_value(T const &) = 0;
-    };
-
-    explicit receivable(std::shared_ptr<impl> impl);
-    receivable(std::nullptr_t);
-
-    void receive_value(T const &);
-};
 
 template <typename T>
 struct receiver : base {
@@ -34,22 +21,6 @@ struct receiver : base {
     receiver(std::nullptr_t);
 
     flow::receivable<T> receivable();
-};
-
-struct sender_base : base {
-    struct impl : base::impl {
-        virtual void send() = 0;
-    };
-
-    sender_base(std::shared_ptr<impl> &&ptr) : base(std::move(ptr)) {
-    }
-
-    sender_base(std::nullptr_t) : base(nullptr) {
-    }
-
-    void send() {
-        impl_ptr<impl>()->send();
-    }
 };
 
 template <typename T>
@@ -65,18 +36,16 @@ struct sender : sender_base {
     [[nodiscard]] bool can_send() const;
     void set_send_handler(std::function<T(void)>);
 
-    node<T, T, T> begin();
+    [[nodiscard]] node<T, T, T> begin();
 
-    template <typename P>
-    void push_handler(std::function<void(P const &)>);
-    std::size_t handlers_size() const;
-    template <typename P>
-    std::function<void(P const &)> const &handler(std::size_t const) const;
-    void add_sub_sender(sender_base);
+    sender_manageable &manageable();
+
+   private:
+    sender_manageable _manageable = nullptr;
 };
 
 template <typename T>
-node<T, T, T> begin();
+[[nodiscard]] node<T, T, T> begin();
 
 template <typename Begin>
 struct observer : base {

@@ -79,14 +79,24 @@ void observer<Begin>::sync() {
     impl_ptr<impl>()->_sender.send();
 }
 
+#pragma mark - sender_manageable
+
+template <typename P>
+void sender_manageable::push_handler(std::function<void(P const &)> handler) {
+    impl_ptr<impl>()->push_handler(std::move(handler));
+}
+
+template <typename P>
+std::function<void(P const &)> const &sender_manageable::handler(std::size_t const idx) const {
+    return impl_ptr<impl>()->handler(idx).template get<std::function<void(P const &)>>();
+}
+
 #pragma mark - sender
 
 template <typename T>
-struct sender<T>::impl : sender_base::impl {
-    std::vector<yas::any> _handlers;
-    std::function<bool(void)> _can_send_handler;
+struct sender<T>::impl : sender_base::impl, sender_manageable::impl {
     std::function<T(void)> _send_handler;
-    std::vector<sender_base> _sub_senders;
+    std::function<bool(void)> _can_send_handler;
 
     void send_value(T const &value) {
         if (this->_handlers.size() > 0) {
@@ -113,6 +123,26 @@ struct sender<T>::impl : sender_base::impl {
             sub_sender.send();
         }
     }
+
+    void push_handler(yas::any &&handler) override {
+        this->_handlers.emplace_back(std::move(handler));
+    }
+
+    yas::any handler(std::size_t const idx) override {
+        return this->_handlers.at(idx);
+    }
+
+    std::size_t handlers_size() override {
+        return this->_handlers.size();
+    }
+
+    void add_sub_sender(sender_base &&sub_sender) override {
+        this->_sub_senders.emplace_back(std::move(sub_sender));
+    }
+
+   private:
+    std::vector<yas::any> _handlers;
+    std::vector<sender_base> _sub_senders;
 };
 
 template <typename T>
@@ -149,25 +179,11 @@ node<T, T, T> sender<T>::begin() {
 }
 
 template <typename T>
-template <typename P>
-void sender<T>::push_handler(std::function<void(P const &)> handler) {
-    impl_ptr<impl>()->_handlers.push_back(handler);
-}
-
-template <typename T>
-std::size_t sender<T>::handlers_size() const {
-    return impl_ptr<impl>()->_handlers.size();
-}
-
-template <typename T>
-template <typename P>
-std::function<void(P const &)> const &sender<T>::handler(std::size_t const idx) const {
-    return impl_ptr<impl>()->_handlers.at(idx).template get<std::function<void(P const &)>>();
-}
-
-template <typename T>
-void sender<T>::add_sub_sender(sender_base sub_sender) {
-    impl_ptr<impl>()->_sub_senders.emplace_back(std::move(sub_sender));
+sender_manageable &sender<T>::manageable() {
+    if (!this->_manageable) {
+        this->_manageable = sender_manageable{impl_ptr<sender_manageable::impl>()};
+    }
+    return this->_manageable;
 }
 
 template <typename T>
@@ -222,15 +238,15 @@ node<Out, Out, Begin> node<Out, In, Begin>::guard(std::function<bool(Out const &
     auto imp = impl_ptr<impl>();
     flow::sender<Begin> &sender = imp->_sender;
     auto weak_sender = to_weak(sender);
-    std::size_t const next_idx = sender.handlers_size() + 1;
+    std::size_t const next_idx = sender.manageable().handlers_size() + 1;
 
-    sender.template push_handler<In>([
+    sender.manageable().template push_handler<In>([
         handler = imp->_handler, weak_sender, next_idx, guard_handler = std::move(guard_handler)
     ](In const &value) mutable {
         auto const result = handler(value);
         if (guard_handler(result)) {
             if (auto sender = weak_sender.lock()) {
-                sender.template handler<Out>(next_idx)(result);
+                sender.manageable().template handler<Out>(next_idx)(result);
             }
         }
     });
@@ -257,14 +273,14 @@ node<Out, Out, Begin> node<Out, In, Begin>::wait(double const time_interval) {
     auto imp = impl_ptr<impl>();
     flow::sender<Begin> &sender = imp->_sender;
     auto weak_sender = to_weak(sender);
-    std::size_t const next_idx = sender.handlers_size() + 1;
+    std::size_t const next_idx = sender.manageable().handlers_size() + 1;
 
-    sender.template push_handler<In>([
+    sender.manageable().template push_handler<In>([
         handler = imp->_handler, time_interval, weak_sender, next_idx, timer = yas::timer{nullptr}
     ](In const &value) mutable {
         timer = yas::timer(time_interval, false, [value = handler(value), weak_sender, next_idx]() {
             if (auto sender = weak_sender.lock()) {
-                sender.template handler<Out>(next_idx)(value);
+                sender.manageable().template handler<Out>(next_idx)(value);
             }
         });
     });
@@ -278,25 +294,26 @@ node<Out, Out, Begin> node<Out, In, Begin>::merge(node<Out, SubIn, SubBegin> sub
     auto imp = impl_ptr<impl>();
     flow::sender<Begin> &sender = imp->_sender;
     auto weak_sender = to_weak(sender);
-    std::size_t const next_idx = sender.handlers_size() + 1;
+    std::size_t const next_idx = sender.manageable().handlers_size() + 1;
 
     auto sub_imp = sub_node.template impl_ptr<typename node<Out, SubIn, SubBegin>::impl>();
     auto &sub_sender = sub_imp->_sender;
 
-    sub_sender.template push_handler<SubIn>(
+    sub_sender.manageable().template push_handler<SubIn>(
         [handler = sub_imp->_handler, weak_sender, next_idx](SubIn const &value) mutable {
             if (auto sender = weak_sender.lock()) {
-                sender.template handler<Out>(next_idx)(handler(value));
+                sender.manageable().template handler<Out>(next_idx)(handler(value));
             }
         });
 
-    sender.template push_handler<In>([handler = imp->_handler, weak_sender, next_idx](In const &value) mutable {
-        if (auto sender = weak_sender.lock()) {
-            sender.template handler<Out>(next_idx)(handler(value));
-        }
-    });
+    sender.manageable().template push_handler<In>(
+        [handler = imp->_handler, weak_sender, next_idx](In const &value) mutable {
+            if (auto sender = weak_sender.lock()) {
+                sender.manageable().template handler<Out>(next_idx)(handler(value));
+            }
+        });
 
-    sender.add_sub_sender(std::move(sub_sender));
+    sender.manageable().add_sub_sender(std::move(sub_sender));
 
     return node<Out, Out, Begin>(sender, [](Out const &value) { return value; });
 }
@@ -315,25 +332,26 @@ node<Out, In, Begin>::pair(node<SubOut, SubIn, SubBegin> sub_node) {
     auto imp = impl_ptr<impl>();
     flow::sender<Begin> &sender = imp->_sender;
     auto weak_sender = to_weak(sender);
-    std::size_t const next_idx = sender.handlers_size() + 1;
+    std::size_t const next_idx = sender.manageable().handlers_size() + 1;
 
     auto sub_imp = sub_node.template impl_ptr<typename node<SubOut, SubIn, SubBegin>::impl>();
     auto &sub_sender = sub_imp->_sender;
 
-    sub_sender.template push_handler<SubIn>(
+    sub_sender.manageable().template push_handler<SubIn>(
         [handler = sub_imp->_handler, weak_sender, next_idx](SubIn const &value) mutable {
             if (auto sender = weak_sender.lock()) {
-                sender.template handler<opt_pair_t>(next_idx)(opt_pair_t{nullopt, handler(value)});
+                sender.manageable().template handler<opt_pair_t>(next_idx)(opt_pair_t{nullopt, handler(value)});
             }
         });
 
-    sender.template push_handler<In>([handler = imp->_handler, weak_sender, next_idx](In const &value) mutable {
-        if (auto sender = weak_sender.lock()) {
-            sender.template handler<opt_pair_t>(next_idx)(opt_pair_t(handler(value), nullopt));
-        }
-    });
+    sender.manageable().template push_handler<In>(
+        [handler = imp->_handler, weak_sender, next_idx](In const &value) mutable {
+            if (auto sender = weak_sender.lock()) {
+                sender.manageable().template handler<opt_pair_t>(next_idx)(opt_pair_t(handler(value), nullopt));
+            }
+        });
 
-    sender.add_sub_sender(std::move(sub_sender));
+    sender.manageable().add_sub_sender(std::move(sub_sender));
 
     return node<opt_pair_t, opt_pair_t, Begin>(sender, [](opt_pair_t const &value) { return value; });
 }
@@ -358,7 +376,9 @@ node<std::pair<opt_t<Out>, opt_t<SubOut>>, std::pair<opt_t<Out>, opt_t<SubOut>>,
 template <typename Out, typename In, typename Begin>
 observer<Begin> node<Out, In, Begin>::end() {
     auto &sender = impl_ptr<impl>()->_sender;
-    sender.template push_handler<In>([handler = impl_ptr<impl>()->_handler](In const &value) { handler(value); });
+    sender.manageable().template push_handler<In>([handler = impl_ptr<impl>()->_handler](In const &value) {
+        handler(value);
+    });
     return observer<Begin>(std::move(sender));
 }
 
