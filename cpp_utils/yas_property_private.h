@@ -218,9 +218,9 @@ flow::node<T, T, T> property<T>::begin_flow() {
     subject_t &subject = this->subject();
 
     auto observer = subject.make_value_observer(property_method::did_change,
-                                                [weak_sender = to_weak(input)](change_context const &context) mutable {
-                                                    if (auto sender = weak_sender.lock()) {
-                                                        sender.send_value(context.new_value);
+                                                [weak_input = to_weak(input)](change_context const &context) mutable {
+                                                    if (auto input = weak_input.lock()) {
+                                                        input.send_value(context.new_value);
                                                     }
                                                 });
 
@@ -241,22 +241,22 @@ flow::node<T, T, T> property<T>::begin_flow() {
 
 template <typename T>
 typename property<T>::flow_context_t property<T>::begin_context_flow() {
-    flow::input<change_context> sender;
+    flow::input<change_context> input;
 
     subject_t &subject = this->subject();
 
     auto observer = subject.make_value_observer(property_method::did_change,
-                                                [weak_sender = to_weak(sender)](change_context const &context) mutable {
-                                                    if (auto sender = weak_sender.lock()) {
-                                                        sender.send_value(context);
+                                                [weak_input = to_weak(input)](change_context const &context) mutable {
+                                                    if (auto input = weak_input.lock()) {
+                                                        input.send_value(context);
                                                     }
                                                 });
 
     auto weak_property = to_weak(*this);
 
-    sender.set_can_send_handler([weak_property]() { return !!weak_property; });
+    input.set_can_send_handler([weak_property]() { return !!weak_property; });
 
-    sender.set_send_handler([weak_property, observer]() {
+    input.set_send_handler([weak_property, observer]() {
         if (auto property = weak_property.lock()) {
             auto const &value = property.value();
             return change_context{.new_value = value, .old_value = value, .property = property};
@@ -265,7 +265,7 @@ typename property<T>::flow_context_t property<T>::begin_context_flow() {
         }
     });
 
-    return sender.begin();
+    return input.begin();
 }
 
 template <typename T>
