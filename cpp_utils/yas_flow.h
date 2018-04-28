@@ -81,7 +81,6 @@ struct node : base {
 
     template <typename SubIn, typename SubBegin>
     [[nodiscard]] node<Out, Out, Begin> merge(node<Out, SubIn, SubBegin>);
-    [[nodiscard]] node<Out, Out, Begin> merge(input<Out>);
 
     template <typename SubOut, typename SubIn, typename SubBegin>
     [[nodiscard]] node<std::pair<opt_t<Out>, opt_t<SubOut>>, std::pair<opt_t<Out>, opt_t<SubOut>>, Begin> pair(

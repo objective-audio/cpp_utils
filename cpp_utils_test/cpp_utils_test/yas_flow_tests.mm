@@ -263,28 +263,7 @@ using namespace yas;
     XCTAssertEqual(received, 3.0f);
 }
 
-- (void)test_merge_by_input {
-    std::string received;
-
-    flow::input<int> input;
-    flow::input<std::string> sub_input;
-
-    auto flow = input.begin()
-                    .convert<std::string>([](int const &value) { return std::to_string(value); })
-                    .merge(sub_input)
-                    .perform([&received](std::string const &value) { received = value; })
-                    .end();
-
-    input.send_value(1);
-
-    XCTAssertEqual(received, "1");
-
-    sub_input.send_value("test_text_1");
-
-    XCTAssertEqual(received, "test_text_1");
-}
-
-- (void)test_merge_by_node {
+- (void)test_merge {
     std::string received;
 
     flow::input<int> input;

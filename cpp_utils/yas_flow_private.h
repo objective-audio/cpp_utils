@@ -319,11 +319,6 @@ node<Out, Out, Begin> node<Out, In, Begin>::merge(node<Out, SubIn, SubBegin> sub
 }
 
 template <typename Out, typename In, typename Begin>
-node<Out, Out, Begin> node<Out, In, Begin>::merge(input<Out> sub_input) {
-    return this->merge(sub_input.begin());
-}
-
-template <typename Out, typename In, typename Begin>
 template <typename SubOut, typename SubIn, typename SubBegin>
 [[nodiscard]] node<std::pair<opt_t<Out>, opt_t<SubOut>>, std::pair<opt_t<Out>, opt_t<SubOut>>, Begin>
 node<Out, In, Begin>::pair(node<SubOut, SubIn, SubBegin> sub_node) {
