@@ -54,7 +54,7 @@ struct observer : base {
     observer(input<Begin>);
     observer(std::nullptr_t);
 
-    flow::input<Begin> &sender();
+    flow::input<Begin> &input();
 
     void sync();
 };

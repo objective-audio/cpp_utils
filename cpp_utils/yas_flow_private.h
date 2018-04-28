@@ -70,7 +70,7 @@ observer<Begin>::observer(std::nullptr_t) : base(nullptr) {
 }
 
 template <typename Begin>
-flow::input<Begin> &observer<Begin>::sender() {
+flow::input<Begin> &observer<Begin>::input() {
     return impl_ptr<impl>()->_sender;
 }
 

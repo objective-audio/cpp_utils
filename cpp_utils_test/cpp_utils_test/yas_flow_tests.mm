@@ -76,7 +76,7 @@ using namespace yas;
 
     XCTAssertEqual(received, -1);
 
-    flow.sender().send_value(2);
+    flow.input().send_value(2);
 
     XCTAssertEqual(received, 2);
 }
