@@ -213,12 +213,12 @@ typename property<T>::subject_t &property<T>::subject() {
 
 template <typename T>
 flow::node<T, T, T> property<T>::begin_flow() {
-    flow::input<T> sender;
+    flow::input<T> input;
 
     subject_t &subject = this->subject();
 
     auto observer = subject.make_value_observer(property_method::did_change,
-                                                [weak_sender = to_weak(sender)](change_context const &context) mutable {
+                                                [weak_sender = to_weak(input)](change_context const &context) mutable {
                                                     if (auto sender = weak_sender.lock()) {
                                                         sender.send_value(context.new_value);
                                                     }
@@ -226,9 +226,9 @@ flow::node<T, T, T> property<T>::begin_flow() {
 
     auto weak_property = to_weak(*this);
 
-    sender.set_can_send_handler([weak_property]() { return !!weak_property; });
+    input.set_can_send_handler([weak_property]() { return !!weak_property; });
 
-    sender.set_send_handler([weak_property, observer]() {
+    input.set_send_handler([weak_property, observer]() {
         if (auto property = weak_property.lock()) {
             return property.value();
         } else {
@@ -236,7 +236,7 @@ flow::node<T, T, T> property<T>::begin_flow() {
         }
     });
 
-    return sender.begin();
+    return input.begin();
 }
 
 template <typename T>

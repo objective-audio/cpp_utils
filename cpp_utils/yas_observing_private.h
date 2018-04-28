@@ -31,15 +31,15 @@ class observer<Key, T>::impl : public base::impl {
             }
         }
 
-        void call_handler(Key const &key, T const &sender) const {
+        void call_handler(Key const &key, T const &input) const {
             if (functions.count(key) > 0) {
-                functions.at(key)(observer<Key, T>::change_context{.key = key, .value = sender});
+                functions.at(key)(observer<Key, T>::change_context{.key = key, .value = input});
             }
         }
 
-        void call_wild_card_handler(Key const &key, T const &sender) const {
+        void call_wild_card_handler(Key const &key, T const &input) const {
             if (functions.count(nullopt) > 0) {
-                functions.at(nullopt)(observer<Key, T>::change_context{.key = key, .value = sender});
+                functions.at(nullopt)(observer<Key, T>::change_context{.key = key, .value = input});
             }
         }
 
