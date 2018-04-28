@@ -191,7 +191,20 @@ node<T, T, T> begin() {
     return flow::input<T>{}.begin();
 }
 
-#pragma mark -
+#pragma mark - sender
+
+template <typename T>
+struct sender<T>::impl : base::impl {};
+
+template <typename T>
+sender<T>::sender() : base(std::make_shared<impl>()) {
+}
+
+template <typename T>
+sender<T>::sender(std::nullptr_t) : base(nullptr) {
+}
+
+#pragma mark - node
 
 template <typename Out, typename In, typename Begin>
 struct node<Out, In, Begin>::impl : base::impl {

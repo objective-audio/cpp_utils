@@ -21,6 +21,14 @@ struct receiver : base {
 };
 
 template <typename T>
+struct sender : base {
+    struct impl;
+
+    sender();
+    sender(std::nullptr_t);
+};
+
+template <typename T>
 [[nodiscard]] node<T, T, T> begin();
 
 template <typename Begin>
