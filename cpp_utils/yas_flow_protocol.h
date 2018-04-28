@@ -8,6 +8,9 @@
 #include "yas_protocol.h"
 
 namespace yas::flow {
+template <typename Out, typename In, typename Begin>
+struct node;
+
 template <typename T>
 struct receivable : protocol {
     struct impl : protocol::impl {
@@ -59,5 +62,26 @@ struct input_manageable : protocol {
     void add_sub_input(input_base sug_input) {
         impl_ptr<impl>()->add_sub_input(std::move(sug_input));
     }
+};
+
+template <typename T>
+struct input : input_base {
+    class impl;
+
+    input();
+    input(std::nullptr_t);
+
+    void send_value(T const &);
+
+    void set_can_send_handler(std::function<bool(void)>);
+    [[nodiscard]] bool can_send() const;
+    void set_send_handler(std::function<T(void)>);
+
+    [[nodiscard]] node<T, T, T> begin();
+
+    input_manageable &manageable();
+
+   private:
+    input_manageable _manageable = nullptr;
 };
 }

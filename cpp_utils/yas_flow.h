@@ -10,9 +10,6 @@
 #include <functional>
 
 namespace yas::flow {
-template <typename Out, typename In, typename Begin>
-struct node;
-
 template <typename T>
 struct receiver : base {
     struct impl;
@@ -21,27 +18,6 @@ struct receiver : base {
     receiver(std::nullptr_t);
 
     flow::receivable<T> receivable();
-};
-
-template <typename T>
-struct input : input_base {
-    class impl;
-
-    input();
-    input(std::nullptr_t);
-
-    void send_value(T const &);
-
-    void set_can_send_handler(std::function<bool(void)>);
-    [[nodiscard]] bool can_send() const;
-    void set_send_handler(std::function<T(void)>);
-
-    [[nodiscard]] node<T, T, T> begin();
-
-    input_manageable &manageable();
-
-   private:
-    input_manageable _manageable = nullptr;
 };
 
 template <typename T>
