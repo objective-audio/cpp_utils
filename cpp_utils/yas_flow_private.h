@@ -94,7 +94,7 @@ std::function<void(P const &)> const &sender_manageable::handler(std::size_t con
 #pragma mark - sender
 
 template <typename T>
-struct sender<T>::impl : sender_base::impl, sender_manageable::impl {
+struct sender<T>::impl : input_base::impl, sender_manageable::impl {
     std::function<T(void)> _send_handler;
     std::function<bool(void)> _can_send_handler;
 
@@ -136,21 +136,21 @@ struct sender<T>::impl : sender_base::impl, sender_manageable::impl {
         return this->_handlers.size();
     }
 
-    void add_sub_sender(sender_base &&sub_sender) override {
+    void add_sub_sender(input_base &&sub_sender) override {
         this->_sub_senders.emplace_back(std::move(sub_sender));
     }
 
    private:
     std::vector<yas::any> _handlers;
-    std::vector<sender_base> _sub_senders;
+    std::vector<input_base> _sub_senders;
 };
 
 template <typename T>
-sender<T>::sender() : sender_base(std::make_shared<impl>()) {
+sender<T>::sender() : input_base(std::make_shared<impl>()) {
 }
 
 template <typename T>
-sender<T>::sender(std::nullptr_t) : sender_base(nullptr) {
+sender<T>::sender(std::nullptr_t) : input_base(nullptr) {
 }
 
 template <typename T>

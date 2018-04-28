@@ -24,7 +24,7 @@ struct receiver : base {
 };
 
 template <typename T>
-struct sender : sender_base {
+struct sender : input_base {
     class impl;
 
     sender();

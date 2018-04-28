@@ -20,15 +20,15 @@ struct receivable : protocol {
     void receive_value(T const &);
 };
 
-struct sender_base : base {
+struct input_base : base {
     struct impl : base::impl {
         virtual void send() = 0;
     };
 
-    sender_base(std::shared_ptr<impl> &&ptr) : base(std::move(ptr)) {
+    input_base(std::shared_ptr<impl> &&ptr) : base(std::move(ptr)) {
     }
 
-    sender_base(std::nullptr_t) : base(nullptr) {
+    input_base(std::nullptr_t) : base(nullptr) {
     }
 
     void send() {
@@ -41,7 +41,7 @@ struct sender_manageable : protocol {
         virtual void push_handler(yas::any &&) = 0;
         virtual yas::any handler(std::size_t const) = 0;
         virtual std::size_t handlers_size() = 0;
-        virtual void add_sub_sender(sender_base &&) = 0;
+        virtual void add_sub_sender(input_base &&) = 0;
     };
 
     sender_manageable(std::shared_ptr<impl> ptr) : protocol(std::move(ptr)) {
@@ -56,7 +56,7 @@ struct sender_manageable : protocol {
     }
     template <typename P>
     std::function<void(P const &)> const &handler(std::size_t const) const;
-    void add_sub_sender(sender_base sub_sender) {
+    void add_sub_sender(input_base sub_sender) {
         impl_ptr<impl>()->add_sub_sender(std::move(sub_sender));
     }
 };
