@@ -41,7 +41,7 @@ struct input_manageable : protocol {
         virtual void push_handler(yas::any &&) = 0;
         virtual yas::any handler(std::size_t const) = 0;
         virtual std::size_t handlers_size() = 0;
-        virtual void add_sub_sender(input_base &&) = 0;
+        virtual void add_sub_input(input_base &&) = 0;
     };
 
     input_manageable(std::shared_ptr<impl> ptr) : protocol(std::move(ptr)) {
@@ -56,8 +56,8 @@ struct input_manageable : protocol {
     }
     template <typename P>
     std::function<void(P const &)> const &handler(std::size_t const) const;
-    void add_sub_sender(input_base sub_sender) {
-        impl_ptr<impl>()->add_sub_sender(std::move(sub_sender));
+    void add_sub_input(input_base sub_sender) {
+        impl_ptr<impl>()->add_sub_input(std::move(sub_sender));
     }
 };
 }
