@@ -12,7 +12,7 @@
 namespace yas::flow {
 template <typename T>
 struct receiver : base {
-    struct impl;
+    class impl;
 
     receiver(std::function<void(T const &)>);
     receiver(std::nullptr_t);
@@ -22,7 +22,7 @@ struct receiver : base {
 
 template <typename T>
 struct sender : base {
-    struct impl;
+    class impl;
 
     sender();
     sender(std::nullptr_t);
