@@ -101,7 +101,7 @@ struct input<T>::impl : input_base::impl, input_flowable::impl {
     std::function<bool(void)> _can_send_handler;
 
     impl() {
-#warning todo なくす
+#warning todo sender使うようにしたらなくす
     }
 
     impl(weak<sender<T>> &&weak_sender) : _weak_sender(std::move(weak_sender)) {
@@ -116,6 +116,10 @@ struct input<T>::impl : input_base::impl, input_flowable::impl {
     }
 
     bool can_send() {
+        if (auto sender = this->_weak_sender.lock()) {
+            return sender.flowable().can_pull();
+        }
+#warning todo sender使うようにしたらなくす
         if (auto handler = this->_can_send_handler) {
             return handler();
         } else {
@@ -123,9 +127,15 @@ struct input<T>::impl : input_base::impl, input_flowable::impl {
         }
     }
 
+#warning todo pullに変える？
     void send() override {
-        if (this->can_send()) {
-            this->send_value(this->_send_handler());
+        if (auto sender = this->_weak_sender.lock()) {
+            sender.flowable().pull(this->identifier());
+        } else {
+#warning todo sender使うようにしたらなくす
+            if (this->can_send()) {
+                this->send_value(this->_send_handler());
+            }
         }
 
         for (auto &sub_input : this->_sub_inputs) {
@@ -262,8 +272,8 @@ struct sender<T>::impl : base::impl, sender_flowable<T>::impl {
         }
     }
 
-    void erase_input(std::uintptr_t const identifier) override {
-        this->inputs.erase(identifier);
+    void erase_input(std::uintptr_t const key) override {
+        this->inputs.erase(key);
     }
 
     bool can_pull() override {
@@ -274,9 +284,9 @@ struct sender<T>::impl : base::impl, sender_flowable<T>::impl {
         }
     }
 
-    void pull(std::uintptr_t const input_id) override {
+    void pull(std::uintptr_t const key) override {
         if (this->can_pull()) {
-            if (auto input = this->inputs.at(input_id).lock()) {
+            if (auto input = this->inputs.at(key).lock()) {
                 input.send_value(this->_pull_handler());
             }
         }
