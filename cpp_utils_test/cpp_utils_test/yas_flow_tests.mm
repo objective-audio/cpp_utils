@@ -82,16 +82,16 @@ using namespace yas;
 }
 
 - (void)test_convert {
-    flow::input<int> input;
+    flow::sender<int> sender;
 
     int received = -1;
 
-    auto flow = input.begin()
+    auto flow = sender.begin()
                     .convert([](int const &value) { return value + 1; })
                     .perform([&received](int const &value) { received = value; })
                     .end();
 
-    input.send_value(10);
+    sender.send_value(10);
 
     XCTAssertEqual(received, 11);
 }
