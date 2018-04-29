@@ -245,9 +245,9 @@ struct sender<T>::impl : base::impl {
         }
     }
 
-    void send(std::uintptr_t const input_id) {
+    void pull(std::uintptr_t const input_id) {
 #warning input側で処理した方が良い？
-        if (this->can_send()) {
+        if (this->can_pull()) {
             if (auto input = this->inputs.at(input_id).lock()) {
                 input.send_value(this->_pull_handler());
             }
