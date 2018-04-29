@@ -27,7 +27,7 @@ struct receivable : protocol {
 
 struct input_base : base {
     struct impl : base::impl {
-        virtual void send() = 0;
+        virtual void sync() = 0;
     };
 
     input_base(std::shared_ptr<impl> &&ptr) : base(std::move(ptr)) {
@@ -36,8 +36,8 @@ struct input_base : base {
     input_base(std::nullptr_t) : base(nullptr) {
     }
 
-    void send() {
-        impl_ptr<impl>()->send();
+    void sync() {
+        impl_ptr<impl>()->sync();
     }
 };
 
@@ -77,7 +77,7 @@ struct input : input_base {
 
     void send_value(T const &);
 
-    [[nodiscard]] bool can_send() const;
+    [[nodiscard]] bool can_sync() const;
 
     [[nodiscard]] node<T, T, T> begin();
 
@@ -91,15 +91,15 @@ template <typename T>
 struct sender_flowable : protocol {
     struct impl : protocol::impl {
         virtual void erase_input(std::uintptr_t const) = 0;
-        virtual bool can_pull() = 0;
-        virtual void pull(std::uintptr_t const) = 0;
+        virtual bool can_sync() = 0;
+        virtual void sync(std::uintptr_t const) = 0;
     };
 
     sender_flowable(std::shared_ptr<impl>);
     sender_flowable(std::nullptr_t);
 
     void erase_input(std::uintptr_t const);
-    bool can_pull();
-    void pull(std::uintptr_t const);
+    bool can_sync();
+    void sync(std::uintptr_t const);
 };
 }

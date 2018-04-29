@@ -134,7 +134,7 @@ struct subject<Key, T>::impl : base::impl {
                 }
             });
 
-            sender.set_can_pull_handler([observer]() { return false; });
+            sender.set_can_sync_handler([observer]() { return false; });
 
             this->sender = std::move(sender);
         }

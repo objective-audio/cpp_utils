@@ -77,7 +77,7 @@ flow::input<Begin> &observer<Begin>::input() {
 
 template <typename Begin>
 void observer<Begin>::sync() {
-    impl_ptr<impl>()->_input.send();
+    impl_ptr<impl>()->_input.sync();
 }
 
 #pragma mark - input_flowable
@@ -109,22 +109,21 @@ struct input<T>::impl : input_base::impl, input_flowable::impl {
         }
     }
 
-    bool can_send() {
+    bool can_sync() {
         if (auto sender = this->_weak_sender.lock()) {
-            return sender.flowable().can_pull();
+            return sender.flowable().can_sync();
         } else {
             return false;
         }
     }
 
-#warning todo pullに変える？
-    void send() override {
+    void sync() override {
         if (auto sender = this->_weak_sender.lock()) {
-            sender.flowable().pull(this->identifier());
+            sender.flowable().sync(this->identifier());
         }
 
         for (auto &sub_input : this->_sub_inputs) {
-            sub_input.send();
+            sub_input.sync();
         }
     }
 
@@ -175,10 +174,10 @@ template <typename T>
 void input<T>::send_value(T const &value) {
     impl_ptr<impl>()->send_value(value);
 }
-    
+
 template <typename T>
-bool input<T>::can_send() const {
-    return impl_ptr<impl>()->can_send();
+bool input<T>::can_sync() const {
+    return impl_ptr<impl>()->can_sync();
 }
 
 template <typename T>
@@ -215,21 +214,21 @@ void sender_flowable<T>::erase_input(std::uintptr_t const key) {
 }
 
 template <typename T>
-bool sender_flowable<T>::can_pull() {
-    return impl_ptr<impl>()->can_pull();
+bool sender_flowable<T>::can_sync() {
+    return impl_ptr<impl>()->can_sync();
 }
 
 template <typename T>
-void sender_flowable<T>::pull(std::uintptr_t const key) {
-    impl_ptr<impl>()->pull(key);
+void sender_flowable<T>::sync(std::uintptr_t const key) {
+    impl_ptr<impl>()->sync(key);
 }
 
 #pragma mark - sender
 
 template <typename T>
 struct sender<T>::impl : base::impl, sender_flowable<T>::impl {
-    std::function<T(void)> _pull_handler;
-    std::function<bool(void)> _can_pull_handler;
+    std::function<T(void)> _sync_handler;
+    std::function<bool(void)> _can_sync_handler;
     std::unordered_map<std::uintptr_t, weak<input<T>>> inputs;
 
     node<T, T, T> begin(sender<T> &sender) {
@@ -251,18 +250,18 @@ struct sender<T>::impl : base::impl, sender_flowable<T>::impl {
         this->inputs.erase(key);
     }
 
-    bool can_pull() override {
-        if (auto handler = this->_can_pull_handler) {
+    bool can_sync() override {
+        if (auto handler = this->_can_sync_handler) {
             return handler();
         } else {
             return false;
         }
     }
 
-    void pull(std::uintptr_t const key) override {
-        if (this->can_pull()) {
+    void sync(std::uintptr_t const key) override {
+        if (this->can_sync()) {
             if (auto input = this->inputs.at(key).lock()) {
-                input.send_value(this->_pull_handler());
+                input.send_value(this->_sync_handler());
             }
         }
     }
@@ -277,13 +276,13 @@ sender<T>::sender(std::nullptr_t) : base(nullptr) {
 }
 
 template <typename T>
-void sender<T>::set_can_pull_handler(std::function<bool(void)> handler) {
-    impl_ptr<impl>()->_can_pull_handler = std::move(handler);
+void sender<T>::set_can_sync_handler(std::function<bool(void)> handler) {
+    impl_ptr<impl>()->_can_sync_handler = std::move(handler);
 }
 
 template <typename T>
-void sender<T>::set_pull_handler(std::function<T(void)> handler) {
-    impl_ptr<impl>()->_pull_handler = std::move(handler);
+void sender<T>::set_sync_handler(std::function<T(void)> handler) {
+    impl_ptr<impl>()->_sync_handler = std::move(handler);
 }
 
 template <typename T>
