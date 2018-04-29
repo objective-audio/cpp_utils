@@ -488,16 +488,4 @@ using namespace yas;
     XCTAssertEqual(notified, 2);
 }
 
-- (void)test_notify_with_object_handler {
-    subject<std::string, int> subject{[](std::string const &key) { return std::stoi(key); }};
-
-    int notified = -1;
-
-    auto observer = subject.make_wild_card_observer([&notified](auto const &context) { notified = context.value; });
-
-    subject.notify("4");
-
-    XCTAssertEqual(notified, 4);
-}
-
 @end
