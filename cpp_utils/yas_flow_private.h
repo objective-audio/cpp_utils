@@ -224,7 +224,7 @@ struct sender<T>::impl : base::impl {
         return input.begin();
     }
 
-    void remove_input(std::uintptr_t const identifier) {
+    void erase_input(std::uintptr_t const identifier) {
         this->inputs.erase(identifier);
     }
 
