@@ -204,8 +204,8 @@ node<T, T, T> begin() {
 
 template <typename T>
 struct sender<T>::impl : base::impl {
-    std::function<T(void)> _send_handler;
-    std::function<bool(void)> _can_send_handler;
+    std::function<T(void)> _pull_handler;
+    std::function<bool(void)> _can_pull_handler;
     std::unordered_map<std::uintptr_t, weak<input<T>>> inputs;
 
     node<T, T, T> begin() {
@@ -228,7 +228,7 @@ struct sender<T>::impl : base::impl {
     }
 
     bool can_send() {
-        if (auto handler = this->_can_send_handler) {
+        if (auto handler = this->_can_pull_handler) {
             return handler();
         } else {
             return false;
@@ -239,7 +239,7 @@ struct sender<T>::impl : base::impl {
 #warning input側で処理した方が良い？
         if (this->can_send()) {
             if (auto input = this->inputs.at(input_id).lock()) {
-                input.send_value(this->_send_handler());
+                input.send_value(this->_pull_handler());
             }
         }
     }
@@ -253,6 +253,16 @@ template <typename T>
 sender<T>::sender(std::nullptr_t) : base(nullptr) {
 }
 
+template <typename T>
+void sender<T>::set_can_pull_handler(std::function<bool(void)> handler) {
+    impl_ptr<impl>()->_can_pull_handler = std::move(handler);
+}
+
+template <typename T>
+void sender<T>::set_pull_handler(std::function<T(void)> handler) {
+    impl_ptr<impl>()->_pull_handler = std::move(handler);
+}
+    
 template <typename T>
 void sender<T>::send_value(T const &value) {
     impl_ptr<impl>()->send_value(value);
