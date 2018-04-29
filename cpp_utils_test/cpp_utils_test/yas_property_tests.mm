@@ -412,12 +412,12 @@ struct test_class {
     XCTAssertEqual(yas::to_string(yas::property_method::did_change), "did_change");
 }
 
-- (void)test_begin_flow {
+- (void)test_begin_value_flow {
     property<int> property{{.value = 10}};
 
     int received = -1;
 
-    auto flow = property.begin_flow().perform([&received](int const &value) { received = value; }).end();
+    auto flow = property.begin_value_flow().perform([&received](int const &value) { received = value; }).end();
 
     flow.sync();
 

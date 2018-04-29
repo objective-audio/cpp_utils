@@ -58,7 +58,7 @@ class property<T>::impl : public base::impl, public flow::receivable<T>::impl {
         this->_set_value(value);
     }
 
-    [[nodiscard]] flow::node<T, T, T> begin_flow(property<T> &property) {
+    [[nodiscard]] flow::node<T, T, T> begin_value_flow(property<T> &property) {
         if (!this->_value_sender) {
             flow::sender<T> sender;
 
@@ -277,8 +277,8 @@ typename property<T>::subject_t &property<T>::subject() {
 }
 
 template <typename T>
-flow::node<T, T, T> property<T>::begin_flow() {
-    return impl_ptr<impl>()->begin_flow(*this);
+flow::node<T, T, T> property<T>::begin_value_flow() {
+    return impl_ptr<impl>()->begin_value_flow(*this);
 }
 
 template <typename T>

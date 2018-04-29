@@ -62,7 +62,7 @@ class property : public base {
 
     subject_t &subject();
 
-    [[nodiscard]] flow::node<T, T, T> begin_flow();
+    [[nodiscard]] flow::node<T, T, T> begin_value_flow();
     [[nodiscard]] flow_context_t begin_context_flow();
     [[nodiscard]] flow::receivable<T> receivable();
 };
