@@ -33,6 +33,11 @@ struct sender : base {
     void send_value(T const &);
 
     [[nodiscard]] node<T, T, T> begin();
+
+    sender_flowable<T> flowable();
+
+   private:
+    sender_flowable<T> _flowable = nullptr;
 };
 
 template <typename T>

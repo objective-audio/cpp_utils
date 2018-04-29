@@ -199,7 +199,7 @@ template <typename T>
 node<T, T, T> begin() {
     return flow::input<T>{}.begin();
 }
-    
+
 #pragma mark - sender_flowable
 
 template <typename T>
@@ -232,7 +232,7 @@ struct sender<T>::impl : base::impl, sender_flowable<T>::impl {
             }
         }
     }
-    
+
     void erase_input(std::uintptr_t const identifier) override {
         this->inputs.erase(identifier);
     }
@@ -281,6 +281,14 @@ void sender<T>::send_value(T const &value) {
 template <typename T>
 node<T, T, T> sender<T>::begin() {
     return impl_ptr<impl>()->begin();
+}
+
+template <typename T>
+sender_flowable<T> sender<T>::flowable() {
+    if (!this->_flowable) {
+        this->_flowable = sender_flowable<T>{impl_ptr<sender_flowable<T>::impl>()};
+    }
+    return this->_flowable;
 }
 
 #pragma mark - node
