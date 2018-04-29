@@ -145,6 +145,7 @@ observer<Key, T>::~observer() {
 template <typename Key, typename T>
 void observer<Key, T>::add_handler(subject<Key, T> &subject, Key const &key, handler_f handler) {
     auto imp = impl_ptr<impl>();
+#warning subjectはbaseを継承するようにしたので、ptrを使うのはよくない
     auto subject_ptr = &subject;
     if (imp->handlers.count(subject_ptr) == 0) {
         imp->handlers.insert(std::make_pair(&subject, typename impl::handler_holder{}));
@@ -170,6 +171,7 @@ void observer<Key, T>::remove_handler(subject<Key, T> &subject, Key const &key) 
 template <typename Key, typename T>
 void observer<Key, T>::add_wild_card_handler(subject<Key, T> &subject, handler_f handler) {
     auto imp = impl_ptr<impl>();
+#warning subjectはbaseを継承するようにしたので、ptrを使うのはよくない
     auto subject_ptr = &subject;
     if (imp->handlers.count(subject_ptr) == 0) {
         imp->handlers.insert(std::make_pair(&subject, typename impl::handler_holder{}));
