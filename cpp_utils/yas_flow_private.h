@@ -247,8 +247,8 @@ struct sender<T>::impl : base::impl, sender_flowable<T>::impl {
     std::function<bool(void)> _can_pull_handler;
     std::unordered_map<std::uintptr_t, weak<input<T>>> inputs;
 
-    node<T, T, T> begin() {
-        flow::input<T> input;
+    node<T, T, T> begin(sender<T> &sender) {
+        flow::input<T> input{to_weak(sender)};
         this->inputs.insert(std::make_pair(input.identifier(), to_weak(input)));
         return input.begin();
     }
@@ -275,7 +275,6 @@ struct sender<T>::impl : base::impl, sender_flowable<T>::impl {
     }
 
     void pull(std::uintptr_t const input_id) override {
-#warning input側で処理した方が良い？
         if (this->can_pull()) {
             if (auto input = this->inputs.at(input_id).lock()) {
                 input.send_value(this->_pull_handler());
@@ -309,7 +308,7 @@ void sender<T>::send_value(T const &value) {
 
 template <typename T>
 node<T, T, T> sender<T>::begin() {
-    return impl_ptr<impl>()->begin();
+    return impl_ptr<impl>()->begin(*this);
 }
 
 template <typename T>
