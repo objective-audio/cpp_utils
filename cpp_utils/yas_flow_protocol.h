@@ -88,7 +88,11 @@ struct input : input_base {
 
 template <typename T>
 struct sender_flowable : protocol {
-    struct impl : protocol::impl {};
+    struct impl : protocol::impl {
+        virtual void erase_input(std::uintptr_t const) = 0;
+        virtual bool can_pull() = 0;
+        virtual void pull(std::uintptr_t const) = 0;
+    };
 
     sender_flowable(std::shared_ptr<impl>);
     sender_flowable(std::nullptr_t);

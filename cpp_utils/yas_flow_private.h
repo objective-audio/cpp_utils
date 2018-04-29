@@ -213,7 +213,7 @@ sender_flowable<T>::sender_flowable(std::nullptr_t) : protocol(nullptr) {
 #pragma mark - sender
 
 template <typename T>
-struct sender<T>::impl : base::impl {
+struct sender<T>::impl : base::impl, sender_flowable<T>::impl {
     std::function<T(void)> _pull_handler;
     std::function<bool(void)> _can_pull_handler;
     std::unordered_map<std::uintptr_t, weak<input<T>>> inputs;
@@ -224,10 +224,6 @@ struct sender<T>::impl : base::impl {
         return input.begin();
     }
 
-    void erase_input(std::uintptr_t const identifier) {
-        this->inputs.erase(identifier);
-    }
-
     void send_value(T const &value) {
         for (auto &pair : this->inputs) {
             weak<flow::input<T>> &weak_input = pair.second;
@@ -236,8 +232,12 @@ struct sender<T>::impl : base::impl {
             }
         }
     }
+    
+    void erase_input(std::uintptr_t const identifier) override {
+        this->inputs.erase(identifier);
+    }
 
-    bool can_pull() {
+    bool can_pull() override {
         if (auto handler = this->_can_pull_handler) {
             return handler();
         } else {
@@ -245,7 +245,7 @@ struct sender<T>::impl : base::impl {
         }
     }
 
-    void pull(std::uintptr_t const input_id) {
+    void pull(std::uintptr_t const input_id) override {
 #warning input側で処理した方が良い？
         if (this->can_pull()) {
             if (auto input = this->inputs.at(input_id).lock()) {
