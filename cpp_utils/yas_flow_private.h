@@ -96,8 +96,16 @@ std::function<void(P const &)> const &input_flowable::handler(std::size_t const 
 
 template <typename T>
 struct input<T>::impl : input_base::impl, input_flowable::impl {
+    weak<sender<T>> _weak_sender;
     std::function<T(void)> _send_handler;
     std::function<bool(void)> _can_send_handler;
+
+    impl() {
+#warning todo なくす
+    }
+
+    impl(weak<sender<T>> &&weak_sender) : _weak_sender(std::move(weak_sender)) {
+    }
 
     void send_value(T const &value) {
         if (this->_handlers.size() > 0) {
@@ -151,13 +159,19 @@ input<T>::input() : input_base(std::make_shared<impl>()) {
 }
 
 template <typename T>
+input<T>::input(weak<sender<T>> weak_sender) : input_base(std::make_shared<impl>(std::move(weak_sender))) {
+}
+
+template <typename T>
 input<T>::input(std::nullptr_t) : input_base(nullptr) {
 }
 
 template <typename T>
 input<T>::~input() {
     if (impl_ptr() && impl_ptr().unique()) {
-#warning todo
+        if (auto sender = impl_ptr<impl>()->_weak_sender.lock()) {
+            sender.flowable().erase_input(this->identifier());
+        }
         impl_ptr().reset();
     }
 }
@@ -208,6 +222,21 @@ sender_flowable<T>::sender_flowable(std::shared_ptr<impl> impl) : protocol(std::
 
 template <typename T>
 sender_flowable<T>::sender_flowable(std::nullptr_t) : protocol(nullptr) {
+}
+
+template <typename T>
+void sender_flowable<T>::erase_input(std::uintptr_t const key) {
+    impl_ptr<impl>()->erase_input(key);
+}
+
+template <typename T>
+bool sender_flowable<T>::can_pull() {
+    return impl_ptr<impl>()->can_pull();
+}
+
+template <typename T>
+void sender_flowable<T>::pull(std::uintptr_t const key) {
+    impl_ptr<impl>()->pull(key);
 }
 
 #pragma mark - sender
@@ -286,7 +315,7 @@ node<T, T, T> sender<T>::begin() {
 template <typename T>
 sender_flowable<T> sender<T>::flowable() {
     if (!this->_flowable) {
-        this->_flowable = sender_flowable<T>{impl_ptr<sender_flowable<T>::impl>()};
+        this->_flowable = sender_flowable<T>{impl_ptr<typename sender_flowable<T>::impl>()};
     }
     return this->_flowable;
 }

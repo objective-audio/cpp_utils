@@ -9,7 +9,9 @@
 
 namespace yas::flow {
 template <typename Out, typename In, typename Begin>
-struct node;
+class node;
+template <typename T>
+class sender;
 
 template <typename T>
 struct receivable : protocol {
@@ -69,6 +71,7 @@ struct input : input_base {
     class impl;
 
     input();
+    input(weak<sender<T>>);
     input(std::nullptr_t);
     ~input();
 
@@ -96,5 +99,9 @@ struct sender_flowable : protocol {
 
     sender_flowable(std::shared_ptr<impl>);
     sender_flowable(std::nullptr_t);
+
+    void erase_input(std::uintptr_t const);
+    bool can_pull();
+    void pull(std::uintptr_t const);
 };
 }
