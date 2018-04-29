@@ -227,7 +227,7 @@ struct sender<T>::impl : base::impl {
         }
     }
 
-    bool can_send() {
+    bool can_pull() {
         if (auto handler = this->_can_pull_handler) {
             return handler();
         } else {
