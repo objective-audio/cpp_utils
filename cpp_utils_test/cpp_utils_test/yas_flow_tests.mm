@@ -149,16 +149,33 @@ using namespace yas;
 }
 
 - (void)test_sync {
-    flow::input<int> input;
-    input.set_can_send_handler([]() { return true; });
-    input.set_send_handler([]() { return 100; });
+    flow::sender<int> sender;
+    sender.set_can_pull_handler([] { return true; });
+    sender.set_pull_handler([] { return 100; });
 
     int received = -1;
 
-    auto flow = input.begin().perform([&received](int const &value) { received = value; }).end();
+    auto flow = sender.begin().perform([&received](int const &value) { received = value; }).end();
     flow.sync();
 
     XCTAssertEqual(received, 100);
+}
+
+- (void)test_sync_many_sender {
+    flow::sender<int> sender;
+    sender.set_can_pull_handler([] { return true; });
+    sender.set_pull_handler([] { return 100; });
+
+    int received1 = -1;
+    int received2 = -1;
+
+    auto flow1 = sender.begin().perform([&received1](int const &value) { received1 = value; }).end();
+    auto flow2 = sender.begin().perform([&received2](int const &value) { received2 = value; }).end();
+
+    flow1.sync();
+
+    XCTAssertEqual(received1, 100);
+    XCTAssertEqual(received2, -1);
 }
 
 - (void)test_sync_with_combined_sub_input {
