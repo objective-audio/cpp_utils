@@ -66,14 +66,14 @@ class observer<Key, T>::impl : public base::impl {
 #pragma mark - subject::impl
 
 template <typename Key, typename T>
-struct subject<Key, T>::impl : base::impl {
+class subject<Key, T>::impl {
+   public:
     using observer_set_t = std::unordered_set<weak<observer<Key, T>>>;
-    using observers_t = std::unordered_map<opt_t<Key>, observer_set_t>;
-    object_handler_f object_handler;
+    using observers_t = std::unordered_map<std::experimental::optional<Key>, observer_set_t>;
     observers_t observers;
     flow::sender<T> sender = nullptr;
 
-    void add_observer(observer<Key, T> const &obs, opt_t<Key> const &key) {
+    void add_observer(observer<Key, T> const &obs, std::experimental::optional<Key> const &key) {
         if (observers.count(key) == 0) {
             observers.insert(std::make_pair(key, observer_set_t()));
         }
@@ -82,7 +82,7 @@ struct subject<Key, T>::impl : base::impl {
         set.insert(weak<observer<Key, T>>(obs));
     }
 
-    void remove_observer(observer<Key, T> const &observer, opt_t<Key> const &key) {
+    void remove_observer(observer<Key, T> const &observer, std::experimental::optional<Key> const &key) {
         if (observers.count(key) > 0) {
             auto &set = observers.at(key);
 
@@ -164,14 +164,13 @@ observer<Key, T>::~observer() {
 template <typename Key, typename T>
 void observer<Key, T>::add_handler(subject<Key, T> &subject, Key const &key, handler_f handler) {
     auto imp = impl_ptr<impl>();
-#warning subjectはbaseを継承するようにしたので、ptrを使うのはよくない
     auto subject_ptr = &subject;
     if (imp->handlers.count(subject_ptr) == 0) {
         imp->handlers.insert(std::make_pair(&subject, typename impl::handler_holder{}));
     };
     imp->handlers.at(&subject).add_handler(key, std::move(handler));
 
-    subject.template impl_ptr<typename yas::subject<Key, T>::impl>()->add_observer(*this, key);
+    subject._impl->add_observer(*this, key);
 }
 
 template <typename Key, typename T>
@@ -184,19 +183,18 @@ void observer<Key, T>::remove_handler(subject<Key, T> &subject, Key const &key) 
             imp->handlers.erase(&subject);
         }
     }
-    subject.template impl_ptr<typename yas::subject<Key, T>::impl>()->remove_observer(*this, key);
+    subject._impl->remove_observer(*this, key);
 }
 
 template <typename Key, typename T>
 void observer<Key, T>::add_wild_card_handler(subject<Key, T> &subject, handler_f handler) {
     auto imp = impl_ptr<impl>();
-#warning subjectはbaseを継承するようにしたので、ptrを使うのはよくない
     auto subject_ptr = &subject;
     if (imp->handlers.count(subject_ptr) == 0) {
         imp->handlers.insert(std::make_pair(&subject, typename impl::handler_holder{}));
     };
     imp->handlers.at(&subject).add_handler(nullopt, std::move(handler));
-    subject.template impl_ptr<typename yas::subject<Key, T>::impl>()->add_observer(*this, nullopt);
+    subject._impl->add_observer(*this, nullopt);
 }
 
 template <typename Key, typename T>
@@ -209,7 +207,7 @@ void observer<Key, T>::remove_wild_card_handler(subject<Key, T> &subject) {
             imp->handlers.erase(&subject);
         }
     }
-    subject.template impl_ptr<typename yas::subject<Key, T>::impl>()->remove_observer(*this, nullopt);
+    subject._impl->remove_observer(*this, nullopt);
 }
 
 template <typename Key, typename T>
@@ -218,7 +216,7 @@ void observer<Key, T>::clear() {
     auto imp = impl_ptr<impl>();
     for (auto &pair : imp->handlers) {
         auto &subject_ptr = pair.first;
-        subject_ptr->template impl_ptr<typename subject<Key, T>::impl>()->remove_observer(id);
+        subject_ptr->_impl->remove_observer(id);
     }
     imp->handlers.clear();
 }
@@ -226,17 +224,12 @@ void observer<Key, T>::clear() {
 #pragma mark - subject
 
 template <typename Key, typename T>
-subject<Key, T>::subject() : base(std::make_shared<impl>()) {
-}
-
-template <typename Key, typename T>
-subject<Key, T>::subject(object_handler_f handler) : subject() {
-    this->impl_ptr<impl>()->object_handler = std::move(handler);
+subject<Key, T>::subject() : _impl(std::make_unique<impl>()) {
 }
 
 template <typename Key, typename T>
 subject<Key, T>::~subject() {
-    for (auto &pair : this->impl_ptr<impl>()->observers) {
+    for (auto &pair : _impl->observers) {
         for (auto &weak_observer : pair.second) {
             if (auto obs = weak_observer.lock()) {
                 obs.template impl_ptr<typename observer<Key, T>::impl>()->handlers.erase(this);
@@ -257,31 +250,29 @@ bool subject<Key, T>::operator!=(subject const &rhs) const {
 
 template <typename Key, typename T>
 bool subject<Key, T>::has_observer() const {
-    return this->impl_ptr<impl>()->has_observer();
+    return _impl->has_observer();
 }
 
 template <typename Key, typename T>
 void subject<Key, T>::notify(Key const &key) const {
-    if (auto handler = this->impl_ptr<impl>()->object_handler) {
-        notify(key, handler(key));
-    }
+    notify(key, nullptr);
 }
 
 template <typename Key, typename T>
 void subject<Key, T>::notify(Key const &key, T const &object) const {
-    if (!this->impl_ptr<impl>()->has_observer()) {
+    if (!_impl->has_observer()) {
         return;
     }
 
-    if (this->impl_ptr<impl>()->observers.count(key) > 0) {
-        for (auto &weak_observer : this->impl_ptr<impl>()->observers.at(key)) {
+    if (_impl->observers.count(key) > 0) {
+        for (auto &weak_observer : _impl->observers.at(key)) {
             if (observer<Key, T> obs = weak_observer.lock()) {
                 obs.template impl_ptr<typename observer<Key, T>::impl>()->call_handler(*this, key, object);
             }
         }
     }
-    if (this->impl_ptr<impl>()->observers.count(nullopt) > 0) {
-        for (auto &weak_observer : this->impl_ptr<impl>()->observers.at(nullopt)) {
+    if (_impl->observers.count(nullopt) > 0) {
+        for (auto &weak_observer : _impl->observers.at(nullopt)) {
             if (auto obs = weak_observer.lock()) {
                 obs.template impl_ptr<typename observer<Key, T>::impl>()->call_wild_card_handler(*this, key, object);
             }
@@ -311,13 +302,14 @@ observer<Key, T> subject<Key, T>::make_wild_card_observer(wild_card_handler_f co
 }
 
 template <typename Key, typename T>
-[[nodiscard]] flow::node<T, T, T> subject<Key, T>::begin_flow(Key const &key) {
-    return impl_ptr<impl>()->begin_flow(*this, key);
+flow::node<T, T, T> subject<Key, T>::begin_flow(Key const &key) {
+    return _impl->begin_flow(*this, key);
+}
 }
 
 template <typename Key, typename T>
-yas::observer<Key, T> make_subject_dispatcher(subject<Key, T> const &source,
-                                              std::initializer_list<subject<Key, T> *> const &destinations) {
+yas::observer<Key, T> yas::make_subject_dispatcher(subject<Key, T> const &source,
+                                                   std::initializer_list<subject<Key, T> *> const &destinations) {
     observer<Key, T> observer;
     auto handler = [&source](auto const &context) { source.notify(context.key, context.value); };
 
@@ -326,5 +318,4 @@ yas::observer<Key, T> make_subject_dispatcher(subject<Key, T> const &source,
     }
 
     return observer;
-}
 }

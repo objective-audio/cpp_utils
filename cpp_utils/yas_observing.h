@@ -48,17 +48,13 @@ class observer : public base {
 };
 
 template <typename Key = std::string, typename T = std::nullptr_t>
-class subject : public base {
+class subject {
    public:
-    class impl;
-
     using observer_t = observer<Key, T>;
-    using object_handler_f = std::function<T(Key const &)>;
     using value_handler_f = std::function<void(T const &)>;
     using wild_card_handler_f = typename observer<Key, T>::handler_f;
 
     subject();
-    subject(object_handler_f);
     ~subject();
 
     bool operator==(subject const &) const;
@@ -75,6 +71,14 @@ class subject : public base {
     [[nodiscard]] flow::node<T, T, T> begin_flow(Key const &);
 
    private:
+    class impl;
+    std::unique_ptr<impl> _impl;
+
+    subject(subject const &) = delete;
+    subject(subject &&) = delete;
+    subject &operator=(subject const &) = delete;
+    subject &operator=(subject &&) = delete;
+
     friend observer_t;
 };
 
