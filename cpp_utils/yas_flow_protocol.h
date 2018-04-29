@@ -39,7 +39,7 @@ struct input_base : base {
     }
 };
 
-struct input_manageable : protocol {
+struct input_flowable : protocol {
     struct impl : protocol::impl {
         virtual void push_handler(yas::any &&) = 0;
         virtual yas::any handler(std::size_t const) = 0;
@@ -47,9 +47,9 @@ struct input_manageable : protocol {
         virtual void add_sub_input(input_base &&) = 0;
     };
 
-    input_manageable(std::shared_ptr<impl> ptr) : protocol(std::move(ptr)) {
+    input_flowable(std::shared_ptr<impl> ptr) : protocol(std::move(ptr)) {
     }
-    input_manageable(std::nullptr_t) : protocol(nullptr) {
+    input_flowable(std::nullptr_t) : protocol(nullptr) {
     }
 
     template <typename P>
@@ -80,9 +80,9 @@ struct input : input_base {
 
     [[nodiscard]] node<T, T, T> begin();
 
-    input_manageable &manageable();
+    input_flowable &flowable();
 
    private:
-    input_manageable _manageable = nullptr;
+    input_flowable _flowable = nullptr;
 };
 }
