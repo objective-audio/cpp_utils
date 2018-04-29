@@ -44,8 +44,6 @@ struct flow::graph<State, Signal>::impl : base::impl, receivable<graph_next<Stat
             throw std::runtime_error("observer state exists.");
         }
 
-        flow::sender<Signal> sender;
-
         flow::receivable<graph_next<State, Signal>> receivable = flow::receivable<graph_next<State, Signal>>{
             graph.impl_ptr<typename flow::receivable<graph_next<State, Signal>>::impl>()};
 
@@ -69,8 +67,8 @@ struct flow::graph<State, Signal>::impl : base::impl, receivable<graph_next<Stat
 
         this->is_running = true;
 
-        auto &sender = this->observers.at(this->state).sender();
-        sender.send_value(signal);
+        auto &input = this->observers.at(this->state).input();
+        input.send_value(signal);
     }
 
     void receive_value(graph_next<State, Signal> const &next) override {

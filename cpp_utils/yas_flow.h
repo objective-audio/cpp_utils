@@ -10,12 +10,9 @@
 #include <functional>
 
 namespace yas::flow {
-template <typename Out, typename In, typename Begin>
-struct node;
-
 template <typename T>
 struct receiver : base {
-    struct impl;
+    class impl;
 
     receiver(std::function<void(T const &)>);
     receiver(std::nullptr_t);
@@ -24,24 +21,23 @@ struct receiver : base {
 };
 
 template <typename T>
-struct sender : sender_base {
+struct sender : base {
     class impl;
 
     sender();
     sender(std::nullptr_t);
 
-    void send_value(T const &);
+    void set_can_sync_handler(std::function<bool(void)>);
+    void set_sync_handler(std::function<T(void)>);
 
-    void set_can_send_handler(std::function<bool(void)>);
-    [[nodiscard]] bool can_send() const;
-    void set_send_handler(std::function<T(void)>);
+    void send_value(T const &);
 
     [[nodiscard]] node<T, T, T> begin();
 
-    sender_manageable &manageable();
+    sender_flowable<T> flowable();
 
    private:
-    sender_manageable _manageable = nullptr;
+    sender_flowable<T> _flowable = nullptr;
 };
 
 template <typename T>
@@ -51,10 +47,10 @@ template <typename Begin>
 struct observer : base {
     class impl;
 
-    observer(sender<Begin>);
+    observer(input<Begin>);
     observer(std::nullptr_t);
 
-    flow::sender<Begin> &sender();
+    flow::input<Begin> &input();
 
     void sync();
 };
@@ -63,9 +59,9 @@ template <typename Out, typename In, typename Begin>
 struct node : base {
     class impl;
 
-    node(sender<Begin>);
+    node(input<Begin>);
     // private
-    node(sender<Begin>, std::function<Out(In const &)>);
+    node(input<Begin>, std::function<Out(In const &)>);
     node(std::nullptr_t);
 
     [[nodiscard]] node<Out, In, Begin> perform(std::function<void(Out const &)>);
@@ -81,7 +77,6 @@ struct node : base {
 
     template <typename SubIn, typename SubBegin>
     [[nodiscard]] node<Out, Out, Begin> merge(node<Out, SubIn, SubBegin>);
-    [[nodiscard]] node<Out, Out, Begin> merge(sender<Out>);
 
     template <typename SubOut, typename SubIn, typename SubBegin>
     [[nodiscard]] node<std::pair<opt_t<Out>, opt_t<SubOut>>, std::pair<opt_t<Out>, opt_t<SubOut>>, Begin> pair(

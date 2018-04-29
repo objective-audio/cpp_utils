@@ -5,7 +5,6 @@
 #import <XCTest/XCTest.h>
 #import "yas_flow.h"
 #import "yas_observing.h"
-#import "yas_flow_observing.h"
 
 using namespace yas;
 
@@ -23,12 +22,12 @@ using namespace yas;
     [super tearDown];
 }
 
-- (void)test_flow {
+- (void)test_flow_from_subject {
     subject<std::string, int> subject;
 
     std::string received_value = "";
 
-    auto node = flow::begin(subject, std::string("key"))
+    auto flow = subject.begin_flow(std::string("key"))
                     .convert<std::string>([](int const value) { return std::to_string(value); })
                     .perform([&received_value](std::string const &value) { received_value = value; })
                     .end();
@@ -54,6 +53,21 @@ using namespace yas;
     XCTAssertEqual(received, 2);
 }
 
+- (void)test_sender_many_begin {
+    int received1 = -1;
+    int received2 = -1;
+
+    flow::sender<int> sender;
+
+    auto flow1 = sender.begin().perform([&received1](int const &value) { received1 = value; }).end();
+    auto flow2 = sender.begin().perform([&received2](int const &value) { received2 = value; }).end();
+
+    sender.send_value(3);
+
+    XCTAssertEqual(received1, 3);
+    XCTAssertEqual(received2, 3);
+}
+
 - (void)test_template_begin {
     int received = -1;
 
@@ -61,7 +75,7 @@ using namespace yas;
 
     XCTAssertEqual(received, -1);
 
-    flow.sender().send_value(2);
+    flow.input().send_value(2);
 
     XCTAssertEqual(received, 2);
 }
@@ -135,8 +149,8 @@ using namespace yas;
 
 - (void)test_sync {
     flow::sender<int> sender;
-    sender.set_can_send_handler([]() { return true; });
-    sender.set_send_handler([]() { return 100; });
+    sender.set_can_sync_handler([] { return true; });
+    sender.set_sync_handler([] { return 100; });
 
     int received = -1;
 
@@ -146,14 +160,31 @@ using namespace yas;
     XCTAssertEqual(received, 100);
 }
 
+- (void)test_sync_many_sender {
+    flow::sender<int> sender;
+    sender.set_can_sync_handler([] { return true; });
+    sender.set_sync_handler([] { return 100; });
+
+    int received1 = -1;
+    int received2 = -1;
+
+    auto flow1 = sender.begin().perform([&received1](int const &value) { received1 = value; }).end();
+    auto flow2 = sender.begin().perform([&received2](int const &value) { received2 = value; }).end();
+
+    flow1.sync();
+
+    XCTAssertEqual(received1, 100);
+    XCTAssertEqual(received2, -1);
+}
+
 - (void)test_sync_with_combined_sub_sender {
     flow::sender<int> sender;
-    sender.set_can_send_handler([]() { return true; });
-    sender.set_send_handler([]() { return 123; });
+    sender.set_can_sync_handler([]() { return true; });
+    sender.set_sync_handler([]() { return 123; });
 
     flow::sender<int> sub_sender;
-    sub_sender.set_can_send_handler([]() { return true; });
-    sub_sender.set_send_handler([]() { return 456; });
+    sub_sender.set_can_sync_handler([]() { return true; });
+    sub_sender.set_sync_handler([]() { return 456; });
 
     std::vector<std::pair<int, int>> received;
 
@@ -175,12 +206,12 @@ using namespace yas;
 
 - (void)test_sync_with_merged_sub_sender {
     flow::sender<int> sender;
-    sender.set_can_send_handler([]() { return true; });
-    sender.set_send_handler([]() { return 78; });
+    sender.set_can_sync_handler([]() { return true; });
+    sender.set_sync_handler([]() { return 78; });
 
     flow::sender<int> sub_sender;
-    sub_sender.set_can_send_handler([]() { return true; });
-    sub_sender.set_send_handler([]() { return 90; });
+    sub_sender.set_can_sync_handler([]() { return true; });
+    sub_sender.set_sync_handler([]() { return 90; });
 
     std::vector<int> received;
 
@@ -248,28 +279,7 @@ using namespace yas;
     XCTAssertEqual(received, 3.0f);
 }
 
-- (void)test_merge_by_sender {
-    std::string received;
-
-    flow::sender<int> sender;
-    flow::sender<std::string> sub_sender;
-
-    auto flow = sender.begin()
-                    .convert<std::string>([](int const &value) { return std::to_string(value); })
-                    .merge(sub_sender)
-                    .perform([&received](std::string const &value) { received = value; })
-                    .end();
-
-    sender.send_value(1);
-
-    XCTAssertEqual(received, "1");
-
-    sub_sender.send_value("test_text_1");
-
-    XCTAssertEqual(received, "test_text_1");
-}
-
-- (void)test_merge_by_node {
+- (void)test_merge {
     std::string received;
 
     flow::sender<int> sender;

@@ -31,15 +31,15 @@ class observer<Key, T>::impl : public base::impl {
             }
         }
 
-        void call_handler(Key const &key, T const &sender) const {
+        void call_handler(Key const &key, T const &input) const {
             if (functions.count(key) > 0) {
-                functions.at(key)(observer<Key, T>::change_context{.key = key, .value = sender});
+                functions.at(key)(observer<Key, T>::change_context{.key = key, .value = input});
             }
         }
 
-        void call_wild_card_handler(Key const &key, T const &sender) const {
+        void call_wild_card_handler(Key const &key, T const &input) const {
             if (functions.count(nullopt) > 0) {
-                functions.at(nullopt)(observer<Key, T>::change_context{.key = key, .value = sender});
+                functions.at(nullopt)(observer<Key, T>::change_context{.key = key, .value = input});
             }
         }
 
@@ -71,6 +71,7 @@ struct subject<Key, T>::impl : base::impl {
     using observers_t = std::unordered_map<opt_t<Key>, observer_set_t>;
     object_handler_f object_handler;
     observers_t observers;
+    flow::sender<T> sender = nullptr;
 
     void add_observer(observer<Key, T> const &obs, opt_t<Key> const &key) {
         if (observers.count(key) == 0) {
@@ -122,6 +123,24 @@ struct subject<Key, T>::impl : base::impl {
     bool has_observer() {
         return observers.size() > 0;
     }
+
+    flow::node<T, T, T> begin_flow(subject<Key, T> &subject, Key const &key) {
+        if (!this->sender) {
+            flow::sender<T> sender;
+
+            auto observer = subject.make_value_observer(key, [weak_sender = to_weak(sender)](T const &value) mutable {
+                if (auto sender = weak_sender.lock()) {
+                    sender.send_value(value);
+                }
+            });
+
+            sender.set_can_sync_handler([observer]() { return false; });
+
+            this->sender = std::move(sender);
+        }
+
+        return this->sender.begin();
+    }
 };
 
 #pragma mark - observer
@@ -145,6 +164,7 @@ observer<Key, T>::~observer() {
 template <typename Key, typename T>
 void observer<Key, T>::add_handler(subject<Key, T> &subject, Key const &key, handler_f handler) {
     auto imp = impl_ptr<impl>();
+#warning subjectはbaseを継承するようにしたので、ptrを使うのはよくない
     auto subject_ptr = &subject;
     if (imp->handlers.count(subject_ptr) == 0) {
         imp->handlers.insert(std::make_pair(&subject, typename impl::handler_holder{}));
@@ -170,6 +190,7 @@ void observer<Key, T>::remove_handler(subject<Key, T> &subject, Key const &key) 
 template <typename Key, typename T>
 void observer<Key, T>::add_wild_card_handler(subject<Key, T> &subject, handler_f handler) {
     auto imp = impl_ptr<impl>();
+#warning subjectはbaseを継承するようにしたので、ptrを使うのはよくない
     auto subject_ptr = &subject;
     if (imp->handlers.count(subject_ptr) == 0) {
         imp->handlers.insert(std::make_pair(&subject, typename impl::handler_holder{}));
@@ -287,6 +308,11 @@ observer<Key, T> subject<Key, T>::make_wild_card_observer(wild_card_handler_f co
     observer<Key, T> obs;
     obs.add_wild_card_handler(*this, handler);
     return obs;
+}
+
+template <typename Key, typename T>
+[[nodiscard]] flow::node<T, T, T> subject<Key, T>::begin_flow(Key const &key) {
+    return impl_ptr<impl>()->begin_flow(*this, key);
 }
 
 template <typename Key, typename T>

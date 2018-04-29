@@ -8,6 +8,7 @@
 #include <initializer_list>
 #include <string>
 #include "yas_base.h"
+#include "yas_flow.h"
 
 namespace yas {
 template <typename Key, typename T>
@@ -71,6 +72,7 @@ class subject : public base {
     [[nodiscard]] observer<Key, T> make_value_observer(Key const &, value_handler_f const &);
     [[nodiscard]] observer<Key, T> make_observer(Key const &, wild_card_handler_f const &);
     [[nodiscard]] observer<Key, T> make_wild_card_observer(wild_card_handler_f const &);
+    [[nodiscard]] flow::node<T, T, T> begin_flow(Key const &);
 
    private:
     friend observer_t;
