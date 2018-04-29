@@ -58,12 +58,77 @@ class property<T>::impl : public base::impl, public flow::receivable<T>::impl {
         this->_set_value(value);
     }
 
+    [[nodiscard]] flow::node<T, T, T> begin_flow(property<T> &property) {
+        if (!this->_value_sender) {
+            flow::sender<T> sender;
+
+            subject_t &subject = this->subject();
+
+            auto observer = subject.make_value_observer(
+                property_method::did_change, [weak_sender = to_weak(sender)](change_context const &context) mutable {
+                    if (auto sender = weak_sender.lock()) {
+                        sender.send_value(context.new_value);
+                    }
+                });
+
+            auto weak_property = to_weak(property);
+
+            sender.set_can_pull_handler([weak_property]() { return !!weak_property; });
+
+            sender.set_pull_handler([weak_property, observer]() {
+                if (auto property = weak_property.lock()) {
+                    return property.value();
+                } else {
+                    throw std::runtime_error("property is null.");
+                }
+            });
+
+            this->_value_sender = std::move(sender);
+        }
+
+        return this->_value_sender.begin();
+    }
+
+    [[nodiscard]] flow_context_t begin_context_flow(property<T> &property) {
+        if (!this->_context_sender) {
+            flow::sender<change_context> sender;
+
+            subject_t &subject = this->_subject;
+
+            auto observer = subject.make_value_observer(
+                property_method::did_change, [weak_sender = to_weak(sender)](change_context const &context) mutable {
+                    if (auto sender = weak_sender.lock()) {
+                        sender.send_value(context);
+                    }
+                });
+
+            auto weak_property = to_weak(property);
+
+            sender.set_can_pull_handler([weak_property]() { return !!weak_property; });
+
+            sender.set_pull_handler([weak_property, observer]() {
+                if (auto property = weak_property.lock()) {
+                    auto const &value = property.value();
+                    return change_context{.new_value = value, .old_value = value, .property = property};
+                } else {
+                    throw std::runtime_error("property is null.");
+                }
+            });
+
+            this->_context_sender = std::move(sender);
+        }
+
+        return this->_context_sender.begin();
+    }
+
    private:
     T _value;
     validator_t _validator = nullptr;
     limiter_t _limiter = nullptr;
     std::mutex _notify_mutex;
     subject_t _subject;
+    flow::sender<T> _value_sender = nullptr;
+    flow::sender<change_context> _context_sender = nullptr;
 
     template <typename U, typename std::enable_if_t<has_operator_bool<U>::value, std::nullptr_t> = nullptr>
     void _set_value(U &&value) {
@@ -213,59 +278,12 @@ typename property<T>::subject_t &property<T>::subject() {
 
 template <typename T>
 flow::node<T, T, T> property<T>::begin_flow() {
-    flow::input<T> input;
-
-    subject_t &subject = this->subject();
-
-    auto observer = subject.make_value_observer(property_method::did_change,
-                                                [weak_input = to_weak(input)](change_context const &context) mutable {
-                                                    if (auto input = weak_input.lock()) {
-                                                        input.send_value(context.new_value);
-                                                    }
-                                                });
-
-    auto weak_property = to_weak(*this);
-
-    input.set_can_send_handler([weak_property]() { return !!weak_property; });
-
-    input.set_send_handler([weak_property, observer]() {
-        if (auto property = weak_property.lock()) {
-            return property.value();
-        } else {
-            throw std::runtime_error("subject is null.");
-        }
-    });
-
-    return input.begin();
+    return impl_ptr<impl>()->begin_flow(*this);
 }
 
 template <typename T>
 typename property<T>::flow_context_t property<T>::begin_context_flow() {
-    flow::input<change_context> input;
-
-    subject_t &subject = this->subject();
-
-    auto observer = subject.make_value_observer(property_method::did_change,
-                                                [weak_input = to_weak(input)](change_context const &context) mutable {
-                                                    if (auto input = weak_input.lock()) {
-                                                        input.send_value(context);
-                                                    }
-                                                });
-
-    auto weak_property = to_weak(*this);
-
-    input.set_can_send_handler([weak_property]() { return !!weak_property; });
-
-    input.set_send_handler([weak_property, observer]() {
-        if (auto property = weak_property.lock()) {
-            auto const &value = property.value();
-            return change_context{.new_value = value, .old_value = value, .property = property};
-        } else {
-            throw std::runtime_error("subject is null.");
-        }
-    });
-
-    return input.begin();
+    return impl_ptr<impl>()->begin_context_flow(*this);
 }
 
 template <typename T>
