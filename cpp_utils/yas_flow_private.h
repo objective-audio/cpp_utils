@@ -199,6 +199,16 @@ template <typename T>
 node<T, T, T> begin() {
     return flow::input<T>{}.begin();
 }
+    
+#pragma mark - sender_flowable
+
+template <typename T>
+sender_flowable<T>::sender_flowable(std::shared_ptr<impl> impl) : protocol(std::move(impl)) {
+}
+
+template <typename T>
+sender_flowable<T>::sender_flowable(std::nullptr_t) : protocol(nullptr) {
+}
 
 #pragma mark - sender
 

@@ -85,4 +85,12 @@ struct input : input_base {
    private:
     input_flowable _flowable = nullptr;
 };
+
+template <typename T>
+struct sender_flowable : protocol {
+    struct impl : protocol::impl {};
+
+    sender_flowable(std::shared_ptr<impl>);
+    sender_flowable(std::nullptr_t);
+};
 }
