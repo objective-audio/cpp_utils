@@ -9,7 +9,6 @@
 #include <mutex>
 #include "yas_base.h"
 #include "yas_observing.h"
-#include "yas_flow_observing.h"
 
 namespace yas {
 enum class property_method {

@@ -5,7 +5,6 @@
 #import <XCTest/XCTest.h>
 #import "yas_flow.h"
 #import "yas_observing.h"
-#import "yas_flow_observing.h"
 
 using namespace yas;
 
@@ -23,12 +22,12 @@ using namespace yas;
     [super tearDown];
 }
 
-- (void)test_flow {
+- (void)test_flow_from_subject {
     subject<std::string, int> subject;
 
     std::string received_value = "";
 
-    auto node = flow::begin(subject, std::string("key"))
+    auto flow = subject.begin_flow(std::string("key"))
                     .convert<std::string>([](int const value) { return std::to_string(value); })
                     .perform([&received_value](std::string const &value) { received_value = value; })
                     .end();
