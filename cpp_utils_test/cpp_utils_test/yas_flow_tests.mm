@@ -179,19 +179,19 @@ using namespace yas;
 }
 
 - (void)test_sync_with_combined_sub_input {
-    flow::input<int> input;
-    input.set_can_send_handler([]() { return true; });
-    input.set_send_handler([]() { return 123; });
+    flow::sender<int> sender;
+    sender.set_can_pull_handler([]() { return true; });
+    sender.set_pull_handler([]() { return 123; });
 
-    flow::input<int> sub_input;
-    sub_input.set_can_send_handler([]() { return true; });
-    sub_input.set_send_handler([]() { return 456; });
+    flow::sender<int> sub_sender;
+    sub_sender.set_can_pull_handler([]() { return true; });
+    sub_sender.set_pull_handler([]() { return 456; });
 
     std::vector<std::pair<int, int>> received;
 
     auto flow =
-        input.begin()
-            .combine(sub_input.begin())
+        sender.begin()
+            .combine(sub_sender.begin())
             .guard([](auto const &pair) { return pair.first && pair.second; })
             .convert<std::pair<int, int>>([](auto const &pair) { return std::make_pair(*pair.first, *pair.second); })
             .perform([&received](auto const &pair) { received.emplace_back(pair); })
