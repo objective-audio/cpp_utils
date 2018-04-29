@@ -77,9 +77,7 @@ struct input : input_base {
 
     void send_value(T const &);
 
-    void set_can_send_handler(std::function<bool(void)>);
     [[nodiscard]] bool can_send() const;
-    void set_send_handler(std::function<T(void)>);
 
     [[nodiscard]] node<T, T, T> begin();
 

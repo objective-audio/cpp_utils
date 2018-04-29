@@ -97,12 +97,6 @@ std::function<void(P const &)> const &input_flowable::handler(std::size_t const 
 template <typename T>
 struct input<T>::impl : input_base::impl, input_flowable::impl {
     weak<sender<T>> _weak_sender;
-    std::function<T(void)> _send_handler;
-    std::function<bool(void)> _can_send_handler;
-
-    impl() {
-#warning todo sender使うようにしたらなくす
-    }
 
     impl(weak<sender<T>> &&weak_sender) : _weak_sender(std::move(weak_sender)) {
     }
@@ -118,10 +112,6 @@ struct input<T>::impl : input_base::impl, input_flowable::impl {
     bool can_send() {
         if (auto sender = this->_weak_sender.lock()) {
             return sender.flowable().can_pull();
-        }
-#warning todo sender使うようにしたらなくす
-        if (auto handler = this->_can_send_handler) {
-            return handler();
         } else {
             return false;
         }
@@ -131,11 +121,6 @@ struct input<T>::impl : input_base::impl, input_flowable::impl {
     void send() override {
         if (auto sender = this->_weak_sender.lock()) {
             sender.flowable().pull(this->identifier());
-        } else {
-#warning todo sender使うようにしたらなくす
-            if (this->can_send()) {
-                this->send_value(this->_send_handler());
-            }
         }
 
         for (auto &sub_input : this->_sub_inputs) {
@@ -165,7 +150,7 @@ struct input<T>::impl : input_base::impl, input_flowable::impl {
 };
 
 template <typename T>
-input<T>::input() : input_base(std::make_shared<impl>()) {
+input<T>::input() : input(weak<sender<T>>()) {
 }
 
 template <typename T>
@@ -190,20 +175,10 @@ template <typename T>
 void input<T>::send_value(T const &value) {
     impl_ptr<impl>()->send_value(value);
 }
-
-template <typename T>
-void input<T>::set_can_send_handler(std::function<bool(void)> handler) {
-    impl_ptr<impl>()->_can_send_handler = std::move(handler);
-}
-
+    
 template <typename T>
 bool input<T>::can_send() const {
     return impl_ptr<impl>()->can_send();
-}
-
-template <typename T>
-void input<T>::set_send_handler(std::function<T(void)> handler) {
-    impl_ptr<impl>()->_send_handler = std::move(handler);
 }
 
 template <typename T>
