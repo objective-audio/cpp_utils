@@ -6,6 +6,7 @@
 
 #include "yas_timer.h"
 #include <vector>
+#include <unordered_map>
 
 namespace yas::flow {
 
@@ -154,6 +155,14 @@ input<T>::input(std::nullptr_t) : input_base(nullptr) {
 }
 
 template <typename T>
+input<T>::~input() {
+    if (impl_ptr() && impl_ptr().unique()) {
+#warning todo
+        impl_ptr().reset();
+    }
+}
+
+template <typename T>
 void input<T>::send_value(T const &value) {
     impl_ptr<impl>()->send_value(value);
 }
@@ -194,7 +203,47 @@ node<T, T, T> begin() {
 #pragma mark - sender
 
 template <typename T>
-struct sender<T>::impl : base::impl {};
+struct sender<T>::impl : base::impl {
+    std::function<T(void)> _send_handler;
+    std::function<bool(void)> _can_send_handler;
+    std::unordered_map<std::uintptr_t, weak<input<T>>> inputs;
+
+    node<T, T, T> begin() {
+        flow::input<T> input;
+        this->inputs.insert(std::make_pair(input.identifier(), to_weak(input)));
+        return input.begin();
+    }
+
+    void remove_input(std::uintptr_t const identifier) {
+        this->inputs.erase(identifier);
+    }
+
+    void send_value(T const &value) {
+        for (auto &pair : this->inputs) {
+            weak<flow::input<T>> &weak_input = pair.second;
+            if (!!weak_input) {
+                weak_input.lock().send_value(value);
+            }
+        }
+    }
+
+    bool can_send() {
+        if (auto handler = this->_can_send_handler) {
+            return handler();
+        } else {
+            return false;
+        }
+    }
+
+    void send(std::uintptr_t const input_id) {
+#warning input側で処理した方が良い？
+        if (this->can_send()) {
+            if (auto input = this->inputs.at(input_id).lock()) {
+                input.send_value(this->_send_handler());
+            }
+        }
+    }
+};
 
 template <typename T>
 sender<T>::sender() : base(std::make_shared<impl>()) {
@@ -202,6 +251,16 @@ sender<T>::sender() : base(std::make_shared<impl>()) {
 
 template <typename T>
 sender<T>::sender(std::nullptr_t) : base(nullptr) {
+}
+
+template <typename T>
+void sender<T>::send_value(T const &value) {
+    impl_ptr<impl>()->send_value(value);
+}
+
+template <typename T>
+node<T, T, T> sender<T>::begin() {
+    return impl_ptr<impl>()->begin();
 }
 
 #pragma mark - node

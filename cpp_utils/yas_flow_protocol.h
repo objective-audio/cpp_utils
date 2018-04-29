@@ -70,6 +70,7 @@ struct input : input_base {
 
     input();
     input(std::nullptr_t);
+    ~input();
 
     void send_value(T const &);
 

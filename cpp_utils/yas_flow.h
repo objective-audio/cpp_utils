@@ -26,6 +26,10 @@ struct sender : base {
 
     sender();
     sender(std::nullptr_t);
+
+    void send_value(T const &);
+
+    [[nodiscard]] node<T, T, T> begin();
 };
 
 template <typename T>
