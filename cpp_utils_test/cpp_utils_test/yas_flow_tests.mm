@@ -363,4 +363,22 @@ using namespace yas;
     XCTAssertEqual(*received.second, "test_text");
 }
 
+- (void)test_normalize {
+    flow::sender<int> sender;
+
+    flow::node<std::string, int, int> converted_flow =
+        sender.begin().convert<std::string>([](int const &value) { return std::to_string(value); });
+
+    flow::node<std::string, std::string, int> normalized_flow = converted_flow.normalize();
+
+    std::string received = "";
+
+    flow::observer<int> observer =
+        normalized_flow.perform([&received](std::string const &value) { received = value; }).end();
+    
+    sender.send_value(10);
+    
+    XCTAssertEqual(received, "10");
+}
+
 @end

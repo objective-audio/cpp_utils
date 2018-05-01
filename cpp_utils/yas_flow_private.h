@@ -329,6 +329,24 @@ node<Out, In, Begin>::node(std::nullptr_t) : base(nullptr) {
 }
 
 template <typename Out, typename In, typename Begin>
+node<Out, Out, Begin> node<Out, In, Begin>::normalize() {
+    auto imp = impl_ptr<impl>();
+    flow::input<Begin> &input = imp->_input;
+    auto weak_input = to_weak(input);
+    std::size_t const next_idx = input.flowable().handlers_size() + 1;
+
+    input.flowable().template push_handler<In>(
+        [handler = imp->_handler, weak_input, next_idx](In const &value) mutable {
+            auto const result = handler(value);
+            if (auto input = weak_input.lock()) {
+                input.flowable().template handler<Out>(next_idx)(result);
+            }
+        });
+
+    return node<Out, Out, Begin>(input, [](Out const &value) { return value; });
+}
+
+template <typename Out, typename In, typename Begin>
 node<Out, In, Begin> node<Out, In, Begin>::perform(std::function<void(Out const &)> perform_handler) {
     auto imp = impl_ptr<impl>();
     return node<Out, In, Begin>(
