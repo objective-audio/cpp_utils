@@ -64,6 +64,8 @@ struct node : base {
     node(input<Begin>, std::function<Out(In const &)>);
     node(std::nullptr_t);
 
+    [[nodiscard]] node<Out, Out, Begin> normalize();
+
     [[nodiscard]] node<Out, In, Begin> perform(std::function<void(Out const &)>);
     [[nodiscard]] node<Out, In, Begin> receive(receivable<Out>);
 
