@@ -241,7 +241,7 @@ struct sender<T>::impl : base::impl, sender_flowable<T>::impl {
         for (auto &pair : this->inputs) {
             weak<flow::input<T>> &weak_input = pair.second;
             if (!!weak_input) {
-                weak_input.lock().send_value(value);
+                weak_input.lock().input_value(value);
             }
         }
     }
@@ -261,7 +261,7 @@ struct sender<T>::impl : base::impl, sender_flowable<T>::impl {
     void sync(std::uintptr_t const key) override {
         if (this->can_sync()) {
             if (auto input = this->inputs.at(key).lock()) {
-                input.send_value(this->_sync_handler());
+                input.input_value(this->_sync_handler());
             }
         }
     }

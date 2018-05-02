@@ -68,7 +68,7 @@ struct flow::graph<State, Signal>::impl : base::impl, receivable<graph_next<Stat
         this->is_running = true;
 
         auto &input = this->observers.at(this->state).input();
-        input.send_value(signal);
+        input.input_value(signal);
     }
 
     void receive_value(graph_next<State, Signal> const &next) override {
