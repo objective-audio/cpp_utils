@@ -171,7 +171,7 @@ input<T>::~input() {
 }
 
 template <typename T>
-void input<T>::send_value(T const &value) {
+void input<T>::input_value(T const &value) {
     impl_ptr<impl>()->send_value(value);
 }
 

@@ -75,7 +75,7 @@ struct input : input_base {
     input(std::nullptr_t);
     ~input();
 
-    void send_value(T const &);
+    void input_value(T const &);
 
     [[nodiscard]] bool can_sync() const;
 

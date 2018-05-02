@@ -458,7 +458,7 @@ struct test_class {
     flow::input<int> input;
     auto flow = input.begin().receive(property.receivable()).end();
 
-    input.send_value(200);
+    input.input_value(200);
 
     XCTAssertEqual(property.value(), 200);
 }
