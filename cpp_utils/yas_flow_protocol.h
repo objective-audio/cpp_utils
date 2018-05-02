@@ -12,6 +12,8 @@ template <typename Out, typename In, typename Begin>
 class node;
 template <typename T>
 class sender;
+template <typename T>
+class receiver;
 
 template <typename T>
 struct receivable : protocol {
@@ -23,6 +25,16 @@ struct receivable : protocol {
     receivable(std::nullptr_t);
 
     void receive_value(T const &);
+};
+
+template <typename T>
+struct output : base {
+    class impl;
+
+    output(weak<receiver<T>>);
+    output(std::nullptr_t);
+
+    void output_value(T const &);
 };
 
 struct input_base : base {

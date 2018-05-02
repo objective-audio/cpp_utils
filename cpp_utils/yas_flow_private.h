@@ -25,6 +25,35 @@ void receivable<T>::receive_value(T const &value) {
     impl_ptr<impl>()->receive_value(value);
 }
 
+#pragma mark - flow::output
+
+template <typename T>
+struct output<T>::impl : base::impl {
+    weak<receiver<T>> _weak_receiver;
+
+    impl(weak<receiver<T>> &&weak_receiver) : _weak_receiver(std::move(weak_receiver)) {
+    }
+
+    void output_value(T const &value) {
+        if (auto receiver = this->_weak_receiver.lock()) {
+            receiver.receive_value(value);
+        }
+    }
+};
+
+template <typename T>
+output<T>::output(weak<receiver<T>> weak_receiver) : base(std::make_shared<impl>(std::move(weak_receiver))) {
+}
+
+template <typename T>
+output<T>::output(std::nullptr_t) : base(nullptr) {
+}
+
+template <typename T>
+void output<T>::output_value(T const &value) {
+    impl_ptr<impl>()->output_value(value);
+}
+
 #pragma mark - flow::receiver
 
 template <typename T>
