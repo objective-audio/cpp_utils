@@ -37,6 +37,19 @@ struct output : base {
     void output_value(T const &);
 };
 
+template <typename T>
+struct receiver_flowable : protocol {
+    struct impl : protocol::impl {
+        virtual output<T> make_output() = 0;
+    };
+
+    explicit receiver_flowable(std::shared_ptr<impl>);
+    receiver_flowable(std::nullptr_t);
+
+    void receive_value(T const &);
+    output<T> make_output();
+};
+
 struct input_base : base {
     struct impl : base::impl {
         virtual void sync() = 0;

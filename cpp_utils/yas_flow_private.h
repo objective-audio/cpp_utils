@@ -54,10 +54,30 @@ void output<T>::output_value(T const &value) {
     impl_ptr<impl>()->output_value(value);
 }
 
+#pragma mark - flow::receiver_flowable
+
+template <typename T>
+receiver_flowable<T>::receiver_flowable(std::shared_ptr<impl> impl) : protocol(std::move(impl)) {
+}
+
+template <typename T>
+receiver_flowable<T>::receiver_flowable(std::nullptr_t) : protocol(nullptr) {
+}
+
+template <typename T>
+void receiver_flowable<T>::receive_value(T const &value) {
+    impl_ptr<impl>()->receive_value(value);
+}
+
+template <typename T>
+output<T> receiver_flowable<T>::make_output() {
+    return impl_ptr<impl>()->make_output();
+}
+
 #pragma mark - flow::receiver
 
 template <typename T>
-struct flow::receiver<T>::impl : base::impl, flow::receivable<T>::impl {
+struct flow::receiver<T>::impl : base::impl, flow::receivable<T>::impl, flow::receiver_flowable<T>::impl {
     std::function<void(T const &)> handler;
 
     impl(std::function<void(T const &)> &&handler) : handler(std::move(handler)) {
@@ -65,6 +85,10 @@ struct flow::receiver<T>::impl : base::impl, flow::receivable<T>::impl {
 
     void receive_value(T const &value) override {
         this->handler(value);
+    }
+
+    output<T> make_output() override {
+        return output<T>{to_weak(cast<flow::receiver<T>>())};
     }
 };
 
@@ -79,6 +103,11 @@ flow::receiver<T>::receiver(std::nullptr_t) : base(nullptr) {
 template <typename T>
 flow::receivable<T> flow::receiver<T>::receivable() {
     return flow::receivable<T>{impl_ptr<typename flow::receivable<T>::impl>()};
+}
+
+template <typename T>
+flow::receiver_flowable<T> flow::receiver<T>::flowable() {
+    return flow::receivable<T>{impl_ptr<typename flow::receiver_flowable<T>::impl>()};
 }
 
 #pragma mark - observer

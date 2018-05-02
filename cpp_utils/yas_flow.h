@@ -18,6 +18,10 @@ struct receiver : base {
     receiver(std::nullptr_t);
 
     flow::receivable<T> receivable();
+    receiver_flowable<T> flowable();
+
+   private:
+    receiver_flowable<T> _flowable = nullptr;
 };
 
 template <typename T>
