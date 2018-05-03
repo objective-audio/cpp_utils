@@ -41,6 +41,7 @@ template <typename T>
 struct receiver_flowable : protocol {
     struct impl : protocol::impl {
         virtual output<T> make_output() = 0;
+        virtual void receive_value(T const &) = 0;
     };
 
     explicit receiver_flowable(std::shared_ptr<impl>);
