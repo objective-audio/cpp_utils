@@ -228,23 +228,6 @@ using namespace yas;
     XCTAssertEqual(received.at(1), 90);
 }
 
-#warning 後で消す
-- (void)test_receive_receivable {
-    std::string received = "";
-
-    flow::sender<int> sender;
-    flow::receiver<std::string> receiver{[&received](std::string const &value) { received = value; }};
-
-    auto node = sender.begin()
-                    .convert<std::string>([](int const &value) { return std::to_string(value); })
-                    .receive(receiver.receivable())
-                    .end();
-
-    sender.send_value(3);
-
-    XCTAssertEqual(received, "3");
-}
-
 - (void)test_receive {
     std::string received = "";
 
