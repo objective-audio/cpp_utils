@@ -17,6 +17,8 @@ struct receiver : base {
     receiver(std::function<void(T const &)>);
     receiver(std::nullptr_t);
 
+    ~receiver() final;
+
     receiver_flowable<T> flowable();
 
    private:
@@ -29,6 +31,8 @@ struct sender : base {
 
     sender();
     sender(std::nullptr_t);
+
+    ~sender() final;
 
     void set_can_sync_handler(std::function<bool(void)>);
     void set_sync_handler(std::function<T(void)>);
@@ -43,15 +47,14 @@ struct sender : base {
     sender_flowable<T> _flowable = nullptr;
 };
 
-template <typename T>
-[[nodiscard]] node<T, T, T> begin();
-
 template <typename Begin>
 struct observer : base {
     class impl;
 
     observer(input<Begin>);
     observer(std::nullptr_t);
+
+    ~observer() final;
 
     flow::input<Begin> &input();
 
@@ -66,6 +69,8 @@ struct node : base {
     // private
     node(input<Begin>, std::function<Out(In const &)>);
     node(std::nullptr_t);
+
+    ~node() final;
 
     [[nodiscard]] node<Out, Out, Begin> normalize();
 

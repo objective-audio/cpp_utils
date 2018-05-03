@@ -54,7 +54,9 @@ struct flow::graph<State, Signal>::impl : base::impl {
             throw std::runtime_error("observer state exists.");
         }
 
-        auto observer = flow::begin<Signal>()
+        flow::sender<Signal> sender;
+
+        auto observer = sender.begin()
                             .template convert<graph_next<State, Signal>>(
                                 [handler = std::move(handler), weak_graph = to_weak(graph)](Signal const &signal) {
                                     state_out<State> state_out = handler(signal);

@@ -68,18 +68,6 @@ using namespace yas;
     XCTAssertEqual(received2, 3);
 }
 
-- (void)test_template_begin {
-    int received = -1;
-
-    auto flow = flow::begin<int>().perform([&received](int const &value) { received = value; }).end();
-
-    XCTAssertEqual(received, -1);
-
-    flow.input().input_value(2);
-
-    XCTAssertEqual(received, 2);
-}
-
 - (void)test_convert {
     flow::sender<int> sender;
 
