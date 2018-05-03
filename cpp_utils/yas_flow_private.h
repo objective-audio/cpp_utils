@@ -10,25 +10,59 @@
 
 namespace yas::flow {
 
-#pragma mark - receivable
+#pragma mark - flow::output
 
 template <typename T>
-receivable<T>::receivable(std::shared_ptr<impl> impl) : protocol(std::move(impl)) {
+struct output<T>::impl : base::impl {
+    weak<receiver<T>> _weak_receiver;
+
+    impl(weak<receiver<T>> &&weak_receiver) : _weak_receiver(std::move(weak_receiver)) {
+    }
+
+    void output_value(T const &value) {
+        if (auto receiver = this->_weak_receiver.lock()) {
+            receiver.flowable().receive_value(value);
+        }
+    }
+};
+
+template <typename T>
+output<T>::output(weak<receiver<T>> weak_receiver) : base(std::make_shared<impl>(std::move(weak_receiver))) {
 }
 
 template <typename T>
-receivable<T>::receivable(std::nullptr_t) : protocol(nullptr) {
+output<T>::output(std::nullptr_t) : base(nullptr) {
 }
 
 template <typename T>
-void receivable<T>::receive_value(T const &value) {
+void output<T>::output_value(T const &value) {
+    impl_ptr<impl>()->output_value(value);
+}
+
+#pragma mark - flow::receiver_flowable
+
+template <typename T>
+receiver_flowable<T>::receiver_flowable(std::shared_ptr<impl> impl) : protocol(std::move(impl)) {
+}
+
+template <typename T>
+receiver_flowable<T>::receiver_flowable(std::nullptr_t) : protocol(nullptr) {
+}
+
+template <typename T>
+void receiver_flowable<T>::receive_value(T const &value) {
     impl_ptr<impl>()->receive_value(value);
+}
+
+template <typename T>
+output<T> receiver_flowable<T>::make_output() {
+    return impl_ptr<impl>()->make_output();
 }
 
 #pragma mark - flow::receiver
 
 template <typename T>
-struct flow::receiver<T>::impl : base::impl, flow::receivable<T>::impl {
+struct flow::receiver<T>::impl : base::impl, flow::receiver_flowable<T>::impl {
     std::function<void(T const &)> handler;
 
     impl(std::function<void(T const &)> &&handler) : handler(std::move(handler)) {
@@ -36,6 +70,10 @@ struct flow::receiver<T>::impl : base::impl, flow::receivable<T>::impl {
 
     void receive_value(T const &value) override {
         this->handler(value);
+    }
+
+    output<T> make_output() override {
+        return output<T>{to_weak(cast<flow::receiver<T>>())};
     }
 };
 
@@ -48,8 +86,8 @@ flow::receiver<T>::receiver(std::nullptr_t) : base(nullptr) {
 }
 
 template <typename T>
-flow::receivable<T> flow::receiver<T>::receivable() {
-    return flow::receivable<T>{impl_ptr<typename flow::receivable<T>::impl>()};
+flow::receiver_flowable<T> flow::receiver<T>::flowable() {
+    return flow::receiver_flowable<T>{impl_ptr<typename flow::receiver_flowable<T>::impl>()};
 }
 
 #pragma mark - observer
@@ -171,7 +209,7 @@ input<T>::~input() {
 }
 
 template <typename T>
-void input<T>::send_value(T const &value) {
+void input<T>::input_value(T const &value) {
     impl_ptr<impl>()->send_value(value);
 }
 
@@ -241,7 +279,7 @@ struct sender<T>::impl : base::impl, sender_flowable<T>::impl {
         for (auto &pair : this->inputs) {
             weak<flow::input<T>> &weak_input = pair.second;
             if (!!weak_input) {
-                weak_input.lock().send_value(value);
+                weak_input.lock().input_value(value);
             }
         }
     }
@@ -261,7 +299,7 @@ struct sender<T>::impl : base::impl, sender_flowable<T>::impl {
     void sync(std::uintptr_t const key) override {
         if (this->can_sync()) {
             if (auto input = this->inputs.at(key).lock()) {
-                input.send_value(this->_sync_handler());
+                input.input_value(this->_sync_handler());
             }
         }
     }
@@ -359,8 +397,10 @@ node<Out, In, Begin> node<Out, In, Begin>::perform(std::function<void(Out const 
 }
 
 template <typename Out, typename In, typename Begin>
-node<Out, In, Begin> node<Out, In, Begin>::receive(receivable<Out> receiver) {
-    return this->perform([receiver = std::move(receiver)](Out const &value) mutable { receiver.receive_value(value); });
+node<Out, In, Begin> node<Out, In, Begin>::receive(receiver<Out> &receiver) {
+    return this->perform([output = receiver.flowable().make_output()](Out const &value) mutable {
+        output.output_value(value);
+    });
 }
 
 template <typename Out, typename In, typename Begin>
@@ -508,7 +548,7 @@ observer<Begin> node<Out, In, Begin>::end() {
 }
 
 template <typename Out, typename In, typename Begin>
-observer<Begin> node<Out, In, Begin>::end(receivable<Out> receiver) {
-    return this->receive(std::move(receiver)).end();
+[[nodiscard]] observer<Begin> node<Out, In, Begin>::end(receiver<Out> &receiver) {
+    return this->receive(receiver).end();
 }
 }

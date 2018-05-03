@@ -17,7 +17,10 @@ struct receiver : base {
     receiver(std::function<void(T const &)>);
     receiver(std::nullptr_t);
 
-    flow::receivable<T> receivable();
+    receiver_flowable<T> flowable();
+
+   private:
+    receiver_flowable<T> _flowable = nullptr;
 };
 
 template <typename T>
@@ -67,7 +70,7 @@ struct node : base {
     [[nodiscard]] node<Out, Out, Begin> normalize();
 
     [[nodiscard]] node<Out, In, Begin> perform(std::function<void(Out const &)>);
-    [[nodiscard]] node<Out, In, Begin> receive(receivable<Out>);
+    [[nodiscard]] node<Out, In, Begin> receive(receiver<Out> &);
 
     [[nodiscard]] node<Out, Out, Begin> guard(std::function<bool(Out const &)>);
 
@@ -89,7 +92,7 @@ struct node : base {
         node<SubOut, SubIn, SubBegin>);
 
     [[nodiscard]] observer<Begin> end();
-    [[nodiscard]] observer<Begin> end(receivable<Out>);
+    [[nodiscard]] observer<Begin> end(receiver<Out> &);
 };
 }
 

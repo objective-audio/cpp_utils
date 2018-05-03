@@ -12,17 +12,31 @@ template <typename Out, typename In, typename Begin>
 class node;
 template <typename T>
 class sender;
+template <typename T>
+class receiver;
 
 template <typename T>
-struct receivable : protocol {
+struct output : base {
+    class impl;
+
+    output(weak<receiver<T>>);
+    output(std::nullptr_t);
+
+    void output_value(T const &);
+};
+
+template <typename T>
+struct receiver_flowable : protocol {
     struct impl : protocol::impl {
+        virtual output<T> make_output() = 0;
         virtual void receive_value(T const &) = 0;
     };
 
-    explicit receivable(std::shared_ptr<impl> impl);
-    receivable(std::nullptr_t);
+    explicit receiver_flowable(std::shared_ptr<impl>);
+    receiver_flowable(std::nullptr_t);
 
     void receive_value(T const &);
+    output<T> make_output();
 };
 
 struct input_base : base {
@@ -70,12 +84,13 @@ template <typename T>
 struct input : input_base {
     class impl;
 
+#warning 引数のなしのコンストラクタはreceiverを修正したら消す？
     input();
     input(weak<sender<T>>);
     input(std::nullptr_t);
     ~input();
 
-    void send_value(T const &);
+    void input_value(T const &);
 
     [[nodiscard]] bool can_sync() const;
 
