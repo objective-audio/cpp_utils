@@ -422,7 +422,7 @@ node<Out, In, Begin> node<Out, In, Begin>::receive(receivable<Out> receiver) {
 }
 
 template <typename Out, typename In, typename Begin>
-node<Out, In, Begin> node<Out, In, Begin>::receive(receiver<Out> receiver) {
+node<Out, In, Begin> node<Out, In, Begin>::receive(receiver<Out> &receiver) {
     return this->perform([output = receiver.flowable().make_output()](Out const &value) mutable {
         output.output_value(value);
     });
@@ -578,7 +578,7 @@ observer<Begin> node<Out, In, Begin>::end(receivable<Out> receiver) {
 }
 
 template <typename Out, typename In, typename Begin>
-[[nodiscard]] observer<Begin> node<Out, In, Begin>::end(receiver<Out> receiver) {
-    return this->receive(std::move(receiver)).end();
+[[nodiscard]] observer<Begin> node<Out, In, Begin>::end(receiver<Out> &receiver) {
+    return this->receive(receiver).end();
 }
 }
