@@ -30,7 +30,7 @@ namespace yas {
 #pragma mark - flow::graph
 
 template <typename State, typename Signal>
-struct flow::graph<State, Signal>::impl : base::impl, receivable<graph_next<State, Signal>>::impl {
+struct flow::graph<State, Signal>::impl : base::impl {
     State state;
     bool is_running = false;
     flow::receiver<graph_next<State, Signal>> receiver = nullptr;
@@ -43,7 +43,7 @@ struct flow::graph<State, Signal>::impl : base::impl, receivable<graph_next<Stat
         this->receiver = flow::receiver<graph_next<State, Signal>>([weak_graph = to_weak(graph)](
             graph_next<State, Signal> const &next) {
             if (flow::graph<State, Signal> graph = weak_graph.lock()) {
-                graph.impl_ptr<impl>()->receive_value(next);
+                graph.impl_ptr<impl>()->_receive_value(next);
             }
         });
     }
@@ -53,9 +53,6 @@ struct flow::graph<State, Signal>::impl : base::impl, receivable<graph_next<Stat
         if (this->observers.count(state) > 0) {
             throw std::runtime_error("observer state exists.");
         }
-
-        flow::receivable<graph_next<State, Signal>> receivable = flow::receivable<graph_next<State, Signal>>{
-            graph.impl_ptr<typename flow::receivable<graph_next<State, Signal>>::impl>()};
 
         auto observer = flow::begin<Signal>()
                             .template convert<graph_next<State, Signal>>(
@@ -81,7 +78,8 @@ struct flow::graph<State, Signal>::impl : base::impl, receivable<graph_next<Stat
         input.input_value(signal);
     }
 
-    void receive_value(graph_next<State, Signal> const &next) override {
+   private:
+    void _receive_value(graph_next<State, Signal> const &next) {
         this->state = next.state;
         this->is_running = false;
 
