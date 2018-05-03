@@ -33,9 +33,19 @@ template <typename State, typename Signal>
 struct flow::graph<State, Signal>::impl : base::impl, receivable<graph_next<State, Signal>>::impl {
     State state;
     bool is_running = false;
+    flow::receiver<graph_next<State, Signal>> receiver = nullptr;
     std::unordered_map<State, flow::observer<Signal>> observers;
 
     impl(State &&state) : state(std::move(state)) {
+    }
+
+    void prepare(flow::graph<State, Signal> &graph) {
+        this->receiver = flow::receiver<graph_next<State, Signal>>([weak_graph = to_weak(graph)](
+            graph_next<State, Signal> const &next) {
+            if (flow::graph<State, Signal> graph = weak_graph.lock()) {
+                graph.impl_ptr<impl>()->receive_value(next);
+            }
+        });
     }
 
     void add(flow::graph<State, Signal> &graph, State &&state,
@@ -55,7 +65,7 @@ struct flow::graph<State, Signal>::impl : base::impl, receivable<graph_next<Stat
                                         .state = state_out.state,
                                         .signal = state_out.is_continue ? opt_t<Signal>(signal) : nullopt};
                                 })
-                            .end(std::move(receivable));
+                            .end(this->receiver);
 
         this->observers.emplace(std::move(state), std::move(observer));
     }
@@ -83,6 +93,7 @@ struct flow::graph<State, Signal>::impl : base::impl, receivable<graph_next<Stat
 
 template <typename State, typename Signal>
 flow::graph<State, Signal>::graph(State state) : base(std::make_shared<impl>(std::move(state))) {
+    impl_ptr<impl>()->prepare(*this);
 }
 
 template <typename State, typename Signal>
