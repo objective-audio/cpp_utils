@@ -16,18 +16,6 @@ template <typename T>
 class receiver;
 
 template <typename T>
-struct receivable : protocol {
-    struct impl : protocol::impl {
-        virtual void receive_value(T const &) = 0;
-    };
-
-    explicit receivable(std::shared_ptr<impl> impl);
-    receivable(std::nullptr_t);
-
-    void receive_value(T const &);
-};
-
-template <typename T>
 struct output : base {
     class impl;
 

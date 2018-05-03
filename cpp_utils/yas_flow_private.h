@@ -10,21 +10,6 @@
 
 namespace yas::flow {
 
-#pragma mark - receivable
-
-template <typename T>
-receivable<T>::receivable(std::shared_ptr<impl> impl) : protocol(std::move(impl)) {
-}
-
-template <typename T>
-receivable<T>::receivable(std::nullptr_t) : protocol(nullptr) {
-}
-
-template <typename T>
-void receivable<T>::receive_value(T const &value) {
-    impl_ptr<impl>()->receive_value(value);
-}
-
 #pragma mark - flow::output
 
 template <typename T>
@@ -77,7 +62,7 @@ output<T> receiver_flowable<T>::make_output() {
 #pragma mark - flow::receiver
 
 template <typename T>
-struct flow::receiver<T>::impl : base::impl, flow::receivable<T>::impl, flow::receiver_flowable<T>::impl {
+struct flow::receiver<T>::impl : base::impl, flow::receiver_flowable<T>::impl {
     std::function<void(T const &)> handler;
 
     impl(std::function<void(T const &)> &&handler) : handler(std::move(handler)) {
@@ -98,11 +83,6 @@ flow::receiver<T>::receiver(std::function<void(T const &)> handler) : base(std::
 
 template <typename T>
 flow::receiver<T>::receiver(std::nullptr_t) : base(nullptr) {
-}
-
-template <typename T>
-flow::receivable<T> flow::receiver<T>::receivable() {
-    return flow::receivable<T>{impl_ptr<typename flow::receivable<T>::impl>()};
 }
 
 template <typename T>
@@ -414,11 +394,6 @@ node<Out, In, Begin> node<Out, In, Begin>::perform(std::function<void(Out const 
             perform_handler(result);
             return result;
         });
-}
-
-template <typename Out, typename In, typename Begin>
-node<Out, In, Begin> node<Out, In, Begin>::receive(receivable<Out> receiver) {
-    return this->perform([receiver = std::move(receiver)](Out const &value) mutable { receiver.receive_value(value); });
 }
 
 template <typename Out, typename In, typename Begin>
