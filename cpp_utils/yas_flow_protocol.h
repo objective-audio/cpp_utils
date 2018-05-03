@@ -96,6 +96,7 @@ template <typename T>
 struct input : input_base {
     class impl;
 
+#warning 引数のなしのコンストラクタはreceiverを修正したら消す？
     input();
     input(weak<sender<T>>);
     input(std::nullptr_t);
