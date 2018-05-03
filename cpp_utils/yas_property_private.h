@@ -8,8 +8,10 @@
 
 namespace yas {
 template <typename T>
-class property<T>::impl : public base::impl, public flow::receivable<T>::impl {
+class property<T>::impl : public base::impl {
    public:
+    flow::receiver<T> receiver = nullptr;
+
     impl(args const &args) : _value(args.value), _validator(args.validator), _limiter(args.limiter) {
         _limit(_value);
         _validate(_value);
@@ -19,6 +21,14 @@ class property<T>::impl : public base::impl, public flow::receivable<T>::impl {
         : _value(std::move(args.value)), _validator(std::move(args.validator)), _limiter(std::move(args.limiter)) {
         _limit(_value);
         _validate(_value);
+    }
+
+    void prepare(property<T> &property) {
+        this->receiver = flow::receiver<T>([weak_property = to_weak(property)](T const &value) {
+            if (auto property = weak_property.lock()) {
+                property.set_value(value);
+            }
+        });
     }
 
     void set_value(T &&val) {
@@ -52,10 +62,6 @@ class property<T>::impl : public base::impl, public flow::receivable<T>::impl {
 
     subject_t &subject() {
         return _subject;
-    }
-
-    void receive_value(T const &value) override {
-        this->_set_value(value);
     }
 
     [[nodiscard]] flow::node<T, T, T> begin_value_flow(property<T> &property) {
@@ -206,10 +212,12 @@ property<T>::property() : property(args{}) {
 
 template <typename T>
 property<T>::property(args const &args) : base(std::make_shared<impl>(args)) {
+    impl_ptr<impl>()->prepare(*this);
 }
 
 template <typename T>
 property<T>::property(args &&args) : base(std::make_shared<impl>(std::move(args))) {
+    impl_ptr<impl>()->prepare(*this);
 }
 
 template <typename T>
@@ -287,8 +295,8 @@ typename property<T>::flow_context_t property<T>::begin_context_flow() {
 }
 
 template <typename T>
-flow::receivable<T> property<T>::receivable() {
-    return flow::receivable<T>{impl_ptr<typename flow::receivable<T>::impl>()};
+flow::receiver<T> &property<T>::receiver() {
+    return impl_ptr<impl>()->receiver;
 }
 
 template <typename T>
