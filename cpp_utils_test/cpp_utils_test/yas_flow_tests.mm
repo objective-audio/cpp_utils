@@ -257,7 +257,7 @@ using namespace yas;
                     .end();
 
     sender.send_value(3);
-    
+
     XCTAssertEqual(received, "3");
 }
 
@@ -267,9 +267,8 @@ using namespace yas;
     flow::sender<int> sender;
     flow::receiver<std::string> receiver{[&received](std::string const &value) { received = value; }};
 
-    auto flow = sender.begin()
-                    .convert<std::string>([](int const &value) { return std::to_string(value); })
-                    .end(receiver.receivable());
+    auto flow =
+        sender.begin().convert<std::string>([](int const &value) { return std::to_string(value); }).end(receiver);
 
     sender.send_value(4);
 
@@ -327,7 +326,7 @@ using namespace yas;
 
     flow::receiver<int> receiver{[&received](int const &value) { received = value; }};
 
-    auto flow = sender.begin().end(receiver.receivable());
+    auto flow = sender.begin().end(receiver);
 
     sender.send_value(100);
 
@@ -392,9 +391,9 @@ using namespace yas;
 
     flow::observer<int> observer =
         normalized_flow.perform([&received](std::string const &value) { received = value; }).end();
-    
+
     sender.send_value(10);
-    
+
     XCTAssertEqual(received, "10");
 }
 
