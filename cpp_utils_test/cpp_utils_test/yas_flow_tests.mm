@@ -228,7 +228,8 @@ using namespace yas;
     XCTAssertEqual(received.at(1), 90);
 }
 
-- (void)test_receive {
+#warning 後で消す
+- (void)test_receive_receivable {
     std::string received = "";
 
     flow::sender<int> sender;
