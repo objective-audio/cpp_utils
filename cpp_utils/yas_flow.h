@@ -94,7 +94,6 @@ struct node : base {
         node<SubOut, SubIn, SubBegin>);
 
     [[nodiscard]] observer<Begin> end();
-    [[nodiscard]] observer<Begin> end(receivable<Out>);
     [[nodiscard]] observer<Begin> end(receiver<Out> &);
 };
 }

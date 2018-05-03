@@ -573,11 +573,6 @@ observer<Begin> node<Out, In, Begin>::end() {
 }
 
 template <typename Out, typename In, typename Begin>
-observer<Begin> node<Out, In, Begin>::end(receivable<Out> receiver) {
-    return this->receive(std::move(receiver)).end();
-}
-
-template <typename Out, typename In, typename Begin>
 [[nodiscard]] observer<Begin> node<Out, In, Begin>::end(receiver<Out> &receiver) {
     return this->receive(receiver).end();
 }
