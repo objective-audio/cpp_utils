@@ -561,4 +561,9 @@ observer<Begin> node<Out, In, Begin>::sync() {
     observer.sync();
     return observer;
 }
+
+template <typename Out, typename In, typename Begin>
+observer<Begin> node<Out, In, Begin>::sync(receiver<Out> &receiver) {
+    return this->receive(receiver).sync();
+}
 }
