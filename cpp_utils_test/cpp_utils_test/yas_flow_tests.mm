@@ -177,6 +177,20 @@ using namespace yas;
     XCTAssertEqual(received, 100);
 }
 
+- (void)test_sync_end_with_receiver {
+    flow::sender<int> sender;
+    sender.set_can_sync_handler([] { return true; });
+    sender.set_sync_handler([] { return 100; });
+
+    int received = -1;
+
+    flow::receiver<int> receiver{[&received](int const &value) { received = value; }};
+
+    auto flow = sender.begin().sync(receiver);
+
+    XCTAssertEqual(received, 100);
+}
+
 - (void)test_sync_with_combined_sub_sender {
     flow::sender<int> sender;
     sender.set_can_sync_handler([]() { return true; });
