@@ -111,9 +111,9 @@ template <typename Begin>
 observer<Begin>::observer(std::nullptr_t) : base(nullptr) {
 }
 
-    template <typename Begin>
-    observer<Begin>::~observer() = default;
-    
+template <typename Begin>
+observer<Begin>::~observer() = default;
+
 template <typename Begin>
 flow::input<Begin> &observer<Begin>::input() {
     return impl_ptr<impl>()->_input;
@@ -551,7 +551,14 @@ observer<Begin> node<Out, In, Begin>::end() {
 }
 
 template <typename Out, typename In, typename Begin>
-[[nodiscard]] observer<Begin> node<Out, In, Begin>::end(receiver<Out> &receiver) {
+observer<Begin> node<Out, In, Begin>::end(receiver<Out> &receiver) {
     return this->receive(receiver).end();
+}
+
+template <typename Out, typename In, typename Begin>
+observer<Begin> node<Out, In, Begin>::sync() {
+    auto observer = this->end();
+    observer.sync();
+    return observer;
 }
 }

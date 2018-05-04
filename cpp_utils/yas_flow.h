@@ -98,6 +98,7 @@ struct node : base {
 
     [[nodiscard]] observer<Begin> end();
     [[nodiscard]] observer<Begin> end(receiver<Out> &);
+    [[nodiscard]] observer<Begin> sync();
 };
 }
 
