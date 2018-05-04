@@ -79,9 +79,9 @@ struct node : base {
 
     [[nodiscard]] node<Out, Out, Begin> guard(std::function<bool(Out const &)>);
 
-    [[nodiscard]] node<Out, In, Begin> convert(std::function<Out(Out const &)>);
+    [[nodiscard]] node<Out, In, Begin> to(std::function<Out(Out const &)>);
     template <typename Next = Out>
-    [[nodiscard]] node<Next, In, Begin> convert(std::function<Next(Out const &)>);
+    [[nodiscard]] node<Next, In, Begin> to(std::function<Next(Out const &)>);
 
     [[nodiscard]] node<Out, Out, Begin> wait(double const);
 

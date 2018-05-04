@@ -56,15 +56,15 @@ struct flow::graph<State, Signal>::impl : base::impl {
 
         flow::sender<Signal> sender;
 
-        auto observer = sender.begin()
-                            .template convert<graph_next<State, Signal>>(
-                                [handler = std::move(handler), weak_graph = to_weak(graph)](Signal const &signal) {
-                                    state_out<State> state_out = handler(signal);
-                                    return graph_next<State, Signal>{
-                                        .state = state_out.state,
-                                        .signal = state_out.is_continue ? opt_t<Signal>(signal) : nullopt};
-                                })
-                            .end(this->receiver);
+        auto observer =
+            sender.begin()
+                .template to<graph_next<State, Signal>>([handler = std::move(handler),
+                                                         weak_graph = to_weak(graph)](Signal const &signal) {
+                    state_out<State> state_out = handler(signal);
+                    return graph_next<State, Signal>{.state = state_out.state,
+                                                     .signal = state_out.is_continue ? opt_t<Signal>(signal) : nullopt};
+                })
+                .end(this->receiver);
 
         this->observers.emplace(std::move(state), std::move(observer));
     }

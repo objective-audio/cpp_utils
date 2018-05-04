@@ -428,17 +428,17 @@ node<Out, Out, Begin> node<Out, In, Begin>::guard(std::function<bool(Out const &
 }
 
 template <typename Out, typename In, typename Begin>
-node<Out, In, Begin> node<Out, In, Begin>::convert(std::function<Out(Out const &)> convert_handler) {
-    return this->convert<Out>(std::move(convert_handler));
+node<Out, In, Begin> node<Out, In, Begin>::to(std::function<Out(Out const &)> to_handler) {
+    return this->to<Out>(std::move(to_handler));
 }
 
 template <typename Out, typename In, typename Begin>
 template <typename Next>
-node<Next, In, Begin> node<Out, In, Begin>::convert(std::function<Next(Out const &)> convert_handler) {
+node<Next, In, Begin> node<Out, In, Begin>::to(std::function<Next(Out const &)> to_handler) {
     auto imp = impl_ptr<impl>();
     return node<Next, In, Begin>(std::move(imp->_input), [
-        convert_handler = std::move(convert_handler), handler = std::move(imp->_handler)
-    ](In const &value) { return convert_handler(handler(value)); });
+        to_handler = std::move(to_handler), handler = std::move(imp->_handler)
+    ](In const &value) { return to_handler(handler(value)); });
 }
 
 template <typename Out, typename In, typename Begin>
@@ -530,7 +530,7 @@ node<std::pair<opt_t<Out>, opt_t<SubOut>>, std::pair<opt_t<Out>, opt_t<SubOut>>,
     node<SubOut, SubIn, SubBegin> sub_node) {
     using opt_pair_t = std::pair<opt_t<Out>, opt_t<SubOut>>;
 
-    return this->pair(std::move(sub_node)).convert([opt_pair = opt_pair_t{}](opt_pair_t const &value) mutable {
+    return this->pair(std::move(sub_node)).to([opt_pair = opt_pair_t{}](opt_pair_t const &value) mutable {
         if (value.first) {
             opt_pair.first = value.first;
         }
