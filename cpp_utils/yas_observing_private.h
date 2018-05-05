@@ -72,6 +72,7 @@ class subject<Key, T>::impl {
     using observers_t = std::unordered_map<std::experimental::optional<Key>, observer_set_t>;
     observers_t observers;
     flow::sender<T> sender = nullptr;
+    flow::sender<flow_context_t> context_sender = nullptr;
 
     void add_observer(observer<Key, T> const &obs, std::experimental::optional<Key> const &key) {
         if (observers.count(key) == 0) {
@@ -140,6 +141,24 @@ class subject<Key, T>::impl {
         }
 
         return this->sender.begin();
+    }
+
+    flow::node<flow_context_t, flow_context_t, flow_context_t> begin_flow(subject<Key, T> &subject) {
+        if (!this->context_sender) {
+            flow::sender<flow_context_t> sender;
+
+            auto observer = subject.make_wild_card_observer([weak_sender = to_weak(sender)](auto const &context) {
+                if (auto sender = weak_sender.lock()) {
+                    sender.send_value(context);
+                }
+            });
+
+            sender.set_can_sync_handler([observer]() { return false; });
+
+            this->context_sender = std::move(sender);
+        }
+
+        return this->context_sender.begin();
     }
 };
 
@@ -304,6 +323,13 @@ observer<Key, T> subject<Key, T>::make_wild_card_observer(wild_card_handler_f co
 template <typename Key, typename T>
 flow::node<T, T, T> subject<Key, T>::begin_flow(Key const &key) {
     return _impl->begin_flow(*this, key);
+}
+
+template <typename Key, typename T>
+[[nodiscard]] flow::node<typename subject<Key, T>::flow_context_t, typename subject<Key, T>::flow_context_t,
+                         typename subject<Key, T>::flow_context_t>
+subject<Key, T>::begin_flow() {
+    return _impl->begin_flow(*this);
 }
 }
 
