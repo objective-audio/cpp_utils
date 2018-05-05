@@ -22,7 +22,7 @@ using namespace yas;
     [super tearDown];
 }
 
-- (void)test_flow_from_subject {
+- (void)test_flow_from_subject_value {
     subject<std::string, int> subject;
 
     std::string received_value = "";
@@ -37,6 +37,29 @@ using namespace yas;
     XCTAssertEqual(received_value, "1");
     subject.notify("key", 2);
     XCTAssertEqual(received_value, "2");
+}
+
+- (void)test_flow_from_subject_context {
+    using subject_t = subject<std::string, int>;
+    subject_t subject;
+
+    std::string received_key = "";
+    int received_value = -1;
+
+    auto flow = subject.begin_flow()
+                    .perform([&received_key, &received_value](subject_t::flow_context_t const &context) {
+                        received_key = context.key;
+                        received_value = context.value;
+                    })
+                    .end();
+
+    XCTAssertEqual(received_key, "");
+    XCTAssertEqual(received_value, -1);
+
+    subject.notify("key", 1);
+
+    XCTAssertEqual(received_key, "key");
+    XCTAssertEqual(received_value, 1);
 }
 
 - (void)test_sender_begin {
