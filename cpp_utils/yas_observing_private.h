@@ -125,22 +125,10 @@ class subject<Key, T>::impl {
         return observers.size() > 0;
     }
 
-    flow::node<T, T, T> begin_flow(subject<Key, T> &subject, Key const &key) {
-        if (!this->sender) {
-            flow::sender<T> sender;
-
-            auto observer = subject.make_value_observer(key, [weak_sender = to_weak(sender)](T const &value) mutable {
-                if (auto sender = weak_sender.lock()) {
-                    sender.send_value(value);
-                }
-            });
-
-            sender.set_can_sync_handler([observer]() { return false; });
-
-            this->sender = std::move(sender);
-        }
-
-        return this->sender.begin();
+    flow::node<T, flow_context_t, flow_context_t> begin_flow(subject<Key, T> &subject, Key const &key) {
+        return this->begin_flow(subject)
+            .guard([key](auto const &context) { return context.key == key; })
+            .template to<T>([](auto const &context) { return context.value; });
     }
 
     flow::node<flow_context_t, flow_context_t, flow_context_t> begin_flow(subject<Key, T> &subject) {
@@ -321,7 +309,8 @@ observer<Key, T> subject<Key, T>::make_wild_card_observer(wild_card_handler_f co
 }
 
 template <typename Key, typename T>
-flow::node<T, T, T> subject<Key, T>::begin_flow(Key const &key) {
+flow::node<T, typename subject<Key, T>::flow_context_t, typename subject<Key, T>::flow_context_t>
+subject<Key, T>::begin_flow(Key const &key) {
     return _impl->begin_flow(*this, key);
 }
 

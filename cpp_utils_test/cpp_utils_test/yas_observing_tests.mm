@@ -488,4 +488,63 @@ using namespace yas;
     XCTAssertEqual(notified, 2);
 }
 
+- (void)test_begin_flow_with_key {
+    enum key { first, second };
+
+    subject<key, int> subject;
+
+    std::string received_first_value = "";
+    int received_second_value = -1;
+
+    auto flow_first = subject.begin_flow(key::first)
+                          .to<std::string>([](int const value) { return std::to_string(value); })
+                          .perform([&received_first_value](std::string const &value) { received_first_value = value; })
+                          .end();
+
+    auto flow_second = subject.begin_flow(key::second)
+                           .perform([&received_second_value](int const &value) { received_second_value = value; })
+                           .end();
+
+    XCTAssertEqual(received_first_value, "");
+    XCTAssertEqual(received_second_value, -1);
+
+    subject.notify(key::first, 1);
+
+    XCTAssertEqual(received_first_value, "1");
+    XCTAssertEqual(received_second_value, -1);
+
+    subject.notify(key::first, 2);
+
+    XCTAssertEqual(received_first_value, "2");
+    XCTAssertEqual(received_second_value, -1);
+
+    subject.notify(key::second, 3);
+
+    XCTAssertEqual(received_first_value, "2");
+    XCTAssertEqual(received_second_value, 3);
+}
+
+- (void)test_begin_flow {
+    using subject_t = subject<std::string, int>;
+    subject_t subject;
+
+    std::string received_key = "";
+    int received_value = -1;
+
+    auto flow = subject.begin_flow()
+                    .perform([&received_key, &received_value](subject_t::flow_context_t const &context) {
+                        received_key = context.key;
+                        received_value = context.value;
+                    })
+                    .end();
+
+    XCTAssertEqual(received_key, "");
+    XCTAssertEqual(received_value, -1);
+
+    subject.notify("key", 1);
+
+    XCTAssertEqual(received_key, "key");
+    XCTAssertEqual(received_value, 1);
+}
+
 @end
