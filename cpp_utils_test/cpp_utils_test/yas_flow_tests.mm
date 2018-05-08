@@ -96,6 +96,8 @@ using namespace yas;
 
     auto flow = sender.begin().to_null().perform([&called](std::nullptr_t const &) { called = true; }).end();
 
+    sender.send_value(1);
+
     XCTAssertTrue(called);
 }
 
