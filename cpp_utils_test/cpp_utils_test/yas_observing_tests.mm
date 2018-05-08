@@ -531,12 +531,13 @@ using namespace yas;
     std::string received_key = "";
     int received_value = -1;
 
-    auto flow = subject.begin_flow()
-                    .perform([&received_key, &received_value](subject_t::flow_context_t const &context) {
-                        received_key = context.key;
-                        received_value = context.value;
-                    })
-                    .end();
+    flow::observer<subject_t::flow_context_t> flow =
+        subject.begin_flow()
+            .perform([&received_key, &received_value](subject_t::flow_context_t const &context) {
+                received_key = context.key;
+                received_value = context.value;
+            })
+            .end();
 
     XCTAssertEqual(received_key, "");
     XCTAssertEqual(received_value, -1);

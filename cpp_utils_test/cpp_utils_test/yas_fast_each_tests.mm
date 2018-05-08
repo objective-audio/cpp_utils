@@ -60,6 +60,16 @@ using namespace yas;
     XCTAssertEqual(each._end, 3);
 }
 
+- (void)test_make_fast_each_index_with_size_t_range {
+    std::size_t start = 1;
+    size_t end = 3;
+    auto each = make_fast_each(start, end);
+    
+    XCTAssertEqual(each._index, 1);
+    XCTAssertEqual(each._next, 1);
+    XCTAssertEqual(each._end, 3);
+}
+
 - (void)test_fast_each_index_next {
     auto each = fast_each<int16_t>{5, 7};
 
@@ -149,7 +159,7 @@ using namespace yas;
 
 - (void)test_make_fast_each_pointer {
     std::array<int16_t, 2> array{0, 1};
-    auto each = make_fast_each(array.data(), array.size());
+    auto each = make_fast_each_ptr(array.data(), array.size());
 
     XCTAssertEqual(each._ptr, array.data());
     XCTAssertEqual(each._index, 0);
@@ -158,7 +168,7 @@ using namespace yas;
 
 - (void)test_fast_each_pointer_next {
     std::array<int16_t, 3> array{5, 6, 7};
-    auto each = make_fast_each(array.data(), array.size());
+    auto each = make_fast_each_ptr(array.data(), array.size());
 
     XCTAssertTrue(yas_each_next(each));
 
@@ -183,7 +193,7 @@ using namespace yas;
 
 - (void)test_fast_each_pointer_stop {
     std::array<int16_t, 3> array{0, 1, 2};
-    auto each = make_fast_each(array.data(), array.size());
+    auto each = make_fast_each_ptr(array.data(), array.size());
 
     auto count = 0;
     auto last_value = -1;
@@ -206,7 +216,7 @@ using namespace yas;
     std::vector<int8_t> vec;
     vec.resize(4, 0);
 
-    auto each = make_fast_each(vec.data(), vec.size());
+    auto each = make_fast_each_ptr(vec.data(), vec.size());
 
     while (yas_each_next(each)) {
         yas_each_value(each) = yas_each_index(each);
@@ -221,7 +231,7 @@ using namespace yas;
 - (void)test_fast_each_ptr {
     std::vector<int8_t> vec{1, 2};
 
-    auto each = make_fast_each(vec.data(), vec.size());
+    auto each = make_fast_each_ptr(vec.data(), vec.size());
 
     yas_each_next(each);
     XCTAssertEqual(yas_each_ptr(each)[0], 1);
@@ -231,7 +241,7 @@ using namespace yas;
 - (void)test_fast_each_ptr_reset {
     std::vector<int8_t> vec{1, 2, 3};
 
-    auto each = make_fast_each(vec.data(), vec.size());
+    auto each = make_fast_each_ptr(vec.data(), vec.size());
 
     XCTAssertTrue(yas_each_next(each));
     XCTAssertEqual(yas_each_value(each), 1);
