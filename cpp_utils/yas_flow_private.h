@@ -442,6 +442,11 @@ node<Next, In, Begin> node<Out, In, Begin>::to(std::function<Next(Out const &)> 
 }
 
 template <typename Out, typename In, typename Begin>
+node<std::nullptr_t, In, Begin> node<Out, In, Begin>::to_null() {
+    return this->to<std::nullptr_t>([](auto const &) { return nullptr; });
+}
+
+template <typename Out, typename In, typename Begin>
 node<Out, Out, Begin> node<Out, In, Begin>::wait(double const time_interval) {
     auto imp = impl_ptr<impl>();
     flow::input<Begin> &input = imp->_input;
