@@ -59,7 +59,7 @@ void fast_each<T, enable_if_pointer_t<T>>::reset(T ptr, std::size_t const end) {
 }
 
 template <typename T>
-fast_each<T> make_fast_each(T ptr, std::size_t const length) {
+fast_each<T> make_fast_each_ptr(T ptr, std::size_t const length) {
     return fast_each<T>(ptr, length);
 }
 }
