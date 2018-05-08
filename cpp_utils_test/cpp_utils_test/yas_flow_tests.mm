@@ -89,6 +89,18 @@ using namespace yas;
     XCTAssertEqual(received, "true");
 }
 
+- (void)test_to_null {
+    flow::sender<int> sender;
+
+    bool called = false;
+
+    auto flow = sender.begin().to_null().perform([&called](std::nullptr_t const &) { called = true; }).end();
+
+    sender.send_value(1);
+
+    XCTAssertTrue(called);
+}
+
 - (void)test_wait {
     flow::sender<int> sender;
 
