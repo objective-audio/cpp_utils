@@ -60,6 +60,16 @@ using namespace yas;
     XCTAssertEqual(each._end, 3);
 }
 
+- (void)test_make_fast_each_index_with_size_t_range {
+    std::size_t start = 1;
+    size_t end = 3;
+    auto each = make_fast_each(start, end);
+    
+    XCTAssertEqual(each._index, 1);
+    XCTAssertEqual(each._next, 1);
+    XCTAssertEqual(each._end, 3);
+}
+
 - (void)test_fast_each_index_next {
     auto each = fast_each<int16_t>{5, 7};
 
