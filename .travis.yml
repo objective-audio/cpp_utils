@@ -1,5 +1,5 @@
 language: objective-c
-osx_image: xcode9
+osx_image: xcode9.3
 branches:
   only:
     - master
@@ -7,4 +7,4 @@ notifications:
   email: false
 script:
   - xcodebuild -project cpp_utils_test/cpp_utils_test.xcodeproj -scheme cpp_utils_test_mac -configuration Debug OBJROOT=build -sdk macosx clean test
-  - xcodebuild -project cpp_utils_test/cpp_utils_test.xcodeproj -scheme cpp_utils_test_ios -configuration Debug OBJROOT=build -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 6,OS=11.0' clean test
+  - xcodebuild -project cpp_utils_test/cpp_utils_test.xcodeproj -scheme cpp_utils_test_ios -configuration Debug OBJROOT=build -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 6,OS=11.3' clean test
