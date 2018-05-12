@@ -115,6 +115,7 @@
 /* Begin PBXFileReference section */
 		B602AFDA1CE83D5F00309B3A /* yas_type_traits.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = yas_type_traits.h; sourceTree = "<group>"; };
 		B60477B71E1B31C000195A0F /* yas_fast_each_tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = yas_fast_each_tests.mm; sourceTree = "<group>"; };
+		B6062B6620A6A22F00D2A0D3 /* yas_objc_macros.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = yas_objc_macros.h; sourceTree = "<group>"; };
 		B60AAA251C5DAFD30074C6FA /* yas_chain.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = yas_chain.cpp; sourceTree = "<group>"; };
 		B60AAA261C5DAFD30074C6FA /* yas_chain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = yas_chain.h; sourceTree = "<group>"; };
 		B60AAA291C5DB6D60074C6FA /* yas_chain_tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = yas_chain_tests.mm; sourceTree = "<group>"; };
@@ -211,7 +212,6 @@
 		B6CA03D01CAD6E1600CC31FF /* yas_objc_ptr_tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = yas_objc_ptr_tests.mm; sourceTree = "<group>"; };
 		B6D05FB01F3FE0D500CBD84E /* yas_state_machine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = yas_state_machine.h; sourceTree = "<group>"; };
 		B6D0DDE41C8164460086AA8E /* yas_operation_protocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = yas_operation_protocol.h; sourceTree = "<group>"; };
-		B6D1A9A51CAEA24E0003C6CF /* yas_objc_macros.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = yas_objc_macros.h; sourceTree = "<group>"; };
 		B6DF847F1D8B814C00A2EE48 /* yas_cf_ref.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = yas_cf_ref.cpp; sourceTree = "<group>"; };
 		B6DF84801D8B814C00A2EE48 /* yas_cf_ref.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = yas_cf_ref.h; sourceTree = "<group>"; };
 		B6DF84831D8B816200A2EE48 /* yas_cf_ref_private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = yas_cf_ref_private.h; sourceTree = "<group>"; };
@@ -247,6 +247,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		B6062B6420A6A22F00D2A0D3 /* objc_utils */ = {
+			isa = PBXGroup;
+			children = (
+				B6062B6620A6A22F00D2A0D3 /* yas_objc_macros.h */,
+			);
+			name = objc_utils;
+			path = ../submodules/objc_utils/objc_utils;
+			sourceTree = "<group>";
+		};
 		B610E99820661088004A46B5 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -258,7 +267,7 @@
 		B6626A9A1C151E380038175B = {
 			isa = PBXGroup;
 			children = (
-				B6D1A9A11CAEA24E0003C6CF /* objc_utils */,
+				B6062B6420A6A22F00D2A0D3 /* objc_utils */,
 				B6626AAE1C15B4230038175B /* cpp_utils */,
 				B6626AA71C151E580038175B /* cpp_utils_test */,
 				B6626AA61C151E580038175B /* Products */,
@@ -396,15 +405,6 @@
 			);
 			name = cpp_utils;
 			path = ../cpp_utils;
-			sourceTree = "<group>";
-		};
-		B6D1A9A11CAEA24E0003C6CF /* objc_utils */ = {
-			isa = PBXGroup;
-			children = (
-				B6D1A9A51CAEA24E0003C6CF /* yas_objc_macros.h */,
-			);
-			name = objc_utils;
-			path = ../submodules/objc_utils/objc_utils;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
