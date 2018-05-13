@@ -509,7 +509,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "cd ../\n./script/format.sh";
+			shellScript = ../script/format.sh;
 		};
 		B6BBA68020A808C100633310 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -522,7 +522,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "cd ../\n./script/format.sh";
+			shellScript = ../script/format.sh;
 		};
 /* End PBXShellScriptBuildPhase section */
 
