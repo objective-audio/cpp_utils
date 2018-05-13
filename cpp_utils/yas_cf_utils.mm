@@ -2,8 +2,8 @@
 //  yas_cf_utils.mm
 //
 
-#include <Foundation/Foundation.h>
 #include "yas_cf_utils.h"
+#include <Foundation/Foundation.h>
 
 std::string yas::to_string(CFStringRef const &cf_string) {
     if (cf_string && CFStringGetLength(cf_string) > 0) {

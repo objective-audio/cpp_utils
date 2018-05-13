@@ -3,9 +3,9 @@
 //
 
 #import <XCTest/XCTest.h>
-#import "yas_fast_each.h"
 #import <array>
 #import <vector>
+#import "yas_fast_each.h"
 
 using namespace yas;
 
@@ -64,7 +64,7 @@ using namespace yas;
     std::size_t start = 1;
     size_t end = 3;
     auto each = make_fast_each(start, end);
-    
+
     XCTAssertEqual(each._index, 1);
     XCTAssertEqual(each._next, 1);
     XCTAssertEqual(each._end, 3);

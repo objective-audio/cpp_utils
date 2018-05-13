@@ -2,8 +2,8 @@
 //  yas_objc_ptr.mm
 //
 
-#include <Foundation/Foundation.h>
 #include "yas_objc_ptr.h"
+#include <Foundation/Foundation.h>
 
 using namespace yas;
 

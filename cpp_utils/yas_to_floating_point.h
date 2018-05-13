@@ -4,8 +4,8 @@
 
 #pragma once
 
-#include <string>
 #include <limits.h>
+#include <string>
 
 namespace yas {
 float to_float(std::string const &str) {

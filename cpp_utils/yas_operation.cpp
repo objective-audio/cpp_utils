@@ -2,12 +2,12 @@
 //  yas_operation.cpp
 //
 
+#include "yas_operation.h"
 #include <atomic>
 #include <deque>
 #include <mutex>
 #include <thread>
 #include <vector>
-#include "yas_operation.h"
 #include "yas_stl_utils.h"
 
 using namespace yas;
@@ -192,7 +192,7 @@ class operation_queue::impl : public base::impl {
             _start_next_operation_if_needed();
         }
     }
-    
+
     bool is_suspended() const {
         return _suspended;
     }

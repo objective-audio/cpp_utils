@@ -3,9 +3,9 @@
 //
 
 #import <XCTest/XCTest.h>
-#import "yas_state_machine.h"
-#import <vector>
 #import <string>
+#import <vector>
+#import "yas_state_machine.h"
 
 using namespace yas;
 
