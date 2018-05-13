@@ -63,7 +63,7 @@ const_each_data<T> make_each_data(T const *const *const ptrs, std::size_t const 
     do {                                          \
         (__v)._next_frm_idx = (__v)._end_frm_idx; \
         (__v)._next_ptr_idx = (__v)._end_ptr_idx; \
-        (__v)._next_elm_idx = (__v)._end_elm_idx;   \
+        (__v)._next_elm_idx = (__v)._end_elm_idx; \
     } while (0)
 
 #define yas_each_data_index(__v) \
@@ -71,26 +71,26 @@ const_each_data<T> make_each_data(T const *const *const ptrs, std::size_t const 
 
 #define yas_each_data_next(__v)                                                                                   \
     (((__v)._next_frm_idx < (__v)._end_frm_idx || (__v)._next_ptr_idx < (__v)._end_ptr_idx ||                     \
-      (__v)._next_elm_idx < (__v)._end_elm_idx) &&                                                                  \
-     !((((__v).elm_idx = (__v)._next_elm_idx++) >= (__v)._end_elm_idx) && !((__v).elm_idx = 0) &&                     \
-       ((__v)._next_elm_idx = 1) && ((__v)._next_ptr_idx = (__v)._next_ptr_idx == 0 ? 1 : (__v)._next_ptr_idx) &&  \
+      (__v)._next_elm_idx < (__v)._end_elm_idx) &&                                                                \
+     !((((__v).elm_idx = (__v)._next_elm_idx++) >= (__v)._end_elm_idx) && !((__v).elm_idx = 0) &&                 \
+       ((__v)._next_elm_idx = 1) && ((__v)._next_ptr_idx = (__v)._next_ptr_idx == 0 ? 1 : (__v)._next_ptr_idx) && \
        (((__v).ptr_idx = (__v)._next_ptr_idx++) >= (__v)._end_ptr_idx) && !((__v).ptr_idx = 0) &&                 \
        ((__v)._next_ptr_idx = 1) && ((__v)._next_frm_idx = (__v)._next_frm_idx == 0 ? 1 : (__v)._next_frm_idx) && \
        (((__v).frm_idx = (__v)._next_frm_idx++) >= (__v)._end_frm_idx)))
 
 #define yas_each_data_next_frame(__v)                                                                  \
     (((__v)._next_frm_idx < (__v)._end_frm_idx || (__v)._next_ptr_idx < (__v)._end_ptr_idx ||          \
-      (__v)._next_elm_idx < (__v)._end_elm_idx) &&                                                       \
-     (((__v).elm_idx < (__v)._end_elm_idx) || (!((__v).elm_idx = 0) && !((__v)._next_elm_idx = 0))) &&     \
+      (__v)._next_elm_idx < (__v)._end_elm_idx) &&                                                     \
+     (((__v).elm_idx < (__v)._end_elm_idx) || (!((__v).elm_idx = 0) && !((__v)._next_elm_idx = 0))) && \
      (((__v).ptr_idx < (__v)._end_ptr_idx) || (!((__v).ptr_idx = 0) && !((__v)._next_ptr_idx = 0))) && \
      (((__v).frm_idx = (__v)._next_frm_idx++) < (__v)._end_frm_idx))
 
-#define yas_each_data_next_ch(__v)                                                                         \
-    (((__v)._next_frm_idx < (__v)._end_frm_idx || (__v)._next_ptr_idx < (__v)._end_ptr_idx ||              \
+#define yas_each_data_next_ch(__v)                                                                           \
+    (((__v)._next_frm_idx < (__v)._end_frm_idx || (__v)._next_ptr_idx < (__v)._end_ptr_idx ||                \
       (__v)._next_elm_idx < (__v)._end_elm_idx) &&                                                           \
-     !((((__v).elm_idx = (__v)._next_elm_idx++) >= (__v)._end_elm_idx) &&                                     \
+     !((((__v).elm_idx = (__v)._next_elm_idx++) >= (__v)._end_elm_idx) &&                                    \
        (((__v).ptr_idx + 1 >= (__v)._end_ptr_idx) || (!((__v).elm_idx = 0) && ((__v)._next_elm_idx = 1))) && \
-       (((__v)._next_ptr_idx = (__v)._next_ptr_idx == 0 ? 1 : (__v)._next_ptr_idx)) &&                     \
+       (((__v)._next_ptr_idx = (__v)._next_ptr_idx == 0 ? 1 : (__v)._next_ptr_idx)) &&                       \
        (((__v).ptr_idx = (__v)._next_ptr_idx++) >= (__v)._end_ptr_idx)))
 
 #define yas_each_data_value(__v) ((__v)._ptrs[(__v).ptr_idx][(__v).frm_idx * (__v)._end_elm_idx + (__v).elm_idx])

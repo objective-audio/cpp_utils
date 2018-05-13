@@ -2,8 +2,8 @@
 //  yas_stl_utils.cpp
 //
 
-#include <sstream>
 #include "yas_stl_utils.h"
+#include <sstream>
 
 std::string yas::to_lower(std::string string) {
     std::transform(string.begin(), string.end(), string.begin(), ::tolower);

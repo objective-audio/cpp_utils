@@ -4,11 +4,11 @@
 
 #pragma once
 
-#include "yas_base.h"
 #include <functional>
-#include <unordered_map>
 #include <string>
+#include <unordered_map>
 #include "yas_any.h"
+#include "yas_base.h"
 
 namespace yas {
 template <typename State = std::string, typename Method = std::string>

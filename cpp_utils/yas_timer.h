@@ -4,8 +4,8 @@
 
 #pragma once
 
-#include "yas_base.h"
 #include <functional>
+#include "yas_base.h"
 
 namespace yas {
 class timer : public base {

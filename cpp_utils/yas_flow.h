@@ -4,10 +4,10 @@
 
 #pragma once
 
-#include "yas_any.h"
-#include "yas_types.h"
-#include "yas_flow_protocol.h"
 #include <functional>
+#include "yas_any.h"
+#include "yas_flow_protocol.h"
+#include "yas_types.h"
 
 namespace yas::flow {
 template <typename T>

@@ -4,8 +4,8 @@
 
 #pragma once
 
-#include <string>
 #include <limits.h>
+#include <string>
 
 namespace yas {
 template <typename T>

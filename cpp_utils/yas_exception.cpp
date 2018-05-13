@@ -2,9 +2,9 @@
 //  yas_exception.cpp
 //
 
+#include "yas_exception.h"
 #include <CoreFoundation/CoreFoundation.h>
 #include <exception>
-#include "yas_exception.h"
 
 using namespace yas;
 

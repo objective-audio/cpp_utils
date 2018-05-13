@@ -4,8 +4,8 @@
 
 #pragma once
 
-#include "yas_type_traits.h"
 #include <iterator>
+#include "yas_type_traits.h"
 
 namespace yas {
 template <typename T>

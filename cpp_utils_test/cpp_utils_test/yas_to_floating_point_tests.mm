@@ -26,7 +26,7 @@ using namespace yas;
     XCTAssertEqual(to_float("1.0"), 1.0f);
     XCTAssertEqual(to_float(""), 0.0f);
     XCTAssertEqual(to_float("abc"), 0.0f);
-    
+
     XCTAssertTrue(typeid(to_float("1.0")) == typeid(float));
 }
 
@@ -35,7 +35,7 @@ using namespace yas;
     XCTAssertEqual(to_double("1.0"), 1.0);
     XCTAssertEqual(to_double(""), 0.0);
     XCTAssertEqual(to_double("abc"), 0.0);
-    
+
     XCTAssertTrue(typeid(to_double("1.0")) == typeid(double));
 }
 

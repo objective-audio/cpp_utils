@@ -92,9 +92,9 @@ using namespace yas;
 
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3 * NSEC_PER_SEC)), dispatch_get_main_queue(),
                    [exp2]() mutable { [exp2 fulfill]; });
-    
+
     [self waitForExpectations:@[exp2] timeout:10.0];
-    
+
     XCTAssertEqual(count_all, count_invalidated);
     XCTAssertGreaterThan(count_all, 1);
 }

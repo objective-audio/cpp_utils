@@ -4,8 +4,8 @@
 
 #pragma once
 
-#include "yas_result.h"
 #include <vector>
+#include "yas_result.h"
 
 namespace yas {
 template <typename T>
