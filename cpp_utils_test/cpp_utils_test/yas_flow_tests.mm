@@ -384,4 +384,33 @@ using namespace yas;
     XCTAssertEqual(received, "10");
 }
 
+- (void)test_node_type_1 {
+    flow::sender<int> sender;
+
+    flow::node<int> node = sender.begin();
+
+    bool called = false;
+
+    auto flow = node.perform([&called](auto const &) { called = true; }).end();
+
+    sender.send_value(10);
+
+    XCTAssertTrue(called);
+}
+
+- (void)test_node_type_2 {
+    flow::sender<int> sender;
+
+    flow::node<std::string, int> node =
+        sender.begin().to<std::string>([](auto const &value) { return std::to_string(value); });
+
+    bool called = false;
+
+    auto flow = node.perform([&called](auto const &) { called = true; }).end();
+
+    sender.send_value(20);
+
+    XCTAssertTrue(called);
+}
+
 @end

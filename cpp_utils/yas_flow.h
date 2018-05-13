@@ -61,7 +61,7 @@ struct observer : base {
     void sync();
 };
 
-template <typename Out, typename In, typename Begin>
+template <typename Out, typename In = Out, typename Begin = In>
 struct node : base {
     class impl;
 
