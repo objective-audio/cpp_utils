@@ -62,4 +62,4 @@ template <typename T>
 fast_each<T> make_fast_each_ptr(T ptr, std::size_t const length) {
     return fast_each<T>(ptr, length);
 }
-}
+}  // namespace yas

@@ -60,4 +60,4 @@ cf_ref<T> make_cf_ref(T const obj) {
     CFRelease(obj);
     return ptr;
 }
-}
+}  // namespace yas

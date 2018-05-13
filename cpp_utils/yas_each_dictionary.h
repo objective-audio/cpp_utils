@@ -48,4 +48,4 @@ class each_dictionary {
     cf_type_vector_ptr _keys_and_values;
     CFDictionaryRef _dict;
 };
-}
+}  // namespace yas

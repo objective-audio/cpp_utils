@@ -142,4 +142,4 @@ result<std::tuple<Args...>, std::nullptr_t> where(Args &&... args) {
         return result<std::tuple<Args...>, std::nullptr_t>{nullptr};
     }
 }
-}
+}  // namespace yas

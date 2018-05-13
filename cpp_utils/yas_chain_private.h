@@ -66,4 +66,4 @@ void chain(T default_value, std::vector<std::function<void(chain_context<T>)>> f
         context.next();
     }
 }
-}
+}  // namespace yas

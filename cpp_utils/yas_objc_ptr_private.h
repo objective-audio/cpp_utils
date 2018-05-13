@@ -80,4 +80,4 @@ objc_ptr<T> make_objc_ptr(std::function<T(void)> const &func) {
     }
     return objc_obj;
 }
-}
+}  // namespace yas

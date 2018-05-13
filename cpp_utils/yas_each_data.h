@@ -57,7 +57,7 @@ each_data<T> make_each_data(T *const *const ptrs, std::size_t const frame_length
 template <typename T>
 const_each_data<T> make_each_data(T const *const *const ptrs, std::size_t const frame_length,
                                   std::size_t const ptr_count, std::size_t const stride);
-}
+}  // namespace yas
 
 #define yas_each_data_stop(__v)                   \
     do {                                          \

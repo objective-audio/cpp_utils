@@ -26,4 +26,4 @@ class flex_ptr {
     template <typename T>
     flex_ptr(T const *const p);
 };
-}
+}  // namespace yas

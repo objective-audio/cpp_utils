@@ -48,6 +48,6 @@ class state_machine : public base {
 
     State const &current_state() const;
 };
-}
+}  // namespace yas
 
 #include "yas_state_machine_private.h"

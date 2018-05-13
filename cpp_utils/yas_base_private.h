@@ -161,4 +161,4 @@ template <typename T>
 weak<T> to_weak(T const &obj) {
     return weak<T>(obj);
 }
-}
+}  // namespace yas

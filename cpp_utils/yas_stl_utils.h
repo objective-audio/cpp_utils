@@ -75,6 +75,6 @@ std::string joined(T const &collection, std::string const &separator, F function
 
 template <typename T>
 std::weak_ptr<T> to_weak(std::shared_ptr<T> shared);
-}
+}  // namespace yas
 
 #include "yas_stl_utils_private.h"

@@ -19,10 +19,10 @@ namespace internal {
 
         T value;
     };
-}
+}  // namespace internal
 
 template <typename T>
 internal::unless<T> unless(T &&value) {
     return internal::unless<T>{std::move(value)};
 }
-}
+}  // namespace yas

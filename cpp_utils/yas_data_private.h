@@ -63,7 +63,7 @@ std::size_t copy_cyclical(data_copy<T> &data_copy) {
 
     return (data_copy.dst_begin_idx + data_copy.length) % dst_length;
 }
-}
+}  // namespace yas::data_copy_utils
 
 namespace yas {
 template <typename T>
@@ -159,4 +159,4 @@ typename data_copy<T>::cyclical_result_t data_copy<T>::execute_cyclical() {
         return cyclical_result_t{data_copy_utils::copy_cyclical(*this)};
     }
 }
-}
+}  // namespace yas

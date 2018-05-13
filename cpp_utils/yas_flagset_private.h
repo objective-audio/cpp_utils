@@ -82,4 +82,4 @@ bool flagset<T, Size>::and_test(flagset<T> const &rhs) const {
     auto and_flags = flags & rhs.flags;
     return and_flags.any();
 }
-}
+}  // namespace yas

@@ -17,4 +17,4 @@ class timer : public base {
 
     void invalidate();
 };
-}
+}  // namespace yas

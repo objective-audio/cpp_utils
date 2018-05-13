@@ -61,6 +61,6 @@ struct data_copy {
     result_t execute();
     cyclical_result_t execute_cyclical();
 };
-}
+}  // namespace yas
 
 #include "yas_data_private.h"

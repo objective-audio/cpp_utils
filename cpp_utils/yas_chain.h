@@ -33,6 +33,6 @@ void chain(std::vector<std::function<void(chain_context<std::nullptr_t>)>> funct
 
 template <typename T>
 void chain(T default_value, std::vector<std::function<void(chain_context<T>)>> functions);
-}
+}  // namespace yas
 
 #include "yas_chain_private.h"

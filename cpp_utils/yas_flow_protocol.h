@@ -116,4 +116,4 @@ struct sender_flowable : protocol {
     bool can_sync();
     void sync(std::uintptr_t const);
 };
-}
+}  // namespace yas::flow

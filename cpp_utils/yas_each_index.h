@@ -52,6 +52,6 @@ each_index<T> make_each_index(T const end);
 
 template <typename T>
 each_index<T> make_each_index(T const start, T const end);
-}
+}  // namespace yas
 
 #include "yas_each_index_private.h"
