@@ -34,4 +34,4 @@ struct operation_option_t {
     operation_priority_t priority = 0;
     base push_cancel_id = nullptr;
 };
-}
+}  // namespace yas

@@ -95,7 +95,7 @@ class property<T>::impl : public base::impl {
         return this->_value_sender.begin();
     }
 
-    [[nodiscard]] flow_context_t begin_context_flow(property<T> &property) {
+        [[nodiscard]] flow_context_t begin_context_flow(property<T> &property) {
         if (!this->_context_sender) {
             flow::sender<change_context> sender;
 
@@ -313,4 +313,4 @@ template <typename T>
 property<T> make_property(T value) {
     return property<T>{{.value = std::move(value)}};
 }
-}
+}  // namespace yas

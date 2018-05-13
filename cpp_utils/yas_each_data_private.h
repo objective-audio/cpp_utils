@@ -54,4 +54,4 @@ const_each_data<T> make_each_data(T const *const *const ptrs, std::size_t const 
                                   std::size_t const ptr_count, std::size_t const stride) {
     return const_each_data<T>{ptrs, frame_length, ptr_count, stride};
 }
-}
+}  // namespace yas

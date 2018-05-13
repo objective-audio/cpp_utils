@@ -148,4 +148,4 @@ template <typename State, typename Method>
 State const &state_machine<State, Method>::current_state() const {
     return impl_ptr<impl>()->current;
 }
-}
+}  // namespace yas

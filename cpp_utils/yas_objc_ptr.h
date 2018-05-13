@@ -59,6 +59,6 @@ objc_ptr<T> make_objc_ptr(T const obj);
 
 template <typename T>
 objc_ptr<T> make_objc_ptr(std::function<T(void)> const &func);
-}
+}  // namespace yas
 
 #include "yas_objc_ptr_private.h"

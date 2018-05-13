@@ -35,6 +35,6 @@ struct any {
    private:
     impl_base_ptr _impl_ptr;
 };
-}
+}  // namespace yas
 
 #include "yas_any_private.h"

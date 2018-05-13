@@ -70,6 +70,6 @@ template <typename T>
 property<T> make_property(T value);
 
 std::string to_string(yas::property_method const method);
-}
+}  // namespace yas
 
 #include "yas_property_private.h"

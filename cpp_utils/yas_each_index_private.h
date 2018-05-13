@@ -80,4 +80,4 @@ template <typename T>
 each_index<T> make_each_index(T const start, T const end) {
     return each_index<T>(start, end);
 }
-}
+}  // namespace yas

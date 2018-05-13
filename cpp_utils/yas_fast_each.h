@@ -44,7 +44,7 @@ fast_each<T> make_fast_each(T const begin, T const end);
 
 template <typename T>
 fast_each<T> make_fast_each_ptr(T ptr, std::size_t const end);
-}
+}  // namespace yas
 
 #define yas_each_stop(__v)        \
     do {                          \

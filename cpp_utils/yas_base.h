@@ -112,6 +112,6 @@ std::map<K, T> lock_values(std::map<K, weak<T>> const &);
 
 template <typename T>
 weak<T> to_weak(T const &);
-}
+}  // namespace yas
 
 #include "yas_base_private.h"

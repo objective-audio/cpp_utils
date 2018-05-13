@@ -23,7 +23,7 @@ struct graph_next {
     State state;
     opt_t<Signal> signal = nullopt;
 };
-}
+}  // namespace yas::flow
 
 namespace yas {
 
@@ -40,12 +40,12 @@ struct flow::graph<State, Signal>::impl : base::impl {
     }
 
     void prepare(flow::graph<State, Signal> &graph) {
-        this->receiver = flow::receiver<graph_next<State, Signal>>([weak_graph = to_weak(graph)](
-            graph_next<State, Signal> const &next) {
-            if (flow::graph<State, Signal> graph = weak_graph.lock()) {
-                graph.impl_ptr<impl>()->_receive_value(next);
-            }
-        });
+        this->receiver = flow::receiver<graph_next<State, Signal>>(
+            [weak_graph = to_weak(graph)](graph_next<State, Signal> const &next) {
+                if (flow::graph<State, Signal> graph = weak_graph.lock()) {
+                    graph.impl_ptr<impl>()->_receive_value(next);
+                }
+            });
     }
 
     void add(flow::graph<State, Signal> &graph, State &&state,
@@ -119,4 +119,4 @@ template <typename State, typename Signal>
 bool flow::graph<State, Signal>::contains(State const &state) {
     return impl_ptr<impl>()->observers.count(state) > 0;
 }
-}
+}  // namespace yas

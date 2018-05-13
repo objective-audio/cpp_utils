@@ -33,6 +33,6 @@ struct graph : base {
 
     bool contains(State const &);
 };
-}
+}  // namespace yas::flow
 
 #include "yas_flow_graph_private.h"

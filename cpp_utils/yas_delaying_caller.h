@@ -23,4 +23,4 @@ class delaying_caller {
     handler_f _handler;
     std::size_t _push_count;
 };
-}
+}  // namespace yas

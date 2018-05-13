@@ -36,6 +36,6 @@ class flagset {
     bool test(T const &) const;
     bool and_test(flagset<T> const &) const;
 };
-}
+}  // namespace yas
 
 #include "yas_flagset_private.h"

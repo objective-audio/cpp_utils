@@ -39,6 +39,6 @@ class protocol {
     explicit protocol(std::shared_ptr<impl> const &);
     explicit protocol(std::shared_ptr<impl> &&);
 };
-}
+}  // namespace yas
 
 #include "yas_protocol_private.h"

@@ -39,6 +39,6 @@ CFDictionaryRef to_cf_object(std::unordered_map<K, T> const &map);
 
 CFStringRef file_type_for_hfs_type_code(OSType const fcc);
 OSType hfs_type_code_from_file_type(CFStringRef const cfStr);
-}
+}  // namespace yas
 
 #include "yas_cf_utils_private.h"

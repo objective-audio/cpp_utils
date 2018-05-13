@@ -52,7 +52,7 @@ static comparison_result compare(version const &lhs, version const &rhs) {
 
     return comparison_result::equal;
 }
-}
+}  // namespace yas
 
 version::version() : _numbers() {
 }

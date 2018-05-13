@@ -14,4 +14,4 @@ T *objc_cast(id const objc_obj) {
     }
     return nil;
 }
-}
+}  // namespace yas

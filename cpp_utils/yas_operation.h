@@ -45,4 +45,4 @@ class operation_queue : public base {
     bool is_suspended() const;
     bool is_operating() const;
 };
-}
+}  // namespace yas

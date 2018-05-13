@@ -102,6 +102,6 @@ struct node : base {
     [[nodiscard]] observer<Begin> sync();
     [[nodiscard]] observer<Begin> sync(receiver<Out> &);
 };
-}
+}  // namespace yas::flow
 
 #include "yas_flow_private.h"

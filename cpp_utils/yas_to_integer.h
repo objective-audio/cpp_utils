@@ -40,4 +40,4 @@ uint64_t to_integer(std::string const &str) {
         return 0;
     }
 }
-}
+}  // namespace yas

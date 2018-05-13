@@ -34,4 +34,4 @@ struct boolean {
 };
 
 std::string to_string(boolean const &);
-}
+}  // namespace yas

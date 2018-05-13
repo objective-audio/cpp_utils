@@ -390,20 +390,18 @@ node<Out, Out, Begin> node<Out, In, Begin>::normalize() {
 template <typename Out, typename In, typename Begin>
 node<Out, In, Begin> node<Out, In, Begin>::perform(std::function<void(Out const &)> perform_handler) {
     auto imp = impl_ptr<impl>();
-    return node<Out, In, Begin>(
-        std::move(imp->_input),
-        [perform_handler = std::move(perform_handler), handler = std::move(imp->_handler)](In const &value) {
-            Out result = handler(value);
-            perform_handler(result);
-            return result;
-        });
+    return node<Out, In, Begin>(std::move(imp->_input), [perform_handler = std::move(perform_handler),
+                                                         handler = std::move(imp->_handler)](In const &value) {
+        Out result = handler(value);
+        perform_handler(result);
+        return result;
+    });
 }
 
 template <typename Out, typename In, typename Begin>
 node<Out, In, Begin> node<Out, In, Begin>::receive(receiver<Out> &receiver) {
-    return this->perform([output = receiver.flowable().make_output()](Out const &value) mutable {
-        output.output_value(value);
-    });
+    return this->perform(
+        [output = receiver.flowable().make_output()](Out const &value) mutable { output.output_value(value); });
 }
 
 template <typename Out, typename In, typename Begin>
@@ -413,9 +411,8 @@ node<Out, Out, Begin> node<Out, In, Begin>::guard(std::function<bool(Out const &
     auto weak_input = to_weak(input);
     std::size_t const next_idx = input.flowable().handlers_size() + 1;
 
-    input.flowable().template push_handler<In>([
-        handler = imp->_handler, weak_input, next_idx, guard_handler = std::move(guard_handler)
-    ](In const &value) mutable {
+    input.flowable().template push_handler<In>([handler = imp->_handler, weak_input, next_idx,
+                                                guard_handler = std::move(guard_handler)](In const &value) mutable {
         auto const result = handler(value);
         if (guard_handler(result)) {
             if (auto input = weak_input.lock()) {
@@ -436,9 +433,9 @@ template <typename Out, typename In, typename Begin>
 template <typename Next>
 node<Next, In, Begin> node<Out, In, Begin>::to(std::function<Next(Out const &)> to_handler) {
     auto imp = impl_ptr<impl>();
-    return node<Next, In, Begin>(std::move(imp->_input), [
-        to_handler = std::move(to_handler), handler = std::move(imp->_handler)
-    ](In const &value) { return to_handler(handler(value)); });
+    return node<Next, In, Begin>(std::move(imp->_input),
+                                 [to_handler = std::move(to_handler), handler = std::move(imp->_handler)](
+                                     In const &value) { return to_handler(handler(value)); });
 }
 
 template <typename Out, typename In, typename Begin>
@@ -453,9 +450,8 @@ node<Out, Out, Begin> node<Out, In, Begin>::wait(double const time_interval) {
     auto weak_input = to_weak(input);
     std::size_t const next_idx = input.flowable().handlers_size() + 1;
 
-    input.flowable().template push_handler<In>([
-        handler = imp->_handler, time_interval, weak_input, next_idx, timer = yas::timer{nullptr}
-    ](In const &value) mutable {
+    input.flowable().template push_handler<In>([handler = imp->_handler, time_interval, weak_input, next_idx,
+                                                timer = yas::timer{nullptr}](In const &value) mutable {
         timer = yas::timer(time_interval, false, [value = handler(value), weak_input, next_idx]() {
             if (auto input = weak_input.lock()) {
                 input.flowable().template handler<Out>(next_idx)(value);
@@ -549,9 +545,8 @@ node<std::pair<opt_t<Out>, opt_t<SubOut>>, std::pair<opt_t<Out>, opt_t<SubOut>>,
 template <typename Out, typename In, typename Begin>
 observer<Begin> node<Out, In, Begin>::end() {
     auto &input = impl_ptr<impl>()->_input;
-    input.flowable().template push_handler<In>([handler = impl_ptr<impl>()->_handler](In const &value) {
-        handler(value);
-    });
+    input.flowable().template push_handler<In>(
+        [handler = impl_ptr<impl>()->_handler](In const &value) { handler(value); });
     return observer<Begin>(std::move(input));
 }
 
@@ -571,4 +566,4 @@ template <typename Out, typename In, typename Begin>
 observer<Begin> node<Out, In, Begin>::sync(receiver<Out> &receiver) {
     return this->receive(receiver).sync();
 }
-}
+}  // namespace yas::flow

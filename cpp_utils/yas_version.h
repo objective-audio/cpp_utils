@@ -30,4 +30,4 @@ class version {
    private:
     std::vector<int> _numbers;
 };
-}
+}  // namespace yas

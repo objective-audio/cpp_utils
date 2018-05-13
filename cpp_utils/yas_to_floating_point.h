@@ -23,4 +23,4 @@ double to_double(std::string const &str) {
         return 0.0;
     }
 }
-}
+}  // namespace yas

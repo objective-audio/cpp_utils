@@ -319,7 +319,7 @@ template <typename Key, typename T>
 subject<Key, T>::begin_flow() {
     return _impl->begin_flow(*this);
 }
-}
+}  // namespace yas
 
 template <typename Key, typename T>
 yas::observer<Key, T> yas::make_subject_dispatcher(subject<Key, T> const &source,

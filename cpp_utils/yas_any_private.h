@@ -52,4 +52,4 @@ struct any_factory : any {
     any_factory(T &&val) : any(std::make_shared<impl<T>>(std::move(val))) {
     }
 };
-}
+}  // namespace yas

@@ -77,4 +77,4 @@ std::size_t copy_cyclical(data_copy<double> &data_copy) {
 
     return dst_idx;
 }
-}
+}  // namespace yas::data_copy_utils

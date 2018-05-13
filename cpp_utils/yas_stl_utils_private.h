@@ -186,4 +186,4 @@ template <typename T>
 std::weak_ptr<T> to_weak(std::shared_ptr<T> shared) {
     return shared;
 }
-}
+}  // namespace yas

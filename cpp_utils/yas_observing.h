@@ -87,7 +87,7 @@ class subject {
 template <typename Key, typename T>
 observer<Key, T> make_subject_dispatcher(subject<Key, T> const &source_subject,
                                          std::initializer_list<subject<Key, T> *> const &destination_subjects);
-}
+}  // namespace yas
 
 template <typename T, typename Key>
 struct std::hash<yas::observer<Key, T>> {

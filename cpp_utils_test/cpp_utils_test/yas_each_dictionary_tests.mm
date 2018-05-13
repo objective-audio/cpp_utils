@@ -20,7 +20,7 @@
 }
 
 - (void)test_create {
-    NSDictionary *dict = @{ @"a": @"1", @"b": @"2" };
+    NSDictionary *dict = @{@"a": @"1", @"b": @"2"};
 
     yas::each_dictionary each_dict{(__bridge CFDictionaryRef)dict};
 
@@ -44,7 +44,7 @@
 }
 
 - (void)test_foreach {
-    NSDictionary *dict = @{ @"a": @"1", @"b": @"2", @"c": @"3" };
+    NSDictionary *dict = @{@"a": @"1", @"b": @"2", @"c": @"3"};
     int count = 0;
     for (auto &pair : yas::each_dictionary{(__bridge CFDictionaryRef)dict}) {
         if (pair.first && pair.second) {
@@ -55,7 +55,7 @@
 }
 
 - (void)test_retaion_count {
-    NSDictionary *dict = @{ @"a": @"1" };
+    NSDictionary *dict = @{@"a": @"1"};
     CFDictionaryRef cf_dict = (__bridge CFDictionaryRef)dict;
 
     auto pre_count = CFGetRetainCount(cf_dict);
