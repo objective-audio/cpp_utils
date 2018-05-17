@@ -48,12 +48,12 @@ struct sender : base {
     sender_flowable<T> _flowable = nullptr;
 };
 
-struct observer_base : base {
+struct observer : base {
     struct impl : base::impl {
         virtual void sync() = 0;
     };
 
-    observer_base(std::nullptr_t) : base(nullptr) {
+    observer(std::nullptr_t) : base(nullptr) {
     }
 
     void sync() {
@@ -61,12 +61,12 @@ struct observer_base : base {
     }
 
    protected:
-    observer_base(std::shared_ptr<impl> &&impl) : base(std::move(impl)) {
+    observer(std::shared_ptr<impl> &&impl) : base(std::move(impl)) {
     }
 };
 
 template <typename Begin>
-struct typed_observer : observer_base {
+struct typed_observer : observer {
     class impl;
 
     typed_observer(input<Begin>);

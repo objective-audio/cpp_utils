@@ -101,7 +101,7 @@ flow::receiver_flowable<T> flow::receiver<T>::flowable() {
 #pragma mark - flow::typed_observer
 
 template <typename Begin>
-struct typed_observer<Begin>::impl : observer_base::impl {
+struct typed_observer<Begin>::impl : observer::impl {
     impl(flow::input<Begin> &&input) : _input(std::move(input)) {
     }
 
@@ -113,12 +113,11 @@ struct typed_observer<Begin>::impl : observer_base::impl {
 };
 
 template <typename Begin>
-typed_observer<Begin>::typed_observer(flow::input<Begin> input)
-    : observer_base(std::make_shared<impl>(std::move(input))) {
+typed_observer<Begin>::typed_observer(flow::input<Begin> input) : observer(std::make_shared<impl>(std::move(input))) {
 }
 
 template <typename Begin>
-typed_observer<Begin>::typed_observer(std::nullptr_t) : observer_base(nullptr) {
+typed_observer<Begin>::typed_observer(std::nullptr_t) : observer(nullptr) {
 }
 
 template <typename Begin>
