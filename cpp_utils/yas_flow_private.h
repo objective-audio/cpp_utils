@@ -98,22 +98,26 @@ flow::receiver_flowable<T> flow::receiver<T>::flowable() {
     return flow::receiver_flowable<T>{impl_ptr<typename flow::receiver_flowable<T>::impl>()};
 }
 
-#pragma mark - observer
+#pragma mark - flow::observer
 
 template <typename Begin>
-struct observer<Begin>::impl : base::impl {
+struct observer<Begin>::impl : observer_base::impl {
     impl(flow::input<Begin> &&input) : _input(std::move(input)) {
+    }
+
+    void sync() override {
+        this->_input.sync();
     }
 
     flow::input<Begin> _input;
 };
 
 template <typename Begin>
-observer<Begin>::observer(flow::input<Begin> input) : base(std::make_shared<impl>(std::move(input))) {
+observer<Begin>::observer(flow::input<Begin> input) : observer_base(std::make_shared<impl>(std::move(input))) {
 }
 
 template <typename Begin>
-observer<Begin>::observer(std::nullptr_t) : base(nullptr) {
+observer<Begin>::observer(std::nullptr_t) : observer_base(nullptr) {
 }
 
 template <typename Begin>
@@ -122,11 +126,6 @@ observer<Begin>::~observer() = default;
 template <typename Begin>
 flow::input<Begin> &observer<Begin>::input() {
     return impl_ptr<impl>()->_input;
-}
-
-template <typename Begin>
-void observer<Begin>::sync() {
-    impl_ptr<impl>()->_input.sync();
 }
 
 #pragma mark - input_flowable
