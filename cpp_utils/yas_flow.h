@@ -10,11 +10,12 @@
 #include "yas_types.h"
 
 namespace yas::flow {
-template <typename T>
+template <typename T = std::nullptr_t>
 struct receiver : base {
     class impl;
 
     receiver(std::function<void(T const &)>);
+    receiver(std::function<void(void)>);
     receiver(std::nullptr_t);
 
     ~receiver() final;
@@ -47,21 +48,36 @@ struct sender : base {
     sender_flowable<T> _flowable = nullptr;
 };
 
-template <typename Begin>
 struct observer : base {
-    class impl;
+    struct impl : base::impl {
+        virtual void sync() = 0;
+    };
 
-    observer(input<Begin>);
-    observer(std::nullptr_t);
+    observer(std::nullptr_t) : base(nullptr) {
+    }
 
-    ~observer() final;
+    void sync() {
+        impl_ptr<impl>()->sync();
+    }
 
-    flow::input<Begin> &input();
-
-    void sync();
+   protected:
+    observer(std::shared_ptr<impl> &&impl) : base(std::move(impl)) {
+    }
 };
 
-template <typename Out, typename In = Out, typename Begin = In>
+template <typename Begin>
+struct typed_observer : observer {
+    class impl;
+
+    typed_observer(input<Begin>);
+    typed_observer(std::nullptr_t);
+
+    ~typed_observer() final;
+
+    flow::input<Begin> &input();
+};
+
+template <typename Out = std::nullptr_t, typename In = Out, typename Begin = In>
 struct node : base {
     class impl;
 
@@ -75,7 +91,9 @@ struct node : base {
     [[nodiscard]] node<Out, Out, Begin> normalize();
 
     [[nodiscard]] node<Out, In, Begin> perform(std::function<void(Out const &)>);
+
     [[nodiscard]] node<Out, In, Begin> receive(receiver<Out> &);
+    [[nodiscard]] node<Out, In, Begin> receive_null(receiver<std::nullptr_t> &);
 
     [[nodiscard]] node<Out, Out, Begin> guard(std::function<bool(Out const &)>);
 
@@ -97,10 +115,10 @@ struct node : base {
     [[nodiscard]] node<std::pair<opt_t<Out>, opt_t<SubOut>>, std::pair<opt_t<Out>, opt_t<SubOut>>, Begin> combine(
         node<SubOut, SubIn, SubBegin>);
 
-    [[nodiscard]] observer<Begin> end();
-    [[nodiscard]] observer<Begin> end(receiver<Out> &);
-    [[nodiscard]] observer<Begin> sync();
-    [[nodiscard]] observer<Begin> sync(receiver<Out> &);
+    [[nodiscard]] typed_observer<Begin> end();
+    [[nodiscard]] typed_observer<Begin> end(receiver<Out> &);
+    [[nodiscard]] typed_observer<Begin> sync();
+    [[nodiscard]] typed_observer<Begin> sync(receiver<Out> &);
 };
 }  // namespace yas::flow
 

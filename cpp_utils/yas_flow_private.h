@@ -82,6 +82,11 @@ flow::receiver<T>::receiver(std::function<void(T const &)> handler) : base(std::
 }
 
 template <typename T>
+flow::receiver<T>::receiver(std::function<void(void)> handler)
+    : receiver([handler = std::move(handler)](auto const &) { handler(); }) {
+}
+
+template <typename T>
 flow::receiver<T>::receiver(std::nullptr_t) : base(nullptr) {
 }
 
@@ -93,35 +98,34 @@ flow::receiver_flowable<T> flow::receiver<T>::flowable() {
     return flow::receiver_flowable<T>{impl_ptr<typename flow::receiver_flowable<T>::impl>()};
 }
 
-#pragma mark - observer
+#pragma mark - flow::typed_observer
 
 template <typename Begin>
-struct observer<Begin>::impl : base::impl {
+struct typed_observer<Begin>::impl : observer::impl {
     impl(flow::input<Begin> &&input) : _input(std::move(input)) {
+    }
+
+    void sync() override {
+        this->_input.sync();
     }
 
     flow::input<Begin> _input;
 };
 
 template <typename Begin>
-observer<Begin>::observer(flow::input<Begin> input) : base(std::make_shared<impl>(std::move(input))) {
+typed_observer<Begin>::typed_observer(flow::input<Begin> input) : observer(std::make_shared<impl>(std::move(input))) {
 }
 
 template <typename Begin>
-observer<Begin>::observer(std::nullptr_t) : base(nullptr) {
+typed_observer<Begin>::typed_observer(std::nullptr_t) : observer(nullptr) {
 }
 
 template <typename Begin>
-observer<Begin>::~observer() = default;
+typed_observer<Begin>::~typed_observer() = default;
 
 template <typename Begin>
-flow::input<Begin> &observer<Begin>::input() {
+flow::input<Begin> &typed_observer<Begin>::input() {
     return impl_ptr<impl>()->_input;
-}
-
-template <typename Begin>
-void observer<Begin>::sync() {
-    impl_ptr<impl>()->_input.sync();
 }
 
 #pragma mark - input_flowable
@@ -405,6 +409,12 @@ node<Out, In, Begin> node<Out, In, Begin>::receive(receiver<Out> &receiver) {
 }
 
 template <typename Out, typename In, typename Begin>
+node<Out, In, Begin> node<Out, In, Begin>::receive_null(receiver<std::nullptr_t> &receiver) {
+    return this->perform(
+        [output = receiver.flowable().make_output()](Out const &value) mutable { output.output_value(nullptr); });
+}
+
+template <typename Out, typename In, typename Begin>
 node<Out, Out, Begin> node<Out, In, Begin>::guard(std::function<bool(Out const &value)> guard_handler) {
     auto imp = impl_ptr<impl>();
     flow::input<Begin> &input = imp->_input;
@@ -543,27 +553,27 @@ node<std::pair<opt_t<Out>, opt_t<SubOut>>, std::pair<opt_t<Out>, opt_t<SubOut>>,
 }
 
 template <typename Out, typename In, typename Begin>
-observer<Begin> node<Out, In, Begin>::end() {
+typed_observer<Begin> node<Out, In, Begin>::end() {
     auto &input = impl_ptr<impl>()->_input;
     input.flowable().template push_handler<In>(
         [handler = impl_ptr<impl>()->_handler](In const &value) { handler(value); });
-    return observer<Begin>(std::move(input));
+    return typed_observer<Begin>(std::move(input));
 }
 
 template <typename Out, typename In, typename Begin>
-observer<Begin> node<Out, In, Begin>::end(receiver<Out> &receiver) {
+typed_observer<Begin> node<Out, In, Begin>::end(receiver<Out> &receiver) {
     return this->receive(receiver).end();
 }
 
 template <typename Out, typename In, typename Begin>
-observer<Begin> node<Out, In, Begin>::sync() {
+typed_observer<Begin> node<Out, In, Begin>::sync() {
     auto observer = this->end();
     observer.sync();
     return observer;
 }
 
 template <typename Out, typename In, typename Begin>
-observer<Begin> node<Out, In, Begin>::sync(receiver<Out> &receiver) {
+typed_observer<Begin> node<Out, In, Begin>::sync(receiver<Out> &receiver) {
     return this->receive(receiver).sync();
 }
 }  // namespace yas::flow
