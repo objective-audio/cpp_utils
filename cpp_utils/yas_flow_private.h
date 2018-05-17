@@ -157,14 +157,6 @@ struct input<T>::impl : input_base::impl, input_flowable::impl {
         }
     }
 
-    bool can_sync() {
-        if (auto sender = this->_weak_sender.lock()) {
-            return sender.flowable().can_sync();
-        } else {
-            return false;
-        }
-    }
-
     void sync() override {
         if (auto sender = this->_weak_sender.lock()) {
             sender.flowable().sync(this->identifier());
@@ -220,11 +212,6 @@ void input<T>::input_value(T const &value) {
 }
 
 template <typename T>
-bool input<T>::can_sync() const {
-    return impl_ptr<impl>()->can_sync();
-}
-
-template <typename T>
 node<T, T, T> input<T>::begin() {
     return node<T, T, T>(*this);
 }
@@ -253,11 +240,6 @@ void sender_flowable<T>::erase_input(std::uintptr_t const key) {
 }
 
 template <typename T>
-bool sender_flowable<T>::can_sync() {
-    return impl_ptr<impl>()->can_sync();
-}
-
-template <typename T>
 void sender_flowable<T>::sync(std::uintptr_t const key) {
     impl_ptr<impl>()->sync(key);
 }
@@ -266,8 +248,7 @@ void sender_flowable<T>::sync(std::uintptr_t const key) {
 
 template <typename T>
 struct sender<T>::impl : base::impl, sender_flowable<T>::impl {
-    std::function<T(void)> _sync_handler;
-    std::function<bool(void)> _can_sync_handler;
+    std::function<opt_t<T>(void)> _sync_handler = []() { return nullopt; };
     std::unordered_map<std::uintptr_t, weak<input<T>>> inputs;
 
     node<T, T, T> begin(sender<T> &sender) {
@@ -289,18 +270,10 @@ struct sender<T>::impl : base::impl, sender_flowable<T>::impl {
         this->inputs.erase(key);
     }
 
-    bool can_sync() override {
-        if (auto handler = this->_can_sync_handler) {
-            return handler();
-        } else {
-            return false;
-        }
-    }
-
     void sync(std::uintptr_t const key) override {
-        if (this->can_sync()) {
+        if (auto value = this->_sync_handler()) {
             if (auto input = this->inputs.at(key).lock()) {
-                input.input_value(this->_sync_handler());
+                input.input_value(*value);
             }
         }
     }
@@ -318,12 +291,7 @@ template <typename T>
 sender<T>::~sender() = default;
 
 template <typename T>
-void sender<T>::set_can_sync_handler(std::function<bool(void)> handler) {
-    impl_ptr<impl>()->_can_sync_handler = std::move(handler);
-}
-
-template <typename T>
-void sender<T>::set_sync_handler(std::function<T(void)> handler) {
+void sender<T>::set_sync_handler(std::function<opt_t<T>(void)> handler) {
     impl_ptr<impl>()->_sync_handler = std::move(handler);
 }
 

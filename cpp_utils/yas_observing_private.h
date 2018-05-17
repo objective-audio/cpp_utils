@@ -140,7 +140,7 @@ class subject<Key, T>::impl {
                 }
             });
 
-            sender.set_can_sync_handler([observer]() { return false; });
+            sender.set_sync_handler([observer]() { return nullopt; });
 
             this->sender = std::move(sender);
         }

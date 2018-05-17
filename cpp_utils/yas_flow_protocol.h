@@ -91,8 +91,6 @@ struct input : input_base {
 
     void input_value(T const &);
 
-    [[nodiscard]] bool can_sync() const;
-
     [[nodiscard]] node<T, T, T> begin();
 
     input_flowable &flowable();
@@ -105,7 +103,6 @@ template <typename T>
 struct sender_flowable : protocol {
     struct impl : protocol::impl {
         virtual void erase_input(std::uintptr_t const) = 0;
-        virtual bool can_sync() = 0;
         virtual void sync(std::uintptr_t const) = 0;
     };
 
@@ -113,7 +110,6 @@ struct sender_flowable : protocol {
     sender_flowable(std::nullptr_t);
 
     void erase_input(std::uintptr_t const);
-    bool can_sync();
     void sync(std::uintptr_t const);
 };
 }  // namespace yas::flow

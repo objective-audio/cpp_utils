@@ -132,7 +132,6 @@ using namespace yas;
 
 - (void)test_sync {
     flow::sender<int> sender;
-    sender.set_can_sync_handler([] { return true; });
     sender.set_sync_handler([] { return 100; });
 
     int received = -1;
@@ -145,7 +144,6 @@ using namespace yas;
 
 - (void)test_sync_by_observer {
     flow::sender<int> sender;
-    sender.set_can_sync_handler([] { return true; });
     sender.set_sync_handler([] { return 100; });
 
     int received = -1;
@@ -158,7 +156,6 @@ using namespace yas;
 
 - (void)test_sync_many_sender {
     flow::sender<int> sender;
-    sender.set_can_sync_handler([] { return true; });
     sender.set_sync_handler([] { return 100; });
 
     int received1 = -1;
@@ -175,7 +172,6 @@ using namespace yas;
 
 - (void)test_sync_end {
     flow::sender<int> sender;
-    sender.set_can_sync_handler([] { return true; });
     sender.set_sync_handler([] { return 100; });
 
     int received = -1;
@@ -187,7 +183,6 @@ using namespace yas;
 
 - (void)test_sync_end_with_receiver {
     flow::sender<int> sender;
-    sender.set_can_sync_handler([] { return true; });
     sender.set_sync_handler([] { return 100; });
 
     int received = -1;
@@ -201,11 +196,9 @@ using namespace yas;
 
 - (void)test_sync_with_combined_sub_sender {
     flow::sender<int> sender;
-    sender.set_can_sync_handler([]() { return true; });
     sender.set_sync_handler([]() { return 123; });
 
     flow::sender<int> sub_sender;
-    sub_sender.set_can_sync_handler([]() { return true; });
     sub_sender.set_sync_handler([]() { return 456; });
 
     std::vector<std::pair<int, int>> received;
@@ -227,11 +220,9 @@ using namespace yas;
 
 - (void)test_sync_with_merged_sub_sender {
     flow::sender<int> sender;
-    sender.set_can_sync_handler([]() { return true; });
     sender.set_sync_handler([]() { return 78; });
 
     flow::sender<int> sub_sender;
-    sub_sender.set_can_sync_handler([]() { return true; });
     sub_sender.set_sync_handler([]() { return 90; });
 
     std::vector<int> received;

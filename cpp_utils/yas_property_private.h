@@ -79,13 +79,11 @@ class property<T>::impl : public base::impl {
 
             auto weak_property = to_weak(property);
 
-            sender.set_can_sync_handler([weak_property]() { return !!weak_property; });
-
             sender.set_sync_handler([weak_property, observer]() {
                 if (auto property = weak_property.lock()) {
-                    return property.value();
+                    return opt_t<T>{property.value()};
                 } else {
-                    throw std::runtime_error("property is null.");
+                    return opt_t<T>{nullopt};
                 }
             });
 
@@ -110,14 +108,13 @@ class property<T>::impl : public base::impl {
 
             auto weak_property = to_weak(property);
 
-            sender.set_can_sync_handler([weak_property]() { return !!weak_property; });
-
             sender.set_sync_handler([weak_property, observer]() {
                 if (auto property = weak_property.lock()) {
                     auto const &value = property.value();
-                    return change_context{.new_value = value, .old_value = value, .property = property};
+                    return opt_t<change_context>{
+                        change_context{.new_value = value, .old_value = value, .property = property}};
                 } else {
-                    throw std::runtime_error("property is null.");
+                    return opt_t<change_context>{nullopt};
                 }
             });
 
