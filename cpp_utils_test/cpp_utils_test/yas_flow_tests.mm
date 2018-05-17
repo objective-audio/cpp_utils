@@ -250,6 +250,19 @@ using namespace yas;
     XCTAssertEqual(received, "3");
 }
 
+- (void)test_receive_null {
+    bool received = false;
+
+    flow::sender<int> sender;
+    flow::receiver<> receiver{[&received]() { received = true; }};
+
+    auto flow = sender.begin().receive_null(receiver).end();
+
+    sender.send_value(4);
+
+    XCTAssertTrue(received);
+}
+
 - (void)test_receive_by_end {
     std::string received = "";
 

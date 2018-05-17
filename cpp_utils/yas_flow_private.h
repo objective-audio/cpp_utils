@@ -82,6 +82,11 @@ flow::receiver<T>::receiver(std::function<void(T const &)> handler) : base(std::
 }
 
 template <typename T>
+flow::receiver<T>::receiver(std::function<void(void)> handler)
+    : receiver([handler = std::move(handler)](auto const &) { handler(); }) {
+}
+
+template <typename T>
 flow::receiver<T>::receiver(std::nullptr_t) : base(nullptr) {
 }
 
@@ -402,6 +407,12 @@ template <typename Out, typename In, typename Begin>
 node<Out, In, Begin> node<Out, In, Begin>::receive(receiver<Out> &receiver) {
     return this->perform(
         [output = receiver.flowable().make_output()](Out const &value) mutable { output.output_value(value); });
+}
+
+template <typename Out, typename In, typename Begin>
+node<Out, In, Begin> node<Out, In, Begin>::receive_null(receiver<std::nullptr_t> &receiver) {
+    return this->perform(
+        [output = receiver.flowable().make_output()](Out const &value) mutable { output.output_value(nullptr); });
 }
 
 template <typename Out, typename In, typename Begin>

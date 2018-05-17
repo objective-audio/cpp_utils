@@ -10,11 +10,12 @@
 #include "yas_types.h"
 
 namespace yas::flow {
-template <typename T>
+template <typename T = std::nullptr_t>
 struct receiver : base {
     class impl;
 
     receiver(std::function<void(T const &)>);
+    receiver(std::function<void(void)>);
     receiver(std::nullptr_t);
 
     ~receiver() final;
@@ -61,7 +62,7 @@ struct observer : base {
     void sync();
 };
 
-template <typename Out, typename In = Out, typename Begin = In>
+template <typename Out = std::nullptr_t, typename In = Out, typename Begin = In>
 struct node : base {
     class impl;
 
@@ -75,7 +76,9 @@ struct node : base {
     [[nodiscard]] node<Out, Out, Begin> normalize();
 
     [[nodiscard]] node<Out, In, Begin> perform(std::function<void(Out const &)>);
+
     [[nodiscard]] node<Out, In, Begin> receive(receiver<Out> &);
+    [[nodiscard]] node<Out, In, Begin> receive_null(receiver<std::nullptr_t> &);
 
     [[nodiscard]] node<Out, Out, Begin> guard(std::function<bool(Out const &)>);
 
