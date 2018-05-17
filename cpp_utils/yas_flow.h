@@ -35,8 +35,7 @@ struct sender : base {
 
     ~sender() final;
 
-    void set_can_sync_handler(std::function<bool(void)>);
-    void set_sync_handler(std::function<T(void)>);
+    void set_sync_handler(std::function<opt_t<T>(void)>);
 
     void send_value(T const &);
 
