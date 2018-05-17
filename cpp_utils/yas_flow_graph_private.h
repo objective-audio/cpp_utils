@@ -34,7 +34,7 @@ struct flow::graph<State, Signal>::impl : base::impl {
     State state;
     bool is_running = false;
     flow::receiver<graph_next<State, Signal>> receiver = nullptr;
-    std::unordered_map<State, flow::observer<Signal>> observers;
+    std::unordered_map<State, flow::typed_observer<Signal>> observers;
 
     impl(State &&state) : state(std::move(state)) {
     }

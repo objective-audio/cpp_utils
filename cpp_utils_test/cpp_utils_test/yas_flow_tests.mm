@@ -389,7 +389,7 @@ using namespace yas;
 
     std::string received = "";
 
-    flow::observer<int> observer =
+    flow::typed_observer<int> observer =
         normalized_flow.perform([&received](std::string const &value) { received = value; }).end();
 
     sender.send_value(10);

@@ -531,7 +531,7 @@ using namespace yas;
     std::string received_key = "";
     int received_value = -1;
 
-    flow::observer<subject_t::flow_context_t> flow =
+    flow::typed_observer<subject_t::flow_context_t> flow =
         subject.begin_flow()
             .perform([&received_key, &received_value](subject_t::flow_context_t const &context) {
                 received_key = context.key;

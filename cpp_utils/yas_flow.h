@@ -66,13 +66,13 @@ struct observer_base : base {
 };
 
 template <typename Begin>
-struct observer : observer_base {
+struct typed_observer : observer_base {
     class impl;
 
-    observer(input<Begin>);
-    observer(std::nullptr_t);
+    typed_observer(input<Begin>);
+    typed_observer(std::nullptr_t);
 
-    ~observer() final;
+    ~typed_observer() final;
 
     flow::input<Begin> &input();
 };
@@ -115,10 +115,10 @@ struct node : base {
     [[nodiscard]] node<std::pair<opt_t<Out>, opt_t<SubOut>>, std::pair<opt_t<Out>, opt_t<SubOut>>, Begin> combine(
         node<SubOut, SubIn, SubBegin>);
 
-    [[nodiscard]] observer<Begin> end();
-    [[nodiscard]] observer<Begin> end(receiver<Out> &);
-    [[nodiscard]] observer<Begin> sync();
-    [[nodiscard]] observer<Begin> sync(receiver<Out> &);
+    [[nodiscard]] typed_observer<Begin> end();
+    [[nodiscard]] typed_observer<Begin> end(receiver<Out> &);
+    [[nodiscard]] typed_observer<Begin> sync();
+    [[nodiscard]] typed_observer<Begin> sync(receiver<Out> &);
 };
 }  // namespace yas::flow
 
