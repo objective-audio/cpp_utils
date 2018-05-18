@@ -128,22 +128,10 @@ flow::input<Begin> &typed_observer<Begin>::input() {
     return impl_ptr<impl>()->_input;
 }
 
-#pragma mark - input_flowable
-
-template <typename P>
-void input_flowable::push_handler(std::function<void(P const &)> handler) {
-    impl_ptr<impl>()->push_handler(std::move(handler));
-}
-
-template <typename P>
-std::function<void(P const &)> const &input_flowable::handler(std::size_t const idx) const {
-    return impl_ptr<impl>()->handler(idx).template get<std::function<void(P const &)>>();
-}
-
 #pragma mark - input
 
 template <typename T>
-struct input<T>::impl : input_base::impl, input_flowable::impl {
+struct input<T>::impl : input_base::impl {
     weak<sender<T>> _weak_sender;
 
     impl(weak<sender<T>> &&weak_sender) : _weak_sender(std::move(weak_sender)) {
@@ -167,19 +155,19 @@ struct input<T>::impl : input_base::impl, input_flowable::impl {
         }
     }
 
-    void push_handler(yas::any &&handler) override {
+    void push_handler(yas::any &&handler) {
         this->_handlers.emplace_back(std::move(handler));
     }
 
-    yas::any handler(std::size_t const idx) override {
+    yas::any handler(std::size_t const idx) {
         return this->_handlers.at(idx);
     }
 
-    std::size_t handlers_size() override {
+    std::size_t handlers_size() {
         return this->_handlers.size();
     }
 
-    void add_sub_input(input_base &&sub_input) override {
+    void add_sub_input(input_base &&sub_input) {
         this->_sub_inputs.emplace_back(std::move(sub_input));
     }
 
@@ -217,11 +205,25 @@ node<T, T, T> input<T>::begin() {
 }
 
 template <typename T>
-input_flowable &input<T>::flowable() {
-    if (!this->_flowable) {
-        this->_flowable = input_flowable{impl_ptr<input_flowable::impl>()};
-    }
-    return this->_flowable;
+template <typename P>
+void input<T>::push_handler(std::function<void(P const &)> handler) {
+    impl_ptr<impl>()->push_handler(std::move(handler));
+}
+
+template <typename T>
+std::size_t input<T>::handlers_size() const {
+    return impl_ptr<impl>()->handlers_size();
+}
+
+template <typename T>
+template <typename P>
+std::function<void(P const &)> const &input<T>::handler(std::size_t const idx) const {
+    return impl_ptr<impl>()->handler(idx).template get<std::function<void(P const &)>>();
+}
+
+template <typename T>
+void input<T>::add_sub_input(input_base sug_input) {
+    impl_ptr<impl>()->add_sub_input(std::move(sug_input));
 }
 
 #pragma mark - sender_flowable
@@ -346,15 +348,14 @@ node<Out, Out, Begin> node<Out, In, Begin>::normalize() {
     auto imp = impl_ptr<impl>();
     flow::input<Begin> &input = imp->_input;
     auto weak_input = to_weak(input);
-    std::size_t const next_idx = input.flowable().handlers_size() + 1;
+    std::size_t const next_idx = input.handlers_size() + 1;
 
-    input.flowable().template push_handler<In>(
-        [handler = imp->_handler, weak_input, next_idx](In const &value) mutable {
-            auto const result = handler(value);
-            if (auto input = weak_input.lock()) {
-                input.flowable().template handler<Out>(next_idx)(result);
-            }
-        });
+    input.template push_handler<In>([handler = imp->_handler, weak_input, next_idx](In const &value) mutable {
+        auto const result = handler(value);
+        if (auto input = weak_input.lock()) {
+            input.template handler<Out>(next_idx)(result);
+        }
+    });
 
     return node<Out, Out, Begin>(input, [](Out const &value) { return value; });
 }
@@ -387,14 +388,14 @@ node<Out, Out, Begin> node<Out, In, Begin>::guard(std::function<bool(Out const &
     auto imp = impl_ptr<impl>();
     flow::input<Begin> &input = imp->_input;
     auto weak_input = to_weak(input);
-    std::size_t const next_idx = input.flowable().handlers_size() + 1;
+    std::size_t const next_idx = input.handlers_size() + 1;
 
-    input.flowable().template push_handler<In>([handler = imp->_handler, weak_input, next_idx,
-                                                guard_handler = std::move(guard_handler)](In const &value) mutable {
+    input.template push_handler<In>([handler = imp->_handler, weak_input, next_idx,
+                                     guard_handler = std::move(guard_handler)](In const &value) mutable {
         auto const result = handler(value);
         if (guard_handler(result)) {
             if (auto input = weak_input.lock()) {
-                input.flowable().template handler<Out>(next_idx)(result);
+                input.template handler<Out>(next_idx)(result);
             }
         }
     });
@@ -426,13 +427,13 @@ node<Out, Out, Begin> node<Out, In, Begin>::wait(double const time_interval) {
     auto imp = impl_ptr<impl>();
     flow::input<Begin> &input = imp->_input;
     auto weak_input = to_weak(input);
-    std::size_t const next_idx = input.flowable().handlers_size() + 1;
+    std::size_t const next_idx = input.handlers_size() + 1;
 
-    input.flowable().template push_handler<In>([handler = imp->_handler, time_interval, weak_input, next_idx,
-                                                timer = yas::timer{nullptr}](In const &value) mutable {
+    input.template push_handler<In>([handler = imp->_handler, time_interval, weak_input, next_idx,
+                                     timer = yas::timer{nullptr}](In const &value) mutable {
         timer = yas::timer(time_interval, false, [value = handler(value), weak_input, next_idx]() {
             if (auto input = weak_input.lock()) {
-                input.flowable().template handler<Out>(next_idx)(value);
+                input.template handler<Out>(next_idx)(value);
             }
         });
     });
@@ -446,26 +447,25 @@ node<Out, Out, Begin> node<Out, In, Begin>::merge(node<Out, SubIn, SubBegin> sub
     auto imp = impl_ptr<impl>();
     flow::input<Begin> &input = imp->_input;
     auto weak_input = to_weak(input);
-    std::size_t const next_idx = input.flowable().handlers_size() + 1;
+    std::size_t const next_idx = input.handlers_size() + 1;
 
     auto sub_imp = sub_node.template impl_ptr<typename node<Out, SubIn, SubBegin>::impl>();
     auto &sub_input = sub_imp->_input;
 
-    sub_input.flowable().template push_handler<SubIn>(
+    sub_input.template push_handler<SubIn>(
         [handler = sub_imp->_handler, weak_input, next_idx](SubIn const &value) mutable {
             if (auto input = weak_input.lock()) {
-                input.flowable().template handler<Out>(next_idx)(handler(value));
+                input.template handler<Out>(next_idx)(handler(value));
             }
         });
 
-    input.flowable().template push_handler<In>(
-        [handler = imp->_handler, weak_input, next_idx](In const &value) mutable {
-            if (auto input = weak_input.lock()) {
-                input.flowable().template handler<Out>(next_idx)(handler(value));
-            }
-        });
+    input.template push_handler<In>([handler = imp->_handler, weak_input, next_idx](In const &value) mutable {
+        if (auto input = weak_input.lock()) {
+            input.template handler<Out>(next_idx)(handler(value));
+        }
+    });
 
-    input.flowable().add_sub_input(std::move(sub_input));
+    input.add_sub_input(std::move(sub_input));
 
     return node<Out, Out, Begin>(input, [](Out const &value) { return value; });
 }
@@ -479,26 +479,25 @@ node<Out, In, Begin>::pair(node<SubOut, SubIn, SubBegin> sub_node) {
     auto imp = impl_ptr<impl>();
     flow::input<Begin> &input = imp->_input;
     auto weak_input = to_weak(input);
-    std::size_t const next_idx = input.flowable().handlers_size() + 1;
+    std::size_t const next_idx = input.handlers_size() + 1;
 
     auto sub_imp = sub_node.template impl_ptr<typename node<SubOut, SubIn, SubBegin>::impl>();
     auto &sub_input = sub_imp->_input;
 
-    sub_input.flowable().template push_handler<SubIn>(
+    sub_input.template push_handler<SubIn>(
         [handler = sub_imp->_handler, weak_input, next_idx](SubIn const &value) mutable {
             if (auto input = weak_input.lock()) {
-                input.flowable().template handler<opt_pair_t>(next_idx)(opt_pair_t{nullopt, handler(value)});
+                input.template handler<opt_pair_t>(next_idx)(opt_pair_t{nullopt, handler(value)});
             }
         });
 
-    input.flowable().template push_handler<In>(
-        [handler = imp->_handler, weak_input, next_idx](In const &value) mutable {
-            if (auto input = weak_input.lock()) {
-                input.flowable().template handler<opt_pair_t>(next_idx)(opt_pair_t(handler(value), nullopt));
-            }
-        });
+    input.template push_handler<In>([handler = imp->_handler, weak_input, next_idx](In const &value) mutable {
+        if (auto input = weak_input.lock()) {
+            input.template handler<opt_pair_t>(next_idx)(opt_pair_t(handler(value), nullopt));
+        }
+    });
 
-    input.flowable().add_sub_input(std::move(sub_input));
+    input.add_sub_input(std::move(sub_input));
 
     return node<opt_pair_t, opt_pair_t, Begin>(input, [](opt_pair_t const &value) { return value; });
 }
@@ -523,8 +522,7 @@ node<std::pair<opt_t<Out>, opt_t<SubOut>>, std::pair<opt_t<Out>, opt_t<SubOut>>,
 template <typename Out, typename In, typename Begin>
 typed_observer<Begin> node<Out, In, Begin>::end() {
     auto &input = impl_ptr<impl>()->_input;
-    input.flowable().template push_handler<In>(
-        [handler = impl_ptr<impl>()->_handler](In const &value) { handler(value); });
+    input.template push_handler<In>([handler = impl_ptr<impl>()->_handler](In const &value) { handler(value); });
     return typed_observer<Begin>(std::move(input));
 }
 

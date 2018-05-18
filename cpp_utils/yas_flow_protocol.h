@@ -55,31 +55,6 @@ struct input_base : base {
     }
 };
 
-struct input_flowable : protocol {
-    struct impl : protocol::impl {
-        virtual void push_handler(yas::any &&) = 0;
-        virtual yas::any handler(std::size_t const) = 0;
-        virtual std::size_t handlers_size() = 0;
-        virtual void add_sub_input(input_base &&) = 0;
-    };
-
-    input_flowable(std::shared_ptr<impl> ptr) : protocol(std::move(ptr)) {
-    }
-    input_flowable(std::nullptr_t) : protocol(nullptr) {
-    }
-
-    template <typename P>
-    void push_handler(std::function<void(P const &)>);
-    std::size_t handlers_size() const {
-        return impl_ptr<impl>()->handlers_size();
-    }
-    template <typename P>
-    std::function<void(P const &)> const &handler(std::size_t const) const;
-    void add_sub_input(input_base sug_input) {
-        impl_ptr<impl>()->add_sub_input(std::move(sug_input));
-    }
-};
-
 template <typename T>
 struct input : input_base {
     class impl;
@@ -93,10 +68,12 @@ struct input : input_base {
 
     [[nodiscard]] node<T, T, T> begin();
 
-    input_flowable &flowable();
-
-   private:
-    input_flowable _flowable = nullptr;
+    template <typename P>
+    void push_handler(std::function<void(P const &)>);
+    std::size_t handlers_size() const;
+    template <typename P>
+    std::function<void(P const &)> const &handler(std::size_t const) const;
+    void add_sub_input(input_base sub_input);
 };
 
 template <typename T>
