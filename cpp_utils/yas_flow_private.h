@@ -504,19 +504,23 @@ node<Out, In, Begin>::pair(node<SubOut, SubIn, SubBegin> sub_node) {
 
 template <typename Out, typename In, typename Begin>
 template <typename SubOut, typename SubIn, typename SubBegin>
-node<std::pair<opt_t<Out>, opt_t<SubOut>>, std::pair<opt_t<Out>, opt_t<SubOut>>, Begin> node<Out, In, Begin>::combine(
+node<std::pair<Out, SubOut>, std::pair<opt_t<Out>, opt_t<SubOut>>, Begin> node<Out, In, Begin>::combine(
     node<SubOut, SubIn, SubBegin> sub_node) {
     using opt_pair_t = std::pair<opt_t<Out>, opt_t<SubOut>>;
 
-    return this->pair(std::move(sub_node)).to([opt_pair = opt_pair_t{}](opt_pair_t const &value) mutable {
-        if (value.first) {
-            opt_pair.first = value.first;
-        }
-        if (value.second) {
-            opt_pair.second = value.second;
-        }
-        return opt_pair;
-    });
+    return this->pair(std::move(sub_node))
+        .to([opt_pair = opt_pair_t{}](opt_pair_t const &value) mutable {
+            if (value.first) {
+                opt_pair.first = value.first;
+            }
+            if (value.second) {
+                opt_pair.second = value.second;
+            }
+            return opt_pair;
+        })
+        .guard([](auto const &pair) { return pair.first && pair.second; })
+        .template to<std::pair<Out, SubOut>>(
+            [](auto const &pair) { return std::make_pair(*pair.first, *pair.second); });
 }
 
 template <typename Out, typename In, typename Begin>

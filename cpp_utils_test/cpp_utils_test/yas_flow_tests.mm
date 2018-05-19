@@ -205,8 +205,6 @@ using namespace yas;
 
     auto flow = sender.begin()
                     .combine(sub_sender.begin())
-                    .guard([](auto const &pair) { return pair.first && pair.second; })
-                    .to<std::pair<int, int>>([](auto const &pair) { return std::make_pair(*pair.first, *pair.second); })
                     .perform([&received](auto const &pair) { received.emplace_back(pair); })
                     .end();
 
@@ -364,7 +362,7 @@ using namespace yas;
     flow::sender<int> main_sender;
     flow::sender<std::string> sub_sender;
 
-    using opt_pair_t = std::pair<opt_t<int>, opt_t<std::string>>;
+    using opt_pair_t = opt_t<std::pair<int, std::string>>;
 
     opt_pair_t received;
 
@@ -374,13 +372,13 @@ using namespace yas;
 
     main_sender.send_value(1);
 
-    XCTAssertEqual(*received.first, 1);
-    XCTAssertFalse(!!received.second);
+    XCTAssertFalse(received);
 
     sub_sender.send_value("test_text");
 
-    XCTAssertEqual(*received.first, 1);
-    XCTAssertEqual(*received.second, "test_text");
+    XCTAssertTrue(received);
+    XCTAssertEqual(received->first, 1);
+    XCTAssertEqual(received->second, "test_text");
 }
 
 - (void)test_normalize {

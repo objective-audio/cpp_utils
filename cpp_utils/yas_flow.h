@@ -111,7 +111,7 @@ struct node : base {
         node<SubOut, SubIn, SubBegin>);
 
     template <typename SubOut, typename SubIn, typename SubBegin>
-    [[nodiscard]] node<std::pair<opt_t<Out>, opt_t<SubOut>>, std::pair<opt_t<Out>, opt_t<SubOut>>, Begin> combine(
+    [[nodiscard]] node<std::pair<Out, SubOut>, std::pair<opt_t<Out>, opt_t<SubOut>>, Begin> combine(
         node<SubOut, SubIn, SubBegin>);
 
     [[nodiscard]] typed_observer<Begin> end();
