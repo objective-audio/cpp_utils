@@ -344,7 +344,7 @@ template <typename Out, typename In, typename Begin>
 node<Out, In, Begin>::~node() = default;
 
 template <typename Out, typename In, typename Begin>
-node<Out, Out, Begin> node<Out, In, Begin>::normalize() {
+auto node<Out, In, Begin>::normalize() {
     auto imp = impl_ptr<impl>();
     flow::input<Begin> &input = imp->_input;
     auto weak_input = to_weak(input);
@@ -361,7 +361,7 @@ node<Out, Out, Begin> node<Out, In, Begin>::normalize() {
 }
 
 template <typename Out, typename In, typename Begin>
-node<Out, In, Begin> node<Out, In, Begin>::perform(std::function<void(Out const &)> perform_handler) {
+auto node<Out, In, Begin>::perform(std::function<void(Out const &)> perform_handler) {
     auto imp = impl_ptr<impl>();
     return node<Out, In, Begin>(std::move(imp->_input), [perform_handler = std::move(perform_handler),
                                                          handler = std::move(imp->_handler)](In const &value) {
@@ -372,19 +372,19 @@ node<Out, In, Begin> node<Out, In, Begin>::perform(std::function<void(Out const 
 }
 
 template <typename Out, typename In, typename Begin>
-node<Out, In, Begin> node<Out, In, Begin>::receive(receiver<Out> &receiver) {
+auto node<Out, In, Begin>::receive(receiver<Out> &receiver) {
     return this->perform(
         [output = receiver.flowable().make_output()](Out const &value) mutable { output.output_value(value); });
 }
 
 template <typename Out, typename In, typename Begin>
-node<Out, In, Begin> node<Out, In, Begin>::receive_null(receiver<std::nullptr_t> &receiver) {
+auto node<Out, In, Begin>::receive_null(receiver<std::nullptr_t> &receiver) {
     return this->perform(
         [output = receiver.flowable().make_output()](Out const &value) mutable { output.output_value(nullptr); });
 }
 
 template <typename Out, typename In, typename Begin>
-node<Out, Out, Begin> node<Out, In, Begin>::guard(std::function<bool(Out const &value)> guard_handler) {
+auto node<Out, In, Begin>::guard(std::function<bool(Out const &value)> guard_handler) {
     auto imp = impl_ptr<impl>();
     flow::input<Begin> &input = imp->_input;
     auto weak_input = to_weak(input);
@@ -404,13 +404,13 @@ node<Out, Out, Begin> node<Out, In, Begin>::guard(std::function<bool(Out const &
 }
 
 template <typename Out, typename In, typename Begin>
-node<Out, In, Begin> node<Out, In, Begin>::to(std::function<Out(Out const &)> to_handler) {
+auto node<Out, In, Begin>::to(std::function<Out(Out const &)> to_handler) {
     return this->to<Out>(std::move(to_handler));
 }
 
 template <typename Out, typename In, typename Begin>
 template <typename Next>
-node<Next, In, Begin> node<Out, In, Begin>::to(std::function<Next(Out const &)> to_handler) {
+auto node<Out, In, Begin>::to(std::function<Next(Out const &)> to_handler) {
     auto imp = impl_ptr<impl>();
     return node<Next, In, Begin>(std::move(imp->_input),
                                  [to_handler = std::move(to_handler), handler = std::move(imp->_handler)](
@@ -418,12 +418,12 @@ node<Next, In, Begin> node<Out, In, Begin>::to(std::function<Next(Out const &)> 
 }
 
 template <typename Out, typename In, typename Begin>
-node<std::nullptr_t, In, Begin> node<Out, In, Begin>::to_null() {
+auto node<Out, In, Begin>::to_null() {
     return this->to<std::nullptr_t>([](auto const &) { return nullptr; });
 }
 
 template <typename Out, typename In, typename Begin>
-node<Out, Out, Begin> node<Out, In, Begin>::wait(double const time_interval) {
+auto node<Out, In, Begin>::wait(double const time_interval) {
     auto imp = impl_ptr<impl>();
     flow::input<Begin> &input = imp->_input;
     auto weak_input = to_weak(input);
@@ -443,7 +443,7 @@ node<Out, Out, Begin> node<Out, In, Begin>::wait(double const time_interval) {
 
 template <typename Out, typename In, typename Begin>
 template <typename SubIn, typename SubBegin>
-node<Out, Out, Begin> node<Out, In, Begin>::merge(node<Out, SubIn, SubBegin> sub_node) {
+auto node<Out, In, Begin>::merge(node<Out, SubIn, SubBegin> sub_node) {
     auto imp = impl_ptr<impl>();
     flow::input<Begin> &input = imp->_input;
     auto weak_input = to_weak(input);
@@ -472,8 +472,7 @@ node<Out, Out, Begin> node<Out, In, Begin>::merge(node<Out, SubIn, SubBegin> sub
 
 template <typename Out, typename In, typename Begin>
 template <typename SubOut, typename SubIn, typename SubBegin>
-[[nodiscard]] node<std::pair<opt_t<Out>, opt_t<SubOut>>, std::pair<opt_t<Out>, opt_t<SubOut>>, Begin>
-node<Out, In, Begin>::pair(node<SubOut, SubIn, SubBegin> sub_node) {
+auto node<Out, In, Begin>::pair(node<SubOut, SubIn, SubBegin> sub_node) {
     using opt_pair_t = std::pair<opt_t<Out>, opt_t<SubOut>>;
 
     auto imp = impl_ptr<impl>();
@@ -504,8 +503,7 @@ node<Out, In, Begin>::pair(node<SubOut, SubIn, SubBegin> sub_node) {
 
 template <typename Out, typename In, typename Begin>
 template <typename SubOut, typename SubIn, typename SubBegin>
-node<std::pair<Out, SubOut>, std::pair<opt_t<Out>, opt_t<SubOut>>, Begin> node<Out, In, Begin>::combine(
-    node<SubOut, SubIn, SubBegin> sub_node) {
+auto node<Out, In, Begin>::combine(node<SubOut, SubIn, SubBegin> sub_node) {
     using opt_pair_t = std::pair<opt_t<Out>, opt_t<SubOut>>;
 
     return this->pair(std::move(sub_node))

@@ -87,32 +87,30 @@ struct node : base {
 
     ~node() final;
 
-    [[nodiscard]] node<Out, Out, Begin> normalize();
+    [[nodiscard]] auto normalize();
 
-    [[nodiscard]] node<Out, In, Begin> perform(std::function<void(Out const &)>);
+    [[nodiscard]] auto perform(std::function<void(Out const &)>);
 
-    [[nodiscard]] node<Out, In, Begin> receive(receiver<Out> &);
-    [[nodiscard]] node<Out, In, Begin> receive_null(receiver<std::nullptr_t> &);
+    [[nodiscard]] auto receive(receiver<Out> &);
+    [[nodiscard]] auto receive_null(receiver<std::nullptr_t> &);
 
-    [[nodiscard]] node<Out, Out, Begin> guard(std::function<bool(Out const &)>);
+    [[nodiscard]] auto guard(std::function<bool(Out const &)>);
 
-    [[nodiscard]] node<Out, In, Begin> to(std::function<Out(Out const &)>);
+    [[nodiscard]] auto to(std::function<Out(Out const &)>);
     template <typename Next = Out>
-    [[nodiscard]] node<Next, In, Begin> to(std::function<Next(Out const &)>);
-    [[nodiscard]] node<std::nullptr_t, In, Begin> to_null();
+    [[nodiscard]] auto to(std::function<Next(Out const &)>);
+    [[nodiscard]] auto to_null();
 
-    [[nodiscard]] node<Out, Out, Begin> wait(double const);
+    [[nodiscard]] auto wait(double const);
 
     template <typename SubIn, typename SubBegin>
-    [[nodiscard]] node<Out, Out, Begin> merge(node<Out, SubIn, SubBegin>);
+    [[nodiscard]] auto merge(node<Out, SubIn, SubBegin>);
 
     template <typename SubOut, typename SubIn, typename SubBegin>
-    [[nodiscard]] node<std::pair<opt_t<Out>, opt_t<SubOut>>, std::pair<opt_t<Out>, opt_t<SubOut>>, Begin> pair(
-        node<SubOut, SubIn, SubBegin>);
+    [[nodiscard]] auto pair(node<SubOut, SubIn, SubBegin>);
 
     template <typename SubOut, typename SubIn, typename SubBegin>
-    [[nodiscard]] node<std::pair<Out, SubOut>, std::pair<opt_t<Out>, opt_t<SubOut>>, Begin> combine(
-        node<SubOut, SubIn, SubBegin>);
+    [[nodiscard]] auto combine(node<SubOut, SubIn, SubBegin>);
 
     [[nodiscard]] typed_observer<Begin> end();
     [[nodiscard]] typed_observer<Begin> end(receiver<Out> &);
