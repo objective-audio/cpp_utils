@@ -22,4 +22,11 @@ template <typename T>
 using enable_if_integral_t = typename std::enable_if_t<std::is_integral<T>::value>;
 template <typename T>
 using enable_if_pointer_t = typename std::enable_if_t<std::is_pointer<T>::value>;
+
+template <typename>
+struct is_tuple : std::false_type {};
+template <typename... T>
+struct is_tuple<std::tuple<T...>> : std::true_type {};
+template <typename T>
+using enable_if_tuple_t = typename std::enable_if_t<is_tuple<T>::value>;
 }  // namespace yas
