@@ -20,10 +20,10 @@ std::string to_string(CFStringRef const &cf_string);
 CFStringRef to_cf_object(std::string const &string);
 
 // clang-format off
-constexpr CFNumberType cf_number_type(float const &) { return kCFNumberFloat32Type; };
-constexpr CFNumberType cf_number_type(double const &) { return kCFNumberFloat64Type; };
-constexpr CFNumberType cf_number_type(int32_t const &) { return kCFNumberSInt32Type; };
-constexpr CFNumberType cf_number_type(int16_t const &) { return kCFNumberSInt16Type; };
+CFNumberType constexpr cf_number_type(float const &) { return kCFNumberFloat32Type; };
+CFNumberType constexpr cf_number_type(double const &) { return kCFNumberFloat64Type; };
+CFNumberType constexpr cf_number_type(int32_t const &) { return kCFNumberSInt32Type; };
+CFNumberType constexpr cf_number_type(int16_t const &) { return kCFNumberSInt16Type; };
 // clang-format on
 
 template <typename T>

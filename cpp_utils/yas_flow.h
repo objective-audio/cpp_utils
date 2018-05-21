@@ -7,6 +7,7 @@
 #include <functional>
 #include "yas_any.h"
 #include "yas_flow_protocol.h"
+#include "yas_type_traits.h"
 #include "yas_types.h"
 
 namespace yas::flow {
@@ -91,15 +92,16 @@ struct node : base {
 
     [[nodiscard]] auto perform(std::function<void(Out const &)>);
 
-    [[nodiscard]] auto receive(receiver<Out> &);
+    template <std::size_t N = 0, typename T>
+    [[nodiscard]] auto receive(receiver<T> &);
     [[nodiscard]] auto receive_null(receiver<std::nullptr_t> &);
 
     [[nodiscard]] auto guard(std::function<bool(Out const &)>);
 
-    [[nodiscard]] auto to(std::function<Out(Out const &)>);
-    template <typename Next = Out>
-    [[nodiscard]] auto to(std::function<Next(Out const &)>);
+    template <typename F>
+    [[nodiscard]] auto to(F);
     [[nodiscard]] auto to_null();
+    [[nodiscard]] auto to_tuple();
 
     [[nodiscard]] auto wait(double const);
 

@@ -73,9 +73,9 @@ using namespace yas;
 
     auto flow = sender.begin()
                     .guard([](int const &) { return true; })
-                    .to<bool>([](int const &value) { return value > 0; })
+                    .to([](int const &value) { return value > 0; })
                     .guard([](bool const &) { return true; })
-                    .to<std::string>([](bool const &value) { return value ? "true" : "false"; })
+                    .to([](bool const &value) { return value ? "true" : "false"; })
                     .guard([](std::string const &) { return true; })
                     .perform([&received](std::string const &value) { received = value; })
                     .end();
@@ -101,6 +101,32 @@ using namespace yas;
     XCTAssertTrue(called);
 }
 
+- (void)test_to_tuple {
+    flow::sender<int> sender;
+
+    opt_t<std::tuple<int>> called;
+
+    auto flow = sender.begin().to_tuple().perform([&called](std::tuple<int> const &value) { called = value; }).end();
+
+    sender.send_value(1);
+
+    XCTAssertTrue(called);
+    XCTAssertEqual(std::get<0>(*called), 1);
+}
+
+- (void)test_to_tuple_from_tuple {
+    flow::sender<std::tuple<int>> sender;
+
+    opt_t<std::tuple<int>> called;
+
+    auto flow = sender.begin().to_tuple().perform([&called](auto const &value) { called = value; }).end();
+
+    sender.send_value(std::make_tuple(int(1)));
+
+    XCTAssertTrue(called);
+    XCTAssertEqual(std::get<0>(*called), 1);
+}
+
 - (void)test_wait {
     flow::sender<int> sender;
 
@@ -113,7 +139,7 @@ using namespace yas;
     auto flow = sender.begin()
                     .perform([&begin](int const &value) { begin = CFAbsoluteTimeGetCurrent(); })
                     .wait(0.1)
-                    .to<std::string>([](int const &value) { return std::to_string(value); })
+                    .to([](int const &value) { return std::to_string(value); })
                     .wait(0.1)
                     .perform([waitExp, &end, &result](std::string const &value) {
                         result = value;
@@ -244,12 +270,29 @@ using namespace yas;
     flow::sender<int> sender;
     flow::receiver<std::string> receiver{[&received](std::string const &value) { received = value; }};
 
-    auto node =
-        sender.begin().to<std::string>([](int const &value) { return std::to_string(value); }).receive(receiver).end();
+    auto node = sender.begin().to([](int const &value) { return std::to_string(value); }).receive(receiver).end();
 
     sender.send_value(3);
 
     XCTAssertEqual(received, "3");
+}
+
+- (void)test_receive_tuple {
+    flow::sender<std::tuple<int, std::string>> sender;
+
+    int int_received = -1;
+    std::string string_received = "";
+
+    flow::receiver<int> int_receiver{[&int_received](int const &value) { int_received = value; }};
+    flow::receiver<std::string> string_receiver{
+        [&string_received](std::string const &value) { string_received = value; }};
+
+    auto flow = sender.begin().receive<0>(int_receiver).receive<1>(string_receiver).end();
+
+    sender.send_value(std::make_tuple(int(10), std::string("20")));
+
+    XCTAssertEqual(int_received, 10);
+    XCTAssertEqual(string_received, "20");
 }
 
 - (void)test_receive_null {
@@ -271,7 +314,7 @@ using namespace yas;
     flow::sender<int> sender;
     flow::receiver<std::string> receiver{[&received](std::string const &value) { received = value; }};
 
-    auto flow = sender.begin().to<std::string>([](int const &value) { return std::to_string(value); }).end(receiver);
+    auto flow = sender.begin().to([](int const &value) { return std::to_string(value); }).end(receiver);
 
     sender.send_value(4);
 
@@ -284,7 +327,7 @@ using namespace yas;
     flow::sender<int> sender;
 
     auto flow = sender.begin()
-                    .to<float>([](int const &value) { return value; })
+                    .to([](int const &value) { return value; })
                     .guard([](float const &value) { return value > 2.5f; })
                     .perform([&received](float const &value) { received = value; })
                     .end();
@@ -304,10 +347,10 @@ using namespace yas;
     flow::sender<int> sender;
     flow::sender<float> sub_sender;
 
-    auto sub_flow = sub_sender.begin().to<std::string>([](float const &value) { return std::to_string(int(value)); });
+    auto sub_flow = sub_sender.begin().to([](float const &value) { return std::to_string(int(value)); });
 
     auto flow = sender.begin()
-                    .to<std::string>([](int const &value) { return std::to_string(value); })
+                    .to([](int const &value) { return std::to_string(value); })
                     .merge(sub_flow)
                     .perform([&received](std::string const &value) { received = value; })
                     .end();
@@ -381,11 +424,32 @@ using namespace yas;
     XCTAssertEqual(received->second, "test_text");
 }
 
+- (void)test_combine_tuples {
+    flow::sender<int> main_sender;
+    flow::sender<std::string> sub_sender;
+
+    auto sub_flow = sub_sender.begin().to_tuple();
+    auto main_flow = main_sender.begin().to_tuple();
+
+    opt_t<std::tuple<int, std::string>> received;
+
+    auto flow = main_flow.combine(sub_flow)
+                    .perform([&received](std::tuple<int, std::string> const &value) { received = value; })
+                    .end();
+
+    main_sender.send_value(33);
+    sub_sender.send_value("44");
+
+    XCTAssertTrue(received);
+    XCTAssertEqual(std::get<0>(*received), 33);
+    XCTAssertEqual(std::get<1>(*received), "44");
+}
+
 - (void)test_normalize {
     flow::sender<int> sender;
 
     flow::node<std::string, int, int> toed_flow =
-        sender.begin().to<std::string>([](int const &value) { return std::to_string(value); });
+        sender.begin().to([](int const &value) { return std::to_string(value); });
 
     flow::node<std::string, std::string, int> normalized_flow = toed_flow.normalize();
 
@@ -416,8 +480,7 @@ using namespace yas;
 - (void)test_node_type_2 {
     flow::sender<int> sender;
 
-    flow::node<std::string, int> node =
-        sender.begin().to<std::string>([](auto const &value) { return std::to_string(value); });
+    flow::node<std::string, int> node = sender.begin().to([](int const &value) { return std::to_string(value); });
 
     bool called = false;
 

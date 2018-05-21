@@ -497,7 +497,7 @@ using namespace yas;
     int received_second_value = -1;
 
     auto flow_first = subject.begin_flow(key::first)
-                          .to<std::string>([](int const value) { return std::to_string(value); })
+                          .to([](int const value) { return std::to_string(value); })
                           .perform([&received_first_value](std::string const &value) { received_first_value = value; })
                           .end();
 

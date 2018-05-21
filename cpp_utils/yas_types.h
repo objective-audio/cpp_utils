@@ -10,5 +10,5 @@ namespace yas {
 template <typename T>
 using opt_t = std::experimental::optional<T>;
 
-constexpr std::experimental::nullopt_t nullopt = std::experimental::nullopt;
+std::experimental::nullopt_t constexpr nullopt = std::experimental::nullopt;
 }  // namespace yas

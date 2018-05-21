@@ -300,7 +300,7 @@
     XCTAssertEqual(mapped.at(2), 3);
 }
 
-- (void)test_to_vector_different_return_type {
+- (void)test_to_vector_different_return_t {
     std::vector<int> vector{0, 1, 2};
     auto mapped =
         yas::to_vector<std::string>(std::move(vector), [](int const &obj) { return std::to_string(obj + 1); });
