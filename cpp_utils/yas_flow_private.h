@@ -319,12 +319,104 @@ sender_flowable<T> sender<T>::flowable() {
 
 template <typename Out, typename In, typename Begin>
 struct node<Out, In, Begin>::impl : base::impl {
+    input<Begin> _input;
+    std::function<Out(In const &)> _handler;
+
     impl(input<Begin> &&input, std::function<Out(In const &)> &&handler)
         : _input(std::move(input)), _handler(std::move(handler)) {
     }
 
-    input<Begin> _input;
-    std::function<Out(In const &)> _handler;
+    template <typename F>
+    node<return_t<F>, In, Begin> to(F &&to_handler) {
+        return flow::node<return_t<F>, In, Begin>(
+            std::move(this->_input), [to_handler = std::move(to_handler), handler = std::move(this->_handler)](
+                                         In const &value) mutable { return to_handler(handler(value)); });
+    }
+
+    template <typename T = Out, enable_if_tuple_t<T, std::nullptr_t> = nullptr>
+    auto to_tuple(node<Out, In, Begin> &node) {
+        return node;
+    }
+
+    template <typename T = Out, disable_if_tuple_t<T, std::nullptr_t> = nullptr>
+    auto to_tuple(node<Out, In, Begin> &node) {
+        return this->to([](Out const &value) { return std::make_tuple(value); });
+    }
+
+    template <typename SubOut, typename SubIn, typename SubBegin, disable_if_tuple_t<SubOut, std::nullptr_t> = nullptr,
+              typename MainOut = Out, disable_if_tuple_t<MainOut, std::nullptr_t> = nullptr>
+    auto tuple(node<SubOut, SubIn, SubBegin> &&sub_node) {
+        using opt_tuple_t = std::tuple<opt_t<Out>, opt_t<SubOut>>;
+
+        flow::input<Begin> &input = this->_input;
+        auto weak_input = to_weak(input);
+        std::size_t const next_idx = input.handlers_size() + 1;
+
+        auto sub_imp = sub_node.template impl_ptr<typename node<SubOut, SubIn, SubBegin>::impl>();
+        auto &sub_input = sub_imp->_input;
+
+        sub_input.template push_handler<SubIn>(
+            [handler = sub_imp->_handler, weak_input, next_idx](SubIn const &value) mutable {
+                if (auto input = weak_input.lock()) {
+                    input.template handler<opt_tuple_t>(next_idx)(opt_tuple_t(nullopt, handler(value)));
+                }
+            });
+
+        input.template push_handler<In>([handler = this->_handler, weak_input, next_idx](In const &value) mutable {
+            if (auto input = weak_input.lock()) {
+                input.template handler<opt_tuple_t>(next_idx)(opt_tuple_t(handler(value), nullopt));
+            }
+        });
+
+        input.add_sub_input(std::move(sub_input));
+
+        return node<opt_tuple_t, opt_tuple_t, Begin>(input, [](opt_tuple_t const &value) { return value; });
+    }
+
+    template <typename SubOut, typename SubIn, typename SubBegin>
+    auto combine_pair(flow::node<Out, In, Begin> &node, flow::node<SubOut, SubIn, SubBegin> &&sub_node) {
+        using opt_pair_t = std::pair<opt_t<Out>, opt_t<SubOut>>;
+
+        return node.pair(std::move(sub_node))
+            .to([opt_pair = opt_pair_t{}](opt_pair_t const &value) mutable {
+                if (value.first) {
+                    opt_pair.first = value.first;
+                }
+                if (value.second) {
+                    opt_pair.second = value.second;
+                }
+                return opt_pair;
+            })
+            .guard([](opt_pair_t const &pair) { return pair.first && pair.second; })
+            .to([](opt_pair_t const &pair) { return std::make_pair(*pair.first, *pair.second); });
+    }
+
+    template <typename SubOut, typename SubIn, typename SubBegin, disable_if_tuple_t<SubOut, std::nullptr_t> = nullptr,
+              typename MainOut = Out, disable_if_tuple_t<MainOut, std::nullptr_t> = nullptr>
+    auto combine(flow::node<Out, In, Begin> &node, flow::node<SubOut, SubIn, SubBegin> &&sub_node) {
+        return this->combine_pair(node, std::move(sub_node));
+    }
+
+    template <typename SubOut, typename SubIn, typename SubBegin, enable_if_tuple_t<SubOut, std::nullptr_t> = nullptr,
+              typename MainOut = Out, enable_if_tuple_t<MainOut, std::nullptr_t> = nullptr>
+    auto combine(flow::node<Out, In, Begin> &node, flow::node<SubOut, SubIn, SubBegin> &&sub_node) {
+        return this->combine_pair(node, std::move(sub_node)).to([](std::pair<Out, SubOut> const &pair) {
+            return std::tuple_cat(pair.first, pair.second);
+        });
+    }
+
+    template <std::size_t N, typename T, typename MainOut = Out, enable_if_tuple_t<MainOut, std::nullptr_t> = nullptr>
+    auto receive(flow::node<Out, In, Begin> &node, receiver<T> &receiver) {
+        return node.perform([output = receiver.flowable().make_output()](Out const &value) mutable {
+            output.output_value(std::get<N>(value));
+        });
+    }
+
+    template <std::size_t N, typename T, typename MainOut = Out, disable_if_tuple_t<MainOut, std::nullptr_t> = nullptr>
+    auto receive(flow::node<Out, In, Begin> &node, receiver<T> &receiver) {
+        return node.perform(
+            [output = receiver.flowable().make_output()](Out const &value) mutable { output.output_value(value); });
+    }
 };
 
 template <typename Out, typename In, typename Begin>
@@ -372,9 +464,9 @@ auto node<Out, In, Begin>::perform(std::function<void(Out const &)> perform_hand
 }
 
 template <typename Out, typename In, typename Begin>
-auto node<Out, In, Begin>::receive(receiver<Out> &receiver) {
-    return this->perform(
-        [output = receiver.flowable().make_output()](Out const &value) mutable { output.output_value(value); });
+template <std::size_t N, typename T>
+auto node<Out, In, Begin>::receive(receiver<T> &receiver) {
+    return impl_ptr<impl>()->template receive<N>(*this, receiver);
 }
 
 template <typename Out, typename In, typename Begin>
@@ -404,22 +496,19 @@ auto node<Out, In, Begin>::guard(std::function<bool(Out const &value)> guard_han
 }
 
 template <typename Out, typename In, typename Begin>
-auto node<Out, In, Begin>::to(std::function<Out(Out const &)> to_handler) {
-    return this->to<Out>(std::move(to_handler));
-}
-
-template <typename Out, typename In, typename Begin>
-template <typename Next>
-auto node<Out, In, Begin>::to(std::function<Next(Out const &)> to_handler) {
-    auto imp = impl_ptr<impl>();
-    return node<Next, In, Begin>(std::move(imp->_input),
-                                 [to_handler = std::move(to_handler), handler = std::move(imp->_handler)](
-                                     In const &value) { return to_handler(handler(value)); });
+template <typename F>
+auto node<Out, In, Begin>::to(F handler) {
+    return impl_ptr<impl>()->to(std::move(handler));
 }
 
 template <typename Out, typename In, typename Begin>
 auto node<Out, In, Begin>::to_null() {
-    return this->to<std::nullptr_t>([](auto const &) { return nullptr; });
+    return impl_ptr<impl>()->to([](Out const &) { return nullptr; });
+}
+
+template <typename Out, typename In, typename Begin>
+auto node<Out, In, Begin>::to_tuple() {
+    return impl_ptr<impl>()->template to_tuple<>(*this);
 }
 
 template <typename Out, typename In, typename Begin>
@@ -504,21 +593,7 @@ auto node<Out, In, Begin>::pair(node<SubOut, SubIn, SubBegin> sub_node) {
 template <typename Out, typename In, typename Begin>
 template <typename SubOut, typename SubIn, typename SubBegin>
 auto node<Out, In, Begin>::combine(node<SubOut, SubIn, SubBegin> sub_node) {
-    using opt_pair_t = std::pair<opt_t<Out>, opt_t<SubOut>>;
-
-    return this->pair(std::move(sub_node))
-        .to([opt_pair = opt_pair_t{}](opt_pair_t const &value) mutable {
-            if (value.first) {
-                opt_pair.first = value.first;
-            }
-            if (value.second) {
-                opt_pair.second = value.second;
-            }
-            return opt_pair;
-        })
-        .guard([](auto const &pair) { return pair.first && pair.second; })
-        .template to<std::pair<Out, SubOut>>(
-            [](auto const &pair) { return std::make_pair(*pair.first, *pair.second); });
+    return impl_ptr<impl>()->combine(*this, std::move(sub_node));
 }
 
 template <typename Out, typename In, typename Begin>
