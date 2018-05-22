@@ -89,6 +89,21 @@ using namespace yas;
     XCTAssertEqual(received, "true");
 }
 
+- (void)test_to_value {
+    flow::sender<int> sender;
+
+    std::string received = "";
+
+    auto flow = sender.begin()
+                    .to_value(std::string("test_value"))
+                    .perform([&received](std::string const &value) { received = value; })
+                    .end();
+
+    sender.send_value(0);
+
+    XCTAssertEqual(received, "test_value");
+}
+
 - (void)test_to_null {
     flow::sender<int> sender;
 
