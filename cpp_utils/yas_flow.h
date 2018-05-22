@@ -100,6 +100,8 @@ struct node : base {
 
     template <typename F>
     [[nodiscard]] auto to(F);
+    template <typename T>
+    [[nodiscard]] auto to_value(T);
     [[nodiscard]] auto to_null();
     [[nodiscard]] auto to_tuple();
 

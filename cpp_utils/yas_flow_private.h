@@ -502,6 +502,12 @@ auto node<Out, In, Begin>::to(F handler) {
 }
 
 template <typename Out, typename In, typename Begin>
+template <typename T>
+auto node<Out, In, Begin>::to_value(T value) {
+    return impl_ptr<impl>()->to([value = std::move(value)](Out const &) { return value; });
+}
+
+template <typename Out, typename In, typename Begin>
 auto node<Out, In, Begin>::to_null() {
     return impl_ptr<impl>()->to([](Out const &) { return nullptr; });
 }
