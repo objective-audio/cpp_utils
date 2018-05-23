@@ -57,7 +57,7 @@ using namespace yas;
     int received = -1;
 
     auto flow = sender.begin()
-                    .to([](int const &value) { return value + 1; })
+                    .map([](int const &value) { return value + 1; })
                     .perform([&received](int const &value) { received = value; })
                     .end();
 
@@ -73,9 +73,9 @@ using namespace yas;
 
     auto flow = sender.begin()
                     .guard([](int const &) { return true; })
-                    .to([](int const &value) { return value > 0; })
+                    .map([](int const &value) { return value > 0; })
                     .guard([](bool const &) { return true; })
-                    .to([](bool const &value) { return value ? "true" : "false"; })
+                    .map([](bool const &value) { return value ? "true" : "false"; })
                     .guard([](std::string const &) { return true; })
                     .perform([&received](std::string const &value) { received = value; })
                     .end();
@@ -154,7 +154,7 @@ using namespace yas;
     auto flow = sender.begin()
                     .perform([&begin](int const &value) { begin = CFAbsoluteTimeGetCurrent(); })
                     .wait(0.1)
-                    .to([](int const &value) { return std::to_string(value); })
+                    .map([](int const &value) { return std::to_string(value); })
                     .wait(0.1)
                     .perform([waitExp, &end, &result](std::string const &value) {
                         result = value;
@@ -285,7 +285,7 @@ using namespace yas;
     flow::sender<int> sender;
     flow::receiver<std::string> receiver{[&received](std::string const &value) { received = value; }};
 
-    auto node = sender.begin().to([](int const &value) { return std::to_string(value); }).receive(receiver).end();
+    auto node = sender.begin().map([](int const &value) { return std::to_string(value); }).receive(receiver).end();
 
     sender.send_value(3);
 
@@ -329,7 +329,7 @@ using namespace yas;
     flow::sender<int> sender;
     flow::receiver<std::string> receiver{[&received](std::string const &value) { received = value; }};
 
-    auto flow = sender.begin().to([](int const &value) { return std::to_string(value); }).end(receiver);
+    auto flow = sender.begin().map([](int const &value) { return std::to_string(value); }).end(receiver);
 
     sender.send_value(4);
 
@@ -342,7 +342,7 @@ using namespace yas;
     flow::sender<int> sender;
 
     auto flow = sender.begin()
-                    .to([](int const &value) { return value; })
+                    .map([](int const &value) { return value; })
                     .guard([](float const &value) { return value > 2.5f; })
                     .perform([&received](float const &value) { received = value; })
                     .end();
@@ -362,10 +362,10 @@ using namespace yas;
     flow::sender<int> sender;
     flow::sender<float> sub_sender;
 
-    auto sub_flow = sub_sender.begin().to([](float const &value) { return std::to_string(int(value)); });
+    auto sub_flow = sub_sender.begin().map([](float const &value) { return std::to_string(int(value)); });
 
     auto flow = sender.begin()
-                    .to([](int const &value) { return std::to_string(value); })
+                    .map([](int const &value) { return std::to_string(value); })
                     .merge(sub_flow)
                     .perform([&received](std::string const &value) { received = value; })
                     .end();
@@ -464,7 +464,7 @@ using namespace yas;
     flow::sender<int> sender;
 
     flow::node<std::string, int, int> toed_flow =
-        sender.begin().to([](int const &value) { return std::to_string(value); });
+        sender.begin().map([](int const &value) { return std::to_string(value); });
 
     flow::node<std::string, std::string, int> normalized_flow = toed_flow.normalize();
 
@@ -495,7 +495,7 @@ using namespace yas;
 - (void)test_node_type_2 {
     flow::sender<int> sender;
 
-    flow::node<std::string, int> node = sender.begin().to([](int const &value) { return std::to_string(value); });
+    flow::node<std::string, int> node = sender.begin().map([](int const &value) { return std::to_string(value); });
 
     bool called = false;
 

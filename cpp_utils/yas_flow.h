@@ -99,7 +99,7 @@ struct node : base {
     [[nodiscard]] auto guard(std::function<bool(Out const &)>);
 
     template <typename F>
-    [[nodiscard]] auto to(F);
+    [[nodiscard]] auto map(F);
     template <typename T>
     [[nodiscard]] auto to_value(T);
     [[nodiscard]] auto to_null();
