@@ -610,19 +610,9 @@ typed_observer<Begin> node<Out, In, Begin>::end() {
 }
 
 template <typename Out, typename In, typename Begin>
-typed_observer<Begin> node<Out, In, Begin>::end(receiver<Out> &receiver) {
-    return this->receive(receiver).end();
-}
-
-template <typename Out, typename In, typename Begin>
 typed_observer<Begin> node<Out, In, Begin>::sync() {
     auto observer = this->end();
     observer.sync();
     return observer;
-}
-
-template <typename Out, typename In, typename Begin>
-typed_observer<Begin> node<Out, In, Begin>::sync(receiver<Out> &receiver) {
-    return this->receive(receiver).sync();
 }
 }  // namespace yas::flow

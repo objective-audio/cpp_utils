@@ -222,19 +222,6 @@ using namespace yas;
     XCTAssertEqual(received, 100);
 }
 
-- (void)test_sync_end_with_receiver {
-    flow::sender<int> sender;
-    sender.set_sync_handler([] { return 100; });
-
-    int received = -1;
-
-    flow::receiver<int> receiver{[&received](int const &value) { received = value; }};
-
-    auto flow = sender.begin().sync(receiver);
-
-    XCTAssertEqual(received, 100);
-}
-
 - (void)test_sync_with_combined_sub_sender {
     flow::sender<int> sender;
     sender.set_sync_handler([]() { return 123; });
@@ -323,19 +310,6 @@ using namespace yas;
     XCTAssertTrue(received);
 }
 
-- (void)test_receive_by_end {
-    std::string received = "";
-
-    flow::sender<int> sender;
-    flow::receiver<std::string> receiver{[&received](std::string const &value) { received = value; }};
-
-    auto flow = sender.begin().map([](int const &value) { return std::to_string(value); }).end(receiver);
-
-    sender.send_value(4);
-
-    XCTAssertEqual(received, "4");
-}
-
 - (void)test_guard {
     float received = -1.0f;
 
@@ -386,7 +360,7 @@ using namespace yas;
 
     flow::receiver<int> receiver{[&received](int const &value) { received = value; }};
 
-    auto flow = sender.begin().end(receiver);
+    auto flow = sender.begin().receive(receiver).end();
 
     sender.send_value(100);
 
