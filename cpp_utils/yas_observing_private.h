@@ -127,7 +127,7 @@ class subject<Key, T>::impl {
     flow::node<T, flow_context_t, flow_context_t> begin_flow(subject<Key, T> &subject, Key const &key) {
         return this->begin_flow(subject)
             .guard([key](flow_context_t const &context) { return context.key == key; })
-            .to([](flow_context_t const &context) { return context.value; });
+            .map([](flow_context_t const &context) { return context.value; });
     }
 
     flow::node<flow_context_t, flow_context_t, flow_context_t> begin_flow(subject<Key, T> &subject) {

@@ -58,7 +58,7 @@ struct flow::graph<State, Signal>::impl : base::impl {
 
         auto observer =
             sender.begin()
-                .template to([handler = std::move(handler), weak_graph = to_weak(graph)](Signal const &signal) {
+                .map([handler = std::move(handler), weak_graph = to_weak(graph)](Signal const &signal) {
                     state_out<State> state_out = handler(signal);
                     return graph_next<State, Signal>{.state = state_out.state,
                                                      .signal = state_out.is_continue ? opt_t<Signal>(signal) : nullopt};

@@ -378,7 +378,7 @@ struct node<Out, In, Begin>::impl : base::impl {
         using opt_pair_t = std::pair<opt_t<Out>, opt_t<SubOut>>;
 
         return node.pair(std::move(sub_node))
-            .to([opt_pair = opt_pair_t{}](opt_pair_t const &value) mutable {
+            .map([opt_pair = opt_pair_t{}](opt_pair_t const &value) mutable {
                 if (value.first) {
                     opt_pair.first = value.first;
                 }
@@ -388,7 +388,7 @@ struct node<Out, In, Begin>::impl : base::impl {
                 return opt_pair;
             })
             .guard([](opt_pair_t const &pair) { return pair.first && pair.second; })
-            .to([](opt_pair_t const &pair) { return std::make_pair(*pair.first, *pair.second); });
+            .map([](opt_pair_t const &pair) { return std::make_pair(*pair.first, *pair.second); });
     }
 
     template <typename SubOut, typename SubIn, typename SubBegin, disable_if_tuple_t<SubOut, std::nullptr_t> = nullptr,
@@ -400,7 +400,7 @@ struct node<Out, In, Begin>::impl : base::impl {
     template <typename SubOut, typename SubIn, typename SubBegin, enable_if_tuple_t<SubOut, std::nullptr_t> = nullptr,
               typename MainOut = Out, enable_if_tuple_t<MainOut, std::nullptr_t> = nullptr>
     auto combine(flow::node<Out, In, Begin> &node, flow::node<SubOut, SubIn, SubBegin> &&sub_node) {
-        return this->combine_pair(node, std::move(sub_node)).to([](std::pair<Out, SubOut> const &pair) {
+        return this->combine_pair(node, std::move(sub_node)).map([](std::pair<Out, SubOut> const &pair) {
             return std::tuple_cat(pair.first, pair.second);
         });
     }
@@ -497,7 +497,7 @@ auto node<Out, In, Begin>::guard(std::function<bool(Out const &value)> guard_han
 
 template <typename Out, typename In, typename Begin>
 template <typename F>
-auto node<Out, In, Begin>::to(F handler) {
+auto node<Out, In, Begin>::map(F handler) {
     return impl_ptr<impl>()->to(std::move(handler));
 }
 
