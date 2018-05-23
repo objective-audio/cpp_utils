@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include <algorithm>
 #include <functional>
 
 namespace yas::flow {
@@ -25,5 +26,25 @@ std::function<T(T const &)> multiply(U const &multiplying) {
 template <typename T>
 std::function<T(T const &)> multiply(T const &multiplying) {
     return [multiplying](T const &value) { return value * multiplying; };
+}
+
+template <typename T>
+std::function<T(std::pair<T, T> const &)> min() {
+    return [](std::pair<T, T> const &pair) { return std::min(pair.first, pair.second); };
+}
+
+template <typename T>
+std::function<T(T const &)> min(T const &min) {
+    return [min](T const &value) { return std::min(value, min); };
+}
+
+template <typename T>
+std::function<T(std::pair<T, T> const &)> max() {
+    return [](std::pair<T, T> const &pair) { return std::max(pair.first, pair.second); };
+}
+
+template <typename T>
+std::function<T(T const &)> max(T const &max) {
+    return [max](T const &value) { return std::max(value, max); };
 }
 }  // namespace yas::flow
