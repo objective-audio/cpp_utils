@@ -28,11 +28,23 @@ using namespace yas;
     XCTAssertEqual(handler(2), 3);
 }
 
+- (void)test_add_diff_type {
+    auto handler = flow::add<float>(int(1));
+
+    XCTAssertEqual(handler(1.5f), 2.5f);
+}
+
 - (void)test_multiply {
     auto handler = flow::multiply(2);
 
     XCTAssertEqual(handler(1), 2);
     XCTAssertEqual(handler(2), 4);
+}
+
+- (void)test_multiply_diff_type {
+    auto handler = flow::multiply<float>(int(2));
+
+    XCTAssertEqual(handler(2.5f), 5.0f);
 }
 
 @end
