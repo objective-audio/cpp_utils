@@ -63,7 +63,8 @@ struct flow::graph<State, Signal>::impl : base::impl {
                     return graph_next<State, Signal>{.state = state_out.state,
                                                      .signal = state_out.is_continue ? opt_t<Signal>(signal) : nullopt};
                 })
-                .end(this->receiver);
+                .receive(this->receiver)
+                .end();
 
         this->observers.emplace(std::move(state), std::move(observer));
     }

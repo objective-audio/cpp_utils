@@ -117,9 +117,7 @@ struct node : base {
     [[nodiscard]] auto combine(node<SubOut, SubIn, SubBegin>);
 
     [[nodiscard]] typed_observer<Begin> end();
-    [[nodiscard]] typed_observer<Begin> end(receiver<Out> &);
     [[nodiscard]] typed_observer<Begin> sync();
-    [[nodiscard]] typed_observer<Begin> sync(receiver<Out> &);
 };
 }  // namespace yas::flow
 
