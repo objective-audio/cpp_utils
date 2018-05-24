@@ -96,7 +96,7 @@ struct node : base {
     [[nodiscard]] auto receive(receiver<T> &);
     [[nodiscard]] auto receive_null(receiver<std::nullptr_t> &);
 
-    [[nodiscard]] auto guard(std::function<bool(Out const &)>);
+    [[nodiscard]] auto filter(std::function<bool(Out const &)>);
 
     template <typename F>
     [[nodiscard]] auto map(F);
