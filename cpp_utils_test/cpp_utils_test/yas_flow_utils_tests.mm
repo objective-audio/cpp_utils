@@ -47,4 +47,18 @@ using namespace yas;
     XCTAssertEqual(handler(2.5f), 5.0f);
 }
 
+- (void)test_min {
+    XCTAssertEqual(flow::min<int>()(std::make_pair(1, 2)), 1);
+    XCTAssertEqual(flow::min<int>()(std::make_pair(2, 1)), 1);
+    XCTAssertEqual(flow::min(1)(2), 1);
+    XCTAssertEqual(flow::min(2)(1), 1);
+}
+
+- (void)test_max {
+    XCTAssertEqual(flow::max<int>()(std::make_pair(1, 2)), 2);
+    XCTAssertEqual(flow::max<int>()(std::make_pair(2, 1)), 2);
+    XCTAssertEqual(flow::max(1)(2), 2);
+    XCTAssertEqual(flow::max(2)(1), 2);
+}
+
 @end
