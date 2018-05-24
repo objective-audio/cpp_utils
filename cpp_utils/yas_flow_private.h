@@ -387,7 +387,7 @@ struct node<Out, In, Begin>::impl : base::impl {
                 }
                 return opt_pair;
             })
-            .guard([](opt_pair_t const &pair) { return pair.first && pair.second; })
+            .filter([](opt_pair_t const &pair) { return pair.first && pair.second; })
             .map([](opt_pair_t const &pair) { return std::make_pair(*pair.first, *pair.second); });
     }
 
@@ -476,16 +476,16 @@ auto node<Out, In, Begin>::receive_null(receiver<std::nullptr_t> &receiver) {
 }
 
 template <typename Out, typename In, typename Begin>
-auto node<Out, In, Begin>::guard(std::function<bool(Out const &value)> guard_handler) {
+auto node<Out, In, Begin>::filter(std::function<bool(Out const &value)> filter_handler) {
     auto imp = impl_ptr<impl>();
     flow::input<Begin> &input = imp->_input;
     auto weak_input = to_weak(input);
     std::size_t const next_idx = input.handlers_size() + 1;
 
     input.template push_handler<In>([handler = imp->_handler, weak_input, next_idx,
-                                     guard_handler = std::move(guard_handler)](In const &value) mutable {
+                                     filter_handler = std::move(filter_handler)](In const &value) mutable {
         auto const result = handler(value);
-        if (guard_handler(result)) {
+        if (filter_handler(result)) {
             if (auto input = weak_input.lock()) {
                 input.template handler<Out>(next_idx)(result);
             }

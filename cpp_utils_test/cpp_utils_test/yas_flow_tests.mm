@@ -72,11 +72,11 @@ using namespace yas;
     std::string received = "";
 
     auto flow = sender.begin()
-                    .guard([](int const &) { return true; })
+                    .filter([](int const &) { return true; })
                     .map([](int const &value) { return value > 0; })
-                    .guard([](bool const &) { return true; })
+                    .filter([](bool const &) { return true; })
                     .map([](bool const &value) { return value ? "true" : "false"; })
-                    .guard([](std::string const &) { return true; })
+                    .filter([](std::string const &) { return true; })
                     .perform([&received](std::string const &value) { received = value; })
                     .end();
 
@@ -317,7 +317,7 @@ using namespace yas;
 
     auto flow = sender.begin()
                     .map([](int const &value) { return value; })
-                    .guard([](float const &value) { return value > 2.5f; })
+                    .filter([](float const &value) { return value > 2.5f; })
                     .perform([&received](float const &value) { received = value; })
                     .end();
 
