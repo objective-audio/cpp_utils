@@ -34,6 +34,12 @@ using namespace yas;
     XCTAssertEqual(handler(1.5f), 2.5f);
 }
 
+- (void)test_add_pair {
+    auto handler = flow::add<int>();
+
+    XCTAssertEqual(handler(std::make_pair(1, 2)), 3);
+}
+
 - (void)test_multiply {
     auto handler = flow::multiply(2);
 
@@ -45,6 +51,12 @@ using namespace yas;
     auto handler = flow::multiply<float>(int(2));
 
     XCTAssertEqual(handler(2.5f), 5.0f);
+}
+
+- (void)test_multiply_pair {
+    auto handler = flow::multiply<int>();
+
+    XCTAssertEqual(handler(std::make_pair(2, 3)), 6);
 }
 
 - (void)test_min {
