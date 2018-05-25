@@ -421,4 +421,14 @@
     XCTAssertEqual(splited.at(1), "1");
 }
 
+- (void)test_array_to_tuple {
+    std::array<int, 3> array{1, 2, 3};
+
+    auto tuple = yas::to_tuple<int, 3>(array);
+
+    XCTAssertEqual(std::get<0>(tuple), 1);
+    XCTAssertEqual(std::get<1>(tuple), 2);
+    XCTAssertEqual(std::get<2>(tuple), 3);
+}
+
 @end
