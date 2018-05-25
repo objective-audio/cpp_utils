@@ -5,6 +5,7 @@
 #pragma once
 
 #include <sstream>
+#include <tuple>
 #include "yas_types.h"
 
 namespace yas {
@@ -185,5 +186,15 @@ std::string joined(T const &collection, std::string const &separator, F function
 template <typename T>
 std::weak_ptr<T> to_weak(std::shared_ptr<T> shared) {
     return shared;
+}
+
+template <typename T, int N, std::size_t... Indices>
+auto __to_tuple__(std::array<T, N> const &array, std::index_sequence<Indices...>) {
+    return std::make_tuple(array[Indices]...);
+}
+
+template <typename T, int N>
+auto to_tuple(std::array<T, N> const &array) {
+    return __to_tuple__<T, N>(array, std::make_index_sequence<N>());
 }
 }  // namespace yas
