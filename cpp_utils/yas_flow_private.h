@@ -421,7 +421,7 @@ struct node<Out, In, Begin>::impl : base::impl {
     }
 
     template <typename T, std::size_t N, typename ArrayOut = Out, enable_if_array_t<ArrayOut, std::nullptr_t> = nullptr>
-    auto receive_array(flow::node<Out, In, Begin> &node, std::array<receiver<T>, N> &receivers) {
+    auto receive(flow::node<Out, In, Begin> &node, std::array<receiver<T>, N> &receivers) {
         std::vector<flow::output<T>> outputs;
         outputs.reserve(N);
 
@@ -441,7 +441,7 @@ struct node<Out, In, Begin>::impl : base::impl {
     }
 
     template <typename T, typename VecOut = Out, enable_if_vector_t<VecOut, std::nullptr_t> = nullptr>
-    auto receive_vector(flow::node<Out, In, Begin> &node, std::vector<receiver<T>> &receivers) {
+    auto receive(flow::node<Out, In, Begin> &node, std::vector<receiver<T>> &receivers) {
         std::size_t const count = receivers.size();
 
         std::vector<flow::output<T>> outputs;
@@ -454,7 +454,8 @@ struct node<Out, In, Begin>::impl : base::impl {
         }
 
         return node.perform([outputs = std::move(outputs)](Out const &values) mutable {
-            auto each = make_fast_each(outputs.size());
+            std::size_t const count = std::min(values.size(), outputs.size());
+            auto each = make_fast_each(count);
             while (yas_each_next(each)) {
                 auto const &idx = yas_each_index(each);
                 outputs.at(idx).output_value(values.at(idx));
@@ -516,13 +517,13 @@ auto node<Out, In, Begin>::receive(receiver<T> &receiver) {
 template <typename Out, typename In, typename Begin>
 template <typename T, std::size_t N>
 auto node<Out, In, Begin>::receive(std::array<receiver<T>, N> &receivers) {
-    return impl_ptr<impl>()->template receive_array<T, N>(*this, receivers);
+    return impl_ptr<impl>()->template receive<T, N>(*this, receivers);
 }
 
 template <typename Out, typename In, typename Begin>
 template <typename T>
 auto node<Out, In, Begin>::receive(std::vector<receiver<T>> &receivers) {
-    return impl_ptr<impl>()->template receive_vector<T>(*this, receivers);
+    return impl_ptr<impl>()->template receive<T>(*this, receivers);
 }
 
 template <typename Out, typename In, typename Begin>
