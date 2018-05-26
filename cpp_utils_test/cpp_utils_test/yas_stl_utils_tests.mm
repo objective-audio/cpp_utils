@@ -431,4 +431,14 @@
     XCTAssertEqual(std::get<2>(tuple), 3);
 }
 
+- (void)test_vector_to_tuple {
+    std::vector<int> vector{1, 2, 3};
+
+    auto tuple = yas::to_tuple<int, 3>(vector);
+
+    XCTAssertEqual(std::get<0>(tuple), 1);
+    XCTAssertEqual(std::get<1>(tuple), 2);
+    XCTAssertEqual(std::get<2>(tuple), 3);
+}
+
 @end

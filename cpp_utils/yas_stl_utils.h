@@ -79,6 +79,9 @@ std::weak_ptr<T> to_weak(std::shared_ptr<T> shared);
 
 template <typename T, std::size_t N>
 auto to_tuple(std::array<T, N> const &);
+
+template <typename T, std::size_t N>
+auto to_tuple(std::vector<T> const &);
 }  // namespace yas
 
 #include "yas_stl_utils_private.h"
