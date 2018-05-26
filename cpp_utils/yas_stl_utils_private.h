@@ -193,8 +193,18 @@ auto __to_tuple__(std::array<T, N> const &array, std::index_sequence<Indices...>
     return std::make_tuple(array[Indices]...);
 }
 
+template <typename T, std::size_t... Indices>
+auto __to_tuple__(std::vector<T> const &vector, std::index_sequence<Indices...>) {
+    return std::make_tuple(vector[Indices]...);
+}
+
 template <typename T, std::size_t N>
 auto to_tuple(std::array<T, N> const &array) {
     return __to_tuple__<T, N>(array, std::make_index_sequence<N>());
+}
+
+template <typename T, std::size_t N>
+auto to_tuple(std::vector<T> const &vector) {
+    return __to_tuple__<T>(vector, std::make_index_sequence<N>());
 }
 }  // namespace yas
