@@ -439,6 +439,28 @@ struct node<Out, In, Begin>::impl : base::impl {
             }
         });
     }
+
+    template <typename T, typename VecOut = Out, enable_if_vector_t<VecOut, std::nullptr_t> = nullptr>
+    auto receive_vector(flow::node<Out, In, Begin> &node, std::vector<receiver<T>> &receivers) {
+        std::size_t const count = receivers.size();
+
+        std::vector<flow::output<T>> outputs;
+        outputs.reserve(count);
+
+        auto each = make_fast_each(count);
+        while (yas_each_next(each)) {
+            auto const &idx = yas_each_index(each);
+            outputs.emplace_back(receivers.at(idx).flowable().make_output());
+        }
+
+        return node.perform([outputs = std::move(outputs)](Out const &values) mutable {
+            auto each = make_fast_each(outputs.size());
+            while (yas_each_next(each)) {
+                auto const &idx = yas_each_index(each);
+                outputs.at(idx).output_value(values.at(idx));
+            }
+        });
+    }
 };
 
 template <typename Out, typename In, typename Begin>
@@ -495,6 +517,12 @@ template <typename Out, typename In, typename Begin>
 template <typename T, std::size_t N>
 auto node<Out, In, Begin>::receive(std::array<receiver<T>, N> &receivers) {
     return impl_ptr<impl>()->template receive_array<T, N>(*this, receivers);
+}
+
+template <typename Out, typename In, typename Begin>
+template <typename T>
+auto node<Out, In, Begin>::receive(std::vector<receiver<T>> &receivers) {
+    return impl_ptr<impl>()->template receive_vector<T>(*this, receivers);
 }
 
 template <typename Out, typename In, typename Begin>
