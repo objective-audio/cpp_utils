@@ -94,6 +94,10 @@ struct node : base {
 
     template <std::size_t N = 0, typename T>
     [[nodiscard]] auto receive(receiver<T> &);
+    template <typename T, std::size_t N>
+    [[nodiscard]] auto receive(std::array<receiver<T>, N> &);
+    template <typename T>
+    [[nodiscard]] auto receive(std::vector<receiver<T>> &);
     [[nodiscard]] auto receive_null(receiver<std::nullptr_t> &);
 
     [[nodiscard]] auto filter(std::function<bool(Out const &)>);
