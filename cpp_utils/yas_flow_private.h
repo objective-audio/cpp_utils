@@ -6,6 +6,7 @@
 
 #include <unordered_map>
 #include <vector>
+#include "yas_fast_each.h"
 #include "yas_timer.h"
 
 namespace yas::flow {
@@ -405,17 +406,38 @@ struct node<Out, In, Begin>::impl : base::impl {
         });
     }
 
-    template <std::size_t N, typename T, typename MainOut = Out, enable_if_tuple_t<MainOut, std::nullptr_t> = nullptr>
+    template <std::size_t N, typename T, typename TupleOut = Out, enable_if_tuple_t<TupleOut, std::nullptr_t> = nullptr>
     auto receive(flow::node<Out, In, Begin> &node, receiver<T> &receiver) {
         return node.perform([output = receiver.flowable().make_output()](Out const &value) mutable {
             output.output_value(std::get<N>(value));
         });
     }
 
-    template <std::size_t N, typename T, typename MainOut = Out, disable_if_tuple_t<MainOut, std::nullptr_t> = nullptr>
+    template <std::size_t N, typename T, typename NonTupleOut = Out,
+              disable_if_tuple_t<NonTupleOut, std::nullptr_t> = nullptr>
     auto receive(flow::node<Out, In, Begin> &node, receiver<T> &receiver) {
         return node.perform(
             [output = receiver.flowable().make_output()](Out const &value) mutable { output.output_value(value); });
+    }
+
+    template <typename T, std::size_t N, typename ArrayOut = Out, enable_if_array_t<ArrayOut, std::nullptr_t> = nullptr>
+    auto receive_array(flow::node<Out, In, Begin> &node, std::array<receiver<T>, N> &receivers) {
+        std::vector<flow::output<T>> outputs;
+        outputs.reserve(N);
+
+        auto each = make_fast_each(N);
+        while (yas_each_next(each)) {
+            auto const &idx = yas_each_index(each);
+            outputs.emplace_back(receivers.at(idx).flowable().make_output());
+        }
+
+        return node.perform([outputs = std::move(outputs)](Out const &values) mutable {
+            auto each = make_fast_each(N);
+            while (yas_each_next(each)) {
+                auto const &idx = yas_each_index(each);
+                outputs.at(idx).output_value(values.at(idx));
+            }
+        });
     }
 };
 
@@ -467,6 +489,12 @@ template <typename Out, typename In, typename Begin>
 template <std::size_t N, typename T>
 auto node<Out, In, Begin>::receive(receiver<T> &receiver) {
     return impl_ptr<impl>()->template receive<N>(*this, receiver);
+}
+
+template <typename Out, typename In, typename Begin>
+template <typename T, std::size_t N>
+auto node<Out, In, Begin>::receive(std::array<receiver<T>, N> &receivers) {
+    return impl_ptr<impl>()->template receive_array<T, N>(*this, receivers);
 }
 
 template <typename Out, typename In, typename Begin>
