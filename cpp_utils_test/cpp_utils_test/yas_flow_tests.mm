@@ -279,6 +279,40 @@ using namespace yas;
     XCTAssertEqual(received, "3");
 }
 
+- (void)test_receive_array {
+    flow::sender<std::array<int, 2>> sender;
+    int received0 = -1;
+    int received1 = -1;
+
+    flow::receiver<int> receiver0{[&received0](int const &value) { received0 = value; }};
+    flow::receiver<int> receiver1{[&received1](int const &value) { received1 = value; }};
+    std::array<flow::receiver<int>, 2> receivers{receiver0, receiver1};
+
+    flow::observer flow = sender.begin().receive(receivers).end();
+
+    sender.send_value(std::array<int, 2>{10, 20});
+
+    XCTAssertEqual(received0, 10);
+    XCTAssertEqual(received1, 20);
+}
+
+- (void)test_receiver_vector {
+    flow::sender<std::vector<int>> sender;
+    int received0 = -1;
+    int received1 = -1;
+
+    flow::receiver<int> receiver0{[&received0](int const &value) { received0 = value; }};
+    flow::receiver<int> receiver1{[&received1](int const &value) { received1 = value; }};
+    std::vector<flow::receiver<int>> receivers{receiver0, receiver1};
+
+    flow::observer flow = sender.begin().receive(receivers).end();
+
+    sender.send_value(std::vector<int>{30, 40});
+
+    XCTAssertEqual(received0, 30);
+    XCTAssertEqual(received1, 40);
+}
+
 - (void)test_receive_tuple {
     flow::sender<std::tuple<int, std::string>> sender;
 
@@ -308,6 +342,20 @@ using namespace yas;
     sender.send_value(4);
 
     XCTAssertTrue(received);
+}
+
+- (void)test_receiver {
+    int received = -1;
+
+    flow::sender<int> sender;
+
+    flow::receiver<int> receiver{[&received](int const &value) { received = value; }};
+
+    auto flow = sender.begin().receive(receiver).end();
+
+    sender.send_value(100);
+
+    XCTAssertEqual(received, 100);
 }
 
 - (void)test_guard {
@@ -351,54 +399,6 @@ using namespace yas;
     sub_sender.send_value(20.0f);
 
     XCTAssertEqual(received, "20");
-}
-
-- (void)test_receiver {
-    int received = -1;
-
-    flow::sender<int> sender;
-
-    flow::receiver<int> receiver{[&received](int const &value) { received = value; }};
-
-    auto flow = sender.begin().receive(receiver).end();
-
-    sender.send_value(100);
-
-    XCTAssertEqual(received, 100);
-}
-
-- (void)test_array_receiver {
-    flow::sender<std::array<int, 2>> sender;
-    int received0 = -1;
-    int received1 = -1;
-
-    flow::receiver<int> receiver0{[&received0](int const &value) { received0 = value; }};
-    flow::receiver<int> receiver1{[&received1](int const &value) { received1 = value; }};
-    std::array<flow::receiver<int>, 2> receivers{receiver0, receiver1};
-
-    flow::observer flow = sender.begin().receive(receivers).end();
-
-    sender.send_value(std::array<int, 2>{10, 20});
-
-    XCTAssertEqual(received0, 10);
-    XCTAssertEqual(received1, 20);
-}
-
-- (void)test_vector_receiver {
-    flow::sender<std::vector<int>> sender;
-    int received0 = -1;
-    int received1 = -1;
-
-    flow::receiver<int> receiver0{[&received0](int const &value) { received0 = value; }};
-    flow::receiver<int> receiver1{[&received1](int const &value) { received1 = value; }};
-    std::vector<flow::receiver<int>> receivers{receiver0, receiver1};
-
-    flow::observer flow = sender.begin().receive(receivers).end();
-
-    sender.send_value(std::vector<int>{30, 40});
-
-    XCTAssertEqual(received0, 30);
-    XCTAssertEqual(received1, 40);
 }
 
 - (void)test_pair {
