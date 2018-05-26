@@ -420,7 +420,7 @@ struct node<Out, In, Begin>::impl : base::impl {
             [output = receiver.flowable().make_output()](Out const &value) mutable { output.output_value(value); });
     }
 
-    template <typename T, std::size_t N, typename ArrayOut = Out, enable_if_array_t<ArrayOut, std::nullptr_t> = nullptr>
+    template <typename T, std::size_t N>
     auto receive(flow::node<Out, In, Begin> &node, std::array<receiver<T>, N> &receivers) {
         std::vector<flow::output<T>> outputs;
         outputs.reserve(N);
@@ -440,7 +440,7 @@ struct node<Out, In, Begin>::impl : base::impl {
         });
     }
 
-    template <typename T, typename VecOut = Out, enable_if_vector_t<VecOut, std::nullptr_t> = nullptr>
+    template <typename T>
     auto receive(flow::node<Out, In, Begin> &node, std::vector<receiver<T>> &receivers) {
         std::size_t const count = receivers.size();
 
