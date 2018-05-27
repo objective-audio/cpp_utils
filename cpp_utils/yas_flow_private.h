@@ -413,8 +413,15 @@ struct node<Out, In, Begin>::impl : base::impl {
         });
     }
 
-    template <std::size_t N, typename T, typename NonTupleOut = Out,
-              disable_if_tuple_t<NonTupleOut, std::nullptr_t> = nullptr>
+    template <std::size_t N, typename T, typename ArrayOut = Out, enable_if_array_t<ArrayOut, std::nullptr_t> = nullptr>
+    auto receive(flow::node<Out, In, Begin> &node, receiver<T> &receiver) {
+        return node.perform([output = receiver.flowable().make_output()](Out const &value) mutable {
+            output.output_value(std::get<N>(value));
+        });
+    }
+
+    template <std::size_t N, typename T, typename NonOut = Out, disable_if_tuple_t<NonOut, std::nullptr_t> = nullptr,
+              disable_if_array_t<NonOut, std::nullptr_t> = nullptr>
     auto receive(flow::node<Out, In, Begin> &node, receiver<T> &receiver) {
         return node.perform(
             [output = receiver.flowable().make_output()](Out const &value) mutable { output.output_value(value); });

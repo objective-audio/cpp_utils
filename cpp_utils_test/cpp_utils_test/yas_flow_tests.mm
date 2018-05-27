@@ -296,6 +296,22 @@ using namespace yas;
     XCTAssertEqual(received1, 20);
 }
 
+- (void)test_receive_array_individual {
+    flow::sender<std::array<int, 2>> sender;
+    int received0 = -1;
+    int received1 = -1;
+
+    flow::receiver<int> receiver0{[&received0](int const &value) { received0 = value; }};
+    flow::receiver<int> receiver1{[&received1](int const &value) { received1 = value; }};
+
+    flow::observer flow = sender.begin().receive<0>(receiver0).receive<1>(receiver1).end();
+
+    sender.send_value(std::array<int, 2>{10, 20});
+
+    XCTAssertEqual(received0, 10);
+    XCTAssertEqual(received1, 20);
+}
+
 - (void)test_receiver_vector {
     flow::sender<std::vector<int>> sender;
     int received0 = -1;
