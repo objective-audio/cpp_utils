@@ -329,6 +329,22 @@ using namespace yas;
     XCTAssertEqual(received1, 40);
 }
 
+- (void)test_receiver_initializer_list {
+    flow::sender<std::vector<int>> sender;
+    int received0 = -1;
+    int received1 = -1;
+
+    flow::receiver<int> receiver0{[&received0](int const &value) { received0 = value; }};
+    flow::receiver<int> receiver1{[&received1](int const &value) { received1 = value; }};
+
+    flow::observer flow = sender.begin().receive({receiver0, receiver1}).end();
+
+    sender.send_value(std::vector<int>{50, 60});
+
+    XCTAssertEqual(received0, 50);
+    XCTAssertEqual(received1, 60);
+}
+
 - (void)test_receive_tuple {
     flow::sender<std::tuple<int, std::string>> sender;
 

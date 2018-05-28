@@ -534,6 +534,13 @@ auto node<Out, In, Begin>::receive(std::vector<receiver<T>> receivers) {
 }
 
 template <typename Out, typename In, typename Begin>
+template <typename T>
+[[nodiscard]] auto node<Out, In, Begin>::receive(std::initializer_list<receiver<T>> receivers) {
+    std::vector<receiver<T>> vector{receivers};
+    return impl_ptr<impl>()->template receive<T>(*this, vector);
+}
+
+template <typename Out, typename In, typename Begin>
 auto node<Out, In, Begin>::receive_null(receiver<std::nullptr_t> &receiver) {
     return this->perform(
         [output = receiver.flowable().make_output()](Out const &value) mutable { output.output_value(nullptr); });
