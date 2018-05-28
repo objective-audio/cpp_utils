@@ -523,13 +523,13 @@ auto node<Out, In, Begin>::receive(receiver<T> &receiver) {
 
 template <typename Out, typename In, typename Begin>
 template <typename T, std::size_t N>
-auto node<Out, In, Begin>::receive(std::array<receiver<T>, N> &receivers) {
+auto node<Out, In, Begin>::receive(std::array<receiver<T>, N> receivers) {
     return impl_ptr<impl>()->template receive<T, N>(*this, receivers);
 }
 
 template <typename Out, typename In, typename Begin>
 template <typename T>
-auto node<Out, In, Begin>::receive(std::vector<receiver<T>> &receivers) {
+auto node<Out, In, Begin>::receive(std::vector<receiver<T>> receivers) {
     return impl_ptr<impl>()->template receive<T>(*this, receivers);
 }
 
