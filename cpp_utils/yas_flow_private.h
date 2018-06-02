@@ -347,7 +347,7 @@ struct node<Out, In, Begin>::impl : base::impl {
     }
 
     template <typename F>
-    node<return_t<F>, In, Begin> to(F &&to_handler) {
+    node<return_t<F>, In, Begin> map(F &&to_handler) {
         return flow::node<return_t<F>, In, Begin>(
             std::move(this->_input), [to_handler = std::move(to_handler), handler = std::move(this->_handler)](
                                          In const &value) mutable { return to_handler(handler(value)); });
@@ -360,7 +360,7 @@ struct node<Out, In, Begin>::impl : base::impl {
 
     template <typename T = Out, disable_if_tuple_t<T, std::nullptr_t> = nullptr>
     auto to_tuple(node<Out, In, Begin> &node) {
-        return this->to([](Out const &value) { return std::make_tuple(value); });
+        return this->map([](Out const &value) { return std::make_tuple(value); });
     }
 
     template <typename SubOut, typename SubIn, typename SubBegin, disable_if_tuple_t<SubOut, std::nullptr_t> = nullptr,
@@ -588,18 +588,18 @@ auto node<Out, In, Begin>::filter(std::function<bool(Out const &value)> filter_h
 template <typename Out, typename In, typename Begin>
 template <typename F>
 auto node<Out, In, Begin>::map(F handler) {
-    return impl_ptr<impl>()->to(std::move(handler));
+    return impl_ptr<impl>()->map(std::move(handler));
 }
 
 template <typename Out, typename In, typename Begin>
 template <typename T>
 auto node<Out, In, Begin>::to_value(T value) {
-    return impl_ptr<impl>()->to([value = std::move(value)](Out const &) { return value; });
+    return impl_ptr<impl>()->map([value = std::move(value)](Out const &) { return value; });
 }
 
 template <typename Out, typename In, typename Begin>
 auto node<Out, In, Begin>::to_null() {
-    return impl_ptr<impl>()->to([](Out const &) { return nullptr; });
+    return impl_ptr<impl>()->map([](Out const &) { return nullptr; });
 }
 
 template <typename Out, typename In, typename Begin>
