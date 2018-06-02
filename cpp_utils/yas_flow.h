@@ -44,6 +44,8 @@ struct sender : base {
 
     sender_flowable<T> flowable();
 
+    receiver<T> &receiver();
+
    private:
     sender_flowable<T> _flowable = nullptr;
 };

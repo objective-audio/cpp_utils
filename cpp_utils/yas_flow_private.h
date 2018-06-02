@@ -280,6 +280,20 @@ struct sender<T>::impl : base::impl, sender_flowable<T>::impl {
             }
         }
     }
+
+    flow::receiver<T> &receiver() {
+        if (!this->_receiver) {
+            this->_receiver = flow::receiver<T>{[weak_sender = to_weak(cast<flow::sender<T>>())](T const &value) {
+                if (auto sender = weak_sender.lock()) {
+                    sender.send_value(value);
+                }
+            }};
+        }
+        return this->_receiver;
+    }
+
+   private:
+    flow::receiver<T> _receiver{nullptr};
 };
 
 template <typename T>
@@ -314,6 +328,11 @@ sender_flowable<T> sender<T>::flowable() {
         this->_flowable = sender_flowable<T>{impl_ptr<typename sender_flowable<T>::impl>()};
     }
     return this->_flowable;
+}
+
+template <typename T>
+receiver<T> &sender<T>::receiver() {
+    return impl_ptr<impl>()->receiver();
 }
 
 #pragma mark - node
