@@ -358,7 +358,13 @@ struct node<Out, In, Begin>::impl : base::impl {
         return node;
     }
 
-    template <typename T = Out, disable_if_tuple_t<T, std::nullptr_t> = nullptr>
+    template <typename T = Out, enable_if_pair_t<T, std::nullptr_t> = nullptr>
+    auto to_tuple(node<Out, In, Begin> &node) {
+        return this->map([](Out const &pair) { return std::make_tuple(pair.first, pair.second); });
+    }
+
+    template <typename T = Out, disable_if_tuple_t<T, std::nullptr_t> = nullptr,
+              disable_if_pair_t<T, std::nullptr_t> = nullptr>
     auto to_tuple(node<Out, In, Begin> &node) {
         return this->map([](Out const &value) { return std::make_tuple(value); });
     }

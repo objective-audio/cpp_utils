@@ -156,6 +156,20 @@ using namespace yas;
     XCTAssertEqual(std::get<0>(*called), 1);
 }
 
+- (void)test_to_tuple_from_pair {
+    flow::sender<std::pair<int, std::string>> sender;
+
+    opt_t<std::tuple<int, std::string>> called;
+
+    auto flow = sender.begin().to_tuple().perform([&called](auto const &value) { called = value; }).end();
+
+    sender.send_value(std::make_pair(int(1), std::string("2")));
+
+    XCTAssertTrue(called);
+    XCTAssertEqual(std::get<0>(*called), 1);
+    XCTAssertEqual(std::get<1>(*called), "2");
+}
+
 - (void)test_wait {
     flow::sender<int> sender;
 
