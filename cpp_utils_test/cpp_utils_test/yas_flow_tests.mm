@@ -510,22 +510,27 @@ using namespace yas;
 - (void)test_combine_tuples {
     flow::sender<int> main_sender;
     flow::sender<std::string> sub_sender;
+    flow::sender<float> sub_sender2;
 
     auto sub_flow = sub_sender.begin().to_tuple();
     auto main_flow = main_sender.begin().to_tuple();
+    auto sub_flow2 = sub_sender2.begin().to_tuple();
 
-    opt_t<std::tuple<int, std::string>> received;
+    opt_t<std::tuple<int, std::string, float>> received;
 
     auto flow = main_flow.combine(sub_flow)
-                    .perform([&received](std::tuple<int, std::string> const &value) { received = value; })
+                    .combine(sub_flow2)
+                    .perform([&received](std::tuple<int, std::string, float> const &value) { received = value; })
                     .end();
 
     main_sender.send_value(33);
     sub_sender.send_value("44");
+    sub_sender2.send_value(55.0f);
 
     XCTAssertTrue(received);
     XCTAssertEqual(std::get<0>(*received), 33);
     XCTAssertEqual(std::get<1>(*received), "44");
+    XCTAssertEqual(std::get<2>(*received), 55.0f);
 }
 
 - (void)test_normalize {
