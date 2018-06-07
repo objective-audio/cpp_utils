@@ -406,10 +406,10 @@ struct node<Out, In, Begin>::impl : base::impl {
         return node.pair(std::move(sub_node))
             .map([opt_pair = opt_pair_t{}](opt_pair_t const &value) mutable {
                 if (value.first) {
-                    opt_pair.first = value.first;
+                    opt_pair.first = *value.first;
                 }
                 if (value.second) {
-                    opt_pair.second = value.second;
+                    opt_pair.second = *value.second;
                 }
                 return opt_pair;
             })
@@ -427,7 +427,8 @@ struct node<Out, In, Begin>::impl : base::impl {
               typename MainOut = Out, enable_if_tuple_t<MainOut, std::nullptr_t> = nullptr>
     auto combine(flow::node<Out, In, Begin> &node, flow::node<SubOut, SubIn, SubBegin> &&sub_node) {
         return this->combine_pair(node, std::move(sub_node)).map([](std::pair<Out, SubOut> const &pair) {
-            return std::tuple_cat(pair.first, pair.second);
+            return std::tuple_cat(static_cast<typename std::remove_const<Out>::type>(pair.first),
+                                  static_cast<typename std::remove_const<SubOut>::type>(pair.second));
         });
     }
 
