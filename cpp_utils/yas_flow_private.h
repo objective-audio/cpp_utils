@@ -262,10 +262,12 @@ struct sender<T>::impl : base::impl, sender_flowable<T>::impl {
     }
 
     void send_value(T const &value) {
-        for (auto &pair : this->inputs) {
-            weak<flow::input<T>> &weak_input = pair.second;
-            if (!!weak_input) {
-                weak_input.lock().input_value(value);
+        if (auto lock = std::unique_lock<std::mutex>(this->_send_mutex, std::try_to_lock); lock.owns_lock()) {
+            for (auto &pair : this->inputs) {
+                weak<flow::input<T>> &weak_input = pair.second;
+                if (!!weak_input) {
+                    weak_input.lock().input_value(value);
+                }
             }
         }
     }
