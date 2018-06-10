@@ -65,6 +65,23 @@ using namespace yas;
     XCTAssertEqual(received, 4);
 }
 
+- (void)test_sender_block_recursive_call {
+    int received = -1;
+
+    flow::sender<int> sender;
+
+    flow::receiver<int> receiver{[&sender, &received](int const &value) {
+        received = value;
+        sender.send_value(value + 1);
+    }};
+
+    auto flow = sender.begin().receive(receiver).end();
+
+    sender.send_value(1);
+
+    XCTAssertEqual(received, 1);
+}
+
 - (void)test_to {
     flow::sender<int> sender;
 
