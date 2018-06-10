@@ -615,25 +615,6 @@ auto node<Out, In, Begin>::to_tuple() {
 }
 
 template <typename Out, typename In, typename Begin>
-auto node<Out, In, Begin>::wait(double const time_interval) {
-    auto imp = impl_ptr<impl>();
-    flow::input<Begin> &input = imp->_input;
-    auto weak_input = to_weak(input);
-    std::size_t const next_idx = input.handlers_size() + 1;
-
-    input.template push_handler<In>([handler = imp->_handler, time_interval, weak_input, next_idx,
-                                     timer = yas::timer{nullptr}](In const &value) mutable {
-        timer = yas::timer(time_interval, false, [value = handler(value), weak_input, next_idx]() {
-            if (auto input = weak_input.lock()) {
-                input.template handler<Out>(next_idx)(value);
-            }
-        });
-    });
-
-    return node<Out, Out, Begin>(input, [](Out const &value) { return value; });
-}
-
-template <typename Out, typename In, typename Begin>
 template <typename SubIn, typename SubBegin>
 auto node<Out, In, Begin>::merge(node<Out, SubIn, SubBegin> sub_node) {
     auto imp = impl_ptr<impl>();

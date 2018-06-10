@@ -170,35 +170,6 @@ using namespace yas;
     XCTAssertEqual(std::get<1>(*called), "2");
 }
 
-- (void)test_wait {
-    flow::sender<int> sender;
-
-    auto waitExp = [self expectationWithDescription:@"wait"];
-
-    CFAbsoluteTime begin = 0.0;
-    CFAbsoluteTime end = 0.0;
-    std::string result = "";
-
-    auto flow = sender.begin()
-                    .perform([&begin](int const &value) { begin = CFAbsoluteTimeGetCurrent(); })
-                    .wait(0.1)
-                    .map([](int const &value) { return std::to_string(value); })
-                    .wait(0.1)
-                    .perform([waitExp, &end, &result](std::string const &value) {
-                        result = value;
-                        end = CFAbsoluteTimeGetCurrent();
-                        [waitExp fulfill];
-                    })
-                    .end();
-
-    sender.send_value(10);
-
-    [self waitForExpectations:@[waitExp] timeout:5.0];
-
-    XCTAssertGreaterThan(end - begin, 0.15);
-    XCTAssertEqual(result, "10");
-}
-
 - (void)test_sync {
     flow::sender<int> sender;
     sender.set_sync_handler([] { return 100; });
