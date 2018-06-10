@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include <mutex>
 #include <unordered_map>
 #include <vector>
 #include "yas_fast_each.h"
@@ -294,6 +295,7 @@ struct sender<T>::impl : base::impl, sender_flowable<T>::impl {
 
    private:
     flow::receiver<T> _receiver{nullptr};
+    std::mutex _send_mutex;
 };
 
 template <typename T>
