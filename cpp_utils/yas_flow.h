@@ -113,8 +113,6 @@ struct node : base {
     [[nodiscard]] auto to_null();
     [[nodiscard]] auto to_tuple();
 
-    [[nodiscard]] auto wait(double const);
-
     template <typename SubIn, typename SubBegin>
     [[nodiscard]] auto merge(node<Out, SubIn, SubBegin>);
 
