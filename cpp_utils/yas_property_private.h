@@ -161,20 +161,18 @@ class property<T>::impl : public base::impl {
         _validate(val);
 
         if (_subject.has_observer()) {
-            if (auto lock = std::unique_lock<std::mutex>(_notify_mutex, std::try_to_lock)) {
-                if (lock.owns_lock()) {
-                    if (auto property = cast<yas::property<T>>()) {
-                        _subject.notify(property_method::will_change,
-                                        yas::property<T>::change_context{
-                                            .old_value = _value, .new_value = val, .property = property});
+            if (auto lock = std::unique_lock<std::mutex>(_notify_mutex, std::try_to_lock); lock.owns_lock()) {
+                if (auto property = cast<yas::property<T>>()) {
+                    _subject.notify(
+                        property_method::will_change,
+                        yas::property<T>::change_context{.old_value = _value, .new_value = val, .property = property});
 
-                        auto old_value = std::move(_value);
-                        _value = std::move(val);
+                    auto old_value = std::move(_value);
+                    _value = std::move(val);
 
-                        _subject.notify(property_method::did_change,
-                                        yas::property<T>::change_context{
-                                            .old_value = old_value, .new_value = _value, .property = property});
-                    }
+                    _subject.notify(property_method::did_change,
+                                    yas::property<T>::change_context{
+                                        .old_value = old_value, .new_value = _value, .property = property});
                 }
             }
         } else {
