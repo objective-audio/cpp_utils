@@ -69,8 +69,8 @@ class subject {
     [[nodiscard]] observer<Key, T> make_value_observer(Key const &, value_handler_f const &);
     [[nodiscard]] observer<Key, T> make_observer(Key const &, wild_card_handler_f const &);
     [[nodiscard]] observer<Key, T> make_wild_card_observer(wild_card_handler_f const &);
-    [[nodiscard]] flow::node<T, flow_context_t, flow_context_t> begin_flow(Key const &);
-    [[nodiscard]] flow::node<flow_context_t, flow_context_t, flow_context_t> begin_flow();
+    [[nodiscard]] flow::node<T, flow_context_t, flow_context_t, false> begin_flow(Key const &);
+    [[nodiscard]] flow::node<flow_context_t, flow_context_t, flow_context_t, false> begin_flow();
 
    private:
     class impl;

@@ -124,13 +124,13 @@ class subject<Key, T>::impl {
         return observers.size() > 0;
     }
 
-    flow::node<T, flow_context_t, flow_context_t> begin_flow(subject<Key, T> &subject, Key const &key) {
+    flow::node<T, flow_context_t, flow_context_t, false> begin_flow(subject<Key, T> &subject, Key const &key) {
         return this->begin_flow(subject)
             .filter([key](flow_context_t const &context) { return context.key == key; })
             .map([](flow_context_t const &context) { return context.value; });
     }
 
-    flow::node<flow_context_t, flow_context_t, flow_context_t> begin_flow(subject<Key, T> &subject) {
+    flow::node<flow_context_t, flow_context_t, flow_context_t, false> begin_flow(subject<Key, T> &subject) {
         if (!this->sender) {
             flow::sender<flow_context_t> sender;
 
@@ -308,14 +308,14 @@ observer<Key, T> subject<Key, T>::make_wild_card_observer(wild_card_handler_f co
 }
 
 template <typename Key, typename T>
-flow::node<T, typename subject<Key, T>::flow_context_t, typename subject<Key, T>::flow_context_t>
+flow::node<T, typename subject<Key, T>::flow_context_t, typename subject<Key, T>::flow_context_t, false>
 subject<Key, T>::begin_flow(Key const &key) {
     return _impl->begin_flow(*this, key);
 }
 
 template <typename Key, typename T>
 [[nodiscard]] flow::node<typename subject<Key, T>::flow_context_t, typename subject<Key, T>::flow_context_t,
-                         typename subject<Key, T>::flow_context_t>
+                         typename subject<Key, T>::flow_context_t, false>
 subject<Key, T>::begin_flow() {
     return _impl->begin_flow(*this);
 }

@@ -64,9 +64,9 @@ class property<T>::impl : public base::impl {
         return _subject;
     }
 
-    [[nodiscard]] flow::node<T, T, T> begin_value_flow(property<T> &property) {
+    [[nodiscard]] flow::node<T, T, T, true> begin_value_flow(property<T> &property) {
         if (!this->_value_sender) {
-            flow::sender<T> sender;
+            flow::sender<T, true> sender;
 
             subject_t &subject = this->subject();
 
@@ -93,9 +93,9 @@ class property<T>::impl : public base::impl {
         return this->_value_sender.begin();
     }
 
-        [[nodiscard]] flow_context_t begin_context_flow(property<T> &property) {
+    [[nodiscard]] flow_context_t begin_context_flow(property<T> &property) {
         if (!this->_context_sender) {
-            flow::sender<change_context> sender;
+            flow::sender<change_context, true> sender;
 
             subject_t &subject = this->_subject;
 
@@ -124,14 +124,13 @@ class property<T>::impl : public base::impl {
         return this->_context_sender.begin();
     }
 
-   private:
-    T _value;
+    private : T _value;
     validator_t _validator = nullptr;
     limiter_t _limiter = nullptr;
     std::mutex _notify_mutex;
     subject_t _subject;
-    flow::sender<T> _value_sender = nullptr;
-    flow::sender<change_context> _context_sender = nullptr;
+    flow::sender<T, true> _value_sender = nullptr;
+    flow::sender<change_context, true> _context_sender = nullptr;
 
     template <typename U, typename std::enable_if_t<has_operator_bool<U>::value, std::nullptr_t> = nullptr>
     void _set_value(U &&value) {
@@ -280,7 +279,7 @@ typename property<T>::subject_t &property<T>::subject() {
 }
 
 template <typename T>
-flow::node<T, T, T> property<T>::begin_value_flow() {
+flow::node<T, T, T, true> property<T>::begin_value_flow() {
     return impl_ptr<impl>()->begin_value_flow(*this);
 }
 

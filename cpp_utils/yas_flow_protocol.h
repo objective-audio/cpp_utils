@@ -8,10 +8,10 @@
 #include "yas_protocol.h"
 
 namespace yas::flow {
-template <typename Out, typename In, typename Begin>
+template <typename Out, typename In, typename Begin, bool Syncable>
 class node;
 template <typename T>
-class sender;
+class sender_base;
 template <typename T>
 class receiver;
 
@@ -59,14 +59,15 @@ template <typename T>
 struct input : input_base {
     class impl;
 
-    input(weak<sender<T>>);
+    input(weak<sender_base<T>>);
     input(std::nullptr_t);
 
     ~input() final;
 
     void input_value(T const &);
 
-    [[nodiscard]] node<T, T, T> begin();
+    template <bool Syncable>
+    [[nodiscard]] node<T, T, T, Syncable> begin();
 
     template <typename P>
     void push_handler(std::function<void(P const &)>);

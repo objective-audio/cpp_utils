@@ -21,14 +21,33 @@ struct receiver : base {
 
     ~receiver() final;
 
-    receiver_flowable<T> flowable();
+    [[nodiscard]] receiver_flowable<T> flowable();
 
    private:
     receiver_flowable<T> _flowable = nullptr;
 };
 
 template <typename T>
-struct sender : base {
+struct sender_base : base {
+    class impl;
+
+    sender_base(std::nullptr_t);
+
+    void send_value(T const &);
+
+    [[nodiscard]] sender_flowable<T> flowable();
+
+    [[nodiscard]] receiver<T> &receiver();
+
+   protected:
+    sender_base(std::shared_ptr<impl> &&);
+
+   private:
+    sender_flowable<T> _flowable = nullptr;
+};
+
+template <typename T, bool Syncable = false>
+struct sender : sender_base<T> {
     class impl;
 
     sender();
@@ -38,16 +57,7 @@ struct sender : base {
 
     void set_sync_handler(std::function<opt_t<T>(void)>);
 
-    void send_value(T const &);
-
-    [[nodiscard]] node<T, T, T> begin();
-
-    sender_flowable<T> flowable();
-
-    receiver<T> &receiver();
-
-   private:
-    sender_flowable<T> _flowable = nullptr;
+    [[nodiscard]] node<T, T, T, Syncable> begin();
 };
 
 struct observer : base {
@@ -76,10 +86,10 @@ struct typed_observer : observer {
 
     ~typed_observer() final;
 
-    flow::input<Begin> &input();
+    [[nodiscard]] flow::input<Begin> &input();
 };
 
-template <typename Out = std::nullptr_t, typename In = Out, typename Begin = In>
+template <typename Out, typename In, typename Begin, bool Syncable>
 struct node : base {
     class impl;
 
@@ -113,14 +123,14 @@ struct node : base {
     [[nodiscard]] auto to_null();
     [[nodiscard]] auto to_tuple();
 
-    template <typename SubIn, typename SubBegin>
-    [[nodiscard]] auto merge(node<Out, SubIn, SubBegin>);
+    template <typename SubIn, typename SubBegin, bool SubSyncable>
+    [[nodiscard]] auto merge(node<Out, SubIn, SubBegin, SubSyncable>);
 
-    template <typename SubOut, typename SubIn, typename SubBegin>
-    [[nodiscard]] auto pair(node<SubOut, SubIn, SubBegin>);
+    template <typename SubOut, typename SubIn, typename SubBegin, bool SubSyncable>
+    [[nodiscard]] auto pair(node<SubOut, SubIn, SubBegin, SubSyncable>);
 
-    template <typename SubOut, typename SubIn, typename SubBegin>
-    [[nodiscard]] auto combine(node<SubOut, SubIn, SubBegin>);
+    template <typename SubOut, typename SubIn, typename SubBegin, bool SubSyncable>
+    [[nodiscard]] auto combine(node<SubOut, SubIn, SubBegin, SubSyncable>);
 
     [[nodiscard]] typed_observer<Begin> end();
     [[nodiscard]] typed_observer<Begin> sync();

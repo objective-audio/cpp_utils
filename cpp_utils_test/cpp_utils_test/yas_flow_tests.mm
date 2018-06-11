@@ -228,7 +228,7 @@ using namespace yas;
 }
 
 - (void)test_sync_end {
-    flow::sender<int> sender;
+    flow::sender<int, true> sender;
     sender.set_sync_handler([] { return 100; });
 
     int received = -1;
@@ -239,10 +239,10 @@ using namespace yas;
 }
 
 - (void)test_sync_with_combined_sub_sender {
-    flow::sender<int> sender;
+    flow::sender<int, true> sender;
     sender.set_sync_handler([]() { return 123; });
 
-    flow::sender<int> sub_sender;
+    flow::sender<int, true> sub_sender;
     sub_sender.set_sync_handler([]() { return 456; });
 
     std::vector<std::pair<int, int>> received;
@@ -250,9 +250,7 @@ using namespace yas;
     auto flow = sender.begin()
                     .combine(sub_sender.begin())
                     .perform([&received](auto const &pair) { received.emplace_back(pair); })
-                    .end();
-
-    flow.sync();
+                    .sync();
 
     // 2つのsenderから来た値が両方揃ってから受け取った
     XCTAssertEqual(received.size(), 1);
@@ -261,10 +259,10 @@ using namespace yas;
 }
 
 - (void)test_sync_with_merged_sub_sender {
-    flow::sender<int> sender;
+    flow::sender<int, true> sender;
     sender.set_sync_handler([]() { return 78; });
 
-    flow::sender<int> sub_sender;
+    flow::sender<int, true> sub_sender;
     sub_sender.set_sync_handler([]() { return 90; });
 
     std::vector<int> received;
@@ -272,9 +270,7 @@ using namespace yas;
     auto flow = sender.begin()
                     .merge(sub_sender.begin())
                     .perform([&received](int const &value) { received.emplace_back(value); })
-                    .end();
-
-    flow.sync();
+                    .sync();
 
     // main -> sub の順番で実行される
     XCTAssertEqual(received.size(), 2);
@@ -524,10 +520,10 @@ using namespace yas;
 - (void)test_normalize {
     flow::sender<int> sender;
 
-    flow::node<std::string, int, int> toed_flow =
+    flow::node<std::string, int, int, false> toed_flow =
         sender.begin().map([](int const &value) { return std::to_string(value); });
 
-    flow::node<std::string, std::string, int> normalized_flow = toed_flow.normalize();
+    flow::node<std::string, std::string, int, false> normalized_flow = toed_flow.normalize();
 
     std::string received = "";
 
@@ -537,34 +533,6 @@ using namespace yas;
     sender.send_value(10);
 
     XCTAssertEqual(received, "10");
-}
-
-- (void)test_node_type_1 {
-    flow::sender<int> sender;
-
-    flow::node<int> node = sender.begin();
-
-    bool called = false;
-
-    auto flow = node.perform([&called](auto const &) { called = true; }).end();
-
-    sender.send_value(10);
-
-    XCTAssertTrue(called);
-}
-
-- (void)test_node_type_2 {
-    flow::sender<int> sender;
-
-    flow::node<std::string, int> node = sender.begin().map([](int const &value) { return std::to_string(value); });
-
-    bool called = false;
-
-    auto flow = node.perform([&called](auto const &) { called = true; }).end();
-
-    sender.send_value(20);
-
-    XCTAssertTrue(called);
 }
 
 @end

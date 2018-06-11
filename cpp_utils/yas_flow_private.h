@@ -134,9 +134,9 @@ flow::input<Begin> &typed_observer<Begin>::input() {
 
 template <typename T>
 struct input<T>::impl : input_base::impl {
-    weak<sender<T>> _weak_sender;
+    weak<sender_base<T>> _weak_sender;
 
-    impl(weak<sender<T>> &&weak_sender) : _weak_sender(std::move(weak_sender)) {
+    impl(weak<sender_base<T>> &&weak_sender) : _weak_sender(std::move(weak_sender)) {
     }
 
     void send_value(T const &value) {
@@ -179,7 +179,7 @@ struct input<T>::impl : input_base::impl {
 };
 
 template <typename T>
-input<T>::input(weak<sender<T>> weak_sender) : input_base(std::make_shared<impl>(std::move(weak_sender))) {
+input<T>::input(weak<sender_base<T>> weak_sender) : input_base(std::make_shared<impl>(std::move(weak_sender))) {
 }
 
 template <typename T>
@@ -202,8 +202,9 @@ void input<T>::input_value(T const &value) {
 }
 
 template <typename T>
-node<T, T, T> input<T>::begin() {
-    return node<T, T, T>(*this);
+template <bool Syncable>
+node<T, T, T, Syncable> input<T>::begin() {
+    return node<T, T, T, Syncable>(*this);
 }
 
 template <typename T>
@@ -251,15 +252,8 @@ void sender_flowable<T>::sync(std::uintptr_t const key) {
 #pragma mark - sender
 
 template <typename T>
-struct sender<T>::impl : base::impl, sender_flowable<T>::impl {
-    std::function<opt_t<T>(void)> _sync_handler = []() { return nullopt; };
+struct sender_base<T>::impl : base::impl, sender_flowable<T>::impl {
     std::unordered_map<std::uintptr_t, weak<input<T>>> inputs;
-
-    node<T, T, T> begin(sender<T> &sender) {
-        flow::input<T> input{to_weak(sender)};
-        this->inputs.insert(std::make_pair(input.identifier(), to_weak(input)));
-        return input.begin();
-    }
 
     void send_value(T const &value) {
         if (auto lock = std::unique_lock<std::mutex>(this->_send_mutex, std::try_to_lock); lock.owns_lock()) {
@@ -277,16 +271,11 @@ struct sender<T>::impl : base::impl, sender_flowable<T>::impl {
     }
 
     void sync(std::uintptr_t const key) override {
-        if (auto value = this->_sync_handler()) {
-            if (auto input = this->inputs.at(key).lock()) {
-                input.input_value(*value);
-            }
-        }
     }
 
     flow::receiver<T> &receiver() {
         if (!this->_receiver) {
-            this->_receiver = flow::receiver<T>{[weak_sender = to_weak(cast<flow::sender<T>>())](T const &value) {
+            this->_receiver = flow::receiver<T>{[weak_sender = to_weak(cast<flow::sender_base<T>>())](T const &value) {
                 if (auto sender = weak_sender.lock()) {
                     sender.send_value(value);
                 }
@@ -301,33 +290,20 @@ struct sender<T>::impl : base::impl, sender_flowable<T>::impl {
 };
 
 template <typename T>
-sender<T>::sender() : base(std::make_shared<impl>()) {
+sender_base<T>::sender_base(std::shared_ptr<impl> &&impl) : base(std::move(impl)) {
 }
 
 template <typename T>
-sender<T>::sender(std::nullptr_t) : base(nullptr) {
+sender_base<T>::sender_base(std::nullptr_t) : base(nullptr) {
 }
 
 template <typename T>
-sender<T>::~sender() = default;
-
-template <typename T>
-void sender<T>::set_sync_handler(std::function<opt_t<T>(void)> handler) {
-    impl_ptr<impl>()->_sync_handler = std::move(handler);
-}
-
-template <typename T>
-void sender<T>::send_value(T const &value) {
+void sender_base<T>::send_value(T const &value) {
     impl_ptr<impl>()->send_value(value);
 }
 
 template <typename T>
-node<T, T, T> sender<T>::begin() {
-    return impl_ptr<impl>()->begin(*this);
-}
-
-template <typename T>
-sender_flowable<T> sender<T>::flowable() {
+sender_flowable<T> sender_base<T>::flowable() {
     if (!this->_flowable) {
         this->_flowable = sender_flowable<T>{impl_ptr<typename sender_flowable<T>::impl>()};
     }
@@ -335,14 +311,56 @@ sender_flowable<T> sender<T>::flowable() {
 }
 
 template <typename T>
-receiver<T> &sender<T>::receiver() {
+receiver<T> &sender_base<T>::receiver() {
     return impl_ptr<impl>()->receiver();
+}
+
+#pragma mark - syncable_sender
+
+template <typename T, bool Syncable>
+struct sender<T, Syncable>::impl : sender_base<T>::impl {
+    std::function<opt_t<T>(void)> _sync_handler = []() { return nullopt; };
+
+    node<T, T, T, Syncable> begin(sender<T, Syncable> &sender) {
+        flow::input<T> input{to_weak(sender)};
+        this->inputs.insert(std::make_pair(input.identifier(), to_weak(input)));
+        return input.template begin<Syncable>();
+    }
+
+    void sync(std::uintptr_t const key) override {
+        if (auto value = this->_sync_handler()) {
+            if (auto input = this->inputs.at(key).lock()) {
+                input.input_value(*value);
+            }
+        }
+    }
+};
+
+template <typename T, bool Syncable>
+sender<T, Syncable>::sender() : sender_base<T>(std::make_shared<impl>()) {
+}
+
+template <typename T, bool Syncable>
+sender<T, Syncable>::sender(std::nullptr_t) : sender_base<T>(nullptr) {
+}
+
+template <typename T, bool Syncable>
+sender<T, Syncable>::~sender() = default;
+
+template <typename T, bool Syncable>
+void sender<T, Syncable>::set_sync_handler(std::function<opt_t<T>(void)> handler) {
+    this->template impl_ptr<impl>()->_sync_handler = std::move(handler);
+}
+
+template <typename T, bool Syncable>
+node<T, T, T, Syncable> sender<T, Syncable>::begin() {
+    return this->template impl_ptr<impl>()->begin(*this);
 }
 
 #pragma mark - node
 
-template <typename Out, typename In, typename Begin>
-struct node<Out, In, Begin>::impl : base::impl {
+template <typename Out, typename In, typename Begin, bool Syncable>
+struct node<Out, In, Begin, Syncable>::impl : base::impl {
     input<Begin> _input;
     std::function<Out(In const &)> _handler;
 
@@ -351,38 +369,39 @@ struct node<Out, In, Begin>::impl : base::impl {
     }
 
     template <typename F>
-    node<return_t<F>, In, Begin> map(F &&to_handler) {
-        return flow::node<return_t<F>, In, Begin>(
+    node<return_t<F>, In, Begin, Syncable> map(F &&to_handler) {
+        return flow::node<return_t<F>, In, Begin, Syncable>(
             std::move(this->_input), [to_handler = std::move(to_handler), handler = std::move(this->_handler)](
                                          In const &value) mutable { return to_handler(handler(value)); });
     }
 
     template <typename T = Out, enable_if_tuple_t<T, std::nullptr_t> = nullptr>
-    auto to_tuple(node<Out, In, Begin> &node) {
+    auto to_tuple(node<Out, In, Begin, Syncable> &node) {
         return node;
     }
 
     template <typename T = Out, enable_if_pair_t<T, std::nullptr_t> = nullptr>
-    auto to_tuple(node<Out, In, Begin> &node) {
+    auto to_tuple(node<Out, In, Begin, Syncable> &node) {
         return this->map([](Out const &pair) { return std::make_tuple(pair.first, pair.second); });
     }
 
     template <typename T = Out, disable_if_tuple_t<T, std::nullptr_t> = nullptr,
               disable_if_pair_t<T, std::nullptr_t> = nullptr>
-    auto to_tuple(node<Out, In, Begin> &node) {
+    auto to_tuple(node<Out, In, Begin, Syncable> &node) {
         return this->map([](Out const &value) { return std::make_tuple(value); });
     }
 
-    template <typename SubOut, typename SubIn, typename SubBegin, disable_if_tuple_t<SubOut, std::nullptr_t> = nullptr,
-              typename MainOut = Out, disable_if_tuple_t<MainOut, std::nullptr_t> = nullptr>
-    auto tuple(node<SubOut, SubIn, SubBegin> &&sub_node) {
+    template <typename SubOut, typename SubIn, typename SubBegin, bool SubSyncable,
+              disable_if_tuple_t<SubOut, std::nullptr_t> = nullptr, typename MainOut = Out,
+              disable_if_tuple_t<MainOut, std::nullptr_t> = nullptr>
+    auto tuple(node<SubOut, SubIn, SubBegin, SubSyncable> &&sub_node) {
         using opt_tuple_t = std::tuple<opt_t<Out>, opt_t<SubOut>>;
 
         flow::input<Begin> &input = this->_input;
         auto weak_input = to_weak(input);
         std::size_t const next_idx = input.handlers_size() + 1;
 
-        auto sub_imp = sub_node.template impl_ptr<typename node<SubOut, SubIn, SubBegin>::impl>();
+        auto sub_imp = sub_node.template impl_ptr<typename node<SubOut, SubIn, SubBegin, SubSyncable>::impl>();
         auto &sub_input = sub_imp->_input;
 
         sub_input.template push_handler<SubIn>(
@@ -400,11 +419,13 @@ struct node<Out, In, Begin>::impl : base::impl {
 
         input.add_sub_input(std::move(sub_input));
 
-        return node<opt_tuple_t, opt_tuple_t, Begin>(input, [](opt_tuple_t const &value) { return value; });
+        return node<opt_tuple_t, opt_tuple_t, Begin, Syncable | SubSyncable>(
+            input, [](opt_tuple_t const &value) { return value; });
     }
 
-    template <typename SubOut, typename SubIn, typename SubBegin>
-    auto combine_pair(flow::node<Out, In, Begin> &node, flow::node<SubOut, SubIn, SubBegin> &&sub_node) {
+    template <typename SubOut, typename SubIn, typename SubBegin, bool SubSyncable>
+    auto combine_pair(flow::node<Out, In, Begin, Syncable> &node,
+                      flow::node<SubOut, SubIn, SubBegin, SubSyncable> &&sub_node) {
         using opt_pair_t = std::pair<opt_t<Out>, opt_t<SubOut>>;
 
         return node.pair(std::move(sub_node))
@@ -421,15 +442,19 @@ struct node<Out, In, Begin>::impl : base::impl {
             .map([](opt_pair_t const &pair) { return std::make_pair(*pair.first, *pair.second); });
     }
 
-    template <typename SubOut, typename SubIn, typename SubBegin, disable_if_tuple_t<SubOut, std::nullptr_t> = nullptr,
-              typename MainOut = Out, disable_if_tuple_t<MainOut, std::nullptr_t> = nullptr>
-    auto combine(flow::node<Out, In, Begin> &node, flow::node<SubOut, SubIn, SubBegin> &&sub_node) {
+    template <typename SubOut, typename SubIn, typename SubBegin, bool SubSyncable,
+              disable_if_tuple_t<SubOut, std::nullptr_t> = nullptr, typename MainOut = Out,
+              disable_if_tuple_t<MainOut, std::nullptr_t> = nullptr>
+    auto combine(flow::node<Out, In, Begin, Syncable> &node,
+                 flow::node<SubOut, SubIn, SubBegin, SubSyncable> &&sub_node) {
         return this->combine_pair(node, std::move(sub_node));
     }
 
-    template <typename SubOut, typename SubIn, typename SubBegin, enable_if_tuple_t<SubOut, std::nullptr_t> = nullptr,
-              typename MainOut = Out, enable_if_tuple_t<MainOut, std::nullptr_t> = nullptr>
-    auto combine(flow::node<Out, In, Begin> &node, flow::node<SubOut, SubIn, SubBegin> &&sub_node) {
+    template <typename SubOut, typename SubIn, typename SubBegin, bool SubSyncable,
+              enable_if_tuple_t<SubOut, std::nullptr_t> = nullptr, typename MainOut = Out,
+              enable_if_tuple_t<MainOut, std::nullptr_t> = nullptr>
+    auto combine(flow::node<Out, In, Begin, Syncable> &node,
+                 flow::node<SubOut, SubIn, SubBegin, SubSyncable> &&sub_node) {
         return this->combine_pair(node, std::move(sub_node)).map([](std::pair<Out, SubOut> const &pair) {
             return std::tuple_cat(static_cast<typename std::remove_const<Out>::type>(pair.first),
                                   static_cast<typename std::remove_const<SubOut>::type>(pair.second));
@@ -437,14 +462,14 @@ struct node<Out, In, Begin>::impl : base::impl {
     }
 
     template <std::size_t N, typename T, typename TupleOut = Out, enable_if_tuple_t<TupleOut, std::nullptr_t> = nullptr>
-    auto receive(flow::node<Out, In, Begin> &node, receiver<T> &receiver) {
+    auto receive(flow::node<Out, In, Begin, Syncable> &node, receiver<T> &receiver) {
         return node.perform([output = receiver.flowable().make_output()](Out const &value) mutable {
             output.output_value(std::get<N>(value));
         });
     }
 
     template <std::size_t N, typename T, typename ArrayOut = Out, enable_if_array_t<ArrayOut, std::nullptr_t> = nullptr>
-    auto receive(flow::node<Out, In, Begin> &node, receiver<T> &receiver) {
+    auto receive(flow::node<Out, In, Begin, Syncable> &node, receiver<T> &receiver) {
         return node.perform([output = receiver.flowable().make_output()](Out const &value) mutable {
             output.output_value(std::get<N>(value));
         });
@@ -452,13 +477,13 @@ struct node<Out, In, Begin>::impl : base::impl {
 
     template <std::size_t N, typename T, typename NonOut = Out, disable_if_tuple_t<NonOut, std::nullptr_t> = nullptr,
               disable_if_array_t<NonOut, std::nullptr_t> = nullptr>
-    auto receive(flow::node<Out, In, Begin> &node, receiver<T> &receiver) {
+    auto receive(flow::node<Out, In, Begin, Syncable> &node, receiver<T> &receiver) {
         return node.perform(
             [output = receiver.flowable().make_output()](Out const &value) mutable { output.output_value(value); });
     }
 
     template <typename T, std::size_t N>
-    auto receive(flow::node<Out, In, Begin> &node, std::array<receiver<T>, N> &receivers) {
+    auto receive(flow::node<Out, In, Begin, Syncable> &node, std::array<receiver<T>, N> &receivers) {
         std::vector<flow::output<T>> outputs;
         outputs.reserve(N);
 
@@ -478,7 +503,7 @@ struct node<Out, In, Begin>::impl : base::impl {
     }
 
     template <typename T>
-    auto receive(flow::node<Out, In, Begin> &node, std::vector<receiver<T>> &receivers) {
+    auto receive(flow::node<Out, In, Begin, Syncable> &node, std::vector<receiver<T>> &receivers) {
         std::size_t const count = receivers.size();
 
         std::vector<flow::output<T>> outputs;
@@ -499,26 +524,44 @@ struct node<Out, In, Begin>::impl : base::impl {
             }
         });
     }
+
+    flow::typed_observer<Begin> _end() {
+        this->_input.template push_handler<In>([handler = this->_handler](In const &value) { handler(value); });
+        return typed_observer<Begin>(this->_input);
+    }
+
+    template <bool S = Syncable, std::enable_if_t<!S, std::nullptr_t> = nullptr>
+    flow::typed_observer<Begin> end() {
+        return this->_end();
+    }
+
+    template <bool S = Syncable, std::enable_if_t<S, std::nullptr_t> = nullptr>
+    flow::typed_observer<Begin> sync() {
+        auto observer = this->_end();
+        observer.sync();
+        return observer;
+    }
 };
 
-template <typename Out, typename In, typename Begin>
-node<Out, In, Begin>::node(input<Begin> input) : node(std::move(input), [](Begin const &value) { return value; }) {
+template <typename Out, typename In, typename Begin, bool Syncable>
+node<Out, In, Begin, Syncable>::node(input<Begin> input)
+    : node(std::move(input), [](Begin const &value) { return value; }) {
 }
 
-template <typename Out, typename In, typename Begin>
-node<Out, In, Begin>::node(input<Begin> input, std::function<Out(In const &)> handler)
+template <typename Out, typename In, typename Begin, bool Syncable>
+node<Out, In, Begin, Syncable>::node(input<Begin> input, std::function<Out(In const &)> handler)
     : base(std::make_shared<impl>(std::move(input), std::move(handler))) {
 }
 
-template <typename Out, typename In, typename Begin>
-node<Out, In, Begin>::node(std::nullptr_t) : base(nullptr) {
+template <typename Out, typename In, typename Begin, bool Syncable>
+node<Out, In, Begin, Syncable>::node(std::nullptr_t) : base(nullptr) {
 }
 
-template <typename Out, typename In, typename Begin>
-node<Out, In, Begin>::~node() = default;
+template <typename Out, typename In, typename Begin, bool Syncable>
+node<Out, In, Begin, Syncable>::~node() = default;
 
-template <typename Out, typename In, typename Begin>
-auto node<Out, In, Begin>::normalize() {
+template <typename Out, typename In, typename Begin, bool Syncable>
+auto node<Out, In, Begin, Syncable>::normalize() {
     auto imp = impl_ptr<impl>();
     flow::input<Begin> &input = imp->_input;
     auto weak_input = to_weak(input);
@@ -531,53 +574,54 @@ auto node<Out, In, Begin>::normalize() {
         }
     });
 
-    return node<Out, Out, Begin>(input, [](Out const &value) { return value; });
+    return node<Out, Out, Begin, Syncable>(input, [](Out const &value) { return value; });
 }
 
-template <typename Out, typename In, typename Begin>
-auto node<Out, In, Begin>::perform(std::function<void(Out const &)> perform_handler) {
+template <typename Out, typename In, typename Begin, bool Syncable>
+auto node<Out, In, Begin, Syncable>::perform(std::function<void(Out const &)> perform_handler) {
     auto imp = impl_ptr<impl>();
-    return node<Out, In, Begin>(std::move(imp->_input), [perform_handler = std::move(perform_handler),
-                                                         handler = std::move(imp->_handler)](In const &value) {
-        Out result = handler(value);
-        perform_handler(result);
-        return result;
-    });
+    return node<Out, In, Begin, Syncable>(
+        std::move(imp->_input),
+        [perform_handler = std::move(perform_handler), handler = std::move(imp->_handler)](In const &value) {
+            Out result = handler(value);
+            perform_handler(result);
+            return result;
+        });
 }
 
-template <typename Out, typename In, typename Begin>
+template <typename Out, typename In, typename Begin, bool Syncable>
 template <std::size_t N, typename T>
-auto node<Out, In, Begin>::receive(receiver<T> &receiver) {
+auto node<Out, In, Begin, Syncable>::receive(receiver<T> &receiver) {
     return impl_ptr<impl>()->template receive<N>(*this, receiver);
 }
 
-template <typename Out, typename In, typename Begin>
+template <typename Out, typename In, typename Begin, bool Syncable>
 template <typename T, std::size_t N>
-auto node<Out, In, Begin>::receive(std::array<receiver<T>, N> receivers) {
+auto node<Out, In, Begin, Syncable>::receive(std::array<receiver<T>, N> receivers) {
     return impl_ptr<impl>()->template receive<T, N>(*this, receivers);
 }
 
-template <typename Out, typename In, typename Begin>
+template <typename Out, typename In, typename Begin, bool Syncable>
 template <typename T>
-auto node<Out, In, Begin>::receive(std::vector<receiver<T>> receivers) {
+auto node<Out, In, Begin, Syncable>::receive(std::vector<receiver<T>> receivers) {
     return impl_ptr<impl>()->template receive<T>(*this, receivers);
 }
 
-template <typename Out, typename In, typename Begin>
+template <typename Out, typename In, typename Begin, bool Syncable>
 template <typename T>
-[[nodiscard]] auto node<Out, In, Begin>::receive(std::initializer_list<receiver<T>> receivers) {
+[[nodiscard]] auto node<Out, In, Begin, Syncable>::receive(std::initializer_list<receiver<T>> receivers) {
     std::vector<receiver<T>> vector{receivers};
     return impl_ptr<impl>()->template receive<T>(*this, vector);
 }
 
-template <typename Out, typename In, typename Begin>
-auto node<Out, In, Begin>::receive_null(receiver<std::nullptr_t> &receiver) {
+template <typename Out, typename In, typename Begin, bool Syncable>
+auto node<Out, In, Begin, Syncable>::receive_null(receiver<std::nullptr_t> &receiver) {
     return this->perform(
         [output = receiver.flowable().make_output()](Out const &value) mutable { output.output_value(nullptr); });
 }
 
-template <typename Out, typename In, typename Begin>
-auto node<Out, In, Begin>::filter(std::function<bool(Out const &value)> filter_handler) {
+template <typename Out, typename In, typename Begin, bool Syncable>
+auto node<Out, In, Begin, Syncable>::filter(std::function<bool(Out const &value)> filter_handler) {
     auto imp = impl_ptr<impl>();
     flow::input<Begin> &input = imp->_input;
     auto weak_input = to_weak(input);
@@ -593,40 +637,40 @@ auto node<Out, In, Begin>::filter(std::function<bool(Out const &value)> filter_h
         }
     });
 
-    return node<Out, Out, Begin>(input, [](Out const &value) { return value; });
+    return node<Out, Out, Begin, Syncable>(input, [](Out const &value) { return value; });
 }
 
-template <typename Out, typename In, typename Begin>
+template <typename Out, typename In, typename Begin, bool Syncable>
 template <typename F>
-auto node<Out, In, Begin>::map(F handler) {
+auto node<Out, In, Begin, Syncable>::map(F handler) {
     return impl_ptr<impl>()->map(std::move(handler));
 }
 
-template <typename Out, typename In, typename Begin>
+template <typename Out, typename In, typename Begin, bool Syncable>
 template <typename T>
-auto node<Out, In, Begin>::to_value(T value) {
+auto node<Out, In, Begin, Syncable>::to_value(T value) {
     return impl_ptr<impl>()->map([value = std::move(value)](Out const &) { return value; });
 }
 
-template <typename Out, typename In, typename Begin>
-auto node<Out, In, Begin>::to_null() {
+template <typename Out, typename In, typename Begin, bool Syncable>
+auto node<Out, In, Begin, Syncable>::to_null() {
     return impl_ptr<impl>()->map([](Out const &) { return nullptr; });
 }
 
-template <typename Out, typename In, typename Begin>
-auto node<Out, In, Begin>::to_tuple() {
+template <typename Out, typename In, typename Begin, bool Syncable>
+auto node<Out, In, Begin, Syncable>::to_tuple() {
     return impl_ptr<impl>()->template to_tuple<>(*this);
 }
 
-template <typename Out, typename In, typename Begin>
-template <typename SubIn, typename SubBegin>
-auto node<Out, In, Begin>::merge(node<Out, SubIn, SubBegin> sub_node) {
+template <typename Out, typename In, typename Begin, bool Syncable>
+template <typename SubIn, typename SubBegin, bool SubSyncable>
+auto node<Out, In, Begin, Syncable>::merge(node<Out, SubIn, SubBegin, SubSyncable> sub_node) {
     auto imp = impl_ptr<impl>();
     flow::input<Begin> &input = imp->_input;
     auto weak_input = to_weak(input);
     std::size_t const next_idx = input.handlers_size() + 1;
 
-    auto sub_imp = sub_node.template impl_ptr<typename node<Out, SubIn, SubBegin>::impl>();
+    auto sub_imp = sub_node.template impl_ptr<typename node<Out, SubIn, SubBegin, SubSyncable>::impl>();
     auto &sub_input = sub_imp->_input;
 
     sub_input.template push_handler<SubIn>(
@@ -644,12 +688,12 @@ auto node<Out, In, Begin>::merge(node<Out, SubIn, SubBegin> sub_node) {
 
     input.add_sub_input(std::move(sub_input));
 
-    return node<Out, Out, Begin>(input, [](Out const &value) { return value; });
+    return node<Out, Out, Begin, Syncable | SubSyncable>(input, [](Out const &value) { return value; });
 }
 
-template <typename Out, typename In, typename Begin>
-template <typename SubOut, typename SubIn, typename SubBegin>
-auto node<Out, In, Begin>::pair(node<SubOut, SubIn, SubBegin> sub_node) {
+template <typename Out, typename In, typename Begin, bool Syncable>
+template <typename SubOut, typename SubIn, typename SubBegin, bool SubSyncable>
+auto node<Out, In, Begin, Syncable>::pair(node<SubOut, SubIn, SubBegin, SubSyncable> sub_node) {
     using opt_pair_t = std::pair<opt_t<Out>, opt_t<SubOut>>;
 
     auto imp = impl_ptr<impl>();
@@ -657,7 +701,7 @@ auto node<Out, In, Begin>::pair(node<SubOut, SubIn, SubBegin> sub_node) {
     auto weak_input = to_weak(input);
     std::size_t const next_idx = input.handlers_size() + 1;
 
-    auto sub_imp = sub_node.template impl_ptr<typename node<SubOut, SubIn, SubBegin>::impl>();
+    auto sub_imp = sub_node.template impl_ptr<typename node<SubOut, SubIn, SubBegin, SubSyncable>::impl>();
     auto &sub_input = sub_imp->_input;
 
     sub_input.template push_handler<SubIn>(
@@ -675,26 +719,23 @@ auto node<Out, In, Begin>::pair(node<SubOut, SubIn, SubBegin> sub_node) {
 
     input.add_sub_input(std::move(sub_input));
 
-    return node<opt_pair_t, opt_pair_t, Begin>(input, [](opt_pair_t const &value) { return value; });
+    return node<opt_pair_t, opt_pair_t, Begin, Syncable | SubSyncable>(input,
+                                                                       [](opt_pair_t const &value) { return value; });
 }
 
-template <typename Out, typename In, typename Begin>
-template <typename SubOut, typename SubIn, typename SubBegin>
-auto node<Out, In, Begin>::combine(node<SubOut, SubIn, SubBegin> sub_node) {
+template <typename Out, typename In, typename Begin, bool Syncable>
+template <typename SubOut, typename SubIn, typename SubBegin, bool SubSyncable>
+auto node<Out, In, Begin, Syncable>::combine(node<SubOut, SubIn, SubBegin, SubSyncable> sub_node) {
     return impl_ptr<impl>()->combine(*this, std::move(sub_node));
 }
 
-template <typename Out, typename In, typename Begin>
-typed_observer<Begin> node<Out, In, Begin>::end() {
-    auto &input = impl_ptr<impl>()->_input;
-    input.template push_handler<In>([handler = impl_ptr<impl>()->_handler](In const &value) { handler(value); });
-    return typed_observer<Begin>(std::move(input));
+template <typename Out, typename In, typename Begin, bool Syncable>
+typed_observer<Begin> node<Out, In, Begin, Syncable>::end() {
+    return impl_ptr<impl>()->end();
 }
 
-template <typename Out, typename In, typename Begin>
-typed_observer<Begin> node<Out, In, Begin>::sync() {
-    auto observer = this->end();
-    observer.sync();
-    return observer;
+template <typename Out, typename In, typename Begin, bool Syncable>
+typed_observer<Begin> node<Out, In, Begin, Syncable>::sync() {
+    return impl_ptr<impl>()->sync();
 }
 }  // namespace yas::flow

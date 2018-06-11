@@ -417,9 +417,7 @@ struct test_class {
 
     int received = -1;
 
-    auto flow = property.begin_value_flow().perform([&received](int const &value) { received = value; }).end();
-
-    flow.sync();
+    auto flow = property.begin_value_flow().perform([&received](int const &value) { received = value; }).sync();
 
     XCTAssertEqual(received, 10);
 
@@ -439,9 +437,7 @@ struct test_class {
                         received_old_value = value.old_value;
                         received_new_value = value.new_value;
                     })
-                    .end();
-
-    flow.sync();
+                    .sync();
 
     XCTAssertEqual(received_new_value, 10);
     XCTAssertEqual(received_old_value, 10);
@@ -455,8 +451,8 @@ struct test_class {
 - (void)test_receive {
     property<int> property{{.value = 100}};
 
-    flow::sender<int> sender;
-    auto flow = sender.begin().receive(property.receiver()).end();
+    flow::sender<int, true> sender;
+    auto flow = sender.begin().receive(property.receiver()).sync();
 
     sender.send_value(200);
 
