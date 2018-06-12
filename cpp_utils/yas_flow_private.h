@@ -398,6 +398,14 @@ struct property<T>::impl : sender<T, true>::impl {
         return this->_receiver;
     }
 
+    virtual bool is_equal(std::shared_ptr<base::impl> const &rhs) const override {
+        if (auto rhs_impl = std::dynamic_pointer_cast<typename property<T>::impl>(rhs)) {
+            return this->_value == rhs_impl->_value;
+        } else {
+            return false;
+        }
+    }
+
    private:
     T _value;
     std::mutex _set_mutex;

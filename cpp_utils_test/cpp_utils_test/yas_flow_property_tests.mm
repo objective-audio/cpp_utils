@@ -58,7 +58,7 @@ using namespace yas;
     XCTAssertEqual(property.value(), 200);
 }
 
-- (void)test_recursive {
+- (void)test_recursive_flow {
     flow::property<int> property1{123};
     flow::property<int> property2{456};
 
@@ -81,6 +81,20 @@ using namespace yas;
 
     XCTAssertEqual(property1.value(), 0);
     XCTAssertEqual(property2.value(), 0);
+}
+
+- (void)test_is_equal {
+    flow::property<int> property1a{1};
+    flow::property<int> property1b{1};
+    flow::property<int> property2{2};
+
+    XCTAssertTrue(property1a == property1a);
+    XCTAssertTrue(property1a == property1b);
+    XCTAssertFalse(property1a == property2);
+
+    XCTAssertFalse(property1a != property1a);
+    XCTAssertFalse(property1a != property1b);
+    XCTAssertTrue(property1a != property2);
 }
 
 @end
