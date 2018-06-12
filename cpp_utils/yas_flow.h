@@ -53,11 +53,25 @@ struct sender : sender_base<T> {
     sender();
     sender(std::nullptr_t);
 
-    ~sender() final;
-
     void set_sync_handler(std::function<opt_t<T>(void)>);
 
     [[nodiscard]] node<T, T, T, Syncable> begin();
+
+   protected:
+    sender(std::shared_ptr<impl> &&);
+};
+
+template <typename T>
+struct property : sender<T, true> {
+    class impl;
+
+    property(T);
+    property(std::nullptr_t);
+
+    ~property() final;
+
+    T const &value() const;
+    void set_value(T);
 };
 
 struct observer : base {

@@ -249,7 +249,7 @@ void sender_flowable<T>::sync(std::uintptr_t const key) {
     impl_ptr<impl>()->sync(key);
 }
 
-#pragma mark - sender
+#pragma mark - sender_base
 
 template <typename T>
 struct sender_base<T>::impl : base::impl, sender_flowable<T>::impl {
@@ -273,7 +273,7 @@ struct sender_base<T>::impl : base::impl, sender_flowable<T>::impl {
     void sync(std::uintptr_t const key) override {
     }
 
-    flow::receiver<T> &receiver() {
+    virtual flow::receiver<T> &receiver() {
         if (!this->_receiver) {
             this->_receiver = flow::receiver<T>{[weak_sender = to_weak(cast<flow::sender_base<T>>())](T const &value) {
                 if (auto sender = weak_sender.lock()) {
@@ -284,8 +284,10 @@ struct sender_base<T>::impl : base::impl, sender_flowable<T>::impl {
         return this->_receiver;
     }
 
-   private:
+   protected:
     flow::receiver<T> _receiver{nullptr};
+
+   private:
     std::mutex _send_mutex;
 };
 
@@ -315,7 +317,7 @@ receiver<T> &sender_base<T>::receiver() {
     return impl_ptr<impl>()->receiver();
 }
 
-#pragma mark - syncable_sender
+#pragma mark - sender
 
 template <typename T, bool Syncable>
 struct sender<T, Syncable>::impl : sender_base<T>::impl {
@@ -341,11 +343,12 @@ sender<T, Syncable>::sender() : sender_base<T>(std::make_shared<impl>()) {
 }
 
 template <typename T, bool Syncable>
-sender<T, Syncable>::sender(std::nullptr_t) : sender_base<T>(nullptr) {
+sender<T, Syncable>::sender(std::shared_ptr<impl> &&impl) : sender_base<T>(std::move(impl)) {
 }
 
 template <typename T, bool Syncable>
-sender<T, Syncable>::~sender() = default;
+sender<T, Syncable>::sender(std::nullptr_t) : sender_base<T>(nullptr) {
+}
 
 template <typename T, bool Syncable>
 void sender<T, Syncable>::set_sync_handler(std::function<opt_t<T>(void)> handler) {
@@ -355,6 +358,70 @@ void sender<T, Syncable>::set_sync_handler(std::function<opt_t<T>(void)> handler
 template <typename T, bool Syncable>
 node<T, T, T, Syncable> sender<T, Syncable>::begin() {
     return this->template impl_ptr<impl>()->begin(*this);
+}
+
+#pragma mark - property
+
+template <typename T>
+struct property<T>::impl : sender<T, true>::impl {
+    impl(T &&value) : _value(std::move(value)) {
+    }
+
+    T const &value() {
+        return this->_value;
+    }
+
+    void set_value(T &&value) {
+        if (auto lock = std::unique_lock<std::mutex>(this->_set_mutex, std::try_to_lock); lock.owns_lock()) {
+            if (this->_value != value) {
+                this->_value = std::move(value);
+                this->send_value(this->_value);
+            }
+        }
+    }
+
+    void sync(std::uintptr_t const key) override {
+        if (auto input = this->inputs.at(key).lock()) {
+            input.input_value(this->_value);
+        }
+    }
+
+    flow::receiver<T> &receiver() override {
+        if (!this->_receiver) {
+            this->_receiver =
+                flow::receiver<T>{[weak_property = to_weak(this->template cast<flow::property<T>>())](T const &value) {
+                    if (auto property = weak_property.lock()) {
+                        property.set_value(value);
+                    }
+                }};
+        }
+        return this->_receiver;
+    }
+
+   private:
+    T _value;
+    std::mutex _set_mutex;
+};
+
+template <typename T>
+property<T>::property(T value) : sender<T, true>(std::make_shared<impl>(std::move(value))) {
+}
+
+template <typename T>
+property<T>::property(std::nullptr_t) : sender<T, true>(nullptr) {
+}
+
+template <typename T>
+property<T>::~property() = default;
+
+template <typename T>
+T const &property<T>::value() const {
+    return this->template impl_ptr<impl>()->value();
+}
+
+template <typename T>
+void property<T>::set_value(T value) {
+    this->template impl_ptr<impl>()->set_value(std::move(value));
 }
 
 #pragma mark - node

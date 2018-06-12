@@ -72,6 +72,7 @@ class subject<Key, T>::impl {
     using observers_t = std::unordered_map<std::experimental::optional<Key>, observer_set_t>;
     observers_t observers;
     flow::sender<flow_context_t> sender = nullptr;
+    std::vector<base> _sender_observers;
 
     void add_observer(observer<Key, T> const &obs, std::experimental::optional<Key> const &key) {
         if (observers.count(key) == 0) {
@@ -134,13 +135,12 @@ class subject<Key, T>::impl {
         if (!this->sender) {
             flow::sender<flow_context_t> sender;
 
-            auto observer = subject.make_wild_card_observer([weak_sender = to_weak(sender)](auto const &context) {
-                if (auto sender = weak_sender.lock()) {
-                    sender.send_value(context);
-                }
-            });
-
-            sender.set_sync_handler([observer]() { return nullopt; });
+            this->_sender_observers.emplace_back(
+                subject.make_wild_card_observer([weak_sender = to_weak(sender)](auto const &context) {
+                    if (auto sender = weak_sender.lock()) {
+                        sender.send_value(context);
+                    }
+                }));
 
             this->sender = std::move(sender);
         }
