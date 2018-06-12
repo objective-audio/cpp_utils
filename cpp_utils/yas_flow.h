@@ -71,6 +71,7 @@ struct property : sender<T, true> {
     ~property() final;
 
     T const &value() const;
+    T &value();
     void set_value(T);
 };
 

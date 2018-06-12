@@ -367,7 +367,7 @@ struct property<T>::impl : sender<T, true>::impl {
     impl(T &&value) : _value(std::move(value)) {
     }
 
-    T const &value() {
+    T &value() {
         return this->_value;
     }
 
@@ -424,6 +424,11 @@ property<T>::~property() = default;
 
 template <typename T>
 T const &property<T>::value() const {
+    return this->template impl_ptr<impl>()->value();
+}
+
+template <typename T>
+T &property<T>::value() {
     return this->template impl_ptr<impl>()->value();
 }
 
