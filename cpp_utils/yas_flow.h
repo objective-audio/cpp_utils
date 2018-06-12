@@ -149,6 +149,9 @@ struct node : base {
     [[nodiscard]] typed_observer<Begin> end();
     [[nodiscard]] typed_observer<Begin> sync();
 };
+
+template <typename T, bool Syncable>
+using node_t = node<T, T, T, Syncable>;
 }  // namespace yas::flow
 
 #include "yas_flow_private.h"
