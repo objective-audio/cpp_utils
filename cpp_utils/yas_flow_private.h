@@ -610,13 +610,13 @@ struct node<Out, In, Begin, Syncable>::impl : base::impl {
         return typed_observer<Begin>(this->_input);
     }
 
-    template <bool S = Syncable, std::enable_if_t<!S, std::nullptr_t> = nullptr>
     flow::typed_observer<Begin> end() {
         return this->_end();
     }
 
-    template <bool S = Syncable, std::enable_if_t<S, std::nullptr_t> = nullptr>
     flow::typed_observer<Begin> sync() {
+        static_assert(Syncable, "Syncable must be true.");
+
         auto observer = this->_end();
         observer.sync();
         return observer;
