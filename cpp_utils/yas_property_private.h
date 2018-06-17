@@ -279,21 +279,6 @@ typename property<T>::subject_t &property<T>::subject() {
 }
 
 template <typename T>
-flow::node<T, T, T, true> property<T>::begin_value_flow() {
-    return impl_ptr<impl>()->begin_value_flow(*this);
-}
-
-template <typename T>
-typename property<T>::flow_context_t property<T>::begin_context_flow() {
-    return impl_ptr<impl>()->begin_context_flow(*this);
-}
-
-template <typename T>
-flow::receiver<T> &property<T>::receiver() {
-    return impl_ptr<impl>()->receiver;
-}
-
-template <typename T>
 bool operator==(T const &lhs, property<T> const &rhs) {
     return lhs == rhs.value();
 }
