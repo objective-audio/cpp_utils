@@ -452,7 +452,7 @@ struct test_class {
     property<int> property{{.value = 100}};
 
     flow::sender<int, true> sender;
-    auto flow = sender.begin().receive(property.receiver()).sync();
+    auto flow = sender.begin_flow().receive(property.receiver()).sync();
 
     sender.send_value(200);
 

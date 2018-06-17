@@ -55,7 +55,7 @@ struct sender : sender_base<T> {
 
     void set_sync_handler(std::function<opt_t<T>(void)>);
 
-    [[nodiscard]] node<T, T, T, Syncable> begin();
+    [[nodiscard]] node<T, T, T, Syncable> begin_flow();
 
    protected:
     sender(std::shared_ptr<impl> &&);

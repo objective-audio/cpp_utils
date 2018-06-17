@@ -90,7 +90,7 @@ class property<T>::impl : public base::impl {
             this->_value_sender = std::move(sender);
         }
 
-        return this->_value_sender.begin();
+        return this->_value_sender.begin_flow();
     }
 
     [[nodiscard]] flow_context_t begin_context_flow(property<T> &property) {
@@ -121,7 +121,7 @@ class property<T>::impl : public base::impl {
             this->_context_sender = std::move(sender);
         }
 
-        return this->_context_sender.begin();
+        return this->_context_sender.begin_flow();
     }
 
     private : T _value;

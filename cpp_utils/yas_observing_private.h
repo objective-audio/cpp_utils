@@ -145,7 +145,7 @@ class subject<Key, T>::impl {
             this->sender = std::move(sender);
         }
 
-        return this->sender.begin();
+        return this->sender.begin_flow();
     }
 };
 

@@ -356,7 +356,7 @@ void sender<T, Syncable>::set_sync_handler(std::function<opt_t<T>(void)> handler
 }
 
 template <typename T, bool Syncable>
-node<T, T, T, Syncable> sender<T, Syncable>::begin() {
+node<T, T, T, Syncable> sender<T, Syncable>::begin_flow() {
     return this->template impl_ptr<impl>()->begin(*this);
 }
 

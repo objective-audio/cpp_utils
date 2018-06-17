@@ -27,7 +27,7 @@ using namespace yas;
 
     flow::sender<int> sender;
 
-    auto flow = sender.begin().perform([&received](int const &value) { received = value; }).end();
+    auto flow = sender.begin_flow().perform([&received](int const &value) { received = value; }).end();
 
     XCTAssertEqual(received, -1);
 
@@ -42,8 +42,8 @@ using namespace yas;
 
     flow::sender<int> sender;
 
-    auto flow1 = sender.begin().perform([&received1](int const &value) { received1 = value; }).end();
-    auto flow2 = sender.begin().perform([&received2](int const &value) { received2 = value; }).end();
+    auto flow1 = sender.begin_flow().perform([&received1](int const &value) { received1 = value; }).end();
+    auto flow2 = sender.begin_flow().perform([&received2](int const &value) { received2 = value; }).end();
 
     sender.send_value(3);
 
@@ -57,8 +57,8 @@ using namespace yas;
     flow::sender<int> sender1;
     flow::sender<int> sender2;
 
-    auto flow1 = sender1.begin().receive(sender2.receiver()).end();
-    auto flow2 = sender2.begin().perform([&received](int const &value) { received = value; }).end();
+    auto flow1 = sender1.begin_flow().receive(sender2.receiver()).end();
+    auto flow2 = sender2.begin_flow().perform([&received](int const &value) { received = value; }).end();
 
     sender1.send_value(4);
 
@@ -75,7 +75,7 @@ using namespace yas;
         sender.send_value(value + 1);
     }};
 
-    auto flow = sender.begin().receive(receiver).end();
+    auto flow = sender.begin_flow().receive(receiver).end();
 
     sender.send_value(1);
 
@@ -87,7 +87,7 @@ using namespace yas;
 
     int received = -1;
 
-    auto flow = sender.begin()
+    auto flow = sender.begin_flow()
                     .map([](int const &value) { return value + 1; })
                     .perform([&received](int const &value) { received = value; })
                     .end();
@@ -102,7 +102,7 @@ using namespace yas;
 
     std::string received = "";
 
-    auto flow = sender.begin()
+    auto flow = sender.begin_flow()
                     .filter([](int const &) { return true; })
                     .map([](int const &value) { return value > 0; })
                     .filter([](bool const &) { return true; })
@@ -125,7 +125,7 @@ using namespace yas;
 
     std::string received = "";
 
-    auto flow = sender.begin()
+    auto flow = sender.begin_flow()
                     .to_value(std::string("test_value"))
                     .perform([&received](std::string const &value) { received = value; })
                     .end();
@@ -140,7 +140,7 @@ using namespace yas;
 
     bool called = false;
 
-    auto flow = sender.begin().to_null().perform([&called](std::nullptr_t const &) { called = true; }).end();
+    auto flow = sender.begin_flow().to_null().perform([&called](std::nullptr_t const &) { called = true; }).end();
 
     sender.send_value(1);
 
@@ -152,7 +152,8 @@ using namespace yas;
 
     opt_t<std::tuple<int>> called;
 
-    auto flow = sender.begin().to_tuple().perform([&called](std::tuple<int> const &value) { called = value; }).end();
+    auto flow =
+        sender.begin_flow().to_tuple().perform([&called](std::tuple<int> const &value) { called = value; }).end();
 
     sender.send_value(1);
 
@@ -165,7 +166,7 @@ using namespace yas;
 
     opt_t<std::tuple<int>> called;
 
-    auto flow = sender.begin().to_tuple().perform([&called](auto const &value) { called = value; }).end();
+    auto flow = sender.begin_flow().to_tuple().perform([&called](auto const &value) { called = value; }).end();
 
     sender.send_value(std::make_tuple(int(1)));
 
@@ -178,7 +179,7 @@ using namespace yas;
 
     opt_t<std::tuple<int, std::string>> called;
 
-    auto flow = sender.begin().to_tuple().perform([&called](auto const &value) { called = value; }).end();
+    auto flow = sender.begin_flow().to_tuple().perform([&called](auto const &value) { called = value; }).end();
 
     sender.send_value(std::make_pair(int(1), std::string("2")));
 
@@ -193,7 +194,7 @@ using namespace yas;
 
     int received = -1;
 
-    auto flow = sender.begin().perform([&received](int const &value) { received = value; }).end();
+    auto flow = sender.begin_flow().perform([&received](int const &value) { received = value; }).end();
     flow.sync();
 
     XCTAssertEqual(received, 100);
@@ -205,7 +206,7 @@ using namespace yas;
 
     int received = -1;
 
-    flow::observer flow = sender.begin().perform([&received](int const &value) { received = value; }).end();
+    flow::observer flow = sender.begin_flow().perform([&received](int const &value) { received = value; }).end();
     flow.sync();
 
     XCTAssertEqual(received, 100);
@@ -218,8 +219,8 @@ using namespace yas;
     int received1 = -1;
     int received2 = -1;
 
-    auto flow1 = sender.begin().perform([&received1](int const &value) { received1 = value; }).end();
-    auto flow2 = sender.begin().perform([&received2](int const &value) { received2 = value; }).end();
+    auto flow1 = sender.begin_flow().perform([&received1](int const &value) { received1 = value; }).end();
+    auto flow2 = sender.begin_flow().perform([&received2](int const &value) { received2 = value; }).end();
 
     flow1.sync();
 
@@ -233,7 +234,7 @@ using namespace yas;
 
     int received = -1;
 
-    auto flow = sender.begin().perform([&received](int const &value) { received = value; }).sync();
+    auto flow = sender.begin_flow().perform([&received](int const &value) { received = value; }).sync();
 
     XCTAssertEqual(received, 100);
 }
@@ -247,8 +248,8 @@ using namespace yas;
 
     std::vector<std::pair<int, int>> received;
 
-    auto flow = sender.begin()
-                    .combine(sub_sender.begin())
+    auto flow = sender.begin_flow()
+                    .combine(sub_sender.begin_flow())
                     .perform([&received](auto const &pair) { received.emplace_back(pair); })
                     .sync();
 
@@ -267,8 +268,8 @@ using namespace yas;
 
     std::vector<int> received;
 
-    auto flow = sender.begin()
-                    .merge(sub_sender.begin())
+    auto flow = sender.begin_flow()
+                    .merge(sub_sender.begin_flow())
                     .perform([&received](int const &value) { received.emplace_back(value); })
                     .sync();
 
@@ -284,7 +285,7 @@ using namespace yas;
     flow::sender<int> sender;
     flow::receiver<std::string> receiver{[&received](std::string const &value) { received = value; }};
 
-    auto node = sender.begin().map([](int const &value) { return std::to_string(value); }).receive(receiver).end();
+    auto node = sender.begin_flow().map([](int const &value) { return std::to_string(value); }).receive(receiver).end();
 
     sender.send_value(3);
 
@@ -300,7 +301,7 @@ using namespace yas;
     flow::receiver<int> receiver1{[&received1](int const &value) { received1 = value; }};
     std::array<flow::receiver<int>, 2> receivers{receiver0, receiver1};
 
-    flow::observer flow = sender.begin().receive(receivers).end();
+    flow::observer flow = sender.begin_flow().receive(receivers).end();
 
     sender.send_value(std::array<int, 2>{10, 20});
 
@@ -316,7 +317,7 @@ using namespace yas;
     flow::receiver<int> receiver0{[&received0](int const &value) { received0 = value; }};
     flow::receiver<int> receiver1{[&received1](int const &value) { received1 = value; }};
 
-    flow::observer flow = sender.begin().receive<0>(receiver0).receive<1>(receiver1).end();
+    flow::observer flow = sender.begin_flow().receive<0>(receiver0).receive<1>(receiver1).end();
 
     sender.send_value(std::array<int, 2>{10, 20});
 
@@ -333,7 +334,7 @@ using namespace yas;
     flow::receiver<int> receiver1{[&received1](int const &value) { received1 = value; }};
     std::vector<flow::receiver<int>> receivers{receiver0, receiver1};
 
-    flow::observer flow = sender.begin().receive(receivers).end();
+    flow::observer flow = sender.begin_flow().receive(receivers).end();
 
     sender.send_value(std::vector<int>{30, 40});
 
@@ -349,7 +350,7 @@ using namespace yas;
     flow::receiver<int> receiver0{[&received0](int const &value) { received0 = value; }};
     flow::receiver<int> receiver1{[&received1](int const &value) { received1 = value; }};
 
-    flow::observer flow = sender.begin().receive({receiver0, receiver1}).end();
+    flow::observer flow = sender.begin_flow().receive({receiver0, receiver1}).end();
 
     sender.send_value(std::vector<int>{50, 60});
 
@@ -367,7 +368,7 @@ using namespace yas;
     flow::receiver<std::string> string_receiver{
         [&string_received](std::string const &value) { string_received = value; }};
 
-    auto flow = sender.begin().receive<0>(int_receiver).receive<1>(string_receiver).end();
+    auto flow = sender.begin_flow().receive<0>(int_receiver).receive<1>(string_receiver).end();
 
     sender.send_value(std::make_tuple(int(10), std::string("20")));
 
@@ -381,7 +382,7 @@ using namespace yas;
     flow::sender<int> sender;
     flow::receiver<> receiver{[&received]() { received = true; }};
 
-    auto flow = sender.begin().receive_null(receiver).end();
+    auto flow = sender.begin_flow().receive_null(receiver).end();
 
     sender.send_value(4);
 
@@ -395,7 +396,7 @@ using namespace yas;
 
     flow::receiver<int> receiver{[&received](int const &value) { received = value; }};
 
-    auto flow = sender.begin().receive(receiver).end();
+    auto flow = sender.begin_flow().receive(receiver).end();
 
     sender.send_value(100);
 
@@ -407,7 +408,7 @@ using namespace yas;
 
     flow::sender<int> sender;
 
-    auto flow = sender.begin()
+    auto flow = sender.begin_flow()
                     .map([](int const &value) { return value; })
                     .filter([](float const &value) { return value > 2.5f; })
                     .perform([&received](float const &value) { received = value; })
@@ -428,9 +429,9 @@ using namespace yas;
     flow::sender<int> sender;
     flow::sender<float> sub_sender;
 
-    auto sub_flow = sub_sender.begin().map([](float const &value) { return std::to_string(int(value)); });
+    auto sub_flow = sub_sender.begin_flow().map([](float const &value) { return std::to_string(int(value)); });
 
-    auto flow = sender.begin()
+    auto flow = sender.begin_flow()
                     .map([](int const &value) { return std::to_string(value); })
                     .merge(sub_flow)
                     .perform([&received](std::string const &value) { received = value; })
@@ -453,9 +454,9 @@ using namespace yas;
 
     opt_pair_t received;
 
-    auto sub_flow = sub_sender.begin();
+    auto sub_flow = sub_sender.begin_flow();
     auto main_flow =
-        main_sender.begin().pair(sub_flow).perform([&received](auto const &value) { received = value; }).end();
+        main_sender.begin_flow().pair(sub_flow).perform([&received](auto const &value) { received = value; }).end();
 
     main_sender.send_value(1);
 
@@ -476,9 +477,9 @@ using namespace yas;
 
     opt_pair_t received;
 
-    auto sub_flow = sub_sender.begin();
+    auto sub_flow = sub_sender.begin_flow();
     auto main_flow =
-        main_sender.begin().combine(sub_flow).perform([&received](auto const &value) { received = value; }).end();
+        main_sender.begin_flow().combine(sub_flow).perform([&received](auto const &value) { received = value; }).end();
 
     main_sender.send_value(1);
 
@@ -496,9 +497,9 @@ using namespace yas;
     flow::sender<std::string> sub_sender;
     flow::sender<float> sub_sender2;
 
-    auto sub_flow = sub_sender.begin().to_tuple();
-    auto main_flow = main_sender.begin().to_tuple();
-    auto sub_flow2 = sub_sender2.begin().to_tuple();
+    auto sub_flow = sub_sender.begin_flow().to_tuple();
+    auto main_flow = main_sender.begin_flow().to_tuple();
+    auto sub_flow2 = sub_sender2.begin_flow().to_tuple();
 
     opt_t<std::tuple<int, std::string, float>> received;
 
@@ -521,7 +522,7 @@ using namespace yas;
     flow::sender<int> sender;
 
     flow::node<std::string, int, int, false> toed_flow =
-        sender.begin().map([](int const &value) { return std::to_string(value); });
+        sender.begin_flow().map([](int const &value) { return std::to_string(value); });
 
     flow::node<std::string, std::string, int, false> normalized_flow = toed_flow.normalize();
 

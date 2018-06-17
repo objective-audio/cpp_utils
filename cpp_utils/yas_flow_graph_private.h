@@ -57,7 +57,7 @@ struct flow::graph<State, Signal>::impl : base::impl {
         flow::sender<Signal> sender;
 
         auto observer =
-            sender.begin()
+            sender.begin_flow()
                 .map([handler = std::move(handler), weak_graph = to_weak(graph)](Signal const &signal) {
                     state_out<State> state_out = handler(signal);
                     return graph_next<State, Signal>{.state = state_out.state,
