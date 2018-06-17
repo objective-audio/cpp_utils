@@ -66,7 +66,7 @@ class property<T>::impl : public base::impl {
 
     [[nodiscard]] flow::node<T, T, T, true> begin_value_flow(property<T> &property) {
         if (!this->_value_sender) {
-            flow::sender<T, true> sender;
+            flow::sync_sender<T> sender;
 
             subject_t &subject = this->subject();
 
@@ -95,7 +95,7 @@ class property<T>::impl : public base::impl {
 
     [[nodiscard]] flow_context_t begin_context_flow(property<T> &property) {
         if (!this->_context_sender) {
-            flow::sender<change_context, true> sender;
+            flow::sync_sender<change_context> sender;
 
             subject_t &subject = this->_subject;
 

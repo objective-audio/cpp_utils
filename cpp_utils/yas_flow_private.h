@@ -321,20 +321,10 @@ receiver<T> &sender_base<T>::receiver() {
 
 template <typename T, bool Syncable>
 struct sender<T, Syncable>::impl : sender_base<T>::impl {
-    std::function<opt_t<T>(void)> _sync_handler = []() { return nullopt; };
-
     node<T, T, T, Syncable> begin(sender<T, Syncable> &sender) {
         flow::input<T> input{to_weak(sender)};
         this->inputs.insert(std::make_pair(input.identifier(), to_weak(input)));
         return input.template begin<Syncable>();
-    }
-
-    void sync(std::uintptr_t const key) override {
-        if (auto value = this->_sync_handler()) {
-            if (auto input = this->inputs.at(key).lock()) {
-                input.input_value(*value);
-            }
-        }
     }
 };
 
@@ -351,13 +341,36 @@ sender<T, Syncable>::sender(std::nullptr_t) : sender_base<T>(nullptr) {
 }
 
 template <typename T, bool Syncable>
-void sender<T, Syncable>::set_sync_handler(std::function<opt_t<T>(void)> handler) {
-    this->template impl_ptr<impl>()->_sync_handler = std::move(handler);
-}
-
-template <typename T, bool Syncable>
 node<T, T, T, Syncable> sender<T, Syncable>::begin_flow() {
     return this->template impl_ptr<impl>()->begin(*this);
+}
+
+#pragma mark - sync_sender
+
+template <typename T>
+struct sync_sender<T>::impl : sender<T, true>::impl {
+    std::function<opt_t<T>(void)> _sync_handler = []() { return nullopt; };
+
+    void sync(std::uintptr_t const key) override {
+        if (auto value = this->_sync_handler()) {
+            if (auto input = this->inputs.at(key).lock()) {
+                input.input_value(*value);
+            }
+        }
+    }
+};
+
+template <typename T>
+sync_sender<T>::sync_sender() : sender<T, true>(std::make_shared<impl>()) {
+}
+
+template <typename T>
+sync_sender<T>::sync_sender(std::nullptr_t) : sender<T, true>(nullptr) {
+}
+
+template <typename T>
+void sync_sender<T>::set_sync_handler(std::function<opt_t<T>(void)> handler) {
+    this->template impl_ptr<impl>()->_sync_handler = std::move(handler);
 }
 
 #pragma mark - property

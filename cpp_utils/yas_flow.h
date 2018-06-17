@@ -53,12 +53,20 @@ struct sender : sender_base<T> {
     sender();
     sender(std::nullptr_t);
 
-    void set_sync_handler(std::function<opt_t<T>(void)>);
-
     [[nodiscard]] node<T, T, T, Syncable> begin_flow();
 
    protected:
     sender(std::shared_ptr<impl> &&);
+};
+
+template <typename T>
+struct sync_sender : sender<T, true> {
+    class impl;
+
+    sync_sender();
+    sync_sender(std::nullptr_t);
+
+    void set_sync_handler(std::function<opt_t<T>(void)>);
 };
 
 template <typename T>
