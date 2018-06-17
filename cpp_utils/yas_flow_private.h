@@ -358,6 +358,12 @@ struct sync_sender<T>::impl : sender<T, true>::impl {
             }
         }
     }
+
+    void sync() {
+        if (auto value = this->_sync_handler()) {
+            this->send_value(*value);
+        }
+    }
 };
 
 template <typename T>
@@ -371,6 +377,11 @@ sync_sender<T>::sync_sender(std::nullptr_t) : sender<T, true>(nullptr) {
 template <typename T>
 void sync_sender<T>::set_sync_handler(std::function<opt_t<T>(void)> handler) {
     this->template impl_ptr<impl>()->_sync_handler = std::move(handler);
+}
+
+template <typename T>
+void sync_sender<T>::sync() const {
+    this->template impl_ptr<impl>()->sync();
 }
 
 #pragma mark - property

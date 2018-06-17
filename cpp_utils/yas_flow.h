@@ -67,6 +67,7 @@ struct sync_sender : sender<T, true> {
     sync_sender(std::nullptr_t);
 
     void set_sync_handler(std::function<opt_t<T>(void)>);
+    void sync() const;
 };
 
 template <typename T>
