@@ -83,7 +83,7 @@ struct property : sender_base<T> {
     T &value();
     void set_value(T);
 
-    node<T, T, T, true> begin_flow();
+    [[nodiscard]] node<T, T, T, true> begin_flow();
 
     [[nodiscard]] receiver<T> &receiver();
 };
