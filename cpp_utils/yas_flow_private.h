@@ -326,24 +326,24 @@ receiver<T> &sender_base<T>::receiver() {
 
 #pragma mark - sender
 
-template <typename T, bool Syncable>
-struct sender<T, Syncable>::impl : sender_base<T>::impl {};
+template <typename T>
+struct sender<T>::impl : sender_base<T>::impl {};
 
-template <typename T, bool Syncable>
-sender<T, Syncable>::sender() : sender_base<T>(std::make_shared<impl>()) {
+template <typename T>
+sender<T>::sender() : sender_base<T>(std::make_shared<impl>()) {
 }
 
-template <typename T, bool Syncable>
-sender<T, Syncable>::sender(std::shared_ptr<impl> &&impl) : sender_base<T>(std::move(impl)) {
+template <typename T>
+sender<T>::sender(std::shared_ptr<impl> &&impl) : sender_base<T>(std::move(impl)) {
 }
 
-template <typename T, bool Syncable>
-sender<T, Syncable>::sender(std::nullptr_t) : sender_base<T>(nullptr) {
+template <typename T>
+sender<T>::sender(std::nullptr_t) : sender_base<T>(nullptr) {
 }
 
-template <typename T, bool Syncable>
-node<T, T, T, Syncable> sender<T, Syncable>::begin_flow() {
-    return this->template impl_ptr<impl>()->template begin<Syncable>(*this);
+template <typename T>
+node<T, T, T, false> sender<T>::begin_flow() {
+    return this->template impl_ptr<impl>()->template begin<false>(*this);
 }
 
 #pragma mark - sync_sender
@@ -372,7 +372,7 @@ sync_sender<T>::sync_sender() : sender_base<T>(std::make_shared<impl>()) {
 }
 
 template <typename T>
-sync_sender<T>::sync_sender(std::nullptr_t) : sender<T, true>(nullptr) {
+sync_sender<T>::sync_sender(std::nullptr_t) : sender_base<T>(nullptr) {
 }
 
 template <typename T>

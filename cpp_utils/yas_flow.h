@@ -46,14 +46,14 @@ struct sender_base : base {
     sender_flowable<T> _flowable = nullptr;
 };
 
-template <typename T, bool Syncable = false>
+template <typename T>
 struct sender : sender_base<T> {
     class impl;
 
     sender();
     sender(std::nullptr_t);
 
-    [[nodiscard]] node<T, T, T, Syncable> begin_flow();
+    [[nodiscard]] node<T, T, T, false> begin_flow();
 
    protected:
     sender(std::shared_ptr<impl> &&);
