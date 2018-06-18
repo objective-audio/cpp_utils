@@ -293,9 +293,8 @@ struct sender<T>::impl : sender_base<T>::impl {
     void send_value(T const &value) {
         if (auto lock = std::unique_lock<std::mutex>(this->_send_mutex, std::try_to_lock); lock.owns_lock()) {
             for (auto &pair : this->inputs) {
-                weak<flow::input<T>> &weak_input = pair.second;
-                if (!!weak_input) {
-                    weak_input.lock().input_value(value);
+                if (auto input = pair.second.lock()) {
+                    input.input_value(value);
                 }
             }
         }
@@ -362,14 +361,18 @@ struct sync_sender<T>::impl : sender_base<T>::impl {
     void sync() {
         if (auto lock = std::unique_lock<std::mutex>(this->_sync_mutex, std::try_to_lock); lock.owns_lock()) {
             if (auto value = this->_sync_handler()) {
-                this->send_value(*value);
+                for (auto &pair : this->inputs) {
+                    if (auto input = pair.second.lock()) {
+                        input.input_value(*value);
+                    }
+                }
             }
         }
     }
 
     flow::receiver<> &receiver() {
         if (!this->_receiver) {
-            this->_receiver = flow::receiver<T>{[weak_sender = to_weak(this->template cast<flow::sync_sender<T>>())] {
+            this->_receiver = flow::receiver<>{[weak_sender = to_weak(this->template cast<flow::sync_sender<T>>())] {
                 if (auto sender = weak_sender.lock()) {
                     sender.sync();
                 }
@@ -380,7 +383,7 @@ struct sync_sender<T>::impl : sender_base<T>::impl {
 
    private:
     std::mutex _sync_mutex;
-    flow::receiver<T> _receiver{nullptr};
+    flow::receiver<> _receiver{nullptr};
 };
 
 template <typename T>
