@@ -70,6 +70,8 @@ struct sync_sender : sender_base<T> {
     void sync() const;
 
     [[nodiscard]] node<T, T, T, true> begin_flow();
+
+    [[nodiscard]] receiver<> &receiver();
 };
 
 template <typename T>

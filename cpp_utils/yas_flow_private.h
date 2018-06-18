@@ -360,10 +360,27 @@ struct sync_sender<T>::impl : sender_base<T>::impl {
     }
 
     void sync() {
-        if (auto value = this->_sync_handler()) {
-            this->send_value(*value);
+        if (auto lock = std::unique_lock<std::mutex>(this->_sync_mutex, std::try_to_lock); lock.owns_lock()) {
+            if (auto value = this->_sync_handler()) {
+                this->send_value(*value);
+            }
         }
     }
+
+    flow::receiver<> &receiver() {
+        if (!this->_receiver) {
+            this->_receiver = flow::receiver<T>{[weak_sender = to_weak(this->template cast<flow::sync_sender<T>>())] {
+                if (auto sender = weak_sender.lock()) {
+                    sender.sync();
+                }
+            }};
+        }
+        return this->_receiver;
+    }
+
+   private:
+    std::mutex _sync_mutex;
+    flow::receiver<T> _receiver{nullptr};
 };
 
 template <typename T>
@@ -387,6 +404,11 @@ void sync_sender<T>::sync() const {
 template <typename T>
 flow::node<T, T, T, true> sync_sender<T>::begin_flow() {
     return this->template impl_ptr<impl>()->template begin<true>(*this);
+}
+
+template <typename T>
+flow::receiver<> &sync_sender<T>::receiver() {
+    return this->template impl_ptr<impl>()->receiver();
 }
 
 #pragma mark - property
