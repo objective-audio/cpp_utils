@@ -43,11 +43,11 @@ struct sender_base : base {
 };
 
 template <typename T>
-struct sender : sender_base<T> {
+struct notifier : sender_base<T> {
     class impl;
 
-    sender();
-    sender(std::nullptr_t);
+    notifier();
+    notifier(std::nullptr_t);
 
     void send_value(T const &);
 
@@ -56,7 +56,7 @@ struct sender : sender_base<T> {
     [[nodiscard]] receiver<T> &receiver();
 
    protected:
-    sender(std::shared_ptr<impl> &&);
+    notifier(std::shared_ptr<impl> &&);
 };
 
 template <typename T>

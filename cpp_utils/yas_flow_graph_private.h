@@ -54,7 +54,7 @@ struct flow::graph<State, Signal>::impl : base::impl {
             throw std::runtime_error("observer state exists.");
         }
 
-        flow::sender<Signal> sender;
+        flow::notifier<Signal> sender;
 
         auto observer =
             sender.begin_flow()

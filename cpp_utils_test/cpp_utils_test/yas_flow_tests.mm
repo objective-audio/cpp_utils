@@ -25,7 +25,7 @@ using namespace yas;
 - (void)test_sender_begin {
     int received = -1;
 
-    flow::sender<int> sender;
+    flow::notifier<int> sender;
 
     auto flow = sender.begin_flow().perform([&received](int const &value) { received = value; }).end();
 
@@ -40,7 +40,7 @@ using namespace yas;
     int received1 = -1;
     int received2 = -1;
 
-    flow::sender<int> sender;
+    flow::notifier<int> sender;
 
     auto flow1 = sender.begin_flow().perform([&received1](int const &value) { received1 = value; }).end();
     auto flow2 = sender.begin_flow().perform([&received2](int const &value) { received2 = value; }).end();
@@ -54,8 +54,8 @@ using namespace yas;
 - (void)test_sender_receiver {
     int received = -1;
 
-    flow::sender<int> sender1;
-    flow::sender<int> sender2;
+    flow::notifier<int> sender1;
+    flow::notifier<int> sender2;
 
     auto flow1 = sender1.begin_flow().receive(sender2.receiver()).end();
     auto flow2 = sender2.begin_flow().perform([&received](int const &value) { received = value; }).end();
@@ -68,7 +68,7 @@ using namespace yas;
 - (void)test_sender_block_recursive_call {
     int received = -1;
 
-    flow::sender<int> sender;
+    flow::notifier<int> sender;
 
     flow::receiver<int> receiver{[&sender, &received](int const &value) {
         received = value;
@@ -83,7 +83,7 @@ using namespace yas;
 }
 
 - (void)test_to {
-    flow::sender<int> sender;
+    flow::notifier<int> sender;
 
     int received = -1;
 
@@ -98,7 +98,7 @@ using namespace yas;
 }
 
 - (void)test_to_type {
-    flow::sender<int> sender;
+    flow::notifier<int> sender;
 
     std::string received = "";
 
@@ -121,7 +121,7 @@ using namespace yas;
 }
 
 - (void)test_to_value {
-    flow::sender<int> sender;
+    flow::notifier<int> sender;
 
     std::string received = "";
 
@@ -136,7 +136,7 @@ using namespace yas;
 }
 
 - (void)test_to_null {
-    flow::sender<int> sender;
+    flow::notifier<int> sender;
 
     bool called = false;
 
@@ -148,7 +148,7 @@ using namespace yas;
 }
 
 - (void)test_to_tuple {
-    flow::sender<int> sender;
+    flow::notifier<int> sender;
 
     opt_t<std::tuple<int>> called;
 
@@ -162,7 +162,7 @@ using namespace yas;
 }
 
 - (void)test_to_tuple_from_tuple {
-    flow::sender<std::tuple<int>> sender;
+    flow::notifier<std::tuple<int>> sender;
 
     opt_t<std::tuple<int>> called;
 
@@ -175,7 +175,7 @@ using namespace yas;
 }
 
 - (void)test_to_tuple_from_pair {
-    flow::sender<std::pair<int, std::string>> sender;
+    flow::notifier<std::pair<int, std::string>> sender;
 
     opt_t<std::tuple<int, std::string>> called;
 
@@ -282,7 +282,7 @@ using namespace yas;
 - (void)test_receive {
     std::string received = "";
 
-    flow::sender<int> sender;
+    flow::notifier<int> sender;
     flow::receiver<std::string> receiver{[&received](std::string const &value) { received = value; }};
 
     auto node = sender.begin_flow().map([](int const &value) { return std::to_string(value); }).receive(receiver).end();
@@ -293,7 +293,7 @@ using namespace yas;
 }
 
 - (void)test_receive_array {
-    flow::sender<std::array<int, 2>> sender;
+    flow::notifier<std::array<int, 2>> sender;
     int received0 = -1;
     int received1 = -1;
 
@@ -310,7 +310,7 @@ using namespace yas;
 }
 
 - (void)test_receive_array_individual {
-    flow::sender<std::array<int, 2>> sender;
+    flow::notifier<std::array<int, 2>> sender;
     int received0 = -1;
     int received1 = -1;
 
@@ -326,7 +326,7 @@ using namespace yas;
 }
 
 - (void)test_receiver_vector {
-    flow::sender<std::vector<int>> sender;
+    flow::notifier<std::vector<int>> sender;
     int received0 = -1;
     int received1 = -1;
 
@@ -343,7 +343,7 @@ using namespace yas;
 }
 
 - (void)test_receiver_initializer_list {
-    flow::sender<std::vector<int>> sender;
+    flow::notifier<std::vector<int>> sender;
     int received0 = -1;
     int received1 = -1;
 
@@ -359,7 +359,7 @@ using namespace yas;
 }
 
 - (void)test_receive_tuple {
-    flow::sender<std::tuple<int, std::string>> sender;
+    flow::notifier<std::tuple<int, std::string>> sender;
 
     int int_received = -1;
     std::string string_received = "";
@@ -379,7 +379,7 @@ using namespace yas;
 - (void)test_receive_null {
     bool received = false;
 
-    flow::sender<int> sender;
+    flow::notifier<int> sender;
     flow::receiver<> receiver{[&received]() { received = true; }};
 
     auto flow = sender.begin_flow().receive_null(receiver).end();
@@ -392,7 +392,7 @@ using namespace yas;
 - (void)test_receiver {
     int received = -1;
 
-    flow::sender<int> sender;
+    flow::notifier<int> sender;
 
     flow::receiver<int> receiver{[&received](int const &value) { received = value; }};
 
@@ -406,7 +406,7 @@ using namespace yas;
 - (void)test_guard {
     float received = -1.0f;
 
-    flow::sender<int> sender;
+    flow::notifier<int> sender;
 
     auto flow = sender.begin_flow()
                     .map([](int const &value) { return value; })
@@ -426,8 +426,8 @@ using namespace yas;
 - (void)test_merge {
     std::string received;
 
-    flow::sender<int> sender;
-    flow::sender<float> sub_sender;
+    flow::notifier<int> sender;
+    flow::notifier<float> sub_sender;
 
     auto sub_flow = sub_sender.begin_flow().map([](float const &value) { return std::to_string(int(value)); });
 
@@ -447,8 +447,8 @@ using namespace yas;
 }
 
 - (void)test_pair {
-    flow::sender<int> main_sender;
-    flow::sender<std::string> sub_sender;
+    flow::notifier<int> main_sender;
+    flow::notifier<std::string> sub_sender;
 
     using opt_pair_t = std::pair<opt_t<int>, opt_t<std::string>>;
 
@@ -470,8 +470,8 @@ using namespace yas;
 }
 
 - (void)test_combine {
-    flow::sender<int> main_sender;
-    flow::sender<std::string> sub_sender;
+    flow::notifier<int> main_sender;
+    flow::notifier<std::string> sub_sender;
 
     using opt_pair_t = opt_t<std::pair<int, std::string>>;
 
@@ -493,9 +493,9 @@ using namespace yas;
 }
 
 - (void)test_combine_tuples {
-    flow::sender<int> main_sender;
-    flow::sender<std::string> sub_sender;
-    flow::sender<float> sub_sender2;
+    flow::notifier<int> main_sender;
+    flow::notifier<std::string> sub_sender;
+    flow::notifier<float> sub_sender2;
 
     auto sub_flow = sub_sender.begin_flow().to_tuple();
     auto main_flow = main_sender.begin_flow().to_tuple();
@@ -519,7 +519,7 @@ using namespace yas;
 }
 
 - (void)test_normalize {
-    flow::sender<int> sender;
+    flow::notifier<int> sender;
 
     flow::node<std::string, int, int, false> toed_flow =
         sender.begin_flow().map([](int const &value) { return std::to_string(value); });

@@ -47,7 +47,7 @@ using namespace yas;
 
 - (void)test_receive {
     flow::property<int> property{100};
-    flow::sender<int> sender;
+    flow::notifier<int> sender;
 
     auto flow = sender.begin_flow().receive(property.receiver()).end();
 

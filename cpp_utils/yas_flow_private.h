@@ -286,10 +286,10 @@ sender_flowable<T> sender_base<T>::flowable() {
     return this->_flowable;
 }
 
-#pragma mark - sender
+#pragma mark - notifier
 
 template <typename T>
-struct sender<T>::impl : sender_base<T>::impl {
+struct notifier<T>::impl : sender_base<T>::impl {
     void send_value(T const &value) {
         if (auto lock = std::unique_lock<std::mutex>(this->_send_mutex, std::try_to_lock); lock.owns_lock()) {
             for (auto &pair : this->inputs) {
@@ -303,7 +303,7 @@ struct sender<T>::impl : sender_base<T>::impl {
     flow::receiver<T> &receiver() {
         if (!this->_receiver) {
             this->_receiver =
-                flow::receiver<T>{[weak_sender = to_weak(this->template cast<flow::sender<T>>())](T const &value) {
+                flow::receiver<T>{[weak_sender = to_weak(this->template cast<flow::notifier<T>>())](T const &value) {
                     if (auto sender = weak_sender.lock()) {
                         sender.send_value(value);
                     }
@@ -318,29 +318,29 @@ struct sender<T>::impl : sender_base<T>::impl {
 };
 
 template <typename T>
-sender<T>::sender() : sender_base<T>(std::make_shared<impl>()) {
+notifier<T>::notifier() : sender_base<T>(std::make_shared<impl>()) {
 }
 
 template <typename T>
-sender<T>::sender(std::shared_ptr<impl> &&impl) : sender_base<T>(std::move(impl)) {
+notifier<T>::notifier(std::shared_ptr<impl> &&impl) : sender_base<T>(std::move(impl)) {
 }
 
 template <typename T>
-sender<T>::sender(std::nullptr_t) : sender_base<T>(nullptr) {
+notifier<T>::notifier(std::nullptr_t) : sender_base<T>(nullptr) {
 }
 
 template <typename T>
-void sender<T>::send_value(T const &value) {
+void notifier<T>::send_value(T const &value) {
     this->template impl_ptr<impl>()->send_value(value);
 }
 
 template <typename T>
-node<T, T, T, false> sender<T>::begin_flow() {
+node<T, T, T, false> notifier<T>::begin_flow() {
     return this->template impl_ptr<impl>()->template begin<false>(*this);
 }
 
 template <typename T>
-receiver<T> &sender<T>::receiver() {
+receiver<T> &notifier<T>::receiver() {
     return this->template impl_ptr<impl>()->receiver();
 }
 

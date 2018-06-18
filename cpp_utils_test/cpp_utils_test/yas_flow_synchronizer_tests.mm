@@ -43,7 +43,7 @@ using namespace yas;
 
 - (void)test_receive {
     flow::synchronizer<int> synchronizer;
-    flow::sender<std::nullptr_t> sender;
+    flow::notifier<std::nullptr_t> sender;
 
     int sending = 1;
 
