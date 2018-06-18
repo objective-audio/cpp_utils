@@ -399,7 +399,12 @@ struct property<T>::impl : sender<T, true>::impl {
         if (auto lock = std::unique_lock<std::mutex>(this->_set_mutex, std::try_to_lock); lock.owns_lock()) {
             if (this->_value != value) {
                 this->_value = std::move(value);
-                this->send_value(this->_value);
+
+                for (auto &pair : this->inputs) {
+                    if (auto input = pair.second.lock()) {
+                        input.input_value(value);
+                    }
+                }
             }
         }
     }
