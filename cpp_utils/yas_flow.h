@@ -71,7 +71,7 @@ struct sync_sender : sender<T, true> {
 };
 
 template <typename T>
-struct property : sender<T, true> {
+struct property : sender_base<T> {
     class impl;
 
     property(T);
@@ -82,6 +82,10 @@ struct property : sender<T, true> {
     T const &value() const;
     T &value();
     void set_value(T);
+
+    node<T, T, T, true> begin_flow();
+
+    [[nodiscard]] receiver<T> &receiver();
 };
 
 struct observer : base {

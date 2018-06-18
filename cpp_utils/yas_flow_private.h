@@ -273,6 +273,13 @@ struct sender_base<T>::impl : base::impl, sender_flowable<T>::impl {
     void sync(std::uintptr_t const key) override {
     }
 
+    template <bool Syncable>
+    node<T, T, T, Syncable> begin(sender_base<T> &sender) {
+        flow::input<T> input{to_weak(sender)};
+        this->inputs.insert(std::make_pair(input.identifier(), to_weak(input)));
+        return input.template begin<Syncable>();
+    }
+
     virtual flow::receiver<T> &receiver() {
         if (!this->_receiver) {
             this->_receiver = flow::receiver<T>{[weak_sender = to_weak(cast<flow::sender_base<T>>())](T const &value) {
@@ -320,13 +327,7 @@ receiver<T> &sender_base<T>::receiver() {
 #pragma mark - sender
 
 template <typename T, bool Syncable>
-struct sender<T, Syncable>::impl : sender_base<T>::impl {
-    node<T, T, T, Syncable> begin(sender<T, Syncable> &sender) {
-        flow::input<T> input{to_weak(sender)};
-        this->inputs.insert(std::make_pair(input.identifier(), to_weak(input)));
-        return input.template begin<Syncable>();
-    }
-};
+struct sender<T, Syncable>::impl : sender_base<T>::impl {};
 
 template <typename T, bool Syncable>
 sender<T, Syncable>::sender() : sender_base<T>(std::make_shared<impl>()) {
@@ -342,7 +343,7 @@ sender<T, Syncable>::sender(std::nullptr_t) : sender_base<T>(nullptr) {
 
 template <typename T, bool Syncable>
 node<T, T, T, Syncable> sender<T, Syncable>::begin_flow() {
-    return this->template impl_ptr<impl>()->begin(*this);
+    return this->template impl_ptr<impl>()->template begin<Syncable>(*this);
 }
 
 #pragma mark - sync_sender
@@ -387,7 +388,7 @@ void sync_sender<T>::sync() const {
 #pragma mark - property
 
 template <typename T>
-struct property<T>::impl : sender<T, true>::impl {
+struct property<T>::impl : sender_base<T>::impl {
     impl(T &&value) : _value(std::move(value)) {
     }
 
@@ -441,11 +442,11 @@ struct property<T>::impl : sender<T, true>::impl {
 };
 
 template <typename T>
-property<T>::property(T value) : sender<T, true>(std::make_shared<impl>(std::move(value))) {
+property<T>::property(T value) : sender_base<T>(std::make_shared<impl>(std::move(value))) {
 }
 
 template <typename T>
-property<T>::property(std::nullptr_t) : sender<T, true>(nullptr) {
+property<T>::property(std::nullptr_t) : sender_base<T>(nullptr) {
 }
 
 template <typename T>
@@ -464,6 +465,16 @@ T &property<T>::value() {
 template <typename T>
 void property<T>::set_value(T value) {
     this->template impl_ptr<impl>()->set_value(std::move(value));
+}
+
+template <typename T>
+node<T, T, T, true> property<T>::begin_flow() {
+    return this->template impl_ptr<impl>()->template begin<true>(*this);
+}
+
+template <typename T>
+receiver<T> &property<T>::receiver() {
+    return this->template impl_ptr<impl>()->receiver();
 }
 
 #pragma mark - node
