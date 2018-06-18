@@ -60,7 +60,7 @@ struct sender : sender_base<T> {
 };
 
 template <typename T>
-struct sync_sender : sender<T, true> {
+struct sync_sender : sender_base<T> {
     class impl;
 
     sync_sender();
@@ -68,6 +68,8 @@ struct sync_sender : sender<T, true> {
 
     void set_sync_handler(std::function<opt_t<T>(void)>);
     void sync() const;
+
+    [[nodiscard]] node<T, T, T, true> begin_flow();
 };
 
 template <typename T>

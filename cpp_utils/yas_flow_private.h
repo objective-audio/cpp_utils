@@ -349,7 +349,7 @@ node<T, T, T, Syncable> sender<T, Syncable>::begin_flow() {
 #pragma mark - sync_sender
 
 template <typename T>
-struct sync_sender<T>::impl : sender<T, true>::impl {
+struct sync_sender<T>::impl : sender_base<T>::impl {
     std::function<opt_t<T>(void)> _sync_handler = []() { return nullopt; };
 
     void sync(std::uintptr_t const key) override {
@@ -368,7 +368,7 @@ struct sync_sender<T>::impl : sender<T, true>::impl {
 };
 
 template <typename T>
-sync_sender<T>::sync_sender() : sender<T, true>(std::make_shared<impl>()) {
+sync_sender<T>::sync_sender() : sender_base<T>(std::make_shared<impl>()) {
 }
 
 template <typename T>
@@ -383,6 +383,11 @@ void sync_sender<T>::set_sync_handler(std::function<opt_t<T>(void)> handler) {
 template <typename T>
 void sync_sender<T>::sync() const {
     this->template impl_ptr<impl>()->sync();
+}
+
+template <typename T>
+flow::node<T, T, T, true> sync_sender<T>::begin_flow() {
+    return this->template impl_ptr<impl>()->template begin<true>(*this);
 }
 
 #pragma mark - property
