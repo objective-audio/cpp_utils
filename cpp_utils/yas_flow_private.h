@@ -403,7 +403,7 @@ struct property<T>::impl : sender_base<T>::impl {
 
                 for (auto &pair : this->inputs) {
                     if (auto input = pair.second.lock()) {
-                        input.input_value(value);
+                        input.input_value(this->_value);
                     }
                 }
             }
