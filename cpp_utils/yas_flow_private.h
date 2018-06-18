@@ -344,10 +344,10 @@ receiver<T> &sender<T>::receiver() {
     return this->template impl_ptr<impl>()->receiver();
 }
 
-#pragma mark - sync_sender
+#pragma mark - synchronizer
 
 template <typename T>
-struct sync_sender<T>::impl : sender_base<T>::impl {
+struct synchronizer<T>::impl : sender_base<T>::impl {
     std::function<opt_t<T>(void)> _sync_handler = []() { return nullopt; };
 
     void sync(std::uintptr_t const key) override {
@@ -372,7 +372,7 @@ struct sync_sender<T>::impl : sender_base<T>::impl {
 
     flow::receiver<> &receiver() {
         if (!this->_receiver) {
-            this->_receiver = flow::receiver<>{[weak_sender = to_weak(this->template cast<flow::sync_sender<T>>())] {
+            this->_receiver = flow::receiver<>{[weak_sender = to_weak(this->template cast<flow::synchronizer<T>>())] {
                 if (auto sender = weak_sender.lock()) {
                     sender.sync();
                 }
@@ -387,30 +387,30 @@ struct sync_sender<T>::impl : sender_base<T>::impl {
 };
 
 template <typename T>
-sync_sender<T>::sync_sender() : sender_base<T>(std::make_shared<impl>()) {
+synchronizer<T>::synchronizer() : sender_base<T>(std::make_shared<impl>()) {
 }
 
 template <typename T>
-sync_sender<T>::sync_sender(std::nullptr_t) : sender_base<T>(nullptr) {
+synchronizer<T>::synchronizer(std::nullptr_t) : sender_base<T>(nullptr) {
 }
 
 template <typename T>
-void sync_sender<T>::set_sync_handler(std::function<opt_t<T>(void)> handler) {
+void synchronizer<T>::set_sync_handler(std::function<opt_t<T>(void)> handler) {
     this->template impl_ptr<impl>()->_sync_handler = std::move(handler);
 }
 
 template <typename T>
-void sync_sender<T>::sync() const {
+void synchronizer<T>::sync() const {
     this->template impl_ptr<impl>()->sync();
 }
 
 template <typename T>
-flow::node<T, T, T, true> sync_sender<T>::begin_flow() {
+flow::node<T, T, T, true> synchronizer<T>::begin_flow() {
     return this->template impl_ptr<impl>()->template begin<true>(*this);
 }
 
 template <typename T>
-flow::receiver<> &sync_sender<T>::receiver() {
+flow::receiver<> &synchronizer<T>::receiver() {
     return this->template impl_ptr<impl>()->receiver();
 }
 

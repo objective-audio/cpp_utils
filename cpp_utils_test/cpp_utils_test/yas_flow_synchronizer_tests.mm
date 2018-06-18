@@ -1,5 +1,5 @@
 //
-//  yas_flow_sync_sender_tests.mm
+//  yas_flow_synchronizer_tests.mm
 //
 
 #import <XCTest/XCTest.h>
@@ -7,11 +7,11 @@
 
 using namespace yas;
 
-@interface yas_flow_sync_sender_tests : XCTestCase
+@interface yas_flow_synchronizer_tests : XCTestCase
 
 @end
 
-@implementation yas_flow_sync_sender_tests
+@implementation yas_flow_synchronizer_tests
 
 - (void)setUp {
     [super setUp];
@@ -22,7 +22,7 @@ using namespace yas;
 }
 
 - (void)test_sync {
-    flow::sync_sender<int> sender;
+    flow::synchronizer<int> sender;
 
     int sending = 1;
 
@@ -42,7 +42,7 @@ using namespace yas;
 }
 
 - (void)test_receive {
-    flow::sync_sender<int> synchronizer;
+    flow::synchronizer<int> synchronizer;
     flow::sender<std::nullptr_t> sender;
 
     int sending = 1;

@@ -60,11 +60,11 @@ struct sender : sender_base<T> {
 };
 
 template <typename T>
-struct sync_sender : sender_base<T> {
+struct synchronizer : sender_base<T> {
     class impl;
 
-    sync_sender();
-    sync_sender(std::nullptr_t);
+    synchronizer();
+    synchronizer(std::nullptr_t);
 
     void set_sync_handler(std::function<opt_t<T>(void)>);
     void sync() const;
