@@ -255,17 +255,6 @@ template <typename T>
 struct sender_base<T>::impl : base::impl, sender_flowable<T>::impl {
     std::unordered_map<std::uintptr_t, weak<input<T>>> inputs;
 
-    void send_value(T const &value) {
-        if (auto lock = std::unique_lock<std::mutex>(this->_send_mutex, std::try_to_lock); lock.owns_lock()) {
-            for (auto &pair : this->inputs) {
-                weak<flow::input<T>> &weak_input = pair.second;
-                if (!!weak_input) {
-                    weak_input.lock().input_value(value);
-                }
-            }
-        }
-    }
-
     void erase_input(std::uintptr_t const key) override {
         this->inputs.erase(key);
     }
@@ -279,23 +268,6 @@ struct sender_base<T>::impl : base::impl, sender_flowable<T>::impl {
         this->inputs.insert(std::make_pair(input.identifier(), to_weak(input)));
         return input.template begin<Syncable>();
     }
-
-    virtual flow::receiver<T> &receiver() {
-        if (!this->_receiver) {
-            this->_receiver = flow::receiver<T>{[weak_sender = to_weak(cast<flow::sender_base<T>>())](T const &value) {
-                if (auto sender = weak_sender.lock()) {
-                    sender.send_value(value);
-                }
-            }};
-        }
-        return this->_receiver;
-    }
-
-   protected:
-    flow::receiver<T> _receiver{nullptr};
-
-   private:
-    std::mutex _send_mutex;
 };
 
 template <typename T>
@@ -307,11 +279,6 @@ sender_base<T>::sender_base(std::nullptr_t) : base(nullptr) {
 }
 
 template <typename T>
-void sender_base<T>::send_value(T const &value) {
-    impl_ptr<impl>()->send_value(value);
-}
-
-template <typename T>
 sender_flowable<T> sender_base<T>::flowable() {
     if (!this->_flowable) {
         this->_flowable = sender_flowable<T>{impl_ptr<typename sender_flowable<T>::impl>()};
@@ -319,15 +286,37 @@ sender_flowable<T> sender_base<T>::flowable() {
     return this->_flowable;
 }
 
-template <typename T>
-receiver<T> &sender_base<T>::receiver() {
-    return impl_ptr<impl>()->receiver();
-}
-
 #pragma mark - sender
 
 template <typename T>
-struct sender<T>::impl : sender_base<T>::impl {};
+struct sender<T>::impl : sender_base<T>::impl {
+    void send_value(T const &value) {
+        if (auto lock = std::unique_lock<std::mutex>(this->_send_mutex, std::try_to_lock); lock.owns_lock()) {
+            for (auto &pair : this->inputs) {
+                weak<flow::input<T>> &weak_input = pair.second;
+                if (!!weak_input) {
+                    weak_input.lock().input_value(value);
+                }
+            }
+        }
+    }
+
+    flow::receiver<T> &receiver() {
+        if (!this->_receiver) {
+            this->_receiver =
+                flow::receiver<T>{[weak_sender = to_weak(this->template cast<flow::sender<T>>())](T const &value) {
+                    if (auto sender = weak_sender.lock()) {
+                        sender.send_value(value);
+                    }
+                }};
+        }
+        return this->_receiver;
+    }
+
+   private:
+    std::mutex _send_mutex;
+    flow::receiver<T> _receiver{nullptr};
+};
 
 template <typename T>
 sender<T>::sender() : sender_base<T>(std::make_shared<impl>()) {
@@ -342,8 +331,18 @@ sender<T>::sender(std::nullptr_t) : sender_base<T>(nullptr) {
 }
 
 template <typename T>
+void sender<T>::send_value(T const &value) {
+    this->template impl_ptr<impl>()->send_value(value);
+}
+
+template <typename T>
 node<T, T, T, false> sender<T>::begin_flow() {
     return this->template impl_ptr<impl>()->template begin<false>(*this);
+}
+
+template <typename T>
+receiver<T> &sender<T>::receiver() {
+    return this->template impl_ptr<impl>()->receiver();
 }
 
 #pragma mark - sync_sender
@@ -421,7 +420,7 @@ struct property<T>::impl : sender_base<T>::impl {
         }
     }
 
-    flow::receiver<T> &receiver() override {
+    flow::receiver<T> &receiver() {
         if (!this->_receiver) {
             this->_receiver =
                 flow::receiver<T>{[weak_property = to_weak(this->template cast<flow::property<T>>())](T const &value) {
@@ -444,6 +443,7 @@ struct property<T>::impl : sender_base<T>::impl {
    private:
     T _value;
     std::mutex _set_mutex;
+    flow::receiver<T> _receiver{nullptr};
 };
 
 template <typename T>

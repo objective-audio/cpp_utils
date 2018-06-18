@@ -33,11 +33,7 @@ struct sender_base : base {
 
     sender_base(std::nullptr_t);
 
-    void send_value(T const &);
-
     [[nodiscard]] sender_flowable<T> flowable();
-
-    [[nodiscard]] receiver<T> &receiver();
 
    protected:
     sender_base(std::shared_ptr<impl> &&);
@@ -53,7 +49,11 @@ struct sender : sender_base<T> {
     sender();
     sender(std::nullptr_t);
 
+    void send_value(T const &);
+
     [[nodiscard]] node<T, T, T, false> begin_flow();
+
+    [[nodiscard]] receiver<T> &receiver();
 
    protected:
     sender(std::shared_ptr<impl> &&);
