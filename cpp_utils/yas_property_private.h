@@ -64,73 +64,12 @@ class property<T>::impl : public base::impl {
         return _subject;
     }
 
-    [[nodiscard]] flow::node<T, T, T, true> begin_value_flow(property<T> &property) {
-        if (!this->_value_sender) {
-            flow::sync_sender<T> sender;
-
-            subject_t &subject = this->subject();
-
-            auto observer = subject.make_value_observer(
-                property_method::did_change, [weak_sender = to_weak(sender)](change_context const &context) mutable {
-                    if (auto sender = weak_sender.lock()) {
-                        sender.send_value(context.new_value);
-                    }
-                });
-
-            auto weak_property = to_weak(property);
-
-            sender.set_sync_handler([weak_property, observer]() {
-                if (auto property = weak_property.lock()) {
-                    return opt_t<T>{property.value()};
-                } else {
-                    return opt_t<T>{nullopt};
-                }
-            });
-
-            this->_value_sender = std::move(sender);
-        }
-
-        return this->_value_sender.begin_flow();
-    }
-
-    [[nodiscard]] flow_context_t begin_context_flow(property<T> &property) {
-        if (!this->_context_sender) {
-            flow::sync_sender<change_context> sender;
-
-            subject_t &subject = this->_subject;
-
-            auto observer = subject.make_value_observer(
-                property_method::did_change, [weak_sender = to_weak(sender)](change_context const &context) mutable {
-                    if (auto sender = weak_sender.lock()) {
-                        sender.send_value(context);
-                    }
-                });
-
-            auto weak_property = to_weak(property);
-
-            sender.set_sync_handler([weak_property, observer]() {
-                if (auto property = weak_property.lock()) {
-                    auto const &value = property.value();
-                    return opt_t<change_context>{
-                        change_context{.new_value = value, .old_value = value, .property = property}};
-                } else {
-                    return opt_t<change_context>{nullopt};
-                }
-            });
-
-            this->_context_sender = std::move(sender);
-        }
-
-        return this->_context_sender.begin_flow();
-    }
-
-    private : T _value;
+   private:
+    T _value;
     validator_t _validator = nullptr;
     limiter_t _limiter = nullptr;
     std::mutex _notify_mutex;
     subject_t _subject;
-    flow::sender<T, true> _value_sender = nullptr;
-    flow::sender<change_context, true> _context_sender = nullptr;
 
     template <typename U, typename std::enable_if_t<has_operator_bool<U>::value, std::nullptr_t> = nullptr>
     void _set_value(U &&value) {
