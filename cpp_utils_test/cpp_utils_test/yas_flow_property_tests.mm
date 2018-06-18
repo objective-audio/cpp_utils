@@ -47,13 +47,13 @@ using namespace yas;
 
 - (void)test_receive {
     flow::property<int> property{100};
-    flow::notifier<int> sender;
+    flow::notifier<int> notifier;
 
-    auto flow = sender.begin_flow().receive(property.receiver()).end();
+    auto flow = notifier.begin_flow().receive(property.receiver()).end();
 
     XCTAssertEqual(property.value(), 100);
 
-    sender.send_value(200);
+    notifier.notify(200);
 
     XCTAssertEqual(property.value(), 200);
 }

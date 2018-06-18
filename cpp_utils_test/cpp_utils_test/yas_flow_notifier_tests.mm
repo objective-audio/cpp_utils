@@ -30,7 +30,7 @@ using namespace yas;
 
     XCTAssertEqual(received, -1);
 
-    notifier.send_value(2);
+    notifier.notify(2);
 
     XCTAssertEqual(received, 2);
 }
@@ -44,7 +44,7 @@ using namespace yas;
     auto flow1 = notifier.begin_flow().perform([&received1](int const &value) { received1 = value; }).end();
     auto flow2 = notifier.begin_flow().perform([&received2](int const &value) { received2 = value; }).end();
 
-    notifier.send_value(3);
+    notifier.notify(3);
 
     XCTAssertEqual(received1, 3);
     XCTAssertEqual(received2, 3);
@@ -59,7 +59,7 @@ using namespace yas;
     auto flow1 = notifier1.begin_flow().receive(notifier2.receiver()).end();
     auto flow2 = notifier2.begin_flow().perform([&received](int const &value) { received = value; }).end();
 
-    notifier1.send_value(4);
+    notifier1.notify(4);
 
     XCTAssertEqual(received, 4);
 }
@@ -71,12 +71,12 @@ using namespace yas;
 
     flow::receiver<int> receiver{[&notifier, &received](int const &value) {
         received = value;
-        notifier.send_value(value + 1);
+        notifier.notify(value + 1);
     }};
 
     auto flow = notifier.begin_flow().receive(receiver).end();
 
-    notifier.send_value(1);
+    notifier.notify(1);
 
     XCTAssertEqual(received, 1);
 }

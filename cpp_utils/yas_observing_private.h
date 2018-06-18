@@ -133,16 +133,16 @@ class subject<Key, T>::impl {
 
     flow::node<flow_context_t, flow_context_t, flow_context_t, false> begin_flow(subject<Key, T> &subject) {
         if (!this->sender) {
-            flow::notifier<flow_context_t> sender;
+            flow::notifier<flow_context_t> notifier;
 
             this->_sender_observers.emplace_back(
-                subject.make_wild_card_observer([weak_sender = to_weak(sender)](auto const &context) {
+                subject.make_wild_card_observer([weak_sender = to_weak(notifier)](auto const &context) {
                     if (auto sender = weak_sender.lock()) {
-                        sender.send_value(context);
+                        sender.notify(context);
                     }
                 }));
 
-            this->sender = std::move(sender);
+            this->sender = std::move(notifier);
         }
 
         return this->sender.begin_flow();

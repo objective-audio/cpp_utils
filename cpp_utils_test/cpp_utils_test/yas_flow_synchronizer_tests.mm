@@ -22,21 +22,21 @@ using namespace yas;
 }
 
 - (void)test_sync {
-    flow::synchronizer<int> sender;
+    flow::synchronizer<int> synchronizer;
 
     int sending = 1;
 
-    sender.set_sync_handler([&sending] { return sending; });
+    synchronizer.set_sync_handler([&sending] { return sending; });
 
     int notified = -1;
 
-    auto flow = sender.begin_flow().perform([&notified](int const &value) { notified = value; }).sync();
+    auto flow = synchronizer.begin_flow().perform([&notified](int const &value) { notified = value; }).sync();
 
     XCTAssertEqual(notified, 1);
 
     sending = 2;
 
-    sender.sync();
+    synchronizer.sync();
 
     XCTAssertEqual(notified, 2);
 }
@@ -59,7 +59,7 @@ using namespace yas;
 
     auto receive_flow = sender.begin_flow().receive(synchronizer.receiver()).end();
 
-    sender.send_value(nullptr);
+    sender.notify(nullptr);
 
     XCTAssertEqual(notified, 2);
 }

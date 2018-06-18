@@ -49,7 +49,7 @@ struct notifier : sender_base<T> {
     notifier();
     notifier(std::nullptr_t);
 
-    void send_value(T const &);
+    void notify(T const &);
 
     [[nodiscard]] node<T, T, T, false> begin_flow();
 
