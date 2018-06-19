@@ -348,7 +348,10 @@ receiver<T> &notifier<T>::receiver() {
 
 template <typename T>
 struct synchronizer<T>::impl : sender_base<T>::impl {
-    std::function<opt_t<T>(void)> _sync_handler = []() { return nullopt; };
+    std::function<opt_t<T>(void)> _sync_handler;
+
+    impl(std::function<opt_t<T>(void)> &&handler) : _sync_handler(std::move(handler)) {
+    }
 
     void sync(std::uintptr_t const key) override {
         if (auto value = this->_sync_handler()) {
@@ -387,16 +390,12 @@ struct synchronizer<T>::impl : sender_base<T>::impl {
 };
 
 template <typename T>
-synchronizer<T>::synchronizer() : sender_base<T>(std::make_shared<impl>()) {
+synchronizer<T>::synchronizer(std::function<opt_t<T>(void)> handler)
+    : sender_base<T>(std::make_shared<impl>(std::move(handler))) {
 }
 
 template <typename T>
 synchronizer<T>::synchronizer(std::nullptr_t) : sender_base<T>(nullptr) {
-}
-
-template <typename T>
-void synchronizer<T>::set_sync_handler(std::function<opt_t<T>(void)> handler) {
-    this->template impl_ptr<impl>()->_sync_handler = std::move(handler);
 }
 
 template <typename T>

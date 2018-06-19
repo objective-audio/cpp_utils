@@ -63,10 +63,9 @@ template <typename T>
 struct synchronizer : sender_base<T> {
     class impl;
 
-    synchronizer();
+    synchronizer(std::function<opt_t<T>(void)>);
     synchronizer(std::nullptr_t);
 
-    void set_sync_handler(std::function<opt_t<T>(void)>);
     void sync() const;
 
     [[nodiscard]] node<T, T, T, true> begin_flow();

@@ -129,8 +129,7 @@ using namespace yas;
 }
 
 - (void)test_sync {
-    flow::synchronizer<int> sender;
-    sender.set_sync_handler([] { return 100; });
+    flow::synchronizer<int> sender{[] { return 100; }};
 
     int received = -1;
 
@@ -141,8 +140,7 @@ using namespace yas;
 }
 
 - (void)test_sync_by_observer {
-    flow::synchronizer<int> sender;
-    sender.set_sync_handler([] { return 100; });
+    flow::synchronizer<int> sender{[] { return 100; }};
 
     int received = -1;
 
@@ -153,8 +151,7 @@ using namespace yas;
 }
 
 - (void)test_sync_many_sender {
-    flow::synchronizer<int> sender;
-    sender.set_sync_handler([] { return 100; });
+    flow::synchronizer<int> sender{[] { return 100; }};
 
     int received1 = -1;
     int received2 = -1;
@@ -169,8 +166,7 @@ using namespace yas;
 }
 
 - (void)test_sync_end {
-    flow::synchronizer<int> sender;
-    sender.set_sync_handler([] { return 100; });
+    flow::synchronizer<int> sender{[] { return 100; }};
 
     int received = -1;
 
@@ -180,11 +176,9 @@ using namespace yas;
 }
 
 - (void)test_sync_with_combined_sub_sender {
-    flow::synchronizer<int> sender;
-    sender.set_sync_handler([]() { return 123; });
+    flow::synchronizer<int> sender{[]() { return 123; }};
 
-    flow::synchronizer<int> sub_sender;
-    sub_sender.set_sync_handler([]() { return 456; });
+    flow::synchronizer<int> sub_sender{[]() { return 456; }};
 
     std::vector<std::pair<int, int>> received;
 
@@ -200,11 +194,9 @@ using namespace yas;
 }
 
 - (void)test_sync_with_merged_sub_sender {
-    flow::synchronizer<int> sender;
-    sender.set_sync_handler([]() { return 78; });
+    flow::synchronizer<int> sender{[]() { return 78; }};
 
-    flow::synchronizer<int> sub_sender;
-    sub_sender.set_sync_handler([]() { return 90; });
+    flow::synchronizer<int> sub_sender{[]() { return 90; }};
 
     std::vector<int> received;
 

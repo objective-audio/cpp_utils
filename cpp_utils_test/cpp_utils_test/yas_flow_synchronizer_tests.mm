@@ -22,11 +22,9 @@ using namespace yas;
 }
 
 - (void)test_sync {
-    flow::synchronizer<int> synchronizer;
-
     int sending = 1;
 
-    synchronizer.set_sync_handler([&sending] { return sending; });
+    flow::synchronizer<int> synchronizer{[&sending] { return sending; }};
 
     int notified = -1;
 
@@ -42,12 +40,11 @@ using namespace yas;
 }
 
 - (void)test_receive {
-    flow::synchronizer<int> synchronizer;
     flow::notifier<std::nullptr_t> sender;
 
     int sending = 1;
 
-    synchronizer.set_sync_handler([&sending] { return sending; });
+    flow::synchronizer<int> synchronizer{[&sending] { return sending; }};
 
     int notified = -1;
 
