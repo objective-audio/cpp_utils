@@ -60,13 +60,13 @@ struct notifier : sender_base<T> {
 };
 
 template <typename T>
-struct synchronizer : sender_base<T> {
+struct fetcher : sender_base<T> {
     class impl;
 
-    synchronizer(std::function<opt_t<T>(void)>);
-    synchronizer(std::nullptr_t);
+    fetcher(std::function<opt_t<T>(void)>);
+    fetcher(std::nullptr_t);
 
-    void sync() const;
+    void fetch() const;
 
     [[nodiscard]] node<T, T, T, true> begin_flow();
 

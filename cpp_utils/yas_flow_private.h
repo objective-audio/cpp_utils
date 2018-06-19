@@ -344,10 +344,10 @@ receiver<T> &notifier<T>::receiver() {
     return this->template impl_ptr<impl>()->receiver();
 }
 
-#pragma mark - synchronizer
+#pragma mark - fetcher
 
 template <typename T>
-struct synchronizer<T>::impl : sender_base<T>::impl {
+struct fetcher<T>::impl : sender_base<T>::impl {
     std::function<opt_t<T>(void)> _sync_handler;
 
     impl(std::function<opt_t<T>(void)> &&handler) : _sync_handler(std::move(handler)) {
@@ -375,9 +375,9 @@ struct synchronizer<T>::impl : sender_base<T>::impl {
 
     flow::receiver<> &receiver() {
         if (!this->_receiver) {
-            this->_receiver = flow::receiver<>{[weak_sender = to_weak(this->template cast<flow::synchronizer<T>>())] {
-                if (auto sender = weak_sender.lock()) {
-                    sender.sync();
+            this->_receiver = flow::receiver<>{[weak_fetcher = to_weak(this->template cast<flow::fetcher<T>>())] {
+                if (auto fetcher = weak_fetcher.lock()) {
+                    fetcher.fetch();
                 }
             }};
         }
@@ -390,26 +390,26 @@ struct synchronizer<T>::impl : sender_base<T>::impl {
 };
 
 template <typename T>
-synchronizer<T>::synchronizer(std::function<opt_t<T>(void)> handler)
+fetcher<T>::fetcher(std::function<opt_t<T>(void)> handler)
     : sender_base<T>(std::make_shared<impl>(std::move(handler))) {
 }
 
 template <typename T>
-synchronizer<T>::synchronizer(std::nullptr_t) : sender_base<T>(nullptr) {
+fetcher<T>::fetcher(std::nullptr_t) : sender_base<T>(nullptr) {
 }
 
 template <typename T>
-void synchronizer<T>::sync() const {
+void fetcher<T>::fetch() const {
     this->template impl_ptr<impl>()->sync();
 }
 
 template <typename T>
-flow::node<T, T, T, true> synchronizer<T>::begin_flow() {
+flow::node<T, T, T, true> fetcher<T>::begin_flow() {
     return this->template impl_ptr<impl>()->template begin<true>(*this);
 }
 
 template <typename T>
-flow::receiver<> &synchronizer<T>::receiver() {
+flow::receiver<> &fetcher<T>::receiver() {
     return this->template impl_ptr<impl>()->receiver();
 }
 
