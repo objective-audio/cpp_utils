@@ -303,9 +303,9 @@ struct notifier<T>::impl : sender_base<T>::impl {
     flow::receiver<T> &receiver() {
         if (!this->_receiver) {
             this->_receiver =
-                flow::receiver<T>{[weak_sender = to_weak(this->template cast<flow::notifier<T>>())](T const &value) {
-                    if (auto sender = weak_sender.lock()) {
-                        sender.notify(value);
+                flow::receiver<T>{[weak_notifier = to_weak(this->template cast<flow::notifier<T>>())](T const &value) {
+                    if (auto notifier = weak_notifier.lock()) {
+                        notifier.notify(value);
                     }
                 }};
         }
