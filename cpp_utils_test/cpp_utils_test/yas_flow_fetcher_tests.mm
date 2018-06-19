@@ -40,7 +40,7 @@ using namespace yas;
 }
 
 - (void)test_receive {
-    flow::notifier<std::nullptr_t> sender;
+    flow::notifier<std::nullptr_t> notifier;
 
     int sending = 1;
 
@@ -54,9 +54,9 @@ using namespace yas;
 
     sending = 2;
 
-    auto receive_flow = sender.begin_flow().receive(fetcher.receiver()).end();
+    auto receive_flow = notifier.begin_flow().receive(fetcher.receiver()).end();
 
-    sender.notify(nullptr);
+    notifier.notify(nullptr);
 
     XCTAssertEqual(notified, 2);
 }
