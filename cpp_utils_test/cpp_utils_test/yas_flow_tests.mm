@@ -22,87 +22,27 @@ using namespace yas;
     [super tearDown];
 }
 
-- (void)test_sender_begin {
-    int received = -1;
-
-    flow::sender<int> sender;
-
-    auto flow = sender.begin().perform([&received](int const &value) { received = value; }).end();
-
-    XCTAssertEqual(received, -1);
-
-    sender.send_value(2);
-
-    XCTAssertEqual(received, 2);
-}
-
-- (void)test_sender_many_begin {
-    int received1 = -1;
-    int received2 = -1;
-
-    flow::sender<int> sender;
-
-    auto flow1 = sender.begin().perform([&received1](int const &value) { received1 = value; }).end();
-    auto flow2 = sender.begin().perform([&received2](int const &value) { received2 = value; }).end();
-
-    sender.send_value(3);
-
-    XCTAssertEqual(received1, 3);
-    XCTAssertEqual(received2, 3);
-}
-
-- (void)test_sender_receiver {
-    int received = -1;
-
-    flow::sender<int> sender1;
-    flow::sender<int> sender2;
-
-    auto flow1 = sender1.begin().receive(sender2.receiver()).end();
-    auto flow2 = sender2.begin().perform([&received](int const &value) { received = value; }).end();
-
-    sender1.send_value(4);
-
-    XCTAssertEqual(received, 4);
-}
-
-- (void)test_sender_block_recursive_call {
-    int received = -1;
-
-    flow::sender<int> sender;
-
-    flow::receiver<int> receiver{[&sender, &received](int const &value) {
-        received = value;
-        sender.send_value(value + 1);
-    }};
-
-    auto flow = sender.begin().receive(receiver).end();
-
-    sender.send_value(1);
-
-    XCTAssertEqual(received, 1);
-}
-
 - (void)test_to {
-    flow::sender<int> sender;
+    flow::notifier<int> notifier;
 
     int received = -1;
 
-    auto flow = sender.begin()
+    auto flow = notifier.begin_flow()
                     .map([](int const &value) { return value + 1; })
                     .perform([&received](int const &value) { received = value; })
                     .end();
 
-    sender.send_value(10);
+    notifier.notify(10);
 
     XCTAssertEqual(received, 11);
 }
 
 - (void)test_to_type {
-    flow::sender<int> sender;
+    flow::notifier<int> notifier;
 
     std::string received = "";
 
-    auto flow = sender.begin()
+    auto flow = notifier.begin_flow()
                     .filter([](int const &) { return true; })
                     .map([](int const &value) { return value > 0; })
                     .filter([](bool const &) { return true; })
@@ -111,76 +51,77 @@ using namespace yas;
                     .perform([&received](std::string const &value) { received = value; })
                     .end();
 
-    sender.send_value(0);
+    notifier.notify(0);
 
     XCTAssertEqual(received, "false");
 
-    sender.send_value(1);
+    notifier.notify(1);
 
     XCTAssertEqual(received, "true");
 }
 
 - (void)test_to_value {
-    flow::sender<int> sender;
+    flow::notifier<int> notifier;
 
     std::string received = "";
 
-    auto flow = sender.begin()
+    auto flow = notifier.begin_flow()
                     .to_value(std::string("test_value"))
                     .perform([&received](std::string const &value) { received = value; })
                     .end();
 
-    sender.send_value(0);
+    notifier.notify(0);
 
     XCTAssertEqual(received, "test_value");
 }
 
 - (void)test_to_null {
-    flow::sender<int> sender;
+    flow::notifier<int> notifier;
 
     bool called = false;
 
-    auto flow = sender.begin().to_null().perform([&called](std::nullptr_t const &) { called = true; }).end();
+    auto flow = notifier.begin_flow().to_null().perform([&called](std::nullptr_t const &) { called = true; }).end();
 
-    sender.send_value(1);
+    notifier.notify(1);
 
     XCTAssertTrue(called);
 }
 
 - (void)test_to_tuple {
-    flow::sender<int> sender;
+    flow::notifier<int> notifier;
 
     opt_t<std::tuple<int>> called;
 
-    auto flow = sender.begin().to_tuple().perform([&called](std::tuple<int> const &value) { called = value; }).end();
+    auto flow =
+        notifier.begin_flow().to_tuple().perform([&called](std::tuple<int> const &value) { called = value; }).end();
 
-    sender.send_value(1);
+    notifier.notify(1);
 
     XCTAssertTrue(called);
     XCTAssertEqual(std::get<0>(*called), 1);
 }
 
 - (void)test_to_tuple_from_tuple {
-    flow::sender<std::tuple<int>> sender;
+    flow::notifier<std::tuple<int>> notifier;
 
     opt_t<std::tuple<int>> called;
 
-    auto flow = sender.begin().to_tuple().perform([&called](auto const &value) { called = value; }).end();
+    auto flow = notifier.begin_flow().to_tuple().perform([&called](auto const &value) { called = value; }).end();
 
-    sender.send_value(std::make_tuple(int(1)));
+    notifier.notify(std::make_tuple(int(1)));
 
     XCTAssertTrue(called);
     XCTAssertEqual(std::get<0>(*called), 1);
 }
 
 - (void)test_to_tuple_from_pair {
-    flow::sender<std::pair<int, std::string>> sender;
+    flow::notifier<std::pair<int, std::string>> notifier;
 
     opt_t<std::tuple<int, std::string>> called;
 
-    auto flow = sender.begin().to_tuple().perform([&called](auto const &value) { called = value; }).end();
+    auto flow = notifier.begin_flow().to_tuple().perform([&called](auto const &value) { called = value; }).end();
 
-    sender.send_value(std::make_pair(int(1), std::string("2")));
+    notifier.notify(std::make_pair(int(1), std::string("2")));
 
     XCTAssertTrue(called);
     XCTAssertEqual(std::get<0>(*called), 1);
@@ -188,38 +129,35 @@ using namespace yas;
 }
 
 - (void)test_sync {
-    flow::sender<int> sender;
-    sender.set_sync_handler([] { return 100; });
+    flow::fetcher<int> fetcher{[] { return 100; }};
 
     int received = -1;
 
-    auto flow = sender.begin().perform([&received](int const &value) { received = value; }).end();
+    auto flow = fetcher.begin_flow().perform([&received](int const &value) { received = value; }).end();
     flow.sync();
 
     XCTAssertEqual(received, 100);
 }
 
 - (void)test_sync_by_observer {
-    flow::sender<int> sender;
-    sender.set_sync_handler([] { return 100; });
+    flow::fetcher<int> fetcher{[] { return 100; }};
 
     int received = -1;
 
-    flow::observer flow = sender.begin().perform([&received](int const &value) { received = value; }).end();
+    flow::observer flow = fetcher.begin_flow().perform([&received](int const &value) { received = value; }).end();
     flow.sync();
 
     XCTAssertEqual(received, 100);
 }
 
-- (void)test_sync_many_sender {
-    flow::sender<int> sender;
-    sender.set_sync_handler([] { return 100; });
+- (void)test_sync_many_flow {
+    flow::fetcher<int> fetcher{[] { return 100; }};
 
     int received1 = -1;
     int received2 = -1;
 
-    auto flow1 = sender.begin().perform([&received1](int const &value) { received1 = value; }).end();
-    auto flow2 = sender.begin().perform([&received2](int const &value) { received2 = value; }).end();
+    auto flow1 = fetcher.begin_flow().perform([&received1](int const &value) { received1 = value; }).end();
+    auto flow2 = fetcher.begin_flow().perform([&received2](int const &value) { received2 = value; }).end();
 
     flow1.sync();
 
@@ -228,27 +166,23 @@ using namespace yas;
 }
 
 - (void)test_sync_end {
-    flow::sender<int, true> sender;
-    sender.set_sync_handler([] { return 100; });
+    flow::fetcher<int> fetcher{[] { return 100; }};
 
     int received = -1;
 
-    auto flow = sender.begin().perform([&received](int const &value) { received = value; }).sync();
+    auto flow = fetcher.begin_flow().perform([&received](int const &value) { received = value; }).sync();
 
     XCTAssertEqual(received, 100);
 }
 
 - (void)test_sync_with_combined_sub_sender {
-    flow::sender<int, true> sender;
-    sender.set_sync_handler([]() { return 123; });
-
-    flow::sender<int, true> sub_sender;
-    sub_sender.set_sync_handler([]() { return 456; });
+    flow::fetcher<int> fetcher{[]() { return 123; }};
+    flow::fetcher<int> sub_fetcher{[]() { return 456; }};
 
     std::vector<std::pair<int, int>> received;
 
-    auto flow = sender.begin()
-                    .combine(sub_sender.begin())
+    auto flow = fetcher.begin_flow()
+                    .combine(sub_fetcher.begin_flow())
                     .perform([&received](auto const &pair) { received.emplace_back(pair); })
                     .sync();
 
@@ -259,16 +193,13 @@ using namespace yas;
 }
 
 - (void)test_sync_with_merged_sub_sender {
-    flow::sender<int, true> sender;
-    sender.set_sync_handler([]() { return 78; });
-
-    flow::sender<int, true> sub_sender;
-    sub_sender.set_sync_handler([]() { return 90; });
+    flow::fetcher<int> fetcher{[]() { return 78; }};
+    flow::fetcher<int> sub_fetcher{[]() { return 90; }};
 
     std::vector<int> received;
 
-    auto flow = sender.begin()
-                    .merge(sub_sender.begin())
+    auto flow = fetcher.begin_flow()
+                    .merge(sub_fetcher.begin_flow())
                     .perform([&received](int const &value) { received.emplace_back(value); })
                     .sync();
 
@@ -281,18 +212,19 @@ using namespace yas;
 - (void)test_receive {
     std::string received = "";
 
-    flow::sender<int> sender;
+    flow::notifier<int> notifier;
     flow::receiver<std::string> receiver{[&received](std::string const &value) { received = value; }};
 
-    auto node = sender.begin().map([](int const &value) { return std::to_string(value); }).receive(receiver).end();
+    auto node =
+        notifier.begin_flow().map([](int const &value) { return std::to_string(value); }).receive(receiver).end();
 
-    sender.send_value(3);
+    notifier.notify(3);
 
     XCTAssertEqual(received, "3");
 }
 
 - (void)test_receive_array {
-    flow::sender<std::array<int, 2>> sender;
+    flow::notifier<std::array<int, 2>> notifier;
     int received0 = -1;
     int received1 = -1;
 
@@ -300,32 +232,32 @@ using namespace yas;
     flow::receiver<int> receiver1{[&received1](int const &value) { received1 = value; }};
     std::array<flow::receiver<int>, 2> receivers{receiver0, receiver1};
 
-    flow::observer flow = sender.begin().receive(receivers).end();
+    flow::observer flow = notifier.begin_flow().receive(receivers).end();
 
-    sender.send_value(std::array<int, 2>{10, 20});
+    notifier.notify(std::array<int, 2>{10, 20});
 
     XCTAssertEqual(received0, 10);
     XCTAssertEqual(received1, 20);
 }
 
 - (void)test_receive_array_individual {
-    flow::sender<std::array<int, 2>> sender;
+    flow::notifier<std::array<int, 2>> notifier;
     int received0 = -1;
     int received1 = -1;
 
     flow::receiver<int> receiver0{[&received0](int const &value) { received0 = value; }};
     flow::receiver<int> receiver1{[&received1](int const &value) { received1 = value; }};
 
-    flow::observer flow = sender.begin().receive<0>(receiver0).receive<1>(receiver1).end();
+    flow::observer flow = notifier.begin_flow().receive<0>(receiver0).receive<1>(receiver1).end();
 
-    sender.send_value(std::array<int, 2>{10, 20});
+    notifier.notify(std::array<int, 2>{10, 20});
 
     XCTAssertEqual(received0, 10);
     XCTAssertEqual(received1, 20);
 }
 
 - (void)test_receiver_vector {
-    flow::sender<std::vector<int>> sender;
+    flow::notifier<std::vector<int>> notifier;
     int received0 = -1;
     int received1 = -1;
 
@@ -333,32 +265,32 @@ using namespace yas;
     flow::receiver<int> receiver1{[&received1](int const &value) { received1 = value; }};
     std::vector<flow::receiver<int>> receivers{receiver0, receiver1};
 
-    flow::observer flow = sender.begin().receive(receivers).end();
+    flow::observer flow = notifier.begin_flow().receive(receivers).end();
 
-    sender.send_value(std::vector<int>{30, 40});
+    notifier.notify(std::vector<int>{30, 40});
 
     XCTAssertEqual(received0, 30);
     XCTAssertEqual(received1, 40);
 }
 
 - (void)test_receiver_initializer_list {
-    flow::sender<std::vector<int>> sender;
+    flow::notifier<std::vector<int>> notifier;
     int received0 = -1;
     int received1 = -1;
 
     flow::receiver<int> receiver0{[&received0](int const &value) { received0 = value; }};
     flow::receiver<int> receiver1{[&received1](int const &value) { received1 = value; }};
 
-    flow::observer flow = sender.begin().receive({receiver0, receiver1}).end();
+    flow::observer flow = notifier.begin_flow().receive({receiver0, receiver1}).end();
 
-    sender.send_value(std::vector<int>{50, 60});
+    notifier.notify(std::vector<int>{50, 60});
 
     XCTAssertEqual(received0, 50);
     XCTAssertEqual(received1, 60);
 }
 
 - (void)test_receive_tuple {
-    flow::sender<std::tuple<int, std::string>> sender;
+    flow::notifier<std::tuple<int, std::string>> notifier;
 
     int int_received = -1;
     std::string string_received = "";
@@ -367,9 +299,9 @@ using namespace yas;
     flow::receiver<std::string> string_receiver{
         [&string_received](std::string const &value) { string_received = value; }};
 
-    auto flow = sender.begin().receive<0>(int_receiver).receive<1>(string_receiver).end();
+    auto flow = notifier.begin_flow().receive<0>(int_receiver).receive<1>(string_receiver).end();
 
-    sender.send_value(std::make_tuple(int(10), std::string("20")));
+    notifier.notify(std::make_tuple(int(10), std::string("20")));
 
     XCTAssertEqual(int_received, 10);
     XCTAssertEqual(string_received, "20");
@@ -378,12 +310,12 @@ using namespace yas;
 - (void)test_receive_null {
     bool received = false;
 
-    flow::sender<int> sender;
+    flow::notifier<int> notifier;
     flow::receiver<> receiver{[&received]() { received = true; }};
 
-    auto flow = sender.begin().receive_null(receiver).end();
+    auto flow = notifier.begin_flow().receive_null(receiver).end();
 
-    sender.send_value(4);
+    notifier.notify(4);
 
     XCTAssertTrue(received);
 }
@@ -391,13 +323,13 @@ using namespace yas;
 - (void)test_receiver {
     int received = -1;
 
-    flow::sender<int> sender;
+    flow::notifier<int> notifier;
 
     flow::receiver<int> receiver{[&received](int const &value) { received = value; }};
 
-    auto flow = sender.begin().receive(receiver).end();
+    auto flow = notifier.begin_flow().receive(receiver).end();
 
-    sender.send_value(100);
+    notifier.notify(100);
 
     XCTAssertEqual(received, 100);
 }
@@ -405,19 +337,19 @@ using namespace yas;
 - (void)test_guard {
     float received = -1.0f;
 
-    flow::sender<int> sender;
+    flow::notifier<int> notifier;
 
-    auto flow = sender.begin()
+    auto flow = notifier.begin_flow()
                     .map([](int const &value) { return value; })
                     .filter([](float const &value) { return value > 2.5f; })
                     .perform([&received](float const &value) { received = value; })
                     .end();
 
-    sender.send_value(2);
+    notifier.notify(2);
 
     XCTAssertEqual(received, -1.0f);
 
-    sender.send_value(3);
+    notifier.notify(3);
 
     XCTAssertEqual(received, 3.0f);
 }
@@ -425,66 +357,68 @@ using namespace yas;
 - (void)test_merge {
     std::string received;
 
-    flow::sender<int> sender;
-    flow::sender<float> sub_sender;
+    flow::notifier<int> notifier;
+    flow::notifier<float> sub_notifier;
 
-    auto sub_flow = sub_sender.begin().map([](float const &value) { return std::to_string(int(value)); });
+    auto sub_flow = sub_notifier.begin_flow().map([](float const &value) { return std::to_string(int(value)); });
 
-    auto flow = sender.begin()
+    auto flow = notifier.begin_flow()
                     .map([](int const &value) { return std::to_string(value); })
                     .merge(sub_flow)
                     .perform([&received](std::string const &value) { received = value; })
                     .end();
 
-    sender.send_value(10);
+    notifier.notify(10);
 
     XCTAssertEqual(received, "10");
 
-    sub_sender.send_value(20.0f);
+    sub_notifier.notify(20.0f);
 
     XCTAssertEqual(received, "20");
 }
 
 - (void)test_pair {
-    flow::sender<int> main_sender;
-    flow::sender<std::string> sub_sender;
+    flow::notifier<int> main_notifier;
+    flow::notifier<std::string> sub_notifier;
 
     using opt_pair_t = std::pair<opt_t<int>, opt_t<std::string>>;
 
     opt_pair_t received;
 
-    auto sub_flow = sub_sender.begin();
+    auto sub_flow = sub_notifier.begin_flow();
     auto main_flow =
-        main_sender.begin().pair(sub_flow).perform([&received](auto const &value) { received = value; }).end();
+        main_notifier.begin_flow().pair(sub_flow).perform([&received](auto const &value) { received = value; }).end();
 
-    main_sender.send_value(1);
+    main_notifier.notify(1);
 
     XCTAssertEqual(*received.first, 1);
     XCTAssertFalse(!!received.second);
 
-    sub_sender.send_value("test_text");
+    sub_notifier.notify("test_text");
 
     XCTAssertFalse(!!received.first);
     XCTAssertEqual(*received.second, "test_text");
 }
 
 - (void)test_combine {
-    flow::sender<int> main_sender;
-    flow::sender<std::string> sub_sender;
+    flow::notifier<int> main_notifier;
+    flow::notifier<std::string> sub_notifier;
 
     using opt_pair_t = opt_t<std::pair<int, std::string>>;
 
     opt_pair_t received;
 
-    auto sub_flow = sub_sender.begin();
-    auto main_flow =
-        main_sender.begin().combine(sub_flow).perform([&received](auto const &value) { received = value; }).end();
+    auto sub_flow = sub_notifier.begin_flow();
+    auto main_flow = main_notifier.begin_flow()
+                         .combine(sub_flow)
+                         .perform([&received](auto const &value) { received = value; })
+                         .end();
 
-    main_sender.send_value(1);
+    main_notifier.notify(1);
 
     XCTAssertFalse(received);
 
-    sub_sender.send_value("test_text");
+    sub_notifier.notify("test_text");
 
     XCTAssertTrue(received);
     XCTAssertEqual(received->first, 1);
@@ -492,13 +426,13 @@ using namespace yas;
 }
 
 - (void)test_combine_tuples {
-    flow::sender<int> main_sender;
-    flow::sender<std::string> sub_sender;
-    flow::sender<float> sub_sender2;
+    flow::notifier<int> main_notifier;
+    flow::notifier<std::string> sub_notifier;
+    flow::notifier<float> sub_notifier2;
 
-    auto sub_flow = sub_sender.begin().to_tuple();
-    auto main_flow = main_sender.begin().to_tuple();
-    auto sub_flow2 = sub_sender2.begin().to_tuple();
+    auto sub_flow = sub_notifier.begin_flow().to_tuple();
+    auto main_flow = main_notifier.begin_flow().to_tuple();
+    auto sub_flow2 = sub_notifier2.begin_flow().to_tuple();
 
     opt_t<std::tuple<int, std::string, float>> received;
 
@@ -507,9 +441,9 @@ using namespace yas;
                     .perform([&received](std::tuple<int, std::string, float> const &value) { received = value; })
                     .end();
 
-    main_sender.send_value(33);
-    sub_sender.send_value("44");
-    sub_sender2.send_value(55.0f);
+    main_notifier.notify(33);
+    sub_notifier.notify("44");
+    sub_notifier2.notify(55.0f);
 
     XCTAssertTrue(received);
     XCTAssertEqual(std::get<0>(*received), 33);
@@ -518,10 +452,10 @@ using namespace yas;
 }
 
 - (void)test_normalize {
-    flow::sender<int> sender;
+    flow::notifier<int> notifier;
 
     flow::node<std::string, int, int, false> toed_flow =
-        sender.begin().map([](int const &value) { return std::to_string(value); });
+        notifier.begin_flow().map([](int const &value) { return std::to_string(value); });
 
     flow::node<std::string, std::string, int, false> normalized_flow = toed_flow.normalize();
 
@@ -530,7 +464,7 @@ using namespace yas;
     flow::typed_observer<int> observer =
         normalized_flow.perform([&received](std::string const &value) { received = value; }).end();
 
-    sender.send_value(10);
+    notifier.notify(10);
 
     XCTAssertEqual(received, "10");
 }

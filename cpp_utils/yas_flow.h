@@ -33,11 +33,7 @@ struct sender_base : base {
 
     sender_base(std::nullptr_t);
 
-    void send_value(T const &);
-
     [[nodiscard]] sender_flowable<T> flowable();
-
-    [[nodiscard]] receiver<T> &receiver();
 
    protected:
     sender_base(std::shared_ptr<impl> &&);
@@ -46,23 +42,39 @@ struct sender_base : base {
     sender_flowable<T> _flowable = nullptr;
 };
 
-template <typename T, bool Syncable = false>
-struct sender : sender_base<T> {
+template <typename T>
+struct notifier : sender_base<T> {
     class impl;
 
-    sender();
-    sender(std::nullptr_t);
+    notifier();
+    notifier(std::nullptr_t);
 
-    void set_sync_handler(std::function<opt_t<T>(void)>);
+    void notify(T const &);
 
-    [[nodiscard]] node<T, T, T, Syncable> begin();
+    [[nodiscard]] node<T, T, T, false> begin_flow();
+
+    [[nodiscard]] receiver<T> &receiver();
 
    protected:
-    sender(std::shared_ptr<impl> &&);
+    notifier(std::shared_ptr<impl> &&);
 };
 
 template <typename T>
-struct property : sender<T, true> {
+struct fetcher : sender_base<T> {
+    class impl;
+
+    fetcher(std::function<opt_t<T>(void)>);
+    fetcher(std::nullptr_t);
+
+    void fetch() const;
+
+    [[nodiscard]] node<T, T, T, true> begin_flow();
+
+    [[nodiscard]] receiver<> &receiver();
+};
+
+template <typename T>
+struct property : sender_base<T> {
     class impl;
 
     property(T);
@@ -73,6 +85,10 @@ struct property : sender<T, true> {
     T const &value() const;
     T &value();
     void set_value(T);
+
+    [[nodiscard]] node<T, T, T, true> begin_flow();
+
+    [[nodiscard]] receiver<T> &receiver();
 };
 
 struct observer : base {

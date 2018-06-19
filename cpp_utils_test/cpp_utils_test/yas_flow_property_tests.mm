@@ -36,7 +36,7 @@ using namespace yas;
 
     int received = -1;
 
-    auto flow = property.begin().perform([&received](int const &value) { received = value; }).sync();
+    auto flow = property.begin_flow().perform([&received](int const &value) { received = value; }).sync();
 
     XCTAssertEqual(received, 10);
 
@@ -47,13 +47,13 @@ using namespace yas;
 
 - (void)test_receive {
     flow::property<int> property{100};
-    flow::sender<int> sender;
+    flow::notifier<int> notifier;
 
-    auto flow = sender.begin().receive(property.receiver()).end();
+    auto flow = notifier.begin_flow().receive(property.receiver()).end();
 
     XCTAssertEqual(property.value(), 100);
 
-    sender.send_value(200);
+    notifier.notify(200);
 
     XCTAssertEqual(property.value(), 200);
 }
@@ -62,12 +62,12 @@ using namespace yas;
     flow::property<int> property1{123};
     flow::property<int> property2{456};
 
-    auto flow1 = property1.begin().receive(property2.receiver()).sync();
+    auto flow1 = property1.begin_flow().receive(property2.receiver()).sync();
 
     XCTAssertEqual(property1.value(), 123);
     XCTAssertEqual(property2.value(), 123);
 
-    auto flow2 = property2.begin().receive(property1.receiver()).sync();
+    auto flow2 = property2.begin_flow().receive(property1.receiver()).sync();
 
     XCTAssertEqual(property1.value(), 123);
     XCTAssertEqual(property2.value(), 123);

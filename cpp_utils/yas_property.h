@@ -60,10 +60,6 @@ class property : public base {
     limiter_t const &limiter() const;
 
     subject_t &subject();
-
-    [[nodiscard]] flow::node<T, T, T, true> begin_value_flow();
-    [[nodiscard]] flow_context_t begin_context_flow();
-    [[nodiscard]] flow::receiver<T> &receiver();
 };
 
 template <typename T>
