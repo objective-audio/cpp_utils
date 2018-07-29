@@ -71,7 +71,7 @@ class subject<Key, T>::impl {
     using observer_set_t = std::unordered_set<weak<observer<Key, T>>>;
     using observers_t = std::unordered_map<std::experimental::optional<Key>, observer_set_t>;
     observers_t observers;
-    flow::notifier<flow_context_t> sender = nullptr;
+    chaining::notifier<flow_context_t> sender = nullptr;
     std::vector<base> _sender_observers;
 
     void add_observer(observer<Key, T> const &obs, std::experimental::optional<Key> const &key) {
@@ -125,15 +125,15 @@ class subject<Key, T>::impl {
         return observers.size() > 0;
     }
 
-    flow::node<T, flow_context_t, flow_context_t, false> begin_flow(subject<Key, T> &subject, Key const &key) {
-        return this->begin_flow(subject)
-            .filter([key](flow_context_t const &context) { return context.key == key; })
-            .map([](flow_context_t const &context) { return context.value; });
+    chaining::node<T, flow_context_t, flow_context_t, false> chain(subject<Key, T> &subject, Key const &key) {
+        return this->chain(subject)
+            .guard([key](flow_context_t const &context) { return context.key == key; })
+            .to([](flow_context_t const &context) { return context.value; });
     }
 
-    flow::node<flow_context_t, flow_context_t, flow_context_t, false> begin_flow(subject<Key, T> &subject) {
+    chaining::node<flow_context_t, flow_context_t, flow_context_t, false> chain(subject<Key, T> &subject) {
         if (!this->sender) {
-            flow::notifier<flow_context_t> notifier;
+            chaining::notifier<flow_context_t> notifier;
 
             this->_sender_observers.emplace_back(
                 subject.make_wild_card_observer([weak_sender = to_weak(notifier)](auto const &context) {
@@ -145,7 +145,7 @@ class subject<Key, T>::impl {
             this->sender = std::move(notifier);
         }
 
-        return this->sender.begin_flow();
+        return this->sender.chain();
     }
 };
 
@@ -308,16 +308,16 @@ observer<Key, T> subject<Key, T>::make_wild_card_observer(wild_card_handler_f co
 }
 
 template <typename Key, typename T>
-flow::node<T, typename subject<Key, T>::flow_context_t, typename subject<Key, T>::flow_context_t, false>
-subject<Key, T>::begin_flow(Key const &key) {
-    return _impl->begin_flow(*this, key);
+chaining::node<T, typename subject<Key, T>::flow_context_t, typename subject<Key, T>::flow_context_t, false>
+subject<Key, T>::chain(Key const &key) {
+    return _impl->chain(*this, key);
 }
 
 template <typename Key, typename T>
-[[nodiscard]] flow::node<typename subject<Key, T>::flow_context_t, typename subject<Key, T>::flow_context_t,
-                         typename subject<Key, T>::flow_context_t, false>
-subject<Key, T>::begin_flow() {
-    return _impl->begin_flow(*this);
+[[nodiscard]] chaining::node<typename subject<Key, T>::flow_context_t, typename subject<Key, T>::flow_context_t,
+                             typename subject<Key, T>::flow_context_t, false>
+subject<Key, T>::chain() {
+    return _impl->chain(*this);
 }
 }  // namespace yas
 

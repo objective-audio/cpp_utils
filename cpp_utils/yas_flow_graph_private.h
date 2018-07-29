@@ -5,6 +5,7 @@
 #pragma once
 
 #include <unordered_map>
+#include "yas_chaining.h"
 #include "yas_types.h"
 
 namespace yas::flow {
@@ -33,14 +34,14 @@ template <typename State, typename Signal>
 struct flow::graph<State, Signal>::impl : base::impl {
     State state;
     bool is_running = false;
-    flow::receiver<graph_next<State, Signal>> receiver = nullptr;
-    std::unordered_map<State, flow::typed_observer<Signal>> observers;
+    chaining::receiver<graph_next<State, Signal>> receiver = nullptr;
+    std::unordered_map<State, chaining::typed_observer<Signal>> observers;
 
     impl(State &&state) : state(std::move(state)) {
     }
 
     void prepare(flow::graph<State, Signal> &graph) {
-        this->receiver = flow::receiver<graph_next<State, Signal>>(
+        this->receiver = chaining::receiver<graph_next<State, Signal>>(
             [weak_graph = to_weak(graph)](graph_next<State, Signal> const &next) {
                 if (flow::graph<State, Signal> graph = weak_graph.lock()) {
                     graph.impl_ptr<impl>()->_receive_value(next);
@@ -54,11 +55,11 @@ struct flow::graph<State, Signal>::impl : base::impl {
             throw std::runtime_error("observer state exists.");
         }
 
-        flow::notifier<Signal> sender;
+        chaining::notifier<Signal> sender;
 
         auto observer =
-            sender.begin_flow()
-                .map([handler = std::move(handler), weak_graph = to_weak(graph)](Signal const &signal) {
+            sender.chain()
+                .to([handler = std::move(handler), weak_graph = to_weak(graph)](Signal const &signal) {
                     state_out<State> state_out = handler(signal);
                     return graph_next<State, Signal>{.state = state_out.state,
                                                      .signal = state_out.is_continue ? opt_t<Signal>(signal) : nullopt};

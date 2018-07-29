@@ -3,7 +3,7 @@
 //
 
 #import <XCTest/XCTest.h>
-#import "yas_flow.h"
+#import "yas_chaining.h"
 
 using namespace yas;
 
@@ -24,11 +24,11 @@ using namespace yas;
 - (void)test_sync {
     int sending = 1;
 
-    flow::fetcher<int> fetcher{[&sending] { return sending; }};
+    chaining::fetcher<int> fetcher{[&sending] { return sending; }};
 
     int notified = -1;
 
-    auto flow = fetcher.begin_flow().perform([&notified](int const &value) { notified = value; }).sync();
+    auto flow = fetcher.chain().perform([&notified](int const &value) { notified = value; }).sync();
 
     XCTAssertEqual(notified, 1);
 
@@ -40,21 +40,21 @@ using namespace yas;
 }
 
 - (void)test_receive {
-    flow::notifier<std::nullptr_t> notifier;
+    chaining::notifier<std::nullptr_t> notifier;
 
     int sending = 1;
 
-    flow::fetcher<int> fetcher{[&sending] { return sending; }};
+    chaining::fetcher<int> fetcher{[&sending] { return sending; }};
 
     int notified = -1;
 
-    auto flow = fetcher.begin_flow().perform([&notified](int const &value) { notified = value; }).sync();
+    auto flow = fetcher.chain().perform([&notified](int const &value) { notified = value; }).sync();
 
     XCTAssertEqual(notified, 1);
 
     sending = 2;
 
-    auto receive_flow = notifier.begin_flow().receive(fetcher.receiver()).end();
+    auto receive_flow = notifier.chain().receive(fetcher.receiver()).end();
 
     notifier.notify(nullptr);
 

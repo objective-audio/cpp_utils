@@ -3,7 +3,7 @@
 //
 
 #import <XCTest/XCTest.h>
-#import "yas_flow.h"
+#import "yas_chaining.h"
 
 using namespace yas;
 
@@ -24,9 +24,9 @@ using namespace yas;
 - (void)test_notifier_begin {
     int received = -1;
 
-    flow::notifier<int> notifier;
+    chaining::notifier<int> notifier;
 
-    auto flow = notifier.begin_flow().perform([&received](int const &value) { received = value; }).end();
+    auto flow = notifier.chain().perform([&received](int const &value) { received = value; }).end();
 
     XCTAssertEqual(received, -1);
 
@@ -39,10 +39,10 @@ using namespace yas;
     int received1 = -1;
     int received2 = -1;
 
-    flow::notifier<int> notifier;
+    chaining::notifier<int> notifier;
 
-    auto flow1 = notifier.begin_flow().perform([&received1](int const &value) { received1 = value; }).end();
-    auto flow2 = notifier.begin_flow().perform([&received2](int const &value) { received2 = value; }).end();
+    auto flow1 = notifier.chain().perform([&received1](int const &value) { received1 = value; }).end();
+    auto flow2 = notifier.chain().perform([&received2](int const &value) { received2 = value; }).end();
 
     notifier.notify(3);
 
@@ -53,11 +53,11 @@ using namespace yas;
 - (void)test_notifier_receiver {
     int received = -1;
 
-    flow::notifier<int> notifier1;
-    flow::notifier<int> notifier2;
+    chaining::notifier<int> notifier1;
+    chaining::notifier<int> notifier2;
 
-    auto flow1 = notifier1.begin_flow().receive(notifier2.receiver()).end();
-    auto flow2 = notifier2.begin_flow().perform([&received](int const &value) { received = value; }).end();
+    auto flow1 = notifier1.chain().receive(notifier2.receiver()).end();
+    auto flow2 = notifier2.chain().perform([&received](int const &value) { received = value; }).end();
 
     notifier1.notify(4);
 
@@ -67,14 +67,14 @@ using namespace yas;
 - (void)test_notifier_block_recursive_call {
     int received = -1;
 
-    flow::notifier<int> notifier;
+    chaining::notifier<int> notifier;
 
-    flow::receiver<int> receiver{[&notifier, &received](int const &value) {
+    chaining::receiver<int> receiver{[&notifier, &received](int const &value) {
         received = value;
         notifier.notify(value + 1);
     }};
 
-    auto flow = notifier.begin_flow().receive(receiver).end();
+    auto flow = notifier.chain().receive(receiver).end();
 
     notifier.notify(1);
 

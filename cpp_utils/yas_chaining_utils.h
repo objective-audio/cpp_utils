@@ -1,5 +1,5 @@
 //
-//  yas_flow_utils.h
+//  yas_chaining_utils.h
 //
 
 #pragma once
@@ -7,7 +7,7 @@
 #include <algorithm>
 #include <functional>
 
-namespace yas::flow {
+namespace yas::chaining {
 template <typename T, typename U, std::enable_if_t<!std::is_same<T, U>::value, std::nullptr_t> = nullptr>
 std::function<T(T const &)> add(U const &adding) {
     return [adding](T const &value) { return value + adding; };
@@ -57,4 +57,4 @@ template <typename T>
 std::function<T(T const &)> max(T const &max) {
     return [max](T const &value) { return std::max(value, max); };
 }
-}  // namespace yas::flow
+}  // namespace yas::chaining
