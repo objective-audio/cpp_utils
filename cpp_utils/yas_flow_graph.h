@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "yas_flow.h"
+#include "yas_base.h"
 
 namespace yas::flow {
 template <typename State>

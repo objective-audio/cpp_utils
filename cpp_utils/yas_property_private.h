@@ -10,7 +10,7 @@ namespace yas {
 template <typename T>
 class property<T>::impl : public base::impl {
    public:
-    flow::receiver<T> receiver = nullptr;
+    chaining::receiver<T> receiver = nullptr;
 
     impl(args const &args) : _value(args.value), _validator(args.validator), _limiter(args.limiter) {
         _limit(_value);
@@ -24,7 +24,7 @@ class property<T>::impl : public base::impl {
     }
 
     void prepare(property<T> &property) {
-        this->receiver = flow::receiver<T>([weak_property = to_weak(property)](T const &value) {
+        this->receiver = chaining::receiver<T>([weak_property = to_weak(property)](T const &value) {
             if (auto property = weak_property.lock()) {
                 property.set_value(value);
             }

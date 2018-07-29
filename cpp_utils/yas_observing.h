@@ -8,7 +8,7 @@
 #include <initializer_list>
 #include <string>
 #include "yas_base.h"
-#include "yas_flow.h"
+#include "yas_chaining.h"
 
 namespace yas {
 template <typename Key, typename T>
@@ -69,8 +69,8 @@ class subject {
     [[nodiscard]] observer<Key, T> make_value_observer(Key const &, value_handler_f const &);
     [[nodiscard]] observer<Key, T> make_observer(Key const &, wild_card_handler_f const &);
     [[nodiscard]] observer<Key, T> make_wild_card_observer(wild_card_handler_f const &);
-    [[nodiscard]] flow::node<T, flow_context_t, flow_context_t, false> begin_flow(Key const &);
-    [[nodiscard]] flow::node<flow_context_t, flow_context_t, flow_context_t, false> begin_flow();
+    [[nodiscard]] chaining::node<T, flow_context_t, flow_context_t, false> chain(Key const &);
+    [[nodiscard]] chaining::node<flow_context_t, flow_context_t, flow_context_t, false> chain();
 
    private:
     class impl;

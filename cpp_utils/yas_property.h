@@ -31,7 +31,7 @@ class property : public base {
     using observer_t = observer<property_method, change_context>;
     using validator_t = std::function<bool(T const &)>;
     using limiter_t = std::function<T(T const &)>;
-    using flow_context_t = flow::node<change_context, change_context, change_context, true>;
+    using flow_context_t = chaining::node<change_context, change_context, change_context, true>;
 
     struct args {
         T value;

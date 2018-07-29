@@ -1,16 +1,16 @@
 //
-//  yas_flow.h
+//  yas_chaining.h
 //
 
 #pragma once
 
 #include <functional>
 #include "yas_any.h"
-#include "yas_flow_protocol.h"
+#include "yas_chaining_protocol.h"
 #include "yas_type_traits.h"
 #include "yas_types.h"
 
-namespace yas::flow {
+namespace yas::chaining {
 template <typename T = std::nullptr_t>
 struct receiver : base {
     class impl;
@@ -21,10 +21,10 @@ struct receiver : base {
 
     ~receiver() final;
 
-    [[nodiscard]] receiver_flowable<T> flowable();
+    [[nodiscard]] receiver_chainable<T> chainable();
 
    private:
-    receiver_flowable<T> _flowable = nullptr;
+    receiver_chainable<T> _chainable = nullptr;
 };
 
 template <typename T>
@@ -33,13 +33,13 @@ struct sender_base : base {
 
     sender_base(std::nullptr_t);
 
-    [[nodiscard]] sender_flowable<T> flowable();
+    [[nodiscard]] sender_chainable<T> chainable();
 
    protected:
     sender_base(std::shared_ptr<impl> &&);
 
    private:
-    sender_flowable<T> _flowable = nullptr;
+    sender_chainable<T> _chainable = nullptr;
 };
 
 template <typename T>
@@ -51,7 +51,7 @@ struct notifier : sender_base<T> {
 
     void notify(T const &);
 
-    [[nodiscard]] node<T, T, T, false> begin_flow();
+    [[nodiscard]] node<T, T, T, false> chain();
 
     [[nodiscard]] receiver<T> &receiver();
 
@@ -68,25 +68,25 @@ struct fetcher : sender_base<T> {
 
     void fetch() const;
 
-    [[nodiscard]] node<T, T, T, true> begin_flow();
+    [[nodiscard]] node<T, T, T, true> chain();
 
     [[nodiscard]] receiver<> &receiver();
 };
 
 template <typename T>
-struct property : sender_base<T> {
+struct holder : sender_base<T> {
     class impl;
 
-    property(T);
-    property(std::nullptr_t);
+    holder(T);
+    holder(std::nullptr_t);
 
-    ~property() final;
+    ~holder() final;
 
     T const &value() const;
     T &value();
     void set_value(T);
 
-    [[nodiscard]] node<T, T, T, true> begin_flow();
+    [[nodiscard]] node<T, T, T, true> chain();
 
     [[nodiscard]] receiver<T> &receiver();
 };
@@ -117,7 +117,7 @@ struct typed_observer : observer {
 
     ~typed_observer() final;
 
-    [[nodiscard]] flow::input<Begin> &input();
+    [[nodiscard]] chaining::input<Begin> &input();
 };
 
 template <typename Out, typename In, typename Begin, bool Syncable>
@@ -145,10 +145,10 @@ struct node : base {
     [[nodiscard]] auto receive(std::initializer_list<receiver<T>>);
     [[nodiscard]] auto receive_null(receiver<std::nullptr_t> &);
 
-    [[nodiscard]] auto filter(std::function<bool(Out const &)>);
+    [[nodiscard]] auto guard(std::function<bool(Out const &)>);
 
     template <typename F>
-    [[nodiscard]] auto map(F);
+    [[nodiscard]] auto to(F);
     template <typename T>
     [[nodiscard]] auto to_value(T);
     [[nodiscard]] auto to_null();
@@ -169,6 +169,6 @@ struct node : base {
 
 template <typename T, bool Syncable>
 using node_t = node<T, T, T, Syncable>;
-}  // namespace yas::flow
+}  // namespace yas::chaining
 
-#include "yas_flow_private.h"
+#include "yas_chaining_private.h"
