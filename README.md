@@ -2,18 +2,6 @@
 
 C++のユーティリティー集
 
-## yas_boolean
-
-boolをvectorで扱うためのクラス。1要素のサイズを`sizeof(bool)`で確保できる。
-
-```cpp
-std::vector<yas::boolean> vec{true, false};
-
-vec[0]; // -> true
-vec[1]; // -> false
-sizeof(vec[0]); // -> sizeof(bool)
-```
-
 ## yas_base
 
 参照型を実現するための基底クラス。
@@ -24,11 +12,11 @@ sizeof(vec[0]); // -> sizeof(bool)
 struct derived : yas::base {
     struct impl : base::impl {
         float value;
-        
+
         impl(float value) : value(value) {
         }
     };
-    
+
     derived(float value) : base(std::make_shared<impl>(value)) {
     }
 
@@ -40,6 +28,63 @@ struct derived : yas::base {
         return impl_ptr<impl>()->value;
     }
 };
+```
+
+## yas_protocol
+
+プロトコルを実現するクラス。`yas::base`を継承したクラスに対して多重継承して必要なインターフェースを持つことを定義する。
+
+```cpp
+struct sample_protocol : yas::protocol {
+    struct impl : yas::protocol::impl {
+        virtual int required_function() = 0;
+        virtual int optional_function() {
+            return 1;
+        }
+    };
+
+    sample_protocol(std::shared_ptr<impl> impl) : protocol(std::move(impl)) {
+    }
+
+    int required_function() {
+        return impl_ptr<impl>()->required_function();
+    }
+
+    int optional_function() {
+        return impl_ptr<impl>()->optional_function();
+    }
+};
+
+struct sample_object : yas::base {
+    struct impl : yas::base::impl, sample_protocol::impl {
+        int required_function() override {
+            return 2;
+        }
+    };
+
+    sample_object() : base(std::make_shared<impl>()) {
+    }
+
+    sample_protocol protocol() {
+        return sample_protocol{impl_ptr<sample_protocol::impl>()};
+    }
+};
+
+sample_object obj;
+obj.protocol().required_function(); // -> 2
+obj.protocol().optional_function(); // -> 1
+```
+
+## yas_boolean
+
+boolをvectorで扱うためのクラス。1要素のサイズを`sizeof(bool)`で確保できる。
+
+```cpp
+std::vector<yas::boolean> vec{true, false};
+
+vec[0]; // -> true
+vec[1]; // -> false
+sizeof(vec[0]); // -> sizeof(bool)
 ```
 
 ## yas_cf_ref
@@ -222,51 +267,6 @@ auto each = make_fast_each(array, 3);
 while (yas_fast_each_next(each)) {
     std::cout << "idx:" << yas_fast_each_index(each) << " value:" << yas_fast_each_value(each) << std::endl;
 }
-```
-
-## yas_protocol
-
-プロトコルを実現するクラス。`yas::base`を継承したクラスに対して多重継承して必要なインターフェースを持つことを定義する。
-
-```cpp
-struct sample_protocol : yas::protocol {
-    struct impl : yas::protocol::impl {
-        virtual int required_function() = 0;
-        virtual int optional_function() {
-            return 1;
-        }
-    };
-
-    sample_protocol(std::shared_ptr<impl> impl) : protocol(std::move(impl)) {
-    }
-
-    int required_function() {
-        return impl_ptr<impl>()->required_function();
-    }
-
-    int optional_function() {
-        return impl_ptr<impl>()->optional_function();
-    }
-};
-
-struct sample_object : yas::base {
-    struct impl : yas::base::impl, sample_protocol::impl {
-        int required_function() override {
-            return 2;
-        }
-    };
-
-    sample_object() : base(std::make_shared<impl>()) {
-    }
-
-    sample_protocol protocol() {
-        return sample_protocol{impl_ptr<sample_protocol::impl>()};
-    }
-};
-
-sample_object obj;
-obj.protocol().required_function(); // -> 2
-obj.protocol().optional_function(); // -> 1
 ```
 
 ## yas_result
