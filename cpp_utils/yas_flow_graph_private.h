@@ -9,115 +9,263 @@
 #include "yas_types.h"
 
 namespace yas::flow {
-template <typename State>
-state_out<State> wait(State state) {
-    return state_out<State>{.state = std::move(state)};
+#pragma mark - state
+
+template <typename Waiting, typename Running>
+state<Waiting, Running>::state(Waiting waiting) : _waiting(std::move(waiting)) {
 }
 
-template <typename State>
-state_out<State> run(State state) {
-    return state_out<State>{.state = std::move(state), .is_continue = true};
+template <typename Waiting, typename Running>
+state<Waiting, Running>::state(Running running) : _running(std::move(running)) {
 }
 
-template <typename State, typename Signal>
-struct graph_next {
-    State state;
-    opt_t<Signal> signal = nullopt;
+template <typename Waiting, typename Running>
+state_kind state<Waiting, Running>::kind() const {
+    if (this->_waiting) {
+        return state_kind::waiting;
+    } else if (this->_running) {
+        return state_kind::running;
+    } else {
+        throw std::runtime_error("");
+    }
+}
+
+template <typename Waiting, typename Running>
+Waiting const &state<Waiting, Running>::waiting() const {
+    return *this->_waiting;
+}
+
+template <typename Waiting, typename Running>
+Running const &state<Waiting, Running>::running() const {
+    return *this->_running;
+}
+
+#pragma mark - out_base
+
+struct out_impl_base : base::impl {};
+
+template <typename T>
+struct out_impl : out_impl_base {
+    T value;
+
+    out_impl(T &&value) : value(std::move(value)) {
+    }
 };
-}  // namespace yas::flow
 
-namespace yas {
+#pragma mark - waiting_out
 
-#pragma mark - flow::graph
+template <typename Waiting>
+waiting_out::waiting_out(flow::wait<Waiting> value)
+    : base(std::make_shared<out_impl<flow::wait<Waiting>>>(std::move(value))) {
+}
 
-template <typename State, typename Signal>
-struct flow::graph<State, Signal>::impl : base::impl {
-    State state;
-    bool is_running = false;
-    chaining::receiver<graph_next<State, Signal>> receiver = nullptr;
-    std::unordered_map<State, chaining::typed_observer<Signal>> observers;
+template <typename Running, typename Event>
+waiting_out::waiting_out(flow::run<Running, Event> value)
+    : base(std::make_shared<out_impl<flow::run<Running, Event>>>(std::move(value))) {
+}
 
-    impl(State &&state) : state(std::move(state)) {
+waiting_out::waiting_out(flow::stay value) : base(std::make_shared<out_impl<flow::stay>>(std::move(value))) {
+}
+
+waiting_out::waiting_out(std::nullptr_t) : base(nullptr) {
+}
+
+template <typename Waiting, typename Running, typename Event>
+enum waiting_out::kind waiting_out::kind() const {
+    if (impl_ptr<out_impl<flow::wait<Waiting>>>()) {
+        return kind::wait;
+    } else if (impl_ptr<out_impl<flow::run<Running, Event>>>()) {
+        return kind::run;
+    } else if (impl_ptr<out_impl<flow::stay>>()) {
+        return kind::stay;
+    } else {
+        throw std::runtime_error("");
+    }
+}
+
+template <typename Waiting>
+wait<Waiting> waiting_out::wait() const {
+    return impl_ptr<out_impl<flow::wait<Waiting>>>()->value;
+}
+
+template <typename Running, typename Event>
+run<Running, Event> waiting_out::run() const {
+    return impl_ptr<out_impl<flow::run<Running, Event>>>()->value;
+}
+
+#pragma mark - running_out
+
+template <typename Waiting>
+running_out::running_out(flow::wait<Waiting> value)
+    : base(std::make_shared<out_impl<flow::wait<Waiting>>>(std::move(value))) {
+}
+
+template <typename Running, typename Event>
+running_out::running_out(flow::run<Running, Event> value)
+    : base(std::make_shared<out_impl<flow::run<Running, Event>>>(std::move(value))) {
+}
+
+running_out::running_out(std::nullptr_t) : base(nullptr) {
+}
+
+template <typename Waiting, typename Running, typename Event>
+enum running_out::kind running_out::kind() const {
+    if (impl_ptr<out_impl<flow::wait<Waiting>>>()) {
+        return kind::wait;
+    } else if (impl_ptr<out_impl<flow::run<Running, Event>>>()) {
+        return kind::run;
+    } else {
+        throw std::runtime_error("");
+    }
+}
+
+template <typename Waiting>
+wait<Waiting> running_out::wait() const {
+    return impl_ptr<out_impl<flow::wait<Waiting>>>()->value;
+}
+
+template <typename Running, typename Event>
+run<Running, Event> running_out::run() const {
+    return impl_ptr<out_impl<flow::run<Running, Event>>>()->value;
+}
+
+#pragma mark - graph
+
+template <typename Waiting, typename Running, typename Event>
+struct graph<Waiting, Running, Event>::impl : base::impl {
+    state<Waiting, Running> _current;
+    std::unordered_map<Waiting, waiting_handler_f> _waiting_handlers;
+    std::unordered_map<Running, running_handler_f> _running_handlers;
+    bool _performing = false;
+
+    impl(Waiting &&waiting) : _current(std::move(waiting)) {
     }
 
-    void prepare(flow::graph<State, Signal> &graph) {
-        this->receiver = chaining::receiver<graph_next<State, Signal>>(
-            [weak_graph = to_weak(graph)](graph_next<State, Signal> const &next) {
-                if (flow::graph<State, Signal> graph = weak_graph.lock()) {
-                    graph.impl_ptr<impl>()->_receive_value(next);
-                }
-            });
-    }
-
-    void add(flow::graph<State, Signal> &graph, State &&state,
-             std::function<state_out<State>(Signal const &)> &&handler) {
-        if (this->observers.count(state) > 0) {
-            throw std::runtime_error("observer state exists.");
+    void addWaiting(Waiting &&waiting, waiting_handler_f &&handler) {
+        if (this->_waiting_handlers.count(waiting) > 0) {
+            throw std::invalid_argument("state exists.");
         }
 
-        chaining::notifier<Signal> sender;
-
-        auto observer =
-            sender.chain()
-                .to([handler = std::move(handler), weak_graph = to_weak(graph)](Signal const &signal) {
-                    state_out<State> state_out = handler(signal);
-                    return graph_next<State, Signal>{.state = state_out.state,
-                                                     .signal = state_out.is_continue ? opt_t<Signal>(signal) : nullopt};
-                })
-                .receive(this->receiver)
-                .end();
-
-        this->observers.emplace(std::move(state), std::move(observer));
+        this->_waiting_handlers.emplace(std::move(waiting), std::move(handler));
     }
 
-    void run(Signal const &signal) {
-        if (this->is_running) {
-            throw std::runtime_error("graph is running.");
+    void addRunning(Running &&running, running_handler_f &&handler) {
+        if (this->_running_handlers.count(running) > 0) {
+            throw std::invalid_argument("state exists.");
         }
 
-        this->is_running = true;
+        this->_running_handlers.emplace(std::move(running), std::move(handler));
+    }
 
-        auto &input = this->observers.at(this->state).input();
-        input.input_value(signal);
+    void run(Event const &event) {
+        if (this->_current.kind() != state_kind::waiting) {
+            throw std::runtime_error("state is not waiting.");
+        }
+
+        this->_run(event);
     }
 
    private:
-    void _receive_value(graph_next<State, Signal> const &next) {
-        this->state = next.state;
-        this->is_running = false;
+    void _run(Event const &event) {
+        if (this->_performing) {
+            throw std::runtime_error("performing.");
+        }
 
-        if (next.signal) {
-            this->run(*next.signal);
+        switch (this->_current.kind()) {
+            case state_kind::waiting: {
+                this->_run_waiting(this->_current.waiting(), event);
+            } break;
+            case state_kind::running: {
+                this->_run_running(this->_current.running(), event);
+            } break;
+        }
+    }
+
+    void _run_waiting(Waiting const &state, Event const &event) {
+        if (this->_waiting_handlers.count(state) == 0) {
+            throw std::invalid_argument("waiting state not found.");
+        }
+
+        waiting_handler_f const &handler = this->_waiting_handlers.at(state);
+
+        waiting_signal_t const signal{.event = event};
+
+        this->_performing = true;
+
+        waiting_out const state_out = handler(signal);
+
+        this->_performing = false;
+
+        switch (state_out.template kind<Waiting, Running, Event>()) {
+            case waiting_out::kind::wait: {
+                this->_current = state_out.wait<Waiting>().waiting;
+            } break;
+
+            case waiting_out::kind::run: {
+                flow::run<Running, Event> run_out = state_out.run<Running, Event>();
+                this->_current = run_out.running;
+                this->_run(run_out.event);
+            } break;
+
+            case waiting_out::kind::stay:
+                break;
+        }
+    }
+
+    void _run_running(Running const &state, Event const &event) {
+        if (this->_running_handlers.count(state) == 0) {
+            throw std::invalid_argument("running state not found.");
+        }
+
+        running_handler_f const &handler = this->_running_handlers.at(state);
+
+        running_signal_t const signal{.event = event};
+
+        this->_performing = true;
+
+        running_out const state_out = handler(signal);
+
+        this->_performing = false;
+
+        switch (state_out.template kind<Waiting, Running, Event>()) {
+            case running_out::kind::wait: {
+                this->_current = state_out.wait<Waiting>().waiting;
+            } break;
+
+            case running_out::kind::run: {
+                flow::run<Running, Event> run_out = state_out.run<Running, Event>();
+                this->_current = run_out.running;
+                this->_run(run_out.event);
+            } break;
         }
     }
 };
 
-template <typename State, typename Signal>
-flow::graph<State, Signal>::graph(State state) : base(std::make_shared<impl>(std::move(state))) {
-    impl_ptr<impl>()->prepare(*this);
+template <typename Waiting, typename Running, typename Event>
+graph<Waiting, Running, Event>::graph(Waiting waiting) : base(std::make_shared<impl>(std::move(waiting))) {
 }
 
-template <typename State, typename Signal>
-flow::graph<State, Signal>::graph(std::nullptr_t) : base(nullptr) {
+template <typename Waiting, typename Running, typename Event>
+graph<Waiting, Running, Event>::graph(std::nullptr_t) : base(nullptr) {
 }
 
-template <typename State, typename Signal>
-State const &flow::graph<State, Signal>::state() const {
-    return impl_ptr<impl>()->state;
+template <typename Waiting, typename Running, typename Event>
+void graph<Waiting, Running, Event>::add_waiting(Waiting waiting, waiting_handler_f handler) {
+    impl_ptr<impl>()->addWaiting(std::move(waiting), std::move(handler));
 }
 
-template <typename State, typename Signal>
-void flow::graph<State, Signal>::add(State state, std::function<state_out<State>(Signal const &)> handler) {
-    impl_ptr<impl>()->add(*this, std::move(state), std::move(handler));
+template <typename Waiting, typename Running, typename Event>
+void graph<Waiting, Running, Event>::add_running(Running running, running_handler_f handler) {
+    impl_ptr<impl>()->addRunning(std::move(running), std::move(handler));
 }
 
-template <typename State, typename Signal>
-void flow::graph<State, Signal>::run(Signal const &signal) {
-    impl_ptr<impl>()->run(signal);
+template <typename Waiting, typename Running, typename Event>
+void graph<Waiting, Running, Event>::run(Event const &event) {
+    impl_ptr<impl>()->run(event);
 }
 
-template <typename State, typename Signal>
-bool flow::graph<State, Signal>::contains(State const &state) {
-    return impl_ptr<impl>()->observers.count(state) > 0;
+template <typename Waiting, typename Running, typename Event>
+state<Waiting, Running> const &graph<Waiting, Running, Event>::current() const {
+    return impl_ptr<impl>()->_current;
 }
-}  // namespace yas
+}  // namespace yas::flow
