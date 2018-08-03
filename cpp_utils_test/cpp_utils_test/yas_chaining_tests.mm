@@ -3,8 +3,8 @@
 //
 
 #import <XCTest/XCTest.h>
+#import <string>
 #import "yas_chaining.h"
-#import "yas_observing.h"
 
 using namespace yas;
 

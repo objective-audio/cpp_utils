@@ -2,18 +2,6 @@
 
 C++のユーティリティー集
 
-## yas_boolean
-
-boolをvectorで扱うためのクラス。1要素のサイズを`sizeof(bool)`で確保できる。
-
-```cpp
-std::vector<yas::boolean> vec{true, false};
-
-vec[0]; // -> true
-vec[1]; // -> false
-sizeof(vec[0]); // -> sizeof(bool)
-```
-
 ## yas_base
 
 参照型を実現するための基底クラス。
@@ -24,11 +12,11 @@ sizeof(vec[0]); // -> sizeof(bool)
 struct derived : yas::base {
     struct impl : base::impl {
         float value;
-        
+
         impl(float value) : value(value) {
         }
     };
-    
+
     derived(float value) : base(std::make_shared<impl>(value)) {
     }
 
@@ -40,6 +28,63 @@ struct derived : yas::base {
         return impl_ptr<impl>()->value;
     }
 };
+```
+
+## yas_protocol
+
+プロトコルを実現するクラス。`yas::base`を継承したクラスに対して多重継承して必要なインターフェースを持つことを定義する。
+
+```cpp
+struct sample_protocol : yas::protocol {
+    struct impl : yas::protocol::impl {
+        virtual int required_function() = 0;
+        virtual int optional_function() {
+            return 1;
+        }
+    };
+
+    sample_protocol(std::shared_ptr<impl> impl) : protocol(std::move(impl)) {
+    }
+
+    int required_function() {
+        return impl_ptr<impl>()->required_function();
+    }
+
+    int optional_function() {
+        return impl_ptr<impl>()->optional_function();
+    }
+};
+
+struct sample_object : yas::base {
+    struct impl : yas::base::impl, sample_protocol::impl {
+        int required_function() override {
+            return 2;
+        }
+    };
+
+    sample_object() : base(std::make_shared<impl>()) {
+    }
+
+    sample_protocol protocol() {
+        return sample_protocol{impl_ptr<sample_protocol::impl>()};
+    }
+};
+
+sample_object obj;
+obj.protocol().required_function(); // -> 2
+obj.protocol().optional_function(); // -> 1
+```
+
+## yas_boolean
+
+boolをvectorで扱うためのクラス。1要素のサイズを`sizeof(bool)`で確保できる。
+
+```cpp
+std::vector<yas::boolean> vec{true, false};
+
+vec[0]; // -> true
+vec[1]; // -> false
+sizeof(vec[0]); // -> sizeof(bool)
 ```
 
 ## yas_cf_ref
@@ -65,32 +110,6 @@ CoreFoundation関連のユーティリティ集。
 * `CFStringRef`と`std::string`の変換
 * `CFArrayRef`と`std::vector`の変換
 * 数値と`CFNumber`の変換
-
-## yas_chain
-
-複数の処理を連結して実行させることができるクラス。
-
-処理を記述する`std::function`の引数には`chain_context`が渡され、`next()`を呼ぶと次の処理が実行され、`stop()`を呼ぶとそこで処理が打ち切られる。
-
-```cpp
-int defaultValue = 1; // contextの値の初期値
-
-auto func1 = [](yas::chain_context<int> context){
-    context.get(); // -> 1
-    
-    context.set(2);
-    
-    context.next(); // 次の処理へ進む
-};
-
-auto func2 = [](yas::chain_context<int> context){
-    context.get(); // -> 2
-    
-    context.next(); // 次の処理へ進む（次は無いので終わる）
-};
-
-yas::chain(defaultValue, {func1, func2}); // 実行
-```
 
 ## yas_delaying_caller
 
@@ -216,27 +235,6 @@ auto objc_obj1 = make_objc_ptr([[NSObject alloc] init]);
 auto objc_obj2 = yas::make_objc_ptr([](){ return [NSArray array]; });
 ```
 
-## yas_observing
-
-通知を行うクラス群。
-
-通知を送信するクラスは`yas::subject`、通知を受信するクラスは`yas::observer`。
-
-それぞれ1つ目のテンプレートパラメータは`value`の型、2つ目のパラメータは`key`の型。2つ目は省略すると`std::string`となる。
-
-`subject`は`observer`のオーナーシップを持たない。明示的に`observer`を保持していないと通知が呼ばれないので注意。
-
-
-```cpp
-yas::subject<int> subject;
-    
-yas::observer<int> observer = subject.make_observer("key", [](yas::observer<int>::change_context const &context){
-    std::cout << "key:" << context.key << " value:" << context.value << std::endl;
-});
-
-subject.notify("key", 1);
-```
-
 ## yas_operation
 
 非同期処理をおこなうクラス群。処理は`operation`で持ち`operation_queue`に追加すると非同期で処理をする。
@@ -256,7 +254,7 @@ queue.push_back(op);
 ```cpp
 // インデックスを走査する場合
 auto each = make_fast_each(5);
-    
+
 while (yas_fast_each_next(each)) {
     std::cout << "idx:" << yas_fast_each_index(each) << std::endl;
 }
@@ -271,75 +269,6 @@ while (yas_fast_each_next(each)) {
 }
 ```
 
-## yas_property
-
-任意の型の値を保持するクラス。`observing`による通知や、値の検証などの機能を持つ。
-
-```cpp
-yas::property<float> property;
-
-property.set_value(1.0f);
-
-property.value(); // -> 1.0f
-```
-
-```cpp
-yas::property<bool, int> property({.value = false, .key = 1});
-
-auto observer = property.subject().make_wild_card_observer([](auto const &context) {
-    std::cout << "method:" << yas::to_string(context.key); // -> "will_change" or "did_change"
-    std::cout << " key:" << context.value.property.key(); // -> 1
-    std::cout << " value:" << context.value.property.value() << std::endl; // will -> false, did -> true
-});
-
-property.set_value(true);
-```
-
-## yas_protocol
-
-プロトコルを実現するクラス。`yas::base`を継承したクラスに対して多重継承して必要なインターフェースを持つことを定義する。
-
-```cpp
-struct sample_protocol : yas::protocol {
-    struct impl : yas::protocol::impl {
-        virtual int required_function() = 0;
-        virtual int optional_function() {
-            return 1;
-        }
-    };
-    
-    sample_protocol(std::shared_ptr<impl> impl) : protocol(std::move(impl)) {
-    }
-    
-    int required_function() {
-        return impl_ptr<impl>()->required_function();
-    }
-    
-    int optional_function() {
-        return impl_ptr<impl>()->optional_function();
-    }
-};
-
-struct sample_object : yas::base {
-    struct impl : yas::base::impl, sample_protocol::impl {
-        int required_function() override {
-            return 2;
-        }
-    };
-    
-    sample_object() : base(std::make_shared<impl>()) {
-    }
-    
-    sample_protocol protocol() {
-        return sample_protocol{impl_ptr<sample_protocol::impl>()};
-    }
-};
-
-sample_object obj;
-obj.protocol().required_function(); // -> 2
-obj.protocol().optional_function(); // -> 1
-```
-
 ## yas_result
 
 成功か失敗かを表すクラス。テンプレートパラメータの1つめが成功の型、2つめが失敗の型となる。2つの型は違っている必要がある。
@@ -350,17 +279,17 @@ obj.protocol().optional_function(); // -> 1
 
 ```cpp
 std::string value("success");
-    
+
 yas::result<std::string, int> result1(value);
-    
+
 if (result1) { // 通る
     std::cout << "result1.value=" << result1.value() << std::endl; // -> result1.value=success
 }
-    
+
 int error = 1;
-    
+
 yas::result<std::string, int> result2(error);
-    
+
 if (!result2) { // 通る
     std::cout << "result2.error=" << result2.error() << std::endl; // -> result2.error=1
 }
