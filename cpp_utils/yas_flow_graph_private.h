@@ -165,6 +165,15 @@ struct graph<Waiting, Running, Event>::impl : base::impl {
         this->_run(event);
     }
 
+    bool contains(state<Waiting, Running> const &state) {
+        switch (state.kind()) {
+            case state_kind::waiting:
+                return this->_waiting_handlers.count(state.waiting()) > 0;
+            case state_kind::running:
+                return this->_running_handlers.count(state.running()) > 0;
+        }
+    }
+
    private:
     void _run(Event const &event) {
         if (this->_performing) {
@@ -267,5 +276,10 @@ void graph<Waiting, Running, Event>::run(Event const &event) {
 template <typename Waiting, typename Running, typename Event>
 state<Waiting, Running> const &graph<Waiting, Running, Event>::current() const {
     return impl_ptr<impl>()->_current;
+}
+
+template <typename Waiting, typename Running, typename Event>
+bool graph<Waiting, Running, Event>::contains(state<Waiting, Running> const &state) const {
+    return impl_ptr<impl>()->contains(state);
 }
 }  // namespace yas::flow

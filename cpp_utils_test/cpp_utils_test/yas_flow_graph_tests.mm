@@ -149,4 +149,20 @@ using namespace yas;
     XCTAssertEqual(called[1], running::second);
 }
 
+- (void)test_contains {
+    enum class waiting { a, b };
+    enum class running { c, d };
+    enum class event { bang };
+
+    flow::graph<waiting, running, event> graph{waiting::a};
+
+    graph.add_waiting(waiting::a, [](auto const &signal) { return signal.stay(); });
+    graph.add_running(running::d, [](auto const &signal) { return signal.wait(waiting::a); });
+
+    XCTAssertTrue(graph.contains(waiting::a));
+    XCTAssertFalse(graph.contains(waiting::b));
+    XCTAssertFalse(graph.contains(running::c));
+    XCTAssertTrue(graph.contains(running::d));
+}
+
 @end

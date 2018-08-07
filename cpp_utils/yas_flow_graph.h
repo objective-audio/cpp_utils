@@ -130,6 +130,8 @@ struct graph : base {
     void run(Event const &);
 
     state<Waiting, Running> const &current() const;
+
+    bool contains(state<Waiting, Running> const &) const;
 };
 }  // namespace yas::flow
 
