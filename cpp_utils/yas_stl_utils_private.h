@@ -62,6 +62,11 @@ T filter(T const &collection, P predicate) {
     return filtered;
 }
 
+template <typename T>
+void erase_at(std::vector<T> &vector, std::size_t const idx) {
+    vector.erase(vector.begin() + idx);
+}
+
 template <typename T, typename P>
 void erase_if(T &collection, P predicate) {
     auto it = collection.begin();
