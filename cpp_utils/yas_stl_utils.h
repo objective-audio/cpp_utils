@@ -27,6 +27,9 @@ bool contains(std::vector<T> const &vector, T const &value);
 template <typename T, typename P>
 T filter(T const &collection, P predicate);
 
+template <typename T>
+void erase_at(std::vector<T> &vector, std::size_t const idx);
+
 template <typename T, typename P>
 void erase_if(T &collection, P predicate);
 
