@@ -362,3 +362,29 @@ version.numbers() // -> {1, 2, 3}
 ## yas_to_string
 
 * **to_string** -> `yas`のnamespaceでそのまま`std::to_string`を呼ぶ関数。
+
+## yas_data
+
+生データを扱うクラス。Accelerate.Frameworkが必要。
+
+* **data** -> 書き込み可能なデータ
+* **const_data** -> 書き込み不可のデータ
+* **data_copy** -> const_dataからdataへコピーをする
+
+```cpp_utils
+std::vector<float> src_vec{2.0f, 4.0f, 8.0f};
+std::vector<float> dst_vec{0, 0, 0};
+
+data_copy<float> data_copy{
+  // const_dataの生成
+  .src_data = make_const_data(src_vec),
+  // dataの生成
+  .dst_data = make_data(dst_vec),
+  // コピーする長さ
+  .length = 3
+};
+
+auto const result = data_copy.execute();
+
+result.is_success(); // -> コピー成功ならtrueを返す
+```
