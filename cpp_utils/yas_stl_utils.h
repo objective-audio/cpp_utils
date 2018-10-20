@@ -12,7 +12,6 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
-#include "yas_types.h"
 
 namespace yas {
 template <typename T, typename U>

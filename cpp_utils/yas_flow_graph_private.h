@@ -6,7 +6,6 @@
 
 #include <unordered_map>
 #include "yas_chaining.h"
-#include "yas_types.h"
 
 namespace yas::flow {
 #pragma mark - state

@@ -5,7 +5,6 @@
 #pragma once
 
 #include "yas_exception.h"
-#include "yas_types.h"
 
 namespace yas {
 template <typename T, typename U>

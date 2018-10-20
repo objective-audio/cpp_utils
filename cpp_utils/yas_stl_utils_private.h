@@ -6,7 +6,6 @@
 
 #include <sstream>
 #include <tuple>
-#include "yas_types.h"
 
 namespace yas {
 template <typename T, typename U>
