@@ -4,10 +4,9 @@
 
 #pragma once
 
-#include <experimental/optional>
 #include <memory>
+#include <optional>
 #include <string>
-#include "yas_types.h"
 
 namespace yas {
 template <typename T, typename U>
@@ -36,12 +35,12 @@ class result {
     U const &error() const;
     U &error();
 
-    opt_t<T> value_opt() const;
-    opt_t<U> error_opt() const;
+    std::optional<T> value_opt() const;
+    std::optional<U> error_opt() const;
 
    private:
-    opt_t<T> _value;
-    opt_t<U> _error;
+    std::optional<T> _value;
+    std::optional<U> _error;
 };
 
 template <typename... Args>

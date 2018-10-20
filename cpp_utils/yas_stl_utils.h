@@ -5,21 +5,20 @@
 #pragma once
 
 #include <array>
-#include <experimental/optional>
 #include <map>
 #include <memory>
+#include <optional>
 #include <string>
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
-#include "yas_types.h"
 
 namespace yas {
 template <typename T, typename U>
-opt_t<T> min_empty_key(std::map<T, U> const &map);
+std::optional<T> min_empty_key(std::map<T, U> const &map);
 
 template <typename T>
-opt_t<std::size_t> index(std::vector<T> const &vector, T const &value);
+std::optional<std::size_t> index(std::vector<T> const &vector, T const &value);
 
 template <typename T>
 bool contains(std::vector<T> const &vector, T const &value);
