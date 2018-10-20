@@ -34,8 +34,8 @@ struct state {
     Running const &running() const;
 
    private:
-    opt_t<Waiting> _waiting;
-    opt_t<Running> _running;
+    std::optional<Waiting> _waiting;
+    std::optional<Running> _running;
 };
 
 struct waiting_out : base {

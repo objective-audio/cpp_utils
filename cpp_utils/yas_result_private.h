@@ -9,19 +9,19 @@
 
 namespace yas {
 template <typename T, typename U>
-result<T, U>::result(T const &value) : _value(std::make_optional<T>(T(value))), _error(nullopt) {
+result<T, U>::result(T const &value) : _value(std::make_optional<T>(T(value))), _error(std::nullopt) {
 }
 
 template <typename T, typename U>
-result<T, U>::result(U const &error) : _value(nullopt), _error(std::make_optional<U>(U(error))) {
+result<T, U>::result(U const &error) : _value(std::nullopt), _error(std::make_optional<U>(U(error))) {
 }
 
 template <typename T, typename U>
-result<T, U>::result(T &&value) : _value(std::make_optional<T>(std::move(value))), _error(nullopt) {
+result<T, U>::result(T &&value) : _value(std::make_optional<T>(std::move(value))), _error(std::nullopt) {
 }
 
 template <typename T, typename U>
-result<T, U>::result(U &&error) : _value(nullopt), _error(std::make_optional<U>(std::move(error))) {
+result<T, U>::result(U &&error) : _value(std::nullopt), _error(std::make_optional<U>(std::move(error))) {
 }
 
 template <typename T, typename U>
@@ -99,12 +99,12 @@ U &result<T, U>::error() {
 }
 
 template <typename T, typename U>
-opt_t<T> result<T, U>::value_opt() const {
+std::optional<T> result<T, U>::value_opt() const {
     return _value;
 }
 
 template <typename T, typename U>
-opt_t<U> result<T, U>::error_opt() const {
+std::optional<U> result<T, U>::error_opt() const {
     return _error;
 }
 

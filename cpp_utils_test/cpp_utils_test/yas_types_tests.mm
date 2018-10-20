@@ -3,6 +3,7 @@
 //
 
 #import <XCTest/XCTest.h>
+#import <optional>
 #import "yas_types.h"
 
 using namespace yas;
@@ -22,11 +23,11 @@ using namespace yas;
 }
 
 - (void)test_is_equal_optional_values {
-    opt_t<int> value_1_a{1};
-    opt_t<int> value_1_b{1};
-    opt_t<int> value_2{2};
-    opt_t<int> value_null_a{nullopt};
-    opt_t<int> value_null_b{nullopt};
+    std::optional<int> value_1_a{1};
+    std::optional<int> value_1_b{1};
+    std::optional<int> value_2{2};
+    std::optional<int> value_null_a{std::nullopt};
+    std::optional<int> value_null_b{std::nullopt};
 
     XCTAssertTrue(value_1_a == value_1_b);
     XCTAssertFalse(value_1_a == value_2);

@@ -10,7 +10,7 @@
 
 namespace yas {
 template <typename T, typename U>
-opt_t<T> min_empty_key(std::map<T, U> const &map) {
+std::optional<T> min_empty_key(std::map<T, U> const &map) {
     auto map_size = map.size();
 
     if (map_size == 0) {
@@ -18,7 +18,7 @@ opt_t<T> min_empty_key(std::map<T, U> const &map) {
     }
 
     if (map_size >= std::numeric_limits<T>::max()) {
-        return nullopt;
+        return std::nullopt;
     }
 
     T next = map.rbegin()->first + 1;
@@ -34,13 +34,13 @@ opt_t<T> min_empty_key(std::map<T, U> const &map) {
 }
 
 template <typename T>
-opt_t<std::size_t> index(std::vector<T> const &vector, T const &target) {
+std::optional<std::size_t> index(std::vector<T> const &vector, T const &target) {
     auto it = std::find_if(vector.begin(), vector.end(), [&target](auto const &value) { return target == value; });
 
     if (it != vector.end()) {
         return std::distance(vector.begin(), it);
     } else {
-        return yas::nullopt;
+        return std::nullopt;
     }
 }
 
