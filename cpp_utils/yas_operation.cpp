@@ -17,7 +17,6 @@ using namespace yas;
 class operation::impl : public base::impl, public controllable_operation::impl {
    public:
     std::atomic<bool> canceled;
-    execution_f execution;
     operation_option_t option;
 
     impl(execution_f const &exe, operation_option_t &&option)
@@ -39,6 +38,9 @@ class operation::impl : public base::impl, public controllable_operation::impl {
     void cancel() {
         canceled = true;
     }
+
+   private:
+    execution_f execution;
 };
 
 operation::operation(execution_f const &exe, operation_option_t option)
