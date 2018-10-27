@@ -417,6 +417,8 @@ using namespace yas;
 
     future.get();
 
+    [NSThread sleepForTimeInterval:0.1];
+
     XCTAssertFalse(queue.is_operating());
 }
 
