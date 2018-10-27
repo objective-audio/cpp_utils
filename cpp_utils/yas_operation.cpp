@@ -16,29 +16,31 @@ using namespace yas;
 
 class operation::impl : public base::impl, public controllable_operation::impl {
    public:
-    std::atomic<bool> canceled;
-    execution_f execution;
-    operation_option_t option;
+    std::atomic<bool> _canceled;
+    operation_option_t _option;
 
     impl(execution_f const &exe, operation_option_t &&option)
-        : canceled(false), execution(exe), option(std::move(option)) {
+        : _canceled(false), _execution(exe), _option(std::move(option)) {
     }
 
     impl(execution_f &&exe, operation_option_t &&option)
-        : canceled(false), execution(std::move(exe)), option(std::move(option)) {
+        : _canceled(false), _execution(std::move(exe)), _option(std::move(option)) {
     }
 
     void execute() {
-        if (execution) {
-            if (!canceled) {
-                execution(cast<operation>());
+        if (this->_execution) {
+            if (!this->_canceled) {
+                this->_execution(cast<operation>());
             }
         }
     }
 
     void cancel() {
-        canceled = true;
+        this->_canceled = true;
     }
+
+   private:
+    execution_f _execution;
 };
 
 operation::operation(execution_f const &exe, operation_option_t option)
@@ -57,11 +59,11 @@ void operation::cancel() {
 }
 
 bool operation::is_canceled() const {
-    return impl_ptr<impl>()->canceled;
+    return impl_ptr<impl>()->_canceled;
 }
 
 operation_option_t const &operation::option() const {
-    return impl_ptr<impl>()->option;
+    return impl_ptr<impl>()->_option;
 }
 
 controllable_operation operation::controllable() const {
@@ -80,51 +82,51 @@ class operation_queue::impl : public base::impl {
     }
 
     void push_back(operation &&op) {
-        std::lock_guard<std::recursive_mutex> lock(_mutex);
+        std::lock_guard<std::recursive_mutex> lock(this->_mutex);
 
         auto &cancel_id = op.option().push_cancel_id;
 
-        for (auto &dq : _operations) {
+        for (auto &dq : this->_operations) {
             erase_if(dq, [&cancel_id](auto const &value) { return value.option().push_cancel_id == cancel_id; });
         }
 
-        if (_current_operation) {
-            if (_current_operation.option().push_cancel_id == cancel_id) {
-                _current_operation.cancel();
+        if (this->_current_operation) {
+            if (this->_current_operation.option().push_cancel_id == cancel_id) {
+                this->_current_operation.cancel();
             }
         }
 
-        auto &dq = _operations.at(op.option().priority);
+        auto &dq = this->_operations.at(op.option().priority);
         dq.emplace_back(std::move(op));
 
-        _start_next_operation_if_needed();
+        this->_start_next_operation_if_needed();
     }
 
     void push_front(operation &&op) {
-        std::lock_guard<std::recursive_mutex> lock(_mutex);
+        std::lock_guard<std::recursive_mutex> lock(this->_mutex);
 
         auto &cancel_id = op.option().push_cancel_id;
 
-        for (auto &dq : _operations) {
+        for (auto &dq : this->_operations) {
             erase_if(dq, [&cancel_id](auto const &value) { return value.option().push_cancel_id == cancel_id; });
         }
 
-        if (_current_operation) {
-            if (_current_operation.option().push_cancel_id == cancel_id) {
-                _current_operation.cancel();
+        if (this->_current_operation) {
+            if (this->_current_operation.option().push_cancel_id == cancel_id) {
+                this->_current_operation.cancel();
             }
         }
 
-        auto &dq = _operations.at(op.option().priority);
+        auto &dq = this->_operations.at(op.option().priority);
         dq.emplace_front(std::move(op));
 
-        _start_next_operation_if_needed();
+        this->_start_next_operation_if_needed();
     }
 
     void cancel(operation const &operation) {
-        std::lock_guard<std::recursive_mutex> lock(_mutex);
+        std::lock_guard<std::recursive_mutex> lock(this->_mutex);
 
-        for (auto &dq : _operations) {
+        for (auto &dq : this->_operations) {
             for (auto &op : dq) {
                 if (operation == op) {
                     op.cancel();
@@ -132,35 +134,35 @@ class operation_queue::impl : public base::impl {
             }
         }
 
-        if (_current_operation) {
-            if (_current_operation == operation) {
-                _current_operation.cancel();
+        if (this->_current_operation) {
+            if (this->_current_operation == operation) {
+                this->_current_operation.cancel();
             }
         }
     }
 
     void cancel() {
-        std::lock_guard<std::recursive_mutex> lock(_mutex);
+        std::lock_guard<std::recursive_mutex> lock(this->_mutex);
 
-        for (auto &dq : _operations) {
+        for (auto &dq : this->_operations) {
             for (auto &op : dq) {
                 op.cancel();
             }
             dq.clear();
         }
 
-        if (_current_operation) {
-            _current_operation.cancel();
+        if (this->_current_operation) {
+            this->_current_operation.cancel();
         }
     }
 
     void wait_until_all_operations_are_finished() {
         while (true) {
-            std::lock_guard<std::recursive_mutex> lock(_mutex);
+            std::lock_guard<std::recursive_mutex> lock(this->_mutex);
 
-            bool op_exists = _current_operation != nullptr;
+            bool op_exists = this->_current_operation != nullptr;
             if (!op_exists) {
-                for (auto &dq : _operations) {
+                for (auto &dq : this->_operations) {
                     if (dq.size() > 0) {
                         op_exists = true;
                     }
@@ -168,7 +170,7 @@ class operation_queue::impl : public base::impl {
             }
 
             if (op_exists) {
-                if (_suspended) {
+                if (this->_suspended) {
                     throw "operation_queue is suspended.";
                 }
                 std::this_thread::yield();
@@ -179,17 +181,17 @@ class operation_queue::impl : public base::impl {
     }
 
     void suspend() {
-        std::lock_guard<std::recursive_mutex> lock(_mutex);
+        std::lock_guard<std::recursive_mutex> lock(this->_mutex);
 
-        _suspended = true;
+        this->_suspended = true;
     }
 
     void resume() {
-        std::lock_guard<std::recursive_mutex> lock(_mutex);
+        std::lock_guard<std::recursive_mutex> lock(this->_mutex);
 
-        if (_suspended) {
-            _suspended = false;
-            _start_next_operation_if_needed();
+        if (this->_suspended) {
+            this->_suspended = false;
+            this->_start_next_operation_if_needed();
         }
     }
 
