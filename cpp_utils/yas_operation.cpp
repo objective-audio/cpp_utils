@@ -20,17 +20,17 @@ class operation::impl : public base::impl, public controllable_operation::impl {
     operation_option_t option;
 
     impl(execution_f const &exe, operation_option_t &&option)
-        : canceled(false), execution(exe), option(std::move(option)) {
+        : canceled(false), _execution(exe), option(std::move(option)) {
     }
 
     impl(execution_f &&exe, operation_option_t &&option)
-        : canceled(false), execution(std::move(exe)), option(std::move(option)) {
+        : canceled(false), _execution(std::move(exe)), option(std::move(option)) {
     }
 
     void execute() {
-        if (execution) {
+        if (_execution) {
             if (!canceled) {
-                execution(cast<operation>());
+                _execution(cast<operation>());
             }
         }
     }
@@ -40,7 +40,7 @@ class operation::impl : public base::impl, public controllable_operation::impl {
     }
 
    private:
-    execution_f execution;
+    execution_f _execution;
 };
 
 operation::operation(execution_f const &exe, operation_option_t option)
