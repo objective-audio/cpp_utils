@@ -86,7 +86,7 @@ class operation_queue::impl : public base::impl {
 
         auto &cancel_id = op.option().push_cancel_id;
 
-        for (auto &dq : _operations) {
+        for (auto &dq : this->_operations) {
             erase_if(dq, [&cancel_id](auto const &value) { return value.option().push_cancel_id == cancel_id; });
         }
 
