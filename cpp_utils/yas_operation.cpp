@@ -17,14 +17,14 @@ using namespace yas;
 class operation::impl : public base::impl, public controllable_operation::impl {
    public:
     std::atomic<bool> _canceled;
-    operation_option_t option;
+    operation_option_t _option;
 
     impl(execution_f const &exe, operation_option_t &&option)
-        : _canceled(false), _execution(exe), option(std::move(option)) {
+        : _canceled(false), _execution(exe), _option(std::move(option)) {
     }
 
     impl(execution_f &&exe, operation_option_t &&option)
-        : _canceled(false), _execution(std::move(exe)), option(std::move(option)) {
+        : _canceled(false), _execution(std::move(exe)), _option(std::move(option)) {
     }
 
     void execute() {
@@ -63,7 +63,7 @@ bool operation::is_canceled() const {
 }
 
 operation_option_t const &operation::option() const {
-    return impl_ptr<impl>()->option;
+    return impl_ptr<impl>()->_option;
 }
 
 controllable_operation operation::controllable() const {
