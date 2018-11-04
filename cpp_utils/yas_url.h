@@ -12,7 +12,8 @@ namespace yas {
 struct url : base {
     class impl;
 
-    url(std::string const &str);
+    explicit url(std::string const &str);
+    url(std::nullptr_t);
     static url file_url(std::string const &path);
 
     std::string path() const;
