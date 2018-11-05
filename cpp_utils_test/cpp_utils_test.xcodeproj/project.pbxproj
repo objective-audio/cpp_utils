@@ -97,6 +97,8 @@
 		B6F05392218F202800904010 /* yas_url_tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = B6F0538F218F202800904010 /* yas_url_tests.mm */; };
 		B6F05393218F202800904010 /* yas_system_url_utils_tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = B6F05390218F202800904010 /* yas_system_url_utils_tests.mm */; };
 		B6F05394218F202800904010 /* yas_system_url_utils_tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = B6F05390218F202800904010 /* yas_system_url_utils_tests.mm */; };
+		B6F053B5219073C100904010 /* yas_file_manager.mm in Sources */ = {isa = PBXBuildFile; fileRef = B6F053B4219073C100904010 /* yas_file_manager.mm */; };
+		B6F053B6219073C100904010 /* yas_file_manager.mm in Sources */ = {isa = PBXBuildFile; fileRef = B6F053B4219073C100904010 /* yas_file_manager.mm */; };
 		B6F58D1A1D67F1FE00807724 /* yas_delaying_caller.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B6F58D181D67F1FE00807724 /* yas_delaying_caller.cpp */; };
 		B6F58D1B1D67F1FE00807724 /* yas_delaying_caller.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B6F58D181D67F1FE00807724 /* yas_delaying_caller.cpp */; };
 		B6F58D1D1D680C5C00807724 /* yas_delaying_caller_tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = B6F58D1C1D680C5C00807724 /* yas_delaying_caller_tests.mm */; };
@@ -197,6 +199,8 @@
 		B6F0538C218F201600904010 /* yas_system_url_utils.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = yas_system_url_utils.mm; sourceTree = "<group>"; };
 		B6F0538F218F202800904010 /* yas_url_tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = yas_url_tests.mm; sourceTree = "<group>"; };
 		B6F05390218F202800904010 /* yas_system_url_utils_tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = yas_system_url_utils_tests.mm; sourceTree = "<group>"; };
+		B6F053B3219073C000904010 /* yas_file_manager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = yas_file_manager.h; sourceTree = "<group>"; };
+		B6F053B4219073C100904010 /* yas_file_manager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = yas_file_manager.mm; sourceTree = "<group>"; };
 		B6F58D181D67F1FE00807724 /* yas_delaying_caller.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = yas_delaying_caller.cpp; sourceTree = "<group>"; };
 		B6F58D191D67F1FE00807724 /* yas_delaying_caller.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = yas_delaying_caller.h; sourceTree = "<group>"; };
 		B6F58D1C1D680C5C00807724 /* yas_delaying_caller_tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = yas_delaying_caller_tests.mm; sourceTree = "<group>"; };
@@ -325,6 +329,8 @@
 				B6626AB61C15B4230038175B /* yas_exception.h */,
 				B6E0CB401E18A2B000329906 /* yas_fast_each_private.h */,
 				B6E0CB3A1E17CB5E00329906 /* yas_fast_each.h */,
+				B6F053B3219073C000904010 /* yas_file_manager.h */,
+				B6F053B4219073C100904010 /* yas_file_manager.mm */,
 				B6C62FA31D06E438001952EC /* yas_flagset_private.h */,
 				B6C62FA41D06E438001952EC /* yas_flagset.h */,
 				B6626AB71C15B4230038175B /* yas_flex_ptr.cpp */,
@@ -525,6 +531,7 @@
 				B654F22420B8F97400833208 /* yas_type_traits_tests.mm in Sources */,
 				B6AA83571E67B5E400120472 /* yas_to_string_tests.mm in Sources */,
 				B6F05391218F202800904010 /* yas_url_tests.mm in Sources */,
+				B6F053B5219073C100904010 /* yas_file_manager.mm in Sources */,
 				B6626AC41C15B4230038175B /* yas_cf_utils.mm in Sources */,
 				B694A43C1EB846FB006C6887 /* yas_to_integer_tests.mm in Sources */,
 				B6626AD41C15B47C0038175B /* yas_result_tests.mm in Sources */,
@@ -578,6 +585,7 @@
 				B6AA83581E67B5E800120472 /* yas_to_string_tests.mm in Sources */,
 				B6626AEF1C15B93B0038175B /* yas_exception.cpp in Sources */,
 				B6F05392218F202800904010 /* yas_url_tests.mm in Sources */,
+				B6F053B6219073C100904010 /* yas_file_manager.mm in Sources */,
 				B694A43D1EB846FB006C6887 /* yas_to_integer_tests.mm in Sources */,
 				B610E98C2065E8B5004A46B5 /* yas_data_tests.mm in Sources */,
 				B60C5BD71C37FD2C00D7C886 /* yas_version_tests.mm in Sources */,
