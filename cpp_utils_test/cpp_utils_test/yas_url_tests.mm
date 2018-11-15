@@ -5,8 +5,6 @@
 #import <XCTest/XCTest.h>
 #import "yas_url.h"
 
-#import <iostream>
-
 using namespace yas;
 
 @interface yas_url_tests : XCTestCase
@@ -51,6 +49,15 @@ using namespace yas;
     auto appended = url.appending("file.ext");
 
     XCTAssertEqual(appended.path(), "test/dir/file.ext");
+}
+
+- (void)test_is_equal {
+    auto url1a = yas::url{"test/dir"};
+    auto url1b = yas::url{"test/dir"};
+    auto url2 = yas::url{"test/dir2"};
+
+    XCTAssertEqual(url1a, url1b);
+    XCTAssertNotEqual(url1a, url2);
 }
 
 @end
