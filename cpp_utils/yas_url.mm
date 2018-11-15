@@ -18,6 +18,14 @@ struct url::impl : base::impl {
     impl(std::string const &str)
         : _url(make_objc_ptr([[NSURL alloc] initWithString:(__bridge NSString *)to_cf_object(str)])) {
     }
+
+    bool is_equal(std::shared_ptr<base::impl> const &rhs) const {
+        if (auto casted_rhs = std::dynamic_pointer_cast<impl>(rhs)) {
+            return [this->_url.object() isEqual:casted_rhs->_url.object()];
+        } else {
+            return false;
+        }
+    }
 };
 
 url::url(std::string const &str) : base(std::make_shared<impl>(str)) {
