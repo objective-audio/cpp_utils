@@ -32,58 +32,66 @@ using namespace yas;
     XCTAssertTrue(yas_each_data_next(each));
     XCTAssertEqual(yas_each_data_value(each), 1);
     XCTAssertEqual(yas_each_data_index(each), 0);
-    XCTAssertEqual(each.frm_idx, 0);
-    XCTAssertEqual(each.ptr_idx, 0);
-    XCTAssertEqual(each.elm_idx, 0);
+    XCTAssertEqual(yas_each_data_frame_index(each), 0);
+    XCTAssertEqual(yas_each_data_ptr_index(each), 0);
+    XCTAssertEqual(yas_each_data_element_index(each), 0);
+    XCTAssertEqual(yas_each_data_ch_index(each), 0);
 
     XCTAssertTrue(yas_each_data_next(each));
     XCTAssertEqual(yas_each_data_value(each), 2);
     XCTAssertEqual(yas_each_data_index(each), 1);
-    XCTAssertEqual(each.frm_idx, 0);
-    XCTAssertEqual(each.ptr_idx, 0);
-    XCTAssertEqual(each.elm_idx, 1);
+    XCTAssertEqual(yas_each_data_frame_index(each), 0);
+    XCTAssertEqual(yas_each_data_ptr_index(each), 0);
+    XCTAssertEqual(yas_each_data_element_index(each), 1);
+    XCTAssertEqual(yas_each_data_ch_index(each), 1);
 
     XCTAssertTrue(yas_each_data_next(each));
     XCTAssertEqual(yas_each_data_value(each), 3);
     XCTAssertEqual(yas_each_data_index(each), 2);
-    XCTAssertEqual(each.frm_idx, 0);
-    XCTAssertEqual(each.ptr_idx, 1);
-    XCTAssertEqual(each.elm_idx, 0);
+    XCTAssertEqual(yas_each_data_frame_index(each), 0);
+    XCTAssertEqual(yas_each_data_ptr_index(each), 1);
+    XCTAssertEqual(yas_each_data_element_index(each), 0);
+    XCTAssertEqual(yas_each_data_ch_index(each), 2);
 
     XCTAssertTrue(yas_each_data_next(each));
     XCTAssertEqual(yas_each_data_value(each), 4);
     XCTAssertEqual(yas_each_data_index(each), 3);
-    XCTAssertEqual(each.frm_idx, 0);
-    XCTAssertEqual(each.ptr_idx, 1);
-    XCTAssertEqual(each.elm_idx, 1);
+    XCTAssertEqual(yas_each_data_frame_index(each), 0);
+    XCTAssertEqual(yas_each_data_ptr_index(each), 1);
+    XCTAssertEqual(yas_each_data_element_index(each), 1);
+    XCTAssertEqual(yas_each_data_ch_index(each), 3);
 
     XCTAssertTrue(yas_each_data_next(each));
     XCTAssertEqual(yas_each_data_value(each), 5);
     XCTAssertEqual(yas_each_data_index(each), 4);
-    XCTAssertEqual(each.frm_idx, 1);
-    XCTAssertEqual(each.ptr_idx, 0);
-    XCTAssertEqual(each.elm_idx, 0);
+    XCTAssertEqual(yas_each_data_frame_index(each), 1);
+    XCTAssertEqual(yas_each_data_ptr_index(each), 0);
+    XCTAssertEqual(yas_each_data_element_index(each), 0);
+    XCTAssertEqual(yas_each_data_ch_index(each), 0);
 
     XCTAssertTrue(yas_each_data_next(each));
     XCTAssertEqual(yas_each_data_value(each), 6);
     XCTAssertEqual(yas_each_data_index(each), 5);
-    XCTAssertEqual(each.frm_idx, 1);
-    XCTAssertEqual(each.ptr_idx, 0);
-    XCTAssertEqual(each.elm_idx, 1);
+    XCTAssertEqual(yas_each_data_frame_index(each), 1);
+    XCTAssertEqual(yas_each_data_ptr_index(each), 0);
+    XCTAssertEqual(yas_each_data_element_index(each), 1);
+    XCTAssertEqual(yas_each_data_ch_index(each), 1);
 
     XCTAssertTrue(yas_each_data_next(each));
     XCTAssertEqual(yas_each_data_value(each), 7);
     XCTAssertEqual(yas_each_data_index(each), 6);
-    XCTAssertEqual(each.frm_idx, 1);
-    XCTAssertEqual(each.ptr_idx, 1);
-    XCTAssertEqual(each.elm_idx, 0);
+    XCTAssertEqual(yas_each_data_frame_index(each), 1);
+    XCTAssertEqual(yas_each_data_ptr_index(each), 1);
+    XCTAssertEqual(yas_each_data_element_index(each), 0);
+    XCTAssertEqual(yas_each_data_ch_index(each), 2);
 
     XCTAssertTrue(yas_each_data_next(each));
     XCTAssertEqual(yas_each_data_value(each), 8);
     XCTAssertEqual(yas_each_data_index(each), 7);
-    XCTAssertEqual(each.frm_idx, 1);
-    XCTAssertEqual(each.ptr_idx, 1);
-    XCTAssertEqual(each.elm_idx, 1);
+    XCTAssertEqual(yas_each_data_frame_index(each), 1);
+    XCTAssertEqual(yas_each_data_ptr_index(each), 1);
+    XCTAssertEqual(yas_each_data_element_index(each), 1);
+    XCTAssertEqual(yas_each_data_ch_index(each), 3);
 
     XCTAssertFalse(yas_each_data_next(each));
 }
@@ -132,16 +140,20 @@ using namespace yas;
         each_data<int8_t> each(vecs.data(), 2, 2, 2);
 
         XCTAssertTrue(yas_each_data_next_frame(each));
+        XCTAssertEqual(yas_each_data_value(each), 1);
         XCTAssertEqual(yas_each_data_index(each), 0);
-        XCTAssertEqual(each.frm_idx, 0);
-        XCTAssertEqual(each.ptr_idx, 0);
-        XCTAssertEqual(each.elm_idx, 0);
+        XCTAssertEqual(yas_each_data_frame_index(each), 0);
+        XCTAssertEqual(yas_each_data_ptr_index(each), 0);
+        XCTAssertEqual(yas_each_data_element_index(each), 0);
+        XCTAssertEqual(yas_each_data_ch_index(each), 0);
 
         XCTAssertTrue(yas_each_data_next_frame(each));
+        XCTAssertEqual(yas_each_data_value(each), 5);
         XCTAssertEqual(yas_each_data_index(each), 4);
-        XCTAssertEqual(each.frm_idx, 1);
-        XCTAssertEqual(each.ptr_idx, 0);
-        XCTAssertEqual(each.elm_idx, 0);
+        XCTAssertEqual(yas_each_data_frame_index(each), 1);
+        XCTAssertEqual(yas_each_data_ptr_index(each), 0);
+        XCTAssertEqual(yas_each_data_element_index(each), 0);
+        XCTAssertEqual(yas_each_data_ch_index(each), 0);
 
         XCTAssertFalse(yas_each_data_next_frame(each));
     }
@@ -156,27 +168,31 @@ using namespace yas;
 
     XCTAssertTrue(yas_each_data_next_ch(each));
     XCTAssertEqual(yas_each_data_index(each), 0);
-    XCTAssertEqual(each.frm_idx, 0);
-    XCTAssertEqual(each.ptr_idx, 0);
-    XCTAssertEqual(each.elm_idx, 0);
+    XCTAssertEqual(yas_each_data_frame_index(each), 0);
+    XCTAssertEqual(yas_each_data_ptr_index(each), 0);
+    XCTAssertEqual(yas_each_data_element_index(each), 0);
+    XCTAssertEqual(yas_each_data_ch_index(each), 0);
 
     XCTAssertTrue(yas_each_data_next_ch(each));
     XCTAssertEqual(yas_each_data_index(each), 1);
-    XCTAssertEqual(each.frm_idx, 0);
-    XCTAssertEqual(each.ptr_idx, 0);
-    XCTAssertEqual(each.elm_idx, 1);
+    XCTAssertEqual(yas_each_data_frame_index(each), 0);
+    XCTAssertEqual(yas_each_data_ptr_index(each), 0);
+    XCTAssertEqual(yas_each_data_element_index(each), 1);
+    XCTAssertEqual(yas_each_data_ch_index(each), 1);
 
     XCTAssertTrue(yas_each_data_next_ch(each));
     XCTAssertEqual(yas_each_data_index(each), 2);
-    XCTAssertEqual(each.frm_idx, 0);
-    XCTAssertEqual(each.ptr_idx, 1);
-    XCTAssertEqual(each.elm_idx, 0);
+    XCTAssertEqual(yas_each_data_frame_index(each), 0);
+    XCTAssertEqual(yas_each_data_ptr_index(each), 1);
+    XCTAssertEqual(yas_each_data_element_index(each), 0);
+    XCTAssertEqual(yas_each_data_ch_index(each), 2);
 
     XCTAssertTrue(yas_each_data_next_ch(each));
     XCTAssertEqual(yas_each_data_index(each), 3);
-    XCTAssertEqual(each.frm_idx, 0);
-    XCTAssertEqual(each.ptr_idx, 1);
-    XCTAssertEqual(each.elm_idx, 1);
+    XCTAssertEqual(yas_each_data_frame_index(each), 0);
+    XCTAssertEqual(yas_each_data_ptr_index(each), 1);
+    XCTAssertEqual(yas_each_data_element_index(each), 1);
+    XCTAssertEqual(yas_each_data_ch_index(each), 3);
 
     XCTAssertFalse(yas_each_data_next_ch(each));
 }
@@ -192,27 +208,31 @@ using namespace yas;
 
     XCTAssertTrue(yas_each_data_next_ch(each));
     XCTAssertEqual(yas_each_data_index(each), 0);
-    XCTAssertEqual(each.frm_idx, 0);
-    XCTAssertEqual(each.ptr_idx, 0);
-    XCTAssertEqual(each.elm_idx, 0);
+    XCTAssertEqual(yas_each_data_frame_index(each), 0);
+    XCTAssertEqual(yas_each_data_ptr_index(each), 0);
+    XCTAssertEqual(yas_each_data_element_index(each), 0);
+    XCTAssertEqual(yas_each_data_ch_index(each), 0);
 
     XCTAssertTrue(yas_each_data_next_ch(each));
     XCTAssertEqual(yas_each_data_index(each), 1);
-    XCTAssertEqual(each.frm_idx, 0);
-    XCTAssertEqual(each.ptr_idx, 0);
-    XCTAssertEqual(each.elm_idx, 1);
+    XCTAssertEqual(yas_each_data_frame_index(each), 0);
+    XCTAssertEqual(yas_each_data_ptr_index(each), 0);
+    XCTAssertEqual(yas_each_data_element_index(each), 1);
+    XCTAssertEqual(yas_each_data_ch_index(each), 1);
 
     XCTAssertTrue(yas_each_data_next_ch(each));
     XCTAssertEqual(yas_each_data_index(each), 2);
-    XCTAssertEqual(each.frm_idx, 0);
-    XCTAssertEqual(each.ptr_idx, 1);
-    XCTAssertEqual(each.elm_idx, 0);
+    XCTAssertEqual(yas_each_data_frame_index(each), 0);
+    XCTAssertEqual(yas_each_data_ptr_index(each), 1);
+    XCTAssertEqual(yas_each_data_element_index(each), 0);
+    XCTAssertEqual(yas_each_data_ch_index(each), 2);
 
     XCTAssertTrue(yas_each_data_next_ch(each));
     XCTAssertEqual(yas_each_data_index(each), 3);
-    XCTAssertEqual(each.frm_idx, 0);
-    XCTAssertEqual(each.ptr_idx, 1);
-    XCTAssertEqual(each.elm_idx, 1);
+    XCTAssertEqual(yas_each_data_frame_index(each), 0);
+    XCTAssertEqual(yas_each_data_ptr_index(each), 1);
+    XCTAssertEqual(yas_each_data_element_index(each), 1);
+    XCTAssertEqual(yas_each_data_ch_index(each), 3);
 
     XCTAssertFalse(yas_each_data_next_ch(each));
 
@@ -220,27 +240,31 @@ using namespace yas;
 
     XCTAssertTrue(yas_each_data_next_ch(each));
     XCTAssertEqual(yas_each_data_index(each), 4);
-    XCTAssertEqual(each.frm_idx, 1);
-    XCTAssertEqual(each.ptr_idx, 0);
-    XCTAssertEqual(each.elm_idx, 0);
+    XCTAssertEqual(yas_each_data_frame_index(each), 1);
+    XCTAssertEqual(yas_each_data_ptr_index(each), 0);
+    XCTAssertEqual(yas_each_data_element_index(each), 0);
+    XCTAssertEqual(yas_each_data_ch_index(each), 0);
 
     XCTAssertTrue(yas_each_data_next_ch(each));
     XCTAssertEqual(yas_each_data_index(each), 5);
-    XCTAssertEqual(each.frm_idx, 1);
-    XCTAssertEqual(each.ptr_idx, 0);
-    XCTAssertEqual(each.elm_idx, 1);
+    XCTAssertEqual(yas_each_data_frame_index(each), 1);
+    XCTAssertEqual(yas_each_data_ptr_index(each), 0);
+    XCTAssertEqual(yas_each_data_element_index(each), 1);
+    XCTAssertEqual(yas_each_data_ch_index(each), 1);
 
     XCTAssertTrue(yas_each_data_next_ch(each));
     XCTAssertEqual(yas_each_data_index(each), 6);
-    XCTAssertEqual(each.frm_idx, 1);
-    XCTAssertEqual(each.ptr_idx, 1);
-    XCTAssertEqual(each.elm_idx, 0);
+    XCTAssertEqual(yas_each_data_frame_index(each), 1);
+    XCTAssertEqual(yas_each_data_ptr_index(each), 1);
+    XCTAssertEqual(yas_each_data_element_index(each), 0);
+    XCTAssertEqual(yas_each_data_ch_index(each), 2);
 
     XCTAssertTrue(yas_each_data_next_ch(each));
     XCTAssertEqual(yas_each_data_index(each), 7);
-    XCTAssertEqual(each.frm_idx, 1);
-    XCTAssertEqual(each.ptr_idx, 1);
-    XCTAssertEqual(each.elm_idx, 1);
+    XCTAssertEqual(yas_each_data_frame_index(each), 1);
+    XCTAssertEqual(yas_each_data_ptr_index(each), 1);
+    XCTAssertEqual(yas_each_data_element_index(each), 1);
+    XCTAssertEqual(yas_each_data_ch_index(each), 3);
 
     XCTAssertFalse(yas_each_data_next_ch(each));
 
@@ -282,7 +306,7 @@ using namespace yas;
     while (yas_each_data_next_frame(each)) {
         yas_each_data_stop(each);
 
-        last_frm_idx = each.frm_idx;
+        last_frm_idx = yas_each_data_frame_index(each);
         last_value = yas_each_data_value(each);
     }
 
@@ -302,8 +326,8 @@ using namespace yas;
     int8_t last_value = 0;
 
     while (yas_each_data_next_ch(each)) {
-        last_ptr_idx = each.ptr_idx;
-        last_ch_idx = each.elm_idx;
+        last_ptr_idx = yas_each_data_ptr_index(each);
+        last_ch_idx = yas_each_data_element_index(each);
         last_value = yas_each_data_value(each);
 
         if (yas_each_data_index(each) == 2) {

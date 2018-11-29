@@ -66,6 +66,14 @@ const_each_data<T> make_each_data(T const *const *const ptrs, std::size_t const 
         (__v)._next_elm_idx = (__v)._end_elm_idx; \
     } while (0)
 
+#define yas_each_data_frame_index(__v) ((__v).frm_idx)
+
+#define yas_each_data_ptr_index(__v) ((__v).ptr_idx)
+
+#define yas_each_data_element_index(__v) ((__v).elm_idx)
+
+#define yas_each_data_ch_index(__v) ((__v).ptr_idx * (__v)._end_elm_idx + (__v).elm_idx)
+
 #define yas_each_data_index(__v) \
     ((__v).frm_idx * ((__v)._end_elm_idx * (__v)._end_ptr_idx) + (__v).ptr_idx * (__v)._end_elm_idx + (__v).elm_idx)
 
