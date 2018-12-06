@@ -30,7 +30,7 @@ class operation_queue : public base {
    public:
     class impl;
 
-    explicit operation_queue(size_t const priority_count = 1);
+    explicit operation_queue(std::size_t const priority_count = 1);
     operation_queue(std::nullptr_t);
 
     void push_back(operation);
@@ -43,6 +43,7 @@ class operation_queue : public base {
     void suspend();
     void resume();
 
+    std::size_t priority_count() const;
     bool is_suspended() const;
     bool is_operating() const;
 };
