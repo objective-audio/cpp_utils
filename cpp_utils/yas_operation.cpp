@@ -74,7 +74,7 @@ controllable_operation operation::controllable() const {
 
 class operation_queue::impl : public base::impl {
    public:
-    impl(size_t const count) : _operations(count) {
+    impl(std::size_t const count) : _operations(count) {
     }
 
     ~impl() {
@@ -209,6 +209,10 @@ class operation_queue::impl : public base::impl {
         }
     }
 
+    std::size_t priority_count() const {
+        return this->_operations.size();
+    }
+
     bool is_suspended() const {
         return _suspended;
     }
@@ -282,7 +286,7 @@ class operation_queue::impl : public base::impl {
     }
 };
 
-operation_queue::operation_queue(size_t const count) : base(std::make_unique<impl>(count)) {
+operation_queue::operation_queue(std::size_t const count) : base(std::make_unique<impl>(count)) {
 }
 
 operation_queue::operation_queue(std::nullptr_t) : base(nullptr) {
@@ -318,6 +322,10 @@ void operation_queue::suspend() {
 
 void operation_queue::resume() {
     impl_ptr<impl>()->resume();
+}
+
+std::size_t operation_queue::priority_count() const {
+    return impl_ptr<impl>()->priority_count();
 }
 
 bool operation_queue::is_suspended() const {
