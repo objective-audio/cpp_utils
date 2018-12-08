@@ -142,14 +142,18 @@ class operation_queue::impl : public base::impl {
     }
 
     void cancel_for_id(base const &cancel_id) {
+        this->cancel([&cancel_id](base const &target_cancel_id) { return cancel_id == target_cancel_id; });
+    }
+
+    void cancel(cancellation_f const &cancellation) {
         std::lock_guard<std::recursive_mutex> lock(this->_mutex);
 
         for (auto &dq : this->_operations) {
-            erase_if(dq, [&cancel_id](auto const &value) { return value.option().cancel_id == cancel_id; });
+            erase_if(dq, [&cancellation](auto const &value) { return cancellation(value.option().cancel_id); });
         }
 
         if (this->_current_operation) {
-            if (this->_current_operation.option().cancel_id == cancel_id) {
+            if (cancellation(this->_current_operation.option().cancel_id)) {
                 this->_current_operation.cancel();
             }
         }
@@ -306,6 +310,10 @@ void operation_queue::cancel(operation const &op) {
 
 void operation_queue::cancel_for_id(base const &identifier) {
     impl_ptr<impl>()->cancel_for_id(identifier);
+}
+
+void operation_queue::cancel(cancellation_f const &cancellation) {
+    impl_ptr<impl>()->cancel(cancellation);
 }
 
 void operation_queue::cancel() {
