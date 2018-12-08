@@ -294,6 +294,40 @@ struct test_cancel_id : base {
     XCTAssertTrue(end_future.get());
 }
 
+- (void)test_cancel_with_cancellation_current_operation {
+    operation_queue queue;
+
+    queue.suspend();
+
+    std::promise<void> start_promise;
+    std::promise<void> wait_promise;
+    std::promise<bool> end_promise;
+
+    auto start_future = start_promise.get_future();
+    auto wait_future = wait_promise.get_future();
+    auto end_future = end_promise.get_future();
+
+    test_cancel_id identifier;
+    operation op(
+        [self, &start_promise, &wait_future, &end_promise](operation const &op) {
+            start_promise.set_value();
+            wait_future.get();
+            end_promise.set_value(op.is_canceled());
+        },
+        {.cancel_id = identifier});
+
+    queue.push_back(op);
+    queue.resume();
+
+    start_future.get();
+
+    queue.cancel([&identifier](base const &op_cancel_id) { return identifier == op_cancel_id; });
+
+    wait_promise.set_value();
+
+    XCTAssertTrue(end_future.get());
+}
+
 - (void)test_null_created {
     operation_queue queue{nullptr};
     operation operation{nullptr};
