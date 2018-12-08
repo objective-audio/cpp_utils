@@ -141,15 +141,15 @@ class operation_queue::impl : public base::impl {
         }
     }
 
-    void cancel_for_id(base const &identifier) {
+    void cancel_for_id(base const &cancel_id) {
         std::lock_guard<std::recursive_mutex> lock(this->_mutex);
 
         for (auto &dq : this->_operations) {
-            erase_if(dq, [&identifier](auto const &value) { return value.option().identifier == identifier; });
+            erase_if(dq, [&cancel_id](auto const &value) { return value.option().cancel_id == cancel_id; });
         }
 
         if (this->_current_operation) {
-            if (this->_current_operation.option().identifier == identifier) {
+            if (this->_current_operation.option().cancel_id == cancel_id) {
                 this->_current_operation.cancel();
             }
         }

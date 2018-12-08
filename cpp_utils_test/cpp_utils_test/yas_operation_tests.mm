@@ -226,7 +226,7 @@ struct test_cancel_id : base {
     bool called = false;
 
     test_cancel_id identifier;
-    operation op([&called](operation const &) { called = true; }, {.identifier = identifier});
+    operation op([&called](operation const &) { called = true; }, {.cancel_id = identifier});
 
     queue.push_back(op);
 
@@ -259,7 +259,7 @@ struct test_cancel_id : base {
             wait_future.get();
             end_promise.set_value(op.is_canceled());
         },
-        {.identifier = identifier});
+        {.cancel_id = identifier});
 
     queue.push_back(op);
     queue.resume();

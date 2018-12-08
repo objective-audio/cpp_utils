@@ -32,7 +32,7 @@ using operation_priority_t = uint32_t;
 
 struct operation_option_t {
     operation_priority_t priority = 0;
-    base identifier = nullptr;
+    base cancel_id = nullptr;
     base push_cancel_id = nullptr;
 };
 }  // namespace yas
