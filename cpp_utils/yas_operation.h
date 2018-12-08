@@ -30,6 +30,8 @@ class operation_queue : public base {
    public:
     class impl;
 
+    using cancellation_f = std::function<bool(base const &)>;
+
     explicit operation_queue(std::size_t const priority_count = 1);
     operation_queue(std::nullptr_t);
 
@@ -37,7 +39,8 @@ class operation_queue : public base {
     void push_front(operation);
     void cancel(operation const &);
     void cancel_for_id(base const &cancel_id);
-    void cancel();
+    void cancel(cancellation_f const &);
+    void cancel_all();
     void wait_until_all_operations_are_finished();
 
     void suspend();
