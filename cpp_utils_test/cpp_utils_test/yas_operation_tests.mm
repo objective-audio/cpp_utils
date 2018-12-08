@@ -239,6 +239,27 @@ struct test_cancel_id : base {
     XCTAssertFalse(called);
 }
 
+- (void)test_cancel_with_cancellation {
+    operation_queue queue;
+
+    queue.suspend();
+
+    bool called = false;
+
+    test_cancel_id identifier;
+    operation op([&called](operation const &) { called = true; }, {.cancel_id = identifier});
+
+    queue.push_back(op);
+
+    queue.cancel([&identifier](base const &op_cancel_id) { return identifier == op_cancel_id; });
+
+    queue.resume();
+
+    [NSThread sleepForTimeInterval:0.1];
+
+    XCTAssertFalse(called);
+}
+
 - (void)test_cancel_for_id_current_operation {
     operation_queue queue;
 
