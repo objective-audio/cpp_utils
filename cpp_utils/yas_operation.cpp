@@ -316,7 +316,7 @@ void operation_queue::cancel(cancellation_f const &cancellation) {
     impl_ptr<impl>()->cancel(cancellation);
 }
 
-void operation_queue::cancel() {
+void operation_queue::cancel_all() {
     impl_ptr<impl>()->cancel();
 }
 

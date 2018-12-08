@@ -40,7 +40,7 @@ class operation_queue : public base {
     void cancel(operation const &);
     void cancel_for_id(base const &cancel_id);
     void cancel(cancellation_f const &);
-    void cancel();
+    void cancel_all();
     void wait_until_all_operations_are_finished();
 
     void suspend();
