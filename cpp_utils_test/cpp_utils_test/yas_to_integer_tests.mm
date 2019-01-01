@@ -3,7 +3,7 @@
 //
 
 #import <XCTest/XCTest.h>
-#import "yas_to_integer.h"
+#import <cpp_utils/yas_to_integer.h>
 
 #import <iostream>
 

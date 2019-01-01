@@ -3,9 +3,9 @@
 //
 
 #import <XCTest/XCTest.h>
+#import <cpp_utils/yas_operation.h>
 #import <future>
 #include <thread>
-#import "yas_operation.h"
 
 using namespace std::chrono_literals;
 using namespace yas;
