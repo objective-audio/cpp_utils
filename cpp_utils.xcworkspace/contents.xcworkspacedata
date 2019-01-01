@@ -4,4 +4,10 @@
    <FileRef
       location = "group:cpp_utils_test/cpp_utils_test.xcodeproj">
    </FileRef>
+   <FileRef
+      location = "group:submodules/objc_utils/objc_utils_mac/objc_utils_mac.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:submodules/objc_utils/objc_utils_ios/objc_utils_ios.xcodeproj">
+   </FileRef>
 </Workspace>
