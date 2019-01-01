@@ -73,7 +73,7 @@
 		B6359D8821DB727A00481348 /* yas_operation.h in Headers */ = {isa = PBXBuildFile; fileRef = B6359D4821DB727900481348 /* yas_operation.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B6359D8921DB727A00481348 /* yas_system_url_utils.h in Headers */ = {isa = PBXBuildFile; fileRef = B6359D4921DB727900481348 /* yas_system_url_utils.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B6359E0D21DB729E00481348 /* objc_utils.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B6359E0C21DB729E00481348 /* objc_utils.framework */; };
-		B6359E0F21DB733200481348 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B6359E0E21DB733200481348 /* Accelerate.framework */; };
+		B6359E2321DB784F00481348 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B6359E0E21DB733200481348 /* Accelerate.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -153,7 +153,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B6359E0F21DB733200481348 /* Accelerate.framework in Frameworks */,
+				B6359E2321DB784F00481348 /* Accelerate.framework in Frameworks */,
 				B6359E0D21DB729E00481348 /* objc_utils.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
