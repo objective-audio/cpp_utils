@@ -3,8 +3,8 @@
 //
 
 #import <XCTest/XCTest.h>
-#import "yas_boolean.h"
-#import "yas_to_string.h"
+#import <cpp_utils/yas_boolean.h>
+#import <cpp_utils/yas_to_string.h>
 
 using namespace yas;
 

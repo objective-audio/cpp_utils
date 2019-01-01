@@ -3,7 +3,7 @@
 //
 
 #import <XCTest/XCTest.h>
-#import "yas_version.h"
+#import <cpp_utils/yas_version.h>
 
 @interface yas_version_tests : XCTestCase
 

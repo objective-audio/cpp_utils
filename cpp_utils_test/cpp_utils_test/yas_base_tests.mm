@@ -3,7 +3,7 @@
 //
 
 #import <XCTest/XCTest.h>
-#import "yas_base.h"
+#import <cpp_utils/yas_base.h>
 
 namespace yas {
 namespace test {

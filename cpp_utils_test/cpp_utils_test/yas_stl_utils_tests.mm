@@ -3,9 +3,9 @@
 //
 
 #import <XCTest/XCTest.h>
+#import <cpp_utils/yas_stl_utils.h>
 #import <set>
 #import <unordered_map>
-#import "yas_stl_utils.h"
 
 @interface yas_stl_utils_tests : XCTestCase
 

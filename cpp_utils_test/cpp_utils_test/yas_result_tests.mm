@@ -3,8 +3,8 @@
 //
 
 #import <XCTest/XCTest.h>
+#import <cpp_utils/yas_result.h>
 #import <vector>
-#import "yas_result.h"
 
 using namespace yas;
 

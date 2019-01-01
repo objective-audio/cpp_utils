@@ -3,7 +3,7 @@
 //
 
 #import <XCTest/XCTest.h>
-#import "yas_delaying_caller.h"
+#import <cpp_utils/yas_delaying_caller.h>
 
 using namespace yas;
 

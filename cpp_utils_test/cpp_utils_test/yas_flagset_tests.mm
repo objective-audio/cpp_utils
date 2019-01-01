@@ -3,9 +3,7 @@
 //
 
 #import <XCTest/XCTest.h>
-#import "yas_flagset.h"
-
-#import <iostream>
+#import <cpp_utils/yas_flagset.h>
 
 using namespace yas;
 

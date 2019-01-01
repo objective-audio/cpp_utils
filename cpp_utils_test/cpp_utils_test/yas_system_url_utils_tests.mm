@@ -3,10 +3,8 @@
 //
 
 #import <XCTest/XCTest.h>
-#import "yas_system_url_utils.h"
-#import "yas_url.h"
-
-#import <iostream>
+#import <cpp_utils/yas_system_url_utils.h>
+#import <cpp_utils/yas_url.h>
 
 using namespace yas;
 
