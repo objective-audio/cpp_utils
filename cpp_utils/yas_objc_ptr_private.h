@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "yas_objc_macros.h"
+#include <objc_utils/yas_objc_macros.h>
 
 namespace yas {
 template <typename T>
