@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B625259F21DCF4BF00EE2ECA /* yas_cpp_utils_umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = B625259E21DCF4BF00EE2ECA /* yas_cpp_utils_umbrella.h */; };
 		B6359D0521DB721B00481348 /* cpp_utils.h in Headers */ = {isa = PBXBuildFile; fileRef = B6359D0321DB721B00481348 /* cpp_utils.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B6359DCB21DB728300481348 /* yas_to_string.h in Headers */ = {isa = PBXBuildFile; fileRef = B6359D8B21DB728300481348 /* yas_to_string.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B6359DCC21DB728300481348 /* yas_cf_utils_private.h in Headers */ = {isa = PBXBuildFile; fileRef = B6359D8C21DB728300481348 /* yas_cf_utils_private.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -77,6 +78,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		B625259E21DCF4BF00EE2ECA /* yas_cpp_utils_umbrella.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = yas_cpp_utils_umbrella.h; sourceTree = "<group>"; };
 		B6359D0021DB721B00481348 /* cpp_utils.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = cpp_utils.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B6359D0321DB721B00481348 /* cpp_utils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = cpp_utils.h; sourceTree = "<group>"; };
 		B6359D0421DB721B00481348 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -255,6 +257,7 @@
 				B6359DC821DB728300481348 /* yas_system_url_utils.mm */,
 				B6359D8E21DB728300481348 /* yas_timer.mm */,
 				B6359D9C21DB728300481348 /* yas_url.mm */,
+				B625259E21DCF4BF00EE2ECA /* yas_cpp_utils_umbrella.h */,
 			);
 			name = cpp_utils;
 			path = ../../cpp_utils;
@@ -292,6 +295,7 @@
 				B6359DCB21DB728300481348 /* yas_to_string.h in Headers */,
 				B6359DE421DB728300481348 /* yas_timer.h in Headers */,
 				B6359DD221DB728300481348 /* yas_data.h in Headers */,
+				B625259F21DCF4BF00EE2ECA /* yas_cpp_utils_umbrella.h in Headers */,
 				B6359DD021DB728300481348 /* yas_to_bool.h in Headers */,
 				B6359DD921DB728300481348 /* yas_each_dictionary.h in Headers */,
 				B6359DDE21DB728300481348 /* yas_data_private.h in Headers */,
