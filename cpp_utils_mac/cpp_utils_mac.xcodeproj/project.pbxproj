@@ -77,6 +77,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		B625259D21DCF48800EE2ECA /* yas_cpp_utils_umbrella.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = yas_cpp_utils_umbrella.h; sourceTree = "<group>"; };
 		B6359CF221DB71E400481348 /* cpp_utils.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = cpp_utils.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B6359CF521DB71E400481348 /* cpp_utils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = cpp_utils.h; sourceTree = "<group>"; };
 		B6359CF621DB71E400481348 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -255,6 +256,7 @@
 				B6359D1B21DB727900481348 /* yas_url.mm */,
 				B6359D1F21DB727900481348 /* yas_version.cpp */,
 				B6359D2821DB727900481348 /* yas_version.h */,
+				B625259D21DCF48800EE2ECA /* yas_cpp_utils_umbrella.h */,
 			);
 			name = cpp_utils;
 			path = ../../cpp_utils;
