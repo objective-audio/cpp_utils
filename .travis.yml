@@ -1,5 +1,5 @@
 language: objective-c
-osx_image: xcode10
+osx_image: xcode10.1
 branches:
   only:
     - master
@@ -9,4 +9,4 @@ install:
   - brew install clang-format
 script:
   - xcodebuild -workspace cpp_utils.xcworkspace -scheme cpp_utils_test_mac -configuration Debug OBJROOT=build -sdk macosx clean test
-  - xcodebuild -workspace cpp_utils.xcworkspace -scheme cpp_utils_test_ios -configuration Debug OBJROOT=build -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 6,OS=12.0' clean test
+  - xcodebuild -workspace cpp_utils.xcworkspace -scheme cpp_utils_test_ios -configuration Debug OBJROOT=build -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 6,OS=12.1' clean test
