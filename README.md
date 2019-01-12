@@ -2,6 +2,12 @@
 
 C++のユーティリティー集
 
+## Embedded Binaries
+[objc_utils](https://github.com/objective-audio/objc_utils)  
+
+## Linked Frameworks
+Accelerate.framework
+
 ## yas_base
 
 参照型を実現するための基底クラス。
