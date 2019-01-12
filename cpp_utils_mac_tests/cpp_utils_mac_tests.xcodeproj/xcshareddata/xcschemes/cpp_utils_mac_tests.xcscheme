@@ -11,13 +11,13 @@
             buildForRunning = "YES"
             buildForProfiling = "NO"
             buildForArchiving = "NO"
-            buildForAnalyzing = "YES">
+            buildForAnalyzing = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "B6626ADC1C15B8EF0038175B"
-               BuildableName = "cpp_utils_test_ios.xctest"
-               BlueprintName = "cpp_utils_test_ios"
-               ReferencedContainer = "container:cpp_utils_test.xcodeproj">
+               BlueprintIdentifier = "B6D4C56B21E99FD3004A95A8"
+               BuildableName = "cpp_utils_mac_tests.xctest"
+               BlueprintName = "cpp_utils_mac_tests"
+               ReferencedContainer = "container:cpp_utils_mac_tests.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -26,17 +26,16 @@
       buildConfiguration = "Debug"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
-      codeCoverageEnabled = "YES"
       shouldUseLaunchSchemeArgsEnv = "YES">
       <Testables>
          <TestableReference
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "B6626ADC1C15B8EF0038175B"
-               BuildableName = "cpp_utils_test_ios.xctest"
-               BlueprintName = "cpp_utils_test_ios"
-               ReferencedContainer = "container:cpp_utils_test.xcodeproj">
+               BlueprintIdentifier = "B6D4C56B21E99FD3004A95A8"
+               BuildableName = "cpp_utils_mac_tests.xctest"
+               BlueprintName = "cpp_utils_mac_tests"
+               ReferencedContainer = "container:cpp_utils_mac_tests.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -56,10 +55,10 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "B6626ADC1C15B8EF0038175B"
-            BuildableName = "cpp_utils_test_ios.xctest"
-            BlueprintName = "cpp_utils_test_ios"
-            ReferencedContainer = "container:cpp_utils_test.xcodeproj">
+            BlueprintIdentifier = "B6D4C56B21E99FD3004A95A8"
+            BuildableName = "cpp_utils_mac_tests.xctest"
+            BlueprintName = "cpp_utils_mac_tests"
+            ReferencedContainer = "container:cpp_utils_mac_tests.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <AdditionalOptions>
@@ -74,10 +73,10 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "B6626ADC1C15B8EF0038175B"
-            BuildableName = "cpp_utils_test_ios.xctest"
-            BlueprintName = "cpp_utils_test_ios"
-            ReferencedContainer = "container:cpp_utils_test.xcodeproj">
+            BlueprintIdentifier = "B6D4C56B21E99FD3004A95A8"
+            BuildableName = "cpp_utils_mac_tests.xctest"
+            BlueprintName = "cpp_utils_mac_tests"
+            ReferencedContainer = "container:cpp_utils_mac_tests.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </ProfileAction>
