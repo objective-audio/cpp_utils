@@ -96,3 +96,30 @@ std::string yas::to_string(file_manager::create_dir_error const &error) {
             return "file_exists";
     }
 }
+
+std::string yas::to_string(file_manager::content_kind const &kind) {
+    switch (kind) {
+        case file_manager::content_kind::directory:
+            return "directory";
+        case file_manager::content_kind::file:
+            return "file";
+    }
+}
+
+std::string yas::to_string(file_manager::remove_content_error const &error) {
+    switch (error) {
+        case file_manager::remove_content_error::remove_failed:
+            return "remove_failed";
+    }
+}
+
+std::string yas::to_string(file_manager::remove_contents_error const &error) {
+    switch (error) {
+        case file_manager::remove_contents_error::not_directory:
+            return "not_directory";
+        case file_manager::remove_contents_error::remove_failed:
+            return "remove_failed";
+        case file_manager::remove_contents_error::find_contents_failed:
+            return "find_contents_failed";
+    }
+}

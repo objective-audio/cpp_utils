@@ -41,4 +41,7 @@ struct file_manager {
 };
 
 std::string to_string(file_manager::create_dir_error const &);
+std::string to_string(file_manager::content_kind const &);
+std::string to_string(file_manager::remove_content_error const &);
+std::string to_string(file_manager::remove_contents_error const &);
 }  // namespace yas
