@@ -37,6 +37,7 @@
 		B6D4C5AE21E9A042004A95A8 /* yas_system_url_utils_tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = B6D4C59121E9A042004A95A8 /* yas_system_url_utils_tests.mm */; };
 		B6D4C5AF21E9A042004A95A8 /* yas_flex_pointer_tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = B6D4C59221E9A042004A95A8 /* yas_flex_pointer_tests.mm */; };
 		B6D4C5B221E9A04B004A95A8 /* cpp_utils.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B6D4C5B121E9A04B004A95A8 /* cpp_utils.framework */; };
+		B6DB92442271F51B000E61CE /* yas_file_manager_tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = B6DB92432271F51B000E61CE /* yas_file_manager_tests.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -72,6 +73,7 @@
 		B6D4C59121E9A042004A95A8 /* yas_system_url_utils_tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = yas_system_url_utils_tests.mm; sourceTree = "<group>"; };
 		B6D4C59221E9A042004A95A8 /* yas_flex_pointer_tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = yas_flex_pointer_tests.mm; sourceTree = "<group>"; };
 		B6D4C5B121E9A04B004A95A8 /* cpp_utils.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = cpp_utils.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B6DB92432271F51B000E61CE /* yas_file_manager_tests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = yas_file_manager_tests.mm; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -115,35 +117,36 @@
 		B6D4C57521E9A042004A95A8 /* cpp_utils_tests */ = {
 			isa = PBXGroup;
 			children = (
-				B6D4C57621E9A042004A95A8 /* yas_objc_ptr_tests.mm */,
-				B6D4C57721E9A042004A95A8 /* yas_operation_tests.mm */,
-				B6D4C57821E9A042004A95A8 /* yas_type_traits_tests.mm */,
-				B6D4C57921E9A042004A95A8 /* yas_flagset_tests.mm */,
 				B6D4C57A21E9A042004A95A8 /* yas_base_tests.mm */,
-				B6D4C57B21E9A042004A95A8 /* yas_protocol_tests.mm */,
-				B6D4C57C21E9A042004A95A8 /* yas_fast_each_tests.mm */,
-				B6D4C57D21E9A042004A95A8 /* yas_to_floating_point_tests.mm */,
-				B6D4C57E21E9A042004A95A8 /* yas_unless_tests.mm */,
-				B6D4C57F21E9A042004A95A8 /* yas_delaying_caller_tests.mm */,
-				B6D4C58021E9A042004A95A8 /* yas_url_tests.mm */,
-				B6D4C58121E9A042004A95A8 /* yas_to_string_tests.mm */,
 				B6D4C58221E9A042004A95A8 /* yas_boolean_tests.mm */,
-				B6D4C58321E9A042004A95A8 /* yas_types_tests.mm */,
 				B6D4C58421E9A042004A95A8 /* yas_cf_ref_tests.mm */,
-				B6D4C58521E9A042004A95A8 /* yas_objc_cast_tests.mm */,
-				B6D4C58621E9A042004A95A8 /* yas_version_tests.mm */,
-				B6D4C58721E9A042004A95A8 /* yas_to_integer_tests.mm */,
+				B6D4C58B21E9A042004A95A8 /* yas_cf_tests.mm */,
+				B6D4C59021E9A042004A95A8 /* yas_data_tests.mm */,
+				B6D4C57F21E9A042004A95A8 /* yas_delaying_caller_tests.mm */,
+				B6D4C58A21E9A042004A95A8 /* yas_each_data_tests.mm */,
 				B6D4C58821E9A042004A95A8 /* yas_each_dictionary_tests.mm */,
 				B6D4C58921E9A042004A95A8 /* yas_each_index_tests.mm */,
-				B6D4C58A21E9A042004A95A8 /* yas_each_data_tests.mm */,
-				B6D4C58B21E9A042004A95A8 /* yas_cf_tests.mm */,
+				B6D4C57C21E9A042004A95A8 /* yas_fast_each_tests.mm */,
+				B6D4C57921E9A042004A95A8 /* yas_flagset_tests.mm */,
+				B6D4C59221E9A042004A95A8 /* yas_flex_pointer_tests.mm */,
+				B6D4C58521E9A042004A95A8 /* yas_objc_cast_tests.mm */,
+				B6D4C57621E9A042004A95A8 /* yas_objc_ptr_tests.mm */,
+				B6D4C57721E9A042004A95A8 /* yas_operation_tests.mm */,
+				B6D4C57B21E9A042004A95A8 /* yas_protocol_tests.mm */,
 				B6D4C58C21E9A042004A95A8 /* yas_result_tests.mm */,
 				B6D4C58D21E9A042004A95A8 /* yas_stl_utils_tests.mm */,
+				B6D4C59121E9A042004A95A8 /* yas_system_url_utils_tests.mm */,
 				B6D4C58E21E9A042004A95A8 /* yas_timer_tests.mm */,
 				B6D4C58F21E9A042004A95A8 /* yas_to_enum_tests.mm */,
-				B6D4C59021E9A042004A95A8 /* yas_data_tests.mm */,
-				B6D4C59121E9A042004A95A8 /* yas_system_url_utils_tests.mm */,
-				B6D4C59221E9A042004A95A8 /* yas_flex_pointer_tests.mm */,
+				B6D4C57D21E9A042004A95A8 /* yas_to_floating_point_tests.mm */,
+				B6D4C58721E9A042004A95A8 /* yas_to_integer_tests.mm */,
+				B6D4C58121E9A042004A95A8 /* yas_to_string_tests.mm */,
+				B6D4C57821E9A042004A95A8 /* yas_type_traits_tests.mm */,
+				B6D4C58321E9A042004A95A8 /* yas_types_tests.mm */,
+				B6D4C57E21E9A042004A95A8 /* yas_unless_tests.mm */,
+				B6D4C58021E9A042004A95A8 /* yas_url_tests.mm */,
+				B6D4C58621E9A042004A95A8 /* yas_version_tests.mm */,
+				B6DB92432271F51B000E61CE /* yas_file_manager_tests.mm */,
 			);
 			name = cpp_utils_tests;
 			path = ../../cpp_utils_tests;
@@ -263,6 +266,7 @@
 				B6D4C5A121E9A042004A95A8 /* yas_cf_ref_tests.mm in Sources */,
 				B6D4C59321E9A042004A95A8 /* yas_objc_ptr_tests.mm in Sources */,
 				B6D4C5AA21E9A042004A95A8 /* yas_stl_utils_tests.mm in Sources */,
+				B6DB92442271F51B000E61CE /* yas_file_manager_tests.mm in Sources */,
 				B6D4C5AF21E9A042004A95A8 /* yas_flex_pointer_tests.mm in Sources */,
 				B6D4C59421E9A042004A95A8 /* yas_operation_tests.mm in Sources */,
 				B6D4C59B21E9A042004A95A8 /* yas_unless_tests.mm in Sources */,
