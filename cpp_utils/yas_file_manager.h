@@ -19,11 +19,11 @@ struct file_manager {
         directory,
     };
 
-    enum class remove_file_error {
+    enum class remove_content_error {
         remove_failed,
     };
 
-    enum class remove_files_error {
+    enum class remove_contents_error {
         not_directory,
         remove_failed,
         find_contents_failed,
@@ -31,13 +31,13 @@ struct file_manager {
 
     using create_dir_result_t = result<std::nullptr_t, create_dir_error>;
     using exists_result_t = result<content_kind, std::nullptr_t>;
-    using remove_result_t = result<std::nullptr_t, remove_file_error>;
-    using remove_files_result_t = result<std::nullptr_t, remove_files_error>;
+    using remove_content_t = result<std::nullptr_t, remove_content_error>;
+    using remove_contents_result_t = result<std::nullptr_t, remove_contents_error>;
 
     [[nodiscard]] static create_dir_result_t create_directory_if_not_exists(std::string const &path);
-    [[nodiscard]] static exists_result_t file_exists(std::string const &path);
-    static remove_result_t remove_file(std::string const &path);
-    static remove_files_result_t remove_files_in_directory(std::string const &dir_path);
+    [[nodiscard]] static exists_result_t content_exists(std::string const &path);
+    static remove_content_t remove_content(std::string const &path);
+    static remove_contents_result_t remove_contents_in_directory(std::string const &dir_path);
 };
 
 std::string to_string(file_manager::create_dir_error const &);
