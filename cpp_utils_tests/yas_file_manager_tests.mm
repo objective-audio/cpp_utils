@@ -91,7 +91,7 @@ struct yas_file_manager_tests_cpp {
     [self create_file];
 
     auto result1 = file_manager::remove_contents_in_directory(dir_url.path());
-    
+
     XCTAssertTrue(result1);
     XCTAssertTrue(file_manager::content_exists(dir_url.path()));
     XCTAssertFalse(file_manager::content_exists(file_url.path()));
