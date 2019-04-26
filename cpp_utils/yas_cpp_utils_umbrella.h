@@ -25,6 +25,7 @@
 #include "yas_protocol.h"
 #include "yas_result.h"
 #include "yas_stl_utils.h"
+#include "yas_thread.h"
 #include "yas_timer.h"
 #include "yas_to_bool.h"
 #include "yas_to_integer.h"
