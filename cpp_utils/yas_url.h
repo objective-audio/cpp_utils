@@ -18,6 +18,8 @@ struct url : base {
     static url file_url(std::string const &path);
 
     std::string path() const;
+    std::string last_path_component() const;
+
     CFURLRef cf_url() const;
 
     url appending(std::string const &) const;
