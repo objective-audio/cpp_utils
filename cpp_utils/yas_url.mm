@@ -46,6 +46,10 @@ std::string url::path() const {
     return to_string((__bridge CFStringRef)(impl_ptr<impl>()->_url.object().path));
 }
 
+std::string url::last_path_component() const {
+    return to_string((__bridge CFStringRef)(impl_ptr<impl>()->_url.object().lastPathComponent));
+}
+
 CFURLRef url::cf_url() const {
     return (__bridge CFURLRef)impl_ptr<impl>()->_url.object();
 }
