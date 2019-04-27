@@ -44,6 +44,12 @@ using namespace yas;
     XCTAssertEqual(url.path(), "test/dir");
 }
 
+- (void)test_last_path_component {
+    XCTAssertEqual(yas::url{"test/dir/file.ext"}.last_path_component(), "file.ext");
+    XCTAssertEqual(yas::url{"test/dir/"}.last_path_component(), "dir");
+    XCTAssertEqual(yas::url{"test/dir"}.last_path_component(), "dir");
+}
+
 - (void)test_append {
     auto url = yas::url{"test/dir"};
     auto appended = url.appending("file.ext");
