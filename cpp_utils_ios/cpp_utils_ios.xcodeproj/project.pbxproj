@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		B625259F21DCF4BF00EE2ECA /* yas_cpp_utils_umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = B625259E21DCF4BF00EE2ECA /* yas_cpp_utils_umbrella.h */; };
+		B625259F21DCF4BF00EE2ECA /* yas_cpp_utils_umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = B625259E21DCF4BF00EE2ECA /* yas_cpp_utils_umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B6359D0521DB721B00481348 /* cpp_utils.h in Headers */ = {isa = PBXBuildFile; fileRef = B6359D0321DB721B00481348 /* cpp_utils.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B6359DCB21DB728300481348 /* yas_to_string.h in Headers */ = {isa = PBXBuildFile; fileRef = B6359D8B21DB728300481348 /* yas_to_string.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B6359DCC21DB728300481348 /* yas_cf_utils_private.h in Headers */ = {isa = PBXBuildFile; fileRef = B6359D8C21DB728300481348 /* yas_cf_utils_private.h */; settings = {ATTRIBUTES = (Public, ); }; };
