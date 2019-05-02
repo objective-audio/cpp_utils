@@ -62,7 +62,7 @@ static NSSearchPathDirectory to_search_path_directory(system_url_utils::dir cons
 }
 }
 
-url system_url_utils::directory_url(dir const dir) {
+std::string system_url_utils::directory_path(dir const dir) {
     auto path = make_objc_ptr<NSString *>([&dir] {
         switch (dir) {
             case dir::temporary:
@@ -75,5 +75,9 @@ url system_url_utils::directory_url(dir const dir) {
                 return NSSearchPathForDirectoriesInDomains(to_search_path_directory(dir), NSUserDomainMask, YES)[0];
         }
     });
-    return url::file_url(to_string((__bridge CFStringRef)path.object()));
+    return to_string((__bridge CFStringRef)path.object());
+}
+
+url system_url_utils::directory_url(dir const dir) {
+    return url::file_url(directory_path(dir));
 }

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B6BBCF8D227AA240002B6396 /* yas_file_path_tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = B6BBCF8C227AA240002B6396 /* yas_file_path_tests.mm */; };
 		B6D4C5CA21E9A5A0004A95A8 /* cpp_utils.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B6D4C5C921E9A5A0004A95A8 /* cpp_utils.framework */; };
 		B6D4C5E921E9A5D2004A95A8 /* yas_objc_ptr_tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = B6D4C5CC21E9A5D2004A95A8 /* yas_objc_ptr_tests.mm */; };
 		B6D4C5EA21E9A5D2004A95A8 /* yas_operation_tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = B6D4C5CD21E9A5D2004A95A8 /* yas_operation_tests.mm */; };
@@ -42,6 +43,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		B6BBCF8C227AA240002B6396 /* yas_file_path_tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = yas_file_path_tests.mm; sourceTree = "<group>"; };
 		B6D4C5BF21E9A544004A95A8 /* cpp_utils_ios_tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = cpp_utils_ios_tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B6D4C5C421E9A544004A95A8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B6D4C5C921E9A5A0004A95A8 /* cpp_utils.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = cpp_utils.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -138,6 +140,7 @@
 				B6D4C5DF21E9A5D2004A95A8 /* yas_each_index_tests.mm */,
 				B6D4C5D221E9A5D2004A95A8 /* yas_fast_each_tests.mm */,
 				B6DB92452271F6CD000E61CE /* yas_file_manager_tests.mm */,
+				B6BBCF8C227AA240002B6396 /* yas_file_path_tests.mm */,
 				B6D4C5CF21E9A5D2004A95A8 /* yas_flagset_tests.mm */,
 				B6D4C5E821E9A5D2004A95A8 /* yas_flex_pointer_tests.mm */,
 				B6D4C5DB21E9A5D2004A95A8 /* yas_objc_cast_tests.mm */,
@@ -258,6 +261,7 @@
 				B6D4C5FC21E9A5D2004A95A8 /* yas_each_index_tests.mm in Sources */,
 				B6D4C5EC21E9A5D2004A95A8 /* yas_flagset_tests.mm in Sources */,
 				B6D4C5EF21E9A5D2004A95A8 /* yas_fast_each_tests.mm in Sources */,
+				B6BBCF8D227AA240002B6396 /* yas_file_path_tests.mm in Sources */,
 				B6D4C5FB21E9A5D2004A95A8 /* yas_each_dictionary_tests.mm in Sources */,
 				B6D4C5EE21E9A5D2004A95A8 /* yas_protocol_tests.mm in Sources */,
 				B6D4C60321E9A5D2004A95A8 /* yas_data_tests.mm in Sources */,
