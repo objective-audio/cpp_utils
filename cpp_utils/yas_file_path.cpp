@@ -7,7 +7,7 @@
 
 using namespace yas;
 
-namespace yas {
+namespace yas::file_path_utils {
 static std::vector<std::string> splited(std::string const &path) {
     auto splited = yas::split(path, '/');
     if (splited.size() > 0 && splited.at(0).length() == 0) {
@@ -15,15 +15,25 @@ static std::vector<std::string> splited(std::string const &path) {
     }
     return splited;
 }
-}  // namespace yas
+
+static std::string joined(std::vector<std::string> const &components) {
+    if (components.size() > 0) {
+        return "/" + yas::joined(components, "/");
+    } else {
+        return "";
+    }
+}
+}  // namespace yas::file_path_utils
 
 struct file_path::impl : base::impl {
-    std::vector<std::string> components;
+    std::vector<std::string> const components;
+    std::string const path;
 
-    impl(std::string &&path) : components(splited(path)) {
+    impl(std::string &&path) : impl(file_path_utils::splited(path)) {
     }
 
-    impl(std::vector<std::string> &&components) : components(std::move(components)) {
+    impl(std::vector<std::string> &&components)
+        : components(std::move(components)), path(file_path_utils::joined(this->components)) {
     }
 
     bool is_equal(std::shared_ptr<base::impl> const &rhs) const {
@@ -45,12 +55,7 @@ file_path::file_path(std::nullptr_t) : base(nullptr) {
 }
 
 std::string file_path::string() const {
-    auto const &components = impl_ptr<impl>()->components;
-    if (components.size() > 0) {
-        return "/" + joined(components, "/");
-    } else {
-        return "";
-    }
+    return impl_ptr<impl>()->path;
 }
 
 std::string file_path::last_component() const {
