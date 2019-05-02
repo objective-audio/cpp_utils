@@ -1,5 +1,5 @@
 //
-//  yas_system_url_utils.h
+//  yas_system_path_utils.h
 //
 
 #pragma once
@@ -7,7 +7,7 @@
 #include <string>
 #include "yas_url.h"
 
-namespace yas::system_url_utils {
+namespace yas::system_path_utils {
 enum class dir {
     application,
     demo_application,
@@ -40,4 +40,4 @@ enum class dir {
 
 [[nodiscard]] std::string directory_path(dir const);
 [[nodiscard]] url directory_url(dir const);
-}  // namespace yas::system_url_utils
+}  // namespace yas::system_path_utils

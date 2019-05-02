@@ -5,9 +5,9 @@
 #import <XCTest/XCTest.h>
 #import <cpp_utils/yas_cf_utils.h>
 #import <cpp_utils/yas_file_manager.h>
+#import <cpp_utils/yas_file_path.h>
 #import <cpp_utils/yas_stl_utils.h>
-#import <cpp_utils/yas_system_url_utils.h>
-#import <cpp_utils/yas_url.h>
+#import <cpp_utils/yas_system_path_utils.h>
 
 using namespace yas;
 
@@ -16,10 +16,11 @@ using namespace yas;
 @end
 
 struct yas_file_manager_tests_cpp {
-    url root_dir_url = system_url_utils::directory_url(system_url_utils::dir::document).appending("root");
-    url file_url = this->root_dir_url.appending("file");
-    url dir_url = this->root_dir_url.appending("dir");
-    url empty_url = this->root_dir_url.appending("empty");
+    yas::file_path root_path =
+        yas::file_path{system_path_utils::directory_path(system_path_utils::dir::document)}.appending("root");
+    yas::file_path file_path = this->root_path.appending("file");
+    yas::file_path dir_path = this->root_path.appending("dir");
+    yas::file_path empty_path = this->root_path.appending("empty");
 };
 
 @implementation yas_file_manager_tests {
@@ -27,105 +28,105 @@ struct yas_file_manager_tests_cpp {
 }
 
 - (void)setUp {
-    file_manager::remove_content(self->_cpp.root_dir_url.path());
+    file_manager::remove_content(self->_cpp.root_path.string());
 }
 
 - (void)tearDown {
-    file_manager::remove_content(self->_cpp.root_dir_url.path());
+    file_manager::remove_content(self->_cpp.root_path.string());
 }
 
 - (void)test_create_directory_if_exists {
-    auto const &root_dir_url = self->_cpp.root_dir_url;
-    auto const &file_url = self->_cpp.file_url;
+    auto const &root_path = self->_cpp.root_path;
+    auto const &file_path = self->_cpp.file_path;
 
-    auto result1 = file_manager::create_directory_if_not_exists(root_dir_url.path());
+    auto const result1 = file_manager::create_directory_if_not_exists(root_path.string());
 
     XCTAssertTrue(result1);
 
-    auto result2 = file_manager::create_directory_if_not_exists(root_dir_url.path());
+    auto const result2 = file_manager::create_directory_if_not_exists(root_path.string());
 
     XCTAssertTrue(result1);
 
     [self create_file];
 
-    auto result3 = file_manager::create_directory_if_not_exists(file_url.path());
+    auto const result3 = file_manager::create_directory_if_not_exists(file_path.string());
 
     XCTAssertFalse(result3);
     XCTAssertEqual(result3.error(), file_manager::create_dir_error::file_exists);
 }
 
 - (void)test_content_exists {
-    auto const &root_dir_url = self->_cpp.root_dir_url;
-    auto const &file_url = self->_cpp.file_url;
+    auto const &root_path = self->_cpp.root_path;
+    auto const &file_path = self->_cpp.file_path;
 
-    XCTAssertFalse(file_manager::content_exists(root_dir_url.path()));
-    XCTAssertFalse(file_manager::content_exists(file_url.path()));
+    XCTAssertFalse(file_manager::content_exists(root_path.string()));
+    XCTAssertFalse(file_manager::content_exists(file_path.string()));
 
-    auto result = file_manager::create_directory_if_not_exists(root_dir_url.path());
+    auto const result = file_manager::create_directory_if_not_exists(root_path.string());
     [self create_file];
 
-    XCTAssertTrue(file_manager::content_exists(root_dir_url.path()));
-    XCTAssertTrue(file_manager::content_exists(file_url.path()));
+    XCTAssertTrue(file_manager::content_exists(root_path.string()));
+    XCTAssertTrue(file_manager::content_exists(file_path.string()));
 }
 
 - (void)test_remove_content {
-    auto const &root_dir_url = self->_cpp.root_dir_url;
-    auto const &file_url = self->_cpp.file_url;
+    auto const &root_path = self->_cpp.root_path;
+    auto const &file_path = self->_cpp.file_path;
 
-    auto result = file_manager::create_directory_if_not_exists(root_dir_url.path());
+    auto const result = file_manager::create_directory_if_not_exists(root_path.string());
     [self create_file];
 
-    auto result1 = file_manager::remove_content(file_url.path());
+    auto const result1 = file_manager::remove_content(file_path.string());
 
     XCTAssertTrue(result1);
-    XCTAssertTrue(file_manager::content_exists(root_dir_url.path()));
-    XCTAssertFalse(file_manager::content_exists(file_url.path()));
+    XCTAssertTrue(file_manager::content_exists(root_path.string()));
+    XCTAssertFalse(file_manager::content_exists(file_path.string()));
 
-    auto result2 = file_manager::remove_content(root_dir_url.path());
+    auto const result2 = file_manager::remove_content(root_path.string());
 
-    XCTAssertFalse(file_manager::content_exists(root_dir_url.path()));
+    XCTAssertFalse(file_manager::content_exists(root_path.string()));
 }
 
 - (void)test_remove_contents_in_directory {
-    auto const &root_dir_url = self->_cpp.root_dir_url;
-    auto const &file_url = self->_cpp.file_url;
+    auto const &root_path = self->_cpp.root_path;
+    auto const &file_path = self->_cpp.file_path;
 
-    auto result = file_manager::create_directory_if_not_exists(root_dir_url.path());
+    auto const result = file_manager::create_directory_if_not_exists(root_path.string());
     [self create_file];
 
-    auto result1 = file_manager::remove_contents_in_directory(root_dir_url.path());
+    auto const result1 = file_manager::remove_contents_in_directory(root_path.string());
 
     XCTAssertTrue(result1);
-    XCTAssertTrue(file_manager::content_exists(root_dir_url.path()));
-    XCTAssertFalse(file_manager::content_exists(file_url.path()));
+    XCTAssertTrue(file_manager::content_exists(root_path.string()));
+    XCTAssertFalse(file_manager::content_exists(file_path.string()));
 }
 
 - (void)test_content_paths_in_directory {
-    auto const &root_dir_url = self->_cpp.root_dir_url;
-    auto const &file_url = self->_cpp.file_url;
-    auto const &dir_url = self->_cpp.dir_url;
-    auto const &empty_url = self->_cpp.empty_url;
+    auto const &root_path = self->_cpp.root_path;
+    auto const &file_path = self->_cpp.file_path;
+    auto const &dir_path = self->_cpp.dir_path;
+    auto const &empty_path = self->_cpp.empty_path;
 
-    auto root_result = file_manager::create_directory_if_not_exists(root_dir_url.path());
-    auto dir_result = file_manager::create_directory_if_not_exists(dir_url.path());
+    auto const root_result = file_manager::create_directory_if_not_exists(root_path.string());
+    auto const dir_result = file_manager::create_directory_if_not_exists(dir_path.string());
     [self create_file];
 
-    auto result = file_manager::content_paths_in_directory(root_dir_url.path());
+    auto result = file_manager::content_paths_in_directory(root_path.string());
 
     XCTAssertTrue(result);
 
     auto const &paths = result.value();
 
     XCTAssertEqual(paths.size(), 2);
-    XCTAssertTrue(contains(paths, file_url.path()));
-    XCTAssertTrue(contains(paths, dir_url.path()));
+    XCTAssertTrue(contains(paths, file_path.string()));
+    XCTAssertTrue(contains(paths, dir_path.string()));
 
-    auto result2 = file_manager::content_paths_in_directory(file_url.path());
+    auto result2 = file_manager::content_paths_in_directory(file_path.string());
 
     XCTAssertFalse(result2);
     XCTAssertEqual(result2.error(), file_manager::content_paths_error::not_directory);
 
-    auto result3 = file_manager::content_paths_in_directory(empty_url.path());
+    auto result3 = file_manager::content_paths_in_directory(empty_path.string());
 
     XCTAssertFalse(result3);
     XCTAssertEqual(result3.error(), file_manager::content_paths_error::directory_not_found);
@@ -155,7 +156,7 @@ struct yas_file_manager_tests_cpp {
 
 - (void)create_file {
     NSData *data = [NSMutableData dataWithLength:1];
-    auto cf_file_path = to_cf_object(self->_cpp.file_url.path());
+    auto cf_file_path = to_cf_object(self->_cpp.file_path.string());
     [[NSFileManager defaultManager] createFileAtPath:(__bridge NSString *)cf_file_path contents:data attributes:nil];
 }
 
