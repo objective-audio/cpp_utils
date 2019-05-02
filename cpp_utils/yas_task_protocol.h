@@ -1,5 +1,5 @@
 //
-//  yas_operation_protocol.h
+//  yas_task_protocol.h
 //
 
 #pragma once
@@ -8,7 +8,7 @@
 #include "yas_protocol.h"
 
 namespace yas {
-class controllable_operation : public protocol {
+class controllable_task : public protocol {
    public:
     class impl : public protocol::impl {
        public:
@@ -16,7 +16,7 @@ class controllable_operation : public protocol {
         virtual void cancel() = 0;
     };
 
-    controllable_operation(std::shared_ptr<impl> const &impl) : protocol(impl) {
+    controllable_task(std::shared_ptr<impl> const &impl) : protocol(impl) {
     }
 
     void execute() {
@@ -28,10 +28,10 @@ class controllable_operation : public protocol {
     }
 };
 
-using operation_priority_t = uint32_t;
+using task_priority_t = uint32_t;
 
-struct operation_option_t {
-    operation_priority_t priority = 0;
+struct task_option_t {
+    task_priority_t priority = 0;
     base cancel_id = nullptr;
     base push_cancel_id = nullptr;
 };
