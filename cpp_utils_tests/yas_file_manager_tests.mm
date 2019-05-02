@@ -7,7 +7,7 @@
 #import <cpp_utils/yas_file_manager.h>
 #import <cpp_utils/yas_file_path.h>
 #import <cpp_utils/yas_stl_utils.h>
-#import <cpp_utils/yas_system_url_utils.h>
+#import <cpp_utils/yas_system_path_utils.h>
 
 using namespace yas;
 
@@ -17,7 +17,7 @@ using namespace yas;
 
 struct yas_file_manager_tests_cpp {
     yas::file_path root_path =
-        yas::file_path{system_url_utils::directory_path(system_url_utils::dir::document)}.appending("root");
+        yas::file_path{system_path_utils::directory_path(system_path_utils::dir::document)}.appending("root");
     yas::file_path file_path = this->root_path.appending("file");
     yas::file_path dir_path = this->root_path.appending("dir");
     yas::file_path empty_path = this->root_path.appending("empty");
@@ -70,21 +70,21 @@ struct yas_file_manager_tests_cpp {
 }
 
 - (void)test_remove_content {
-    auto const &root_dir_url = self->_cpp.root_path;
-    auto const &file_url = self->_cpp.file_path;
+    auto const &root_path = self->_cpp.root_path;
+    auto const &file_path = self->_cpp.file_path;
 
-    auto const result = file_manager::create_directory_if_not_exists(root_dir_url.string());
+    auto const result = file_manager::create_directory_if_not_exists(root_path.string());
     [self create_file];
 
-    auto const result1 = file_manager::remove_content(file_url.string());
+    auto const result1 = file_manager::remove_content(file_path.string());
 
     XCTAssertTrue(result1);
-    XCTAssertTrue(file_manager::content_exists(root_dir_url.string()));
-    XCTAssertFalse(file_manager::content_exists(file_url.string()));
+    XCTAssertTrue(file_manager::content_exists(root_path.string()));
+    XCTAssertFalse(file_manager::content_exists(file_path.string()));
 
-    auto const result2 = file_manager::remove_content(root_dir_url.string());
+    auto const result2 = file_manager::remove_content(root_path.string());
 
-    XCTAssertFalse(file_manager::content_exists(root_dir_url.string()));
+    XCTAssertFalse(file_manager::content_exists(root_path.string()));
 }
 
 - (void)test_remove_contents_in_directory {
