@@ -29,7 +29,13 @@
     XCTAssertFalse(path);
 }
 
-- (void)test_make_path_last_slash {
+- (void)test_top_slash {
+    auto path = yas::file_path{"/test/dir"};
+
+    XCTAssertEqual(path.string(), "/test/dir");
+}
+
+- (void)test_last_slash {
     auto path = yas::file_path{"test/dir/"};
 
     XCTAssertEqual(path.string(), "/test/dir");
