@@ -38,5 +38,6 @@ enum class dir {
     open_step_root,
 };
 
+[[nodiscard]] std::string directory_path(dir const);
 [[nodiscard]] url directory_url(dir const);
 }  // namespace yas::system_url_utils
