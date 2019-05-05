@@ -24,20 +24,7 @@ T to_integer(std::string const &str) {
 }
 
 template <>
-int64_t to_integer(std::string const &str) {
-    try {
-        return stoll(str);
-    } catch (...) {
-        return 0;
-    }
-}
-
+int64_t to_integer(std::string const &str);
 template <>
-uint64_t to_integer(std::string const &str) {
-    try {
-        return stoull(str);
-    } catch (...) {
-        return 0;
-    }
-}
+uint64_t to_integer(std::string const &str);
 }  // namespace yas
