@@ -62,12 +62,6 @@ waiting_out::waiting_out(flow::run<Running, Event> value)
     : base(std::make_shared<out_impl<flow::run<Running, Event>>>(std::move(value))) {
 }
 
-waiting_out::waiting_out(flow::stay value) : base(std::make_shared<out_impl<flow::stay>>(std::move(value))) {
-}
-
-waiting_out::waiting_out(std::nullptr_t) : base(nullptr) {
-}
-
 template <typename Waiting, typename Running, typename Event>
 enum waiting_out::kind waiting_out::kind() const {
     if (impl_ptr<out_impl<flow::wait<Waiting>>>()) {
@@ -101,9 +95,6 @@ running_out::running_out(flow::wait<Waiting> value)
 template <typename Running, typename Event>
 running_out::running_out(flow::run<Running, Event> value)
     : base(std::make_shared<out_impl<flow::run<Running, Event>>>(std::move(value))) {
-}
-
-running_out::running_out(std::nullptr_t) : base(nullptr) {
 }
 
 template <typename Waiting, typename Running, typename Event>
