@@ -5,8 +5,6 @@
 #import <XCTest/XCTest.h>
 #import <cpp_utils/yas_to_integer.h>
 
-#import <iostream>
-
 using namespace yas;
 
 @interface yas_to_integer_tests : XCTestCase
