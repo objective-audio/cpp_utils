@@ -74,6 +74,9 @@
 		B6359D8921DB727A00481348 /* yas_system_path_utils.h in Headers */ = {isa = PBXBuildFile; fileRef = B6359D4921DB727900481348 /* yas_system_path_utils.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B6359E0D21DB729E00481348 /* objc_utils.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B6359E0C21DB729E00481348 /* objc_utils.framework */; };
 		B6359E2321DB784F00481348 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B6359E0E21DB733200481348 /* Accelerate.framework */; };
+		B6B33BDC227F1DFA004F87CD /* yas_cpp_utils_umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = B625259D21DCF48800EE2ECA /* yas_cpp_utils_umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B6B33BDE227F277D004F87CD /* yas_to_integer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B6B33BDD227F277D004F87CD /* yas_to_integer.cpp */; };
+		B6B33BE0227F28DA004F87CD /* yas_flow_graph.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B6B33BDF227F28DA004F87CD /* yas_flow_graph.cpp */; };
 		B6BBCF84227A7FD5002B6396 /* yas_file_path.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B6BBCF82227A7FD5002B6396 /* yas_file_path.cpp */; };
 		B6BBCF85227A7FD5002B6396 /* yas_file_path.h in Headers */ = {isa = PBXBuildFile; fileRef = B6BBCF83227A7FD5002B6396 /* yas_file_path.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B6FA87A822728C0A00A77872 /* yas_thread.mm in Sources */ = {isa = PBXBuildFile; fileRef = B6FA87A622728C0A00A77872 /* yas_thread.mm */; };
@@ -151,6 +154,8 @@
 		B6359D4921DB727900481348 /* yas_system_path_utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = yas_system_path_utils.h; sourceTree = "<group>"; };
 		B6359E0C21DB729E00481348 /* objc_utils.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = objc_utils.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B6359E0E21DB733200481348 /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
+		B6B33BDD227F277D004F87CD /* yas_to_integer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = yas_to_integer.cpp; sourceTree = "<group>"; };
+		B6B33BDF227F28DA004F87CD /* yas_flow_graph.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = yas_flow_graph.cpp; sourceTree = "<group>"; };
 		B6BBCF82227A7FD5002B6396 /* yas_file_path.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = yas_file_path.cpp; sourceTree = "<group>"; };
 		B6BBCF83227A7FD5002B6396 /* yas_file_path.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = yas_file_path.h; sourceTree = "<group>"; };
 		B6FA87A622728C0A00A77872 /* yas_thread.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = yas_thread.mm; sourceTree = "<group>"; };
@@ -235,6 +240,7 @@
 				B6359D0E21DB727900481348 /* yas_flex_ptr.h */,
 				B6359D2D21DB727900481348 /* yas_flow_graph_private.h */,
 				B6359D4521DB727900481348 /* yas_flow_graph.h */,
+				B6B33BDF227F28DA004F87CD /* yas_flow_graph.cpp */,
 				B6359D1421DB727900481348 /* yas_objc_cast.h */,
 				B6359D4021DB727900481348 /* yas_objc_ptr_private.h */,
 				B6359D2521DB727900481348 /* yas_objc_ptr.h */,
@@ -261,6 +267,7 @@
 				B6359D0F21DB727900481348 /* yas_to_bool.h */,
 				B6359D2F21DB727900481348 /* yas_to_floating_point.h */,
 				B6359D4321DB727900481348 /* yas_to_integer.h */,
+				B6B33BDD227F277D004F87CD /* yas_to_integer.cpp */,
 				B6359D0A21DB727900481348 /* yas_to_string.h */,
 				B6359D1921DB727900481348 /* yas_type_traits.h */,
 				B6359D3921DB727900481348 /* yas_types.h */,
@@ -316,6 +323,7 @@
 				B6359D6F21DB727A00481348 /* yas_to_floating_point.h in Headers */,
 				B6359D8221DB727A00481348 /* yas_exception.h in Headers */,
 				B6359D8821DB727A00481348 /* yas_task.h in Headers */,
+				B6B33BDC227F1DFA004F87CD /* yas_cpp_utils_umbrella.h in Headers */,
 				B6359D5921DB727A00481348 /* yas_type_traits.h in Headers */,
 				B6359D5721DB727A00481348 /* yas_task_protocol.h in Headers */,
 				B6359D7921DB727A00481348 /* yas_types.h in Headers */,
@@ -415,9 +423,11 @@
 				B6359D6921DB727A00481348 /* yas_data.cpp in Sources */,
 				B6359D7C21DB727A00481348 /* yas_each_dictionary.cpp in Sources */,
 				B6359D4D21DB727A00481348 /* yas_timer.mm in Sources */,
+				B6B33BE0227F28DA004F87CD /* yas_flow_graph.cpp in Sources */,
 				B6359D7D21DB727A00481348 /* yas_stl_utils.cpp in Sources */,
 				B6359D8721DB727A00481348 /* yas_system_path_utils.mm in Sources */,
 				B6359D7F21DB727A00481348 /* yas_cf_ref.cpp in Sources */,
+				B6B33BDE227F277D004F87CD /* yas_to_integer.cpp in Sources */,
 				B6359D6621DB727A00481348 /* yas_flex_ptr.cpp in Sources */,
 				B6359D8121DB727A00481348 /* yas_objc_ptr.mm in Sources */,
 				B6359D6E21DB727A00481348 /* yas_base.cpp in Sources */,
