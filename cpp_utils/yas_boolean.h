@@ -29,6 +29,8 @@ struct boolean {
 
     explicit operator bool() const;
 
+    bool const &raw() const;
+
    private:
     bool _value;
 };

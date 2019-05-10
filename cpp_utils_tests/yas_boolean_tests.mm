@@ -166,6 +166,14 @@ using namespace yas;
     XCTAssertTrue(false_flag1 <= true_flag1);
 }
 
+- (void)test_raw {
+    boolean true_flag = true;
+    boolean false_flag = false;
+
+    XCTAssertTrue(true_flag.raw());
+    XCTAssertFalse(false_flag.raw());
+}
+
 - (void)test_to_string {
     boolean true_flag = true;
     boolean false_flag = false;
