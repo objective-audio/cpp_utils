@@ -20,8 +20,6 @@
 #include "yas_flagset.h"
 #include "yas_flex_ptr.h"
 #include "yas_flow_graph.h"
-#include "yas_objc_cast.h"
-#include "yas_objc_ptr.h"
 #include "yas_protocol.h"
 #include "yas_result.h"
 #include "yas_stl_utils.h"
