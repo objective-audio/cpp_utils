@@ -334,7 +334,7 @@ namespace test {
     yas::base base{nullptr};
     base.set_impl_ptr(std::make_shared<yas::base::impl>());
 
-    yas::weak<yas::base> weak_base{base};
+    yas::base::weak<yas::base> weak_base{base};
 
     auto identifier = base.identifier();
 
@@ -453,7 +453,7 @@ namespace test {
 
     auto weak_obj = to_weak(obj);
 
-    yas::weak<yas::test::derived3base> weak_base_obj{weak_obj};
+    yas::base::weak<yas::test::derived3base> weak_base_obj{weak_obj};
 
     XCTAssertTrue(weak_base_obj);
 }

@@ -43,33 +43,33 @@ T cast(base const &src) {
 #pragma mark - weak
 
 template <typename T>
-weak<T>::weak() : _impl() {
+base::weak<T>::weak() : _impl() {
 }
 
 template <typename T>
-weak<T>::weak(T const &obj) : _impl(obj.impl_ptr()) {
+base::weak<T>::weak(T const &obj) : _impl(obj.impl_ptr()) {
 }
 
 template <typename T>
 template <typename U>
-weak<T>::weak(weak<U> const &wobj) : _impl(wobj.lock().impl_ptr()) {
+base::weak<T>::weak(weak<U> const &wobj) : _impl(wobj.lock().impl_ptr()) {
     static_assert(std::is_base_of<T, U>(), "base class is not T.");
 }
 
 template <typename T>
-weak<T>::weak(weak<T> const &) = default;
+base::weak<T>::weak(base::weak<T> const &) = default;
 
 template <typename T>
-weak<T>::weak(weak<T> &&) = default;
+base::weak<T>::weak(base::weak<T> &&) = default;
 
 template <typename T>
-weak<T> &weak<T>::operator=(weak<T> const &) = default;
+base::weak<T> &base::weak<T>::operator=(base::weak<T> const &) = default;
 
 template <typename T>
-weak<T> &weak<T>::operator=(weak<T> &&) = default;
+base::weak<T> &base::weak<T>::operator=(base::weak<T> &&) = default;
 
 template <typename T>
-weak<T> &weak<T>::operator=(T const &obj) {
+base::weak<T> &base::weak<T>::operator=(T const &obj) {
     _impl = obj.impl_ptr();
 
     return *this;
@@ -77,7 +77,7 @@ weak<T> &weak<T>::operator=(T const &obj) {
 
 template <typename T>
 template <typename U>
-weak<T> &weak<T>::operator=(weak<U> const &wobj) {
+base::weak<T> &base::weak<T>::operator=(weak<U> const &wobj) {
     static_assert(std::is_base_of<T, U>(), "base class is not T.");
 
     _impl = wobj.lock().impl_ptr();
@@ -86,12 +86,12 @@ weak<T> &weak<T>::operator=(weak<U> const &wobj) {
 }
 
 template <typename T>
-weak<T>::operator bool() const {
+base::weak<T>::operator bool() const {
     return !_impl.expired();
 }
 
 template <typename T>
-uintptr_t weak<T>::identifier() const {
+uintptr_t base::weak<T>::identifier() const {
     if (auto impl = _impl.lock()) {
         return reinterpret_cast<uintptr_t>(&*impl);
     }
@@ -99,7 +99,7 @@ uintptr_t weak<T>::identifier() const {
 }
 
 template <typename T>
-bool weak<T>::operator==(weak const &rhs) const {
+bool base::weak<T>::operator==(weak const &rhs) const {
     if (_impl.expired() || rhs._impl.expired()) {
         return false;
     } else {
@@ -110,7 +110,7 @@ bool weak<T>::operator==(weak const &rhs) const {
 }
 
 template <typename T>
-bool weak<T>::operator!=(weak const &rhs) const {
+bool base::weak<T>::operator!=(weak const &rhs) const {
     if (_impl.expired() || rhs._impl.expired()) {
         return true;
     } else {
@@ -121,7 +121,7 @@ bool weak<T>::operator!=(weak const &rhs) const {
 }
 
 template <typename T>
-T weak<T>::lock() const {
+T base::weak<T>::lock() const {
     T obj{nullptr};
     auto impl = _impl.lock();
     if (impl) {
@@ -131,21 +131,21 @@ T weak<T>::lock() const {
 }
 
 template <typename T>
-void weak<T>::lock(std::function<void(T &)> const &func) const {
+void base::weak<T>::lock(std::function<void(T &)> const &func) const {
     if (auto obj = lock()) {
         func(obj);
     }
 }
 
 template <typename T>
-void weak<T>::reset() {
+void base::weak<T>::reset() {
     _impl.reset();
 }
 
 #pragma mark - global
 
 template <typename K, typename T>
-std::map<K, T> lock_values(std::map<K, weak<T>> const &map) {
+std::map<K, T> lock_values(std::map<K, base::weak<T>> const &map) {
     std::map<K, T> locked_map;
 
     for (auto &pair : map) {
@@ -155,10 +155,5 @@ std::map<K, T> lock_values(std::map<K, weak<T>> const &map) {
     }
 
     return locked_map;
-}
-
-template <typename T>
-weak<T> to_weak(T const &obj) {
-    return weak<T>(obj);
 }
 }  // namespace yas

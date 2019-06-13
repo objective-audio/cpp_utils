@@ -343,7 +343,7 @@ static int _objc_object_count = 0;
 
 - (void)test_weak {
     {
-        weak<objc_ptr<YASObjCTestObject *>> weak_objc_obj;
+        base::weak<objc_ptr<YASObjCTestObject *>> weak_objc_obj;
 
         {
             auto objc_obj = make_objc_ptr([[YASObjCTestObject alloc] init]);
