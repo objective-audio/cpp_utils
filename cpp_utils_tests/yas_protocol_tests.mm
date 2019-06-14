@@ -161,4 +161,12 @@ namespace test {
     XCTAssertFalse(handler());
 }
 
+- (void)test_weak_identifier {
+    test::required_object req_obj;
+    auto required = req_obj.required();
+    auto weak = to_weak(required);
+
+    XCTAssertEqual(required.identifier(), weak.identifier());
+}
+
 @end
