@@ -62,6 +62,42 @@ class base {
 
    private:
     std::shared_ptr<impl> _impl;
+
+   public:
+    template <typename T>
+    class weak {
+       public:
+        weak();
+        weak(T const &);
+
+        weak(weak<T> const &);
+        weak(weak<T> &&);
+
+        template <typename U>
+        weak(weak<U> const &);
+
+        weak<T> &operator=(weak<T> const &);
+        weak<T> &operator=(weak<T> &&);
+        weak<T> &operator=(T const &);
+
+        template <typename U>
+        weak<T> &operator=(weak<U> const &);
+
+        explicit operator bool() const;
+
+        uintptr_t identifier() const;
+
+        bool operator==(weak const &rhs) const;
+        bool operator!=(weak const &rhs) const;
+
+        T lock() const;
+        void lock(std::function<void(T &)> const &) const;
+
+        void reset();
+
+       private:
+        std::weak_ptr<base::impl> _impl;
+    };
 };
 
 template <typename T>
@@ -72,46 +108,18 @@ bool is_same(base const &, base const &);
 template <typename T>
 T cast(base const &);
 
-template <typename T>
-class weak {
-   public:
-    weak();
-    weak(T const &);
-
-    weak(weak<T> const &);
-    weak(weak<T> &&);
-
-    template <typename U>
-    weak(weak<U> const &);
-
-    weak<T> &operator=(weak<T> const &);
-    weak<T> &operator=(weak<T> &&);
-    weak<T> &operator=(T const &);
-
-    template <typename U>
-    weak<T> &operator=(weak<U> const &);
-
-    explicit operator bool() const;
-
-    uintptr_t identifier() const;
-
-    bool operator==(weak const &rhs) const;
-    bool operator!=(weak const &rhs) const;
-
-    T lock() const;
-    void lock(std::function<void(T &)> const &) const;
-
-    void reset();
-
-   private:
-    std::weak_ptr<base::impl> _impl;
-};
-
 template <typename K, typename T>
-std::map<K, T> lock_values(std::map<K, weak<T>> const &);
+std::map<K, T> lock_values(std::map<K, base::weak<T>> const &);
 
 template <typename T>
-weak<T> to_weak(T const &);
+using is_base_of_base = std::is_base_of<base, T>;
+template <typename T, typename V = void>
+using enable_if_base_of_base_t = typename std::enable_if_t<is_base_of_base<T>::value, V>;
+
+template <typename T, enable_if_base_of_base_t<T, std::nullptr_t> = nullptr>
+base::weak<T> to_weak(T const &obj) {
+    return base::weak<T>(obj);
+}
 }  // namespace yas
 
 #include "yas_base_private.h"

@@ -228,7 +228,7 @@ using namespace yas;
 }
 
 - (void)test_weak {
-    weak<cf_ref<CFArrayRef>> weak_cf_obj;
+    base::weak<cf_ref<CFArrayRef>> weak_cf_obj;
 
     {
         auto cf_obj = make_cf_ref(CFArrayCreate(nullptr, nullptr, 0, nullptr));
