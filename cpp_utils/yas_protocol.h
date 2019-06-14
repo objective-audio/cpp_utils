@@ -29,9 +29,19 @@ class protocol {
     protocol &operator=(protocol const &);
     protocol &operator=(protocol &&);
 
+    bool operator==(protocol const &rhs) const;
+    bool operator!=(protocol const &rhs) const;
+    bool operator==(std::nullptr_t) const;
+    bool operator!=(std::nullptr_t) const;
+    bool operator<(protocol const &rhs) const;
+
     explicit operator bool() const;
 
     uintptr_t identifier() const;
+
+    std::shared_ptr<impl> &impl_ptr();
+    void set_impl_ptr(std::shared_ptr<impl> const &);
+    void set_impl_ptr(std::shared_ptr<impl> &&);
 
     template <typename T = impl>
     std::shared_ptr<T> impl_ptr() const;

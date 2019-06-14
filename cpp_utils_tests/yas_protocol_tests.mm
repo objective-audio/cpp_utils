@@ -169,4 +169,19 @@ namespace test {
     XCTAssertEqual(required.identifier(), weak.identifier());
 }
 
+- (void)test_weak_lock {
+    test::required_object req_obj;
+    auto required = req_obj.required();
+    auto weak = to_weak(required);
+
+    auto locked = weak.lock();
+
+    XCTAssertEqual(required, locked);
+
+    test::required_object req_obj2;
+    auto required2 = req_obj2.required();
+
+    XCTAssertNotEqual(required2, locked);
+}
+
 @end
