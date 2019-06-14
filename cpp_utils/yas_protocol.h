@@ -31,6 +31,8 @@ class protocol {
 
     explicit operator bool() const;
 
+    uintptr_t identifier() const;
+
     template <typename T = impl>
     std::shared_ptr<T> impl_ptr() const;
 

@@ -93,7 +93,7 @@ base::weak<T>::operator bool() const {
 template <typename T>
 uintptr_t base::weak<T>::identifier() const {
     if (auto impl = _impl.lock()) {
-        return reinterpret_cast<uintptr_t>(&*impl);
+        return reinterpret_cast<uintptr_t>(impl.get());
     }
     return 0;
 }

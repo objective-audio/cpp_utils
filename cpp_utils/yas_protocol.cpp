@@ -25,3 +25,7 @@ protocol::~protocol() = default;
 protocol::operator bool() const {
     return _impl != nullptr;
 }
+
+uintptr_t protocol::identifier() const {
+    return reinterpret_cast<uintptr_t>(_impl.get());
+}
