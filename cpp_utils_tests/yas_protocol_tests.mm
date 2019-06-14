@@ -146,4 +146,19 @@ namespace test {
     XCTAssertTrue(optional.optional_function());
 }
 
+- (void)test_to_weak {
+    std::function<bool(void)> handler = nullptr;
+
+    {
+        test::required_object req_obj;
+        auto required = req_obj.required();
+
+        handler = [weak = to_weak(required)]() { return weak.operator bool(); };
+
+        XCTAssertTrue(handler());
+    }
+
+    XCTAssertFalse(handler());
+}
+
 @end
