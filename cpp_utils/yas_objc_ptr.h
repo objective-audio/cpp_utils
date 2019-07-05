@@ -13,11 +13,11 @@ namespace yas {
 template <typename T>
 using enable_if_id_t = typename std::enable_if_t<std::is_convertible<T, id>::value>;
 
-struct objc_ptr_impl : public base::impl {
+struct objc_ptr_impl final : public base::impl {
     objc_ptr_impl();
     objc_ptr_impl(id const obj);
 
-    virtual ~objc_ptr_impl() final;
+    virtual ~objc_ptr_impl();
 
     void set_object(id const obj);
     void move_object(id const obj);

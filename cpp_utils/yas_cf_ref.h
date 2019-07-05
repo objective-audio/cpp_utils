@@ -9,12 +9,12 @@
 #include "yas_base.h"
 
 namespace yas {
-struct cf_ref_impl : public base::impl {
+struct cf_ref_impl final : public base::impl {
     cf_ref_impl();
     cf_ref_impl(CFTypeRef const obj);
     cf_ref_impl(std::nullptr_t);
 
-    virtual ~cf_ref_impl() final;
+    virtual ~cf_ref_impl();
 
     void set_object(CFTypeRef const obj);
     void move_object(CFTypeRef const obj);
