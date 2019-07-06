@@ -61,6 +61,15 @@ using enable_if_tuple_t = typename std::enable_if_t<is_tuple<T>::value, U>;
 template <typename T, typename U = void>
 using disable_if_tuple_t = typename std::enable_if_t<!is_tuple<T>::value, U>;
 
+template <typename>
+struct is_shared_ptr : std::false_type {};
+template <typename T>
+struct is_shared_ptr<std::shared_ptr<T>> : std::true_type {};
+template <typename T, typename U = void>
+using enable_if_shared_ptr_t = typename std::enable_if_t<is_shared_ptr<T>::value, U>;
+template <typename T, typename U = void>
+using disable_if_shared_ptr_t = typename std::enable_if_t<!is_shared_ptr<T>::value, U>;
+
 template <typename F, typename R, typename... Args>
 R __return_type__(R (F::*)(Args...));
 template <typename F, typename R, typename... Args>

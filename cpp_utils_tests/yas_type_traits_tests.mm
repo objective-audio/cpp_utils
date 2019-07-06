@@ -47,6 +47,16 @@ template <typename T, disable_if_tuple_t<T, std::nullptr_t> = nullptr>
 bool is_tuple(T const &) {
     return false;
 }
+
+template <typename T, enable_if_shared_ptr_t<T, std::nullptr_t> = nullptr>
+bool is_shared_ptr(T const &) {
+    return true;
+}
+
+template <typename T, disable_if_shared_ptr_t<T, std::nullptr_t> = nullptr>
+bool is_shared_ptr(T const &) {
+    return false;
+}
 }
 
 @interface yas_type_traits_tests : XCTestCase
@@ -81,6 +91,11 @@ bool is_tuple(T const &) {
 - (void)test_is_tuple {
     XCTAssertTrue(test::is_tuple(std::make_tuple(1, 2, 3)));
     XCTAssertFalse(test::is_tuple(int(0)));
+}
+
+- (void)test_is_shared_ptr {
+    XCTAssertTrue(test::is_shared_ptr(std::make_shared<int>(0)));
+    XCTAssertFalse(test::is_shared_ptr(int(0)));
 }
 
 @end
