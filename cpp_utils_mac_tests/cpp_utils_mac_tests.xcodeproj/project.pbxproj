@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B6A28C0522D2248F00086ECF /* yas_weakable_tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = B6A28C0422D2248F00086ECF /* yas_weakable_tests.mm */; };
 		B6BBCF87227A8AAE002B6396 /* yas_file_path_tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = B6BBCF86227A8AAE002B6396 /* yas_file_path_tests.mm */; };
 		B6D4C59321E9A042004A95A8 /* yas_objc_ptr_tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = B6D4C57621E9A042004A95A8 /* yas_objc_ptr_tests.mm */; };
 		B6D4C59421E9A042004A95A8 /* yas_task_tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = B6D4C57721E9A042004A95A8 /* yas_task_tests.mm */; };
@@ -43,6 +44,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		B6A28C0422D2248F00086ECF /* yas_weakable_tests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = yas_weakable_tests.mm; sourceTree = "<group>"; };
 		B6BBCF86227A8AAE002B6396 /* yas_file_path_tests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = yas_file_path_tests.mm; sourceTree = "<group>"; };
 		B6D4C56C21E99FD3004A95A8 /* cpp_utils_mac_tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = cpp_utils_mac_tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B6D4C57121E99FD3004A95A8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -153,6 +155,7 @@
 				B6D4C58021E9A042004A95A8 /* yas_url_tests.mm */,
 				B6BBCF86227A8AAE002B6396 /* yas_file_path_tests.mm */,
 				B6D4C58621E9A042004A95A8 /* yas_version_tests.mm */,
+				B6A28C0422D2248F00086ECF /* yas_weakable_tests.mm */,
 			);
 			name = cpp_utils_tests;
 			path = ../../cpp_utils_tests;
@@ -281,6 +284,7 @@
 				B6D4C59F21E9A042004A95A8 /* yas_boolean_tests.mm in Sources */,
 				B6D4C59E21E9A042004A95A8 /* yas_to_string_tests.mm in Sources */,
 				B6D4C59521E9A042004A95A8 /* yas_type_traits_tests.mm in Sources */,
+				B6A28C0522D2248F00086ECF /* yas_weakable_tests.mm in Sources */,
 				B6D4C59C21E9A042004A95A8 /* yas_delaying_caller_tests.mm in Sources */,
 				B6D4C5AE21E9A042004A95A8 /* yas_system_path_utils_tests.mm in Sources */,
 				B6D4C5A421E9A042004A95A8 /* yas_to_integer_tests.mm in Sources */,
