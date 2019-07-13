@@ -73,6 +73,24 @@ using namespace yas;
 
         XCTAssertFalse(locked_opt);
     }
+
+    {
+        test_class source{3};
+
+        auto weak = to_weak(source);
+
+        auto copied = weak;
+        auto moved = std::move(weak);
+
+        auto copied_locked_opt = copied.lock();
+        XCTAssertTrue(copied_locked_opt);
+
+        auto moved_locked_opt = moved.lock();
+        XCTAssertTrue(moved_locked_opt);
+
+        auto locked_opt = weak.lock();
+        XCTAssertFalse(locked_opt);
+    }
 }
 
 @end

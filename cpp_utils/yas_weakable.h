@@ -22,9 +22,6 @@ struct weak_ref {
     weak_ref(weakable<T> const &weakable) : _impl(weakable.weakable_impl_ptr()) {
     }
 
-    weak_ref(weak_ref const &) = default;
-    weak_ref &operator=(weak_ref const &) = default;
-
     std::optional<T> lock() const {
         if (auto shared = this->_impl.lock()) {
             if (auto casted = std::dynamic_pointer_cast<typename T::impl>(shared)) {
@@ -36,9 +33,6 @@ struct weak_ref {
 
    private:
     std::weak_ptr<weakable_impl> _impl;
-
-    weak_ref(weak_ref &&) = delete;
-    weak_ref &operator=(weak_ref &&) = delete;
 };
 
 template <typename T>
