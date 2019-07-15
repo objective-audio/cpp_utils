@@ -188,8 +188,14 @@ std::string joined(T const &collection, std::string const &separator, F function
 }
 
 template <typename T>
-std::weak_ptr<T> to_weak(std::shared_ptr<T> shared) {
-    return shared;
+std::weak_ptr<T> to_weak(std::shared_ptr<T> const &shared) {
+    return std::weak_ptr<T>{shared};
+}
+
+template <typename T>
+std::weak_ptr<T> to_weak(std::shared_ptr<T> &&shared) {
+    auto lvalue_shared = shared;
+    return std::weak_ptr<T>{lvalue_shared};
 }
 
 template <typename T, std::size_t N, std::size_t... Indices>

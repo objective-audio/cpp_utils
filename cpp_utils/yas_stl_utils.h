@@ -77,7 +77,9 @@ template <typename T, typename F>
 std::string joined(T const &collection, std::string const &separator, F function);
 
 template <typename T>
-std::weak_ptr<T> to_weak(std::shared_ptr<T> shared);
+std::weak_ptr<T> to_weak(std::shared_ptr<T> const &shared);
+template <typename T>
+std::weak_ptr<T> to_weak(std::shared_ptr<T> &&shared);
 
 template <typename T, std::size_t N>
 auto to_tuple(std::array<T, N> const &);
