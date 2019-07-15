@@ -371,6 +371,20 @@
     XCTAssertTrue(weak.expired());
 }
 
+- (void)test_to_weak_rvalue {
+    struct test_class : std::enable_shared_from_this<test_class> {
+        int value = 98;
+    };
+
+    auto shared = std::make_shared<test_class>();
+    auto &object = *shared;
+    auto weak = yas::to_weak(object.shared_from_this());
+    auto shared_from_weak = weak.lock();
+
+    XCTAssertTrue(shared_from_weak);
+    XCTAssertEqual(shared_from_weak->value, 98);
+}
+
 - (void)test_index {
     std::vector<int> vector{3, 25, 1, 0, -1};
 
