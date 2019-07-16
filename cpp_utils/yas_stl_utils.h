@@ -86,6 +86,9 @@ auto to_tuple(std::array<T, N> const &);
 
 template <typename T, std::size_t N>
 auto to_tuple(std::vector<T> const &);
+
+template <typename K, typename T>
+std::map<K, std::shared_ptr<T>> lock_values(std::map<K, std::weak_ptr<T>> const &map);
 }  // namespace yas
 
 #include "yas_stl_utils_private.h"
