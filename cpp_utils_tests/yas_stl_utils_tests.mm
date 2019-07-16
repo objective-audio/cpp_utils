@@ -466,4 +466,20 @@
     XCTAssertEqual(std::get<2>(tuple), 3);
 }
 
+- (void)test_lock_values {
+    auto value1 = std::make_shared<int>(1);
+    auto value2 = std::make_shared<int>(2);
+    auto value3 = std::make_shared<int>(3);
+
+    std::map<int, std::weak_ptr<int>> map{{1, value1}, {2, value2}, {3, value3}};
+
+    value2.reset();
+
+    auto locked = yas::lock_values(map);
+
+    XCTAssertEqual(locked.size(), 2);
+    XCTAssertEqual(*locked.at(1), 1);
+    XCTAssertEqual(*locked.at(3), 3);
+}
+
 @end

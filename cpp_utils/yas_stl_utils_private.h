@@ -217,4 +217,17 @@ template <typename T, std::size_t N>
 auto to_tuple(std::vector<T> const &vector) {
     return __to_tuple__<T>(vector, std::make_index_sequence<N>());
 }
+
+template <typename K, typename T>
+std::map<K, std::shared_ptr<T>> lock_values(std::map<K, std::weak_ptr<T>> const &map) {
+    std::map<K, std::shared_ptr<T>> locked_map;
+
+    for (auto &pair : map) {
+        if (std::shared_ptr<T> shared = pair.second.lock()) {
+            locked_map.insert(std::make_pair(pair.first, std::move(shared)));
+        }
+    }
+
+    return locked_map;
+}
 }  // namespace yas
