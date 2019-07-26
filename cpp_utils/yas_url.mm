@@ -31,9 +31,6 @@ struct url::impl : base::impl {
 url::url(std::string const &str) : base(std::make_shared<impl>(str)) {
 }
 
-url::url(std::nullptr_t) : base(nullptr) {
-}
-
 url::url(std::shared_ptr<impl> &&impl) : base(std::move(impl)) {
 }
 

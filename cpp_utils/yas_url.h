@@ -14,7 +14,6 @@ struct url : base {
     class impl;
 
     explicit url(std::string const &str);
-    url(std::nullptr_t);
     static url file_url(std::string const &path);
 
     std::string path() const;

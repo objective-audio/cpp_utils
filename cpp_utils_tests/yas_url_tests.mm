@@ -32,12 +32,6 @@ using namespace yas;
     XCTAssertEqual(url.path().compare(url.path().size() - expected.size(), expected.size(), expected), 0);
 }
 
-- (void)test_make_url_with_nullptr {
-    auto url = yas::url{nullptr};
-
-    XCTAssertFalse(url);
-}
-
 - (void)test_make_path_last_slash {
     auto url = yas::url{"test/dir/"};
 
