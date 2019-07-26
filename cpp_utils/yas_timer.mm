@@ -8,7 +8,7 @@
 
 using namespace yas;
 
-struct timer::impl : base::impl {
+struct timer::impl {
     objc_ptr<NSTimer *> _objc_timer;
 
     impl(double const time_interval, bool const repeats, std::function<void(void)> &&handler)
@@ -38,12 +38,9 @@ struct timer::impl : base::impl {
 };
 
 timer::timer(double const time_interval, bool const repeats, std::function<void(void)> handler)
-    : base(std::make_shared<impl>(time_interval, repeats, std::move(handler))) {
-}
-
-timer::timer(std::nullptr_t) : base(nullptr) {
+    : _impl(std::make_unique<impl>(time_interval, repeats, std::move(handler))) {
 }
 
 void timer::invalidate() {
-    impl_ptr<impl>()->invalidate();
+    this->_impl->invalidate();
 }
