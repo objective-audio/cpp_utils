@@ -23,12 +23,6 @@
     XCTAssertEqual(path.string(), "/test/dir");
 }
 
-- (void)test_make_file_path_with_nullptr {
-    auto path = yas::file_path{nullptr};
-
-    XCTAssertFalse(path);
-}
-
 - (void)test_top_slash {
     auto path = yas::file_path{"/test/dir"};
 
@@ -61,6 +55,14 @@
 
     XCTAssertEqual(path1a, path1b);
     XCTAssertNotEqual(path1a, path2);
+}
+
+- (void)test_move_and_copy {
+    auto path = yas::file_path{"test/dir"};
+    auto copied = path;
+    auto moved = std::move(path);
+
+    XCTAssertEqual(moved, copied);
 }
 
 @end
