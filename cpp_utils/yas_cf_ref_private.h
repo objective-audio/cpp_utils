@@ -6,52 +6,51 @@
 
 namespace yas {
 template <typename T>
-cf_ref<T>::cf_ref() : base(std::make_shared<cf_ref_impl>()) {
+cf_ref<T>::cf_ref() : _impl(std::make_shared<cf_ref_impl>()) {
 }
 
 template <typename T>
-cf_ref<T>::cf_ref(T const obj) : base(std::make_shared<cf_ref_impl>(obj)) {
+cf_ref<T>::cf_ref(T const obj) : _impl(std::make_shared<cf_ref_impl>(obj)) {
 }
 
 template <typename T>
-cf_ref<T>::cf_ref(std::nullptr_t) : base(std::make_shared<cf_ref_impl>()) {
+cf_ref<T>::cf_ref(std::nullptr_t) : _impl(std::make_shared<cf_ref_impl>()) {
 }
 
 template <typename T>
 cf_ref<T> &cf_ref<T>::operator=(T const obj) {
-    set_impl_ptr(std::make_shared<cf_ref_impl>(obj));
+    this->_impl = std::make_shared<cf_ref_impl>(obj);
     return *this;
 }
 
 template <typename T>
 cf_ref<T>::operator bool() const {
-    auto imp_ptr = impl_ptr<cf_ref_impl>();
-    return imp_ptr && imp_ptr->object();
+    return this->_impl && this->_impl->object();
 }
 
 template <typename T>
 void cf_ref<T>::set_object(T const obj) {
-    impl_ptr<cf_ref_impl>()->set_object(obj);
+    this->_impl->set_object(obj);
 }
 
 template <typename T>
 void cf_ref<T>::move_object(T const obj) {
-    impl_ptr<cf_ref_impl>()->move_object(obj);
+    this->_impl->move_object(obj);
 }
 
 template <typename T>
 T cf_ref<T>::object() const {
-    return static_cast<T>(impl_ptr<cf_ref_impl>()->object());
+    return static_cast<T>(this->_impl->object());
 }
 
 template <typename T>
 T cf_ref<T>::retained_object() const {
-    return static_cast<T>(impl_ptr<cf_ref_impl>()->retained_object());
+    return static_cast<T>(this->_impl->retained_object());
 }
 
 template <typename T>
 T cf_ref<T>::autoreleased_object() const {
-    return static_cast<T>(impl_ptr<cf_ref_impl>()->autoreleased_object());
+    return static_cast<T>(this->_impl->autoreleased_object());
 }
 
 template <typename T>

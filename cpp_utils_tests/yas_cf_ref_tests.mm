@@ -227,24 +227,4 @@ using namespace yas;
     XCTAssertEqual(CFGetRetainCount(cf_obj.object()), 1);
 }
 
-- (void)test_weak {
-    base::weak<cf_ref<CFArrayRef>> weak_cf_obj;
-
-    {
-        auto cf_obj = make_cf_ref(CFArrayCreate(nullptr, nullptr, 0, nullptr));
-
-        XCTAssertTrue(cf_obj);
-        XCTAssertEqual(CFGetRetainCount(cf_obj.object()), 1);
-
-        XCTAssertFalse(weak_cf_obj);
-
-        weak_cf_obj = cf_obj;
-
-        XCTAssertTrue(weak_cf_obj);
-        XCTAssertEqual(CFGetRetainCount(cf_obj.object()), 1);
-    }
-
-    XCTAssertFalse(weak_cf_obj);
-}
-
 @end
