@@ -10,11 +10,10 @@
 #include "yas_base.h"
 
 namespace yas {
-struct url : base {
+struct url final {
     class impl;
 
     explicit url(std::string const &str);
-    url(std::nullptr_t);
     static url file_url(std::string const &path);
 
     std::string path() const;
@@ -24,7 +23,12 @@ struct url : base {
 
     url appending(std::string const &) const;
 
-   protected:
+    bool operator==(url const &rhs) const;
+    bool operator!=(url const &rhs) const;
+
+   private:
+    std::shared_ptr<impl> _impl;
+
     url(std::shared_ptr<impl> &&);
 };
 
