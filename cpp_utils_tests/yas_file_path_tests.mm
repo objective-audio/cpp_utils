@@ -57,4 +57,12 @@
     XCTAssertNotEqual(path1a, path2);
 }
 
+- (void)test_move_and_copy {
+    auto path = yas::file_path{"test/dir"};
+    auto copied = path;
+    auto moved = std::move(path);
+
+    XCTAssertEqual(moved, copied);
+}
+
 @end

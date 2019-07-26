@@ -9,11 +9,9 @@
 #include "yas_base.h"
 
 namespace yas {
-struct file_path {
-    class impl;
-
-    explicit file_path(std::string);
-    explicit file_path(std::vector<std::string>);
+struct file_path final {
+    explicit file_path(std::string const &);
+    explicit file_path(std::vector<std::string> const &);
 
     std::string string() const;
     std::string last_component() const;
@@ -24,6 +22,7 @@ struct file_path {
     bool operator!=(file_path const &) const;
 
    private:
-    std::shared_ptr<impl> _impl;
+    std::vector<std::string> const _components;
+    std::string const _path;
 };
 }  // namespace yas
