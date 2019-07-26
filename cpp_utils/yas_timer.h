@@ -5,7 +5,6 @@
 #pragma once
 
 #include <functional>
-#include "yas_base.h"
 
 namespace yas {
 struct timer final {

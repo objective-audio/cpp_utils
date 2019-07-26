@@ -6,10 +6,9 @@
 
 #include <CoreFoundation/CFBase.h>
 #include <mutex>
-#include "yas_base.h"
 
 namespace yas {
-struct cf_ref_impl final : public base::impl {
+struct cf_ref_impl final {
     cf_ref_impl();
     cf_ref_impl(CFTypeRef const obj);
     cf_ref_impl(std::nullptr_t);
@@ -29,8 +28,7 @@ struct cf_ref_impl final : public base::impl {
 };
 
 template <typename T>
-class cf_ref : public base {
-   public:
+struct cf_ref final {
     cf_ref();
     explicit cf_ref(T const);
     cf_ref(std::nullptr_t);
@@ -45,10 +43,13 @@ class cf_ref : public base {
     T object() const;
     T retained_object() const;
     T autoreleased_object() const;
+
+   private:
+    std::shared_ptr<cf_ref_impl> _impl;
 };
 
 template <typename T>
-cf_ref<T> make_cf_ref(T const obj);
+cf_ref<T> cf_ref_with_move_object(T const obj);
 }  // namespace yas
 
 #include "yas_cf_ref_private.h"

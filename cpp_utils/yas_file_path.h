@@ -6,7 +6,6 @@
 
 #include <string>
 #include <vector>
-#include "yas_base.h"
 
 namespace yas {
 struct file_path final {
