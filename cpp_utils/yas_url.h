@@ -7,7 +7,6 @@
 #include <CoreFoundation/CoreFoundation.h>
 #include <ostream>
 #include <string>
-#include "yas_base.h"
 
 namespace yas {
 struct url final {
