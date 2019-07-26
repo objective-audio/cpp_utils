@@ -23,12 +23,6 @@
     XCTAssertEqual(path.string(), "/test/dir");
 }
 
-- (void)test_make_file_path_with_nullptr {
-    auto path = yas::file_path{nullptr};
-
-    XCTAssertFalse(path);
-}
-
 - (void)test_top_slash {
     auto path = yas::file_path{"/test/dir"};
 
