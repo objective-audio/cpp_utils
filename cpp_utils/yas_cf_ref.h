@@ -29,8 +29,7 @@ struct cf_ref_impl final : public base::impl {
 };
 
 template <typename T>
-class cf_ref : public base {
-   public:
+struct cf_ref final : base {
     cf_ref();
     explicit cf_ref(T const);
     cf_ref(std::nullptr_t);
