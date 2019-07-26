@@ -9,7 +9,7 @@
 
 using namespace yas;
 
-struct url::impl : base::impl {
+struct url::impl {
     objc_ptr<NSURL *> _url;
 
     impl(objc_ptr<NSURL *> &&url) : _url(std::move(url)) {
@@ -19,19 +19,15 @@ struct url::impl : base::impl {
         : _url(make_objc_ptr([[NSURL alloc] initWithString:(__bridge NSString *)to_cf_object(str)])) {
     }
 
-    bool is_equal(std::shared_ptr<base::impl> const &rhs) const {
-        if (auto casted_rhs = std::dynamic_pointer_cast<impl>(rhs)) {
-            return [this->_url.object() isEqual:casted_rhs->_url.object()];
-        } else {
-            return false;
-        }
+    bool is_equal(std::shared_ptr<impl> const &rhs) const {
+        return [this->_url.object() isEqual:rhs->_url.object()];
     }
 };
 
-url::url(std::string const &str) : base(std::make_shared<impl>(str)) {
+url::url(std::string const &str) : _impl(std::make_shared<impl>(str)) {
 }
 
-url::url(std::shared_ptr<impl> &&impl) : base(std::move(impl)) {
+url::url(std::shared_ptr<impl> &&impl) : _impl(std::move(impl)) {
 }
 
 url url::file_url(std::string const &str) {
@@ -40,22 +36,30 @@ url url::file_url(std::string const &str) {
 }
 
 std::string url::path() const {
-    return to_string((__bridge CFStringRef)(impl_ptr<impl>()->_url.object().path));
+    return to_string((__bridge CFStringRef)(this->_impl->_url.object().path));
 }
 
 std::string url::last_path_component() const {
-    return to_string((__bridge CFStringRef)(impl_ptr<impl>()->_url.object().lastPathComponent));
+    return to_string((__bridge CFStringRef)(this->_impl->_url.object().lastPathComponent));
 }
 
 CFURLRef url::cf_url() const {
-    return (__bridge CFURLRef)impl_ptr<impl>()->_url.object();
+    return (__bridge CFURLRef)this->_impl->_url.object();
 }
 
 url url::appending(std::string const &str) const {
     auto url = make_objc_ptr<NSURL *>([=]() {
-        return [impl_ptr<impl>()->_url.object() URLByAppendingPathComponent:(__bridge NSString *)to_cf_object(str)];
+        return [this->_impl->_url.object() URLByAppendingPathComponent:(__bridge NSString *)to_cf_object(str)];
     });
     return yas::url{std::make_shared<impl>(std::move(url))};
+}
+
+bool url::operator==(url const &rhs) const {
+    return this->_impl->is_equal(rhs._impl);
+}
+
+bool url::operator!=(url const &rhs) const {
+    return !(*this == rhs);
 }
 
 #pragma mark -
