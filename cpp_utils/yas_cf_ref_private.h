@@ -54,7 +54,7 @@ T cf_ref<T>::autoreleased_object() const {
 }
 
 template <typename T>
-cf_ref<T> make_cf_ref(T const obj) {
+cf_ref<T> cf_ref_with_move_object(T const obj) {
     auto ptr = cf_ref<T>{obj};
     CFRelease(obj);
     return ptr;

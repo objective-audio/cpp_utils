@@ -49,7 +49,7 @@ struct cf_ref final {
 };
 
 template <typename T>
-cf_ref<T> make_cf_ref(T const obj);
+cf_ref<T> cf_ref_with_move_object(T const obj);
 }  // namespace yas
 
 #include "yas_cf_ref_private.h"

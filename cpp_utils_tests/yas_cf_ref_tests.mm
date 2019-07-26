@@ -209,8 +209,8 @@ using namespace yas;
     CFRelease(arrayObj);
 }
 
-- (void)test_make_cf_ref {
-    auto cf_obj = make_cf_ref(CFArrayCreate(nullptr, nullptr, 0, nullptr));
+- (void)test_cf_ref_with_move_object {
+    auto cf_obj = cf_ref_with_move_object(CFArrayCreate(nullptr, nullptr, 0, nullptr));
 
     XCTAssertTrue(cf_obj.object());
     XCTAssertEqual(CFGetRetainCount(cf_obj.object()), 1);
