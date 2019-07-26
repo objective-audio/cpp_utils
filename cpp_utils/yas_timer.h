@@ -8,7 +8,7 @@
 #include "yas_base.h"
 
 namespace yas {
-struct timer {
+struct timer final {
     class impl;
 
     timer(double const time_interval, bool const repeats, std::function<void(void)> handler);
