@@ -7,13 +7,12 @@
 #include <objc/objc.h>
 #include <functional>
 #include <mutex>
-#include "yas_base.h"
 
 namespace yas {
 template <typename T>
 using enable_if_id_t = typename std::enable_if_t<std::is_convertible<T, id>::value>;
 
-struct objc_ptr_impl final : public base::impl {
+struct objc_ptr_impl final {
     objc_ptr_impl();
     objc_ptr_impl(id const obj);
 
@@ -35,8 +34,7 @@ template <typename T = id, typename Enable = void>
 class objc_ptr;
 
 template <typename T>
-class objc_ptr<T, enable_if_id_t<T>> : public base {
-   public:
+struct objc_ptr<T, enable_if_id_t<T>> {
     objc_ptr();
     explicit objc_ptr(T const);
     explicit objc_ptr(std::function<T(void)> const &func);
@@ -52,13 +50,13 @@ class objc_ptr<T, enable_if_id_t<T>> : public base {
     T object() const;
     T retained_object() const;
     T autoreleased_object() const;
+
+   private:
+    std::shared_ptr<objc_ptr_impl> _impl;
 };
 
 template <typename T>
-objc_ptr<T> make_objc_ptr(T const obj);
-
-template <typename T>
-objc_ptr<T> make_objc_ptr(std::function<T(void)> const &func);
+objc_ptr<T> objc_ptr_with_move_object(T const obj);
 }  // namespace yas
 
 #include "yas_objc_ptr_private.h"

@@ -289,21 +289,9 @@ static int _objc_object_count = 0;
     XCTAssertEqual(_objc_object_count, 0);
 }
 
-- (void)test_make_objc_ptr_with_func {
-    {
-        auto container =
-            yas::make_objc_ptr<YASObjCTestObject *>([]() { return yas_autorelease([[YASObjCTestObject alloc] init]); });
-
-        XCTAssertNotNil(container.object());
-        XCTAssertEqual([container.object() retainCount], 1);
-    }
-
-    XCTAssertEqual(_objc_object_count, 0);
-}
-
 - (void)test_make_objc_ptr {
     {
-        auto objc_obj = make_objc_ptr([[YASObjCTestObject alloc] init]);
+        auto objc_obj = objc_ptr_with_move_object([[YASObjCTestObject alloc] init]);
 
         XCTAssertNotNil(objc_obj.object());
         XCTAssertEqual([objc_obj.object() retainCount], 1);
@@ -343,30 +331,32 @@ static int _objc_object_count = 0;
 
 - (void)test_weak {
     {
-        base::weak<objc_ptr<YASObjCTestObject *>> weak_objc_obj;
+        std::weak_ptr<objc_ptr<YASObjCTestObject *>> weak_objc_obj;
 
         {
-            auto objc_obj = make_objc_ptr([[YASObjCTestObject alloc] init]);
+            auto testObj = [[YASObjCTestObject alloc] init];
+            auto objc_obj = std::make_shared<objc_ptr<YASObjCTestObject *>>(testObj);
+            yas_release(testObj);
 
             XCTAssertTrue(objc_obj);
-            XCTAssertEqual([objc_obj.object() retainCount], 1);
+            XCTAssertEqual([objc_obj->object() retainCount], 1);
 
-            XCTAssertFalse(weak_objc_obj);
+            XCTAssertEqual(weak_objc_obj.use_count(), 0);
 
             weak_objc_obj = objc_obj;
 
-            XCTAssertTrue(weak_objc_obj);
-            XCTAssertEqual([objc_obj.object() retainCount], 1);
+            XCTAssertEqual(weak_objc_obj.use_count(), 1);
+            XCTAssertEqual([objc_obj->object() retainCount], 1);
         }
 
-        XCTAssertFalse(weak_objc_obj);
+        XCTAssertEqual(weak_objc_obj.use_count(), 0);
     }
 
     XCTAssertEqual(_objc_object_count, 0);
 }
 
 - (void)test_asterisk {
-    auto objc_obj = make_objc_ptr([[YASObjCTestObject alloc] init]);
+    auto objc_obj = objc_ptr_with_move_object([[YASObjCTestObject alloc] init]);
 
     XCTAssertEqualObjects(*objc_obj, objc_obj.object());
 
