@@ -8,7 +8,7 @@
 #include "yas_task_protocol.h"
 
 namespace yas {
-struct task : base {
+struct task : base, controllable_task, std::enable_shared_from_this<task> {
     class impl;
 
     using execution_f = std::function<void(task const &)>;
@@ -17,12 +17,15 @@ struct task : base {
     explicit task(execution_f &&, task_option_t opt = {});
     task(std::nullptr_t);
 
-    void cancel();
+    void cancel() override;
     bool is_canceled() const;
 
     task_option_t const &option() const;
 
-    controllable_task controllable() const;
+    std::shared_ptr<controllable_task> controllable();
+
+   private:
+    void execute() override;
 };
 
 struct task_queue : base {

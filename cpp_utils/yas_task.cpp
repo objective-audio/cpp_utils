@@ -14,8 +14,7 @@ using namespace yas;
 
 #pragma mark - task
 
-class task::impl : public base::impl, public controllable_task::impl {
-   public:
+struct task::impl : base::impl {
     std::atomic<bool> _canceled;
     task_option_t _option;
 
@@ -64,8 +63,12 @@ task_option_t const &task::option() const {
     return impl_ptr<impl>()->_option;
 }
 
-controllable_task task::controllable() const {
-    return controllable_task{impl_ptr<controllable_task::impl>()};
+std::shared_ptr<controllable_task> task::controllable() {
+    return std::dynamic_pointer_cast<controllable_task>(shared_from_this());
+}
+
+void task::execute() {
+    impl_ptr<impl>()->execute();
 }
 
 #pragma mark - queue
@@ -261,7 +264,7 @@ class task_queue::impl : public base::impl {
                 std::thread thread{[weak_task = to_weak(task), weak_queue = to_weak(cast<task_queue>())]() {
                     auto task = weak_task.lock();
                     if (task) {
-                        task.controllable().execute();
+                        task.controllable()->execute();
 
                         if (auto queue = weak_queue.lock()) {
                             queue.impl_ptr<impl>()->_task_did_finish(task);

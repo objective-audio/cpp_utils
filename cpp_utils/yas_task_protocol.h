@@ -8,24 +8,11 @@
 #include "yas_protocol.h"
 
 namespace yas {
-class controllable_task : public protocol {
-   public:
-    class impl : public protocol::impl {
-       public:
-        virtual void execute() = 0;
-        virtual void cancel() = 0;
-    };
+struct controllable_task {
+    virtual ~controllable_task() = default;
 
-    controllable_task(std::shared_ptr<impl> const &impl) : protocol(impl) {
-    }
-
-    void execute() {
-        impl_ptr<impl>()->execute();
-    }
-
-    void cancel() {
-        impl_ptr<impl>()->cancel();
-    }
+    virtual void execute() = 0;
+    virtual void cancel() = 0;
 };
 
 using task_priority_t = uint32_t;
