@@ -17,6 +17,11 @@ struct controllable_task {
 
 using task_priority_t = uint32_t;
 
+struct task_cancel_id {
+    virtual ~task_cancel_id() = default;
+    virtual bool is_equal(task_cancel_id const &) const = 0;
+};
+
 struct task_option_t {
     task_priority_t priority = 0;
     base cancel_id = nullptr;
