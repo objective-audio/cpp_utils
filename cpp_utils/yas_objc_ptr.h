@@ -13,7 +13,7 @@ namespace yas {
 template <typename T>
 using enable_if_id_t = typename std::enable_if_t<std::is_convertible<T, id>::value>;
 
-struct objc_ptr_impl final : public base::impl {
+struct objc_ptr_impl final : base::impl {
     objc_ptr_impl();
     objc_ptr_impl(id const obj);
 
@@ -35,8 +35,7 @@ template <typename T = id, typename Enable = void>
 class objc_ptr;
 
 template <typename T>
-class objc_ptr<T, enable_if_id_t<T>> : public base {
-   public:
+struct objc_ptr<T, enable_if_id_t<T>> : base {
     objc_ptr();
     explicit objc_ptr(T const);
     explicit objc_ptr(std::function<T(void)> const &func);
