@@ -8,7 +8,7 @@
 using namespace yas;
 
 bool thread::is_main() {
-    return [NSThread isMainThread];
+    return CFEqual(CFRunLoopGetCurrent(), CFRunLoopGetMain());
 }
 
 void thread::sleep_for_timeinterval(double const interval) {
