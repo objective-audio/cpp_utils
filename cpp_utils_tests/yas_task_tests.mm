@@ -52,7 +52,7 @@ struct test_cancel_id : task_cancel_id {
     XCTestExpectation *exe_ex = [self expectationWithDescription:@"call execution"];
 
     task_queue queue;
-    auto task = make_task([exe_ex](yas::task const &) { [exe_ex fulfill]; });
+    auto task = task::make_shared([exe_ex](yas::task const &) { [exe_ex fulfill]; });
     queue.push_back(*task);
 
     [self waitForExpectationsWithTimeout:1.0 handler:nil];
@@ -66,15 +66,15 @@ struct test_cancel_id : task_cancel_id {
 
     task_queue queue;
 
-    auto task_1 = make_task([self, &count, exe_ex](task const &op) {
+    auto task_1 = task::make_shared([self, &count, exe_ex](task const &op) {
         XCTAssertEqual(count.load(), 0);
         ++count;
     });
-    auto task_2 = make_task([self, &count, exe_ex](task const &op) {
+    auto task_2 = task::make_shared([self, &count, exe_ex](task const &op) {
         XCTAssertEqual(count.load(), 1);
         ++count;
     });
-    auto task_3 = make_task([self, &count, exe_ex](task const &op) {
+    auto task_3 = task::make_shared([self, &count, exe_ex](task const &op) {
         XCTAssertEqual(count.load(), 2);
         ++count;
         [exe_ex fulfill];
@@ -98,7 +98,7 @@ struct test_cancel_id : task_cancel_id {
 
     bool called = false;
 
-    auto task = make_task([&called, exe_ex](yas::task const &) {
+    auto task = task::make_shared([&called, exe_ex](yas::task const &) {
         called = true;
         [exe_ex fulfill];
     });
@@ -138,15 +138,15 @@ struct test_cancel_id : task_cancel_id {
 
     queue.suspend();
 
-    auto task_1 = make_task([self, &count, exe_ex](task const &op) {
+    auto task_1 = task::make_shared([self, &count, exe_ex](task const &op) {
         XCTAssertEqual(count.load(), 0);
         ++count;
     });
-    auto task_2 = make_task([self, &count, exe_ex](task const &op) {
+    auto task_2 = task::make_shared([self, &count, exe_ex](task const &op) {
         XCTAssertEqual(count.load(), 1);
         ++count;
     });
-    auto task_3 = make_task([self, &count, exe_ex](task const &op) {
+    auto task_3 = task::make_shared([self, &count, exe_ex](task const &op) {
         XCTAssertEqual(count.load(), 2);
         ++count;
         [exe_ex fulfill];
@@ -170,7 +170,7 @@ struct test_cancel_id : task_cancel_id {
 
     bool called = false;
 
-    auto task = make_task([&called](yas::task const &) { called = true; });
+    auto task = task::make_shared([&called](yas::task const &) { called = true; });
 
     queue.push_back(*task);
 
@@ -190,7 +190,7 @@ struct test_cancel_id : task_cancel_id {
 
     bool called = false;
 
-    auto task = make_task([&called](yas::task const &) { called = true; });
+    auto task = task::make_shared([&called](yas::task const &) { called = true; });
 
     queue.push_back(*task);
 
@@ -216,7 +216,7 @@ struct test_cancel_id : task_cancel_id {
     auto wait_future = wait_promise.get_future();
     auto end_future = end_promise.get_future();
 
-    auto task = make_task([self, &start_promise, &wait_future, &end_promise](yas::task const &task) {
+    auto task = task::make_shared([self, &start_promise, &wait_future, &end_promise](yas::task const &task) {
         start_promise.set_value();
         wait_future.get();
         end_promise.set_value(task.is_canceled());
@@ -242,7 +242,7 @@ struct test_cancel_id : task_cancel_id {
     bool called = false;
 
     auto identifier = test_cancel_id::make_shared();
-    auto task = make_task([&called](yas::task const &) { called = true; }, {.cancel_id = identifier});
+    auto task = task::make_shared([&called](yas::task const &) { called = true; }, {.cancel_id = identifier});
 
     queue.push_back(*task);
 
@@ -263,7 +263,7 @@ struct test_cancel_id : task_cancel_id {
     bool called = false;
 
     auto identifier = test_cancel_id::make_shared();
-    auto task = make_task([&called](yas::task const &) { called = true; }, {.cancel_id = identifier});
+    auto task = task::make_shared([&called](yas::task const &) { called = true; }, {.cancel_id = identifier});
 
     queue.push_back(*task);
 
@@ -290,7 +290,7 @@ struct test_cancel_id : task_cancel_id {
     auto end_future = end_promise.get_future();
 
     auto identifier = test_cancel_id::make_shared();
-    auto task = make_task(
+    auto task = task::make_shared(
         [self, &start_promise, &wait_future, &end_promise](yas::task const &task) {
             start_promise.set_value();
             wait_future.get();
@@ -324,7 +324,7 @@ struct test_cancel_id : task_cancel_id {
     auto end_future = end_promise.get_future();
 
     auto identifier = test_cancel_id::make_shared();
-    auto task = make_task(
+    auto task = task::make_shared(
         [self, &start_promise, &wait_future, &end_promise](yas::task const &task) {
             start_promise.set_value();
             wait_future.get();
@@ -354,37 +354,37 @@ struct test_cancel_id : task_cancel_id {
 
     queue.suspend();
 
-    auto task_1a = make_task(
+    auto task_1a = task::make_shared(
         [self, &count](yas::task const &task) {
             XCTAssertEqual(count.load(), 0);
             ++count;
         },
         {.priority = 0});
-    auto task_1b = make_task(
+    auto task_1b = task::make_shared(
         [self, &count](yas::task const &task) {
             XCTAssertEqual(count.load(), 1);
             ++count;
         },
         {.priority = 0});
-    auto task_2a = make_task(
+    auto task_2a = task::make_shared(
         [self, &count](yas::task const &task) {
             XCTAssertEqual(count.load(), 2);
             ++count;
         },
         {.priority = 1});
-    auto task_2b = make_task(
+    auto task_2b = task::make_shared(
         [self, &count](yas::task const &task) {
             XCTAssertEqual(count.load(), 3);
             ++count;
         },
         {.priority = 1});
-    auto task_3a = make_task(
+    auto task_3a = task::make_shared(
         [self, &count](yas::task const &task) {
             XCTAssertEqual(count.load(), 4);
             ++count;
         },
         {.priority = 2});
-    auto task_3b = make_task(
+    auto task_3b = task::make_shared(
         [self, &count, exe_ex](yas::task const &task) {
             XCTAssertEqual(count.load(), 5);
             ++count;
@@ -413,7 +413,7 @@ struct test_cancel_id : task_cancel_id {
 
     bool called = false;
 
-    auto task = make_task([&called](yas::task const &) {
+    auto task = task::make_shared([&called](yas::task const &) {
         std::this_thread::sleep_for(100ms);
 
         called = true;
@@ -433,7 +433,7 @@ struct test_cancel_id : task_cancel_id {
 
     queue.suspend();
 
-    auto task = make_task([](yas::task const &) {});
+    auto task = task::make_shared([](yas::task const &) {});
 
     queue.push_back(*task);
 
@@ -452,11 +452,14 @@ struct test_cancel_id : task_cancel_id {
     bool called_n_1 = false;
     bool called_n_2 = false;
 
-    auto task_a_1 = make_task([&called_a_1](auto const &task) { called_a_1 = true; }, {.push_cancel_id = cancel_id_a});
-    auto task_a_2 = make_task([&called_a_2](auto const &task) { called_a_2 = true; }, {.push_cancel_id = cancel_id_a});
-    auto task_b = make_task([&called_b](auto const &task) { called_b = true; }, {.push_cancel_id = cancel_id_b});
-    auto task_n_1 = make_task([&called_n_1](auto const &task) { called_n_1 = true; });
-    auto task_n_2 = make_task([&called_n_2](auto const &task) { called_n_2 = true; });
+    auto task_a_1 =
+        task::make_shared([&called_a_1](auto const &task) { called_a_1 = true; }, {.push_cancel_id = cancel_id_a});
+    auto task_a_2 =
+        task::make_shared([&called_a_2](auto const &task) { called_a_2 = true; }, {.push_cancel_id = cancel_id_a});
+    auto task_b =
+        task::make_shared([&called_b](auto const &task) { called_b = true; }, {.push_cancel_id = cancel_id_b});
+    auto task_n_1 = task::make_shared([&called_n_1](auto const &task) { called_n_1 = true; });
+    auto task_n_2 = task::make_shared([&called_n_2](auto const &task) { called_n_2 = true; });
 
     queue.suspend();
 
@@ -485,10 +488,10 @@ struct test_cancel_id : task_cancel_id {
     bool called_1 = false;
     bool called_2 = false;
 
-    auto task_1 =
-        make_task([&called_1](auto const &task) { called_1 = true; }, {.priority = 0, .push_cancel_id = cancel_id});
-    auto task_2 =
-        make_task([&called_2](auto const &task) { called_2 = true; }, {.priority = 1, .push_cancel_id = cancel_id});
+    auto task_1 = task::make_shared([&called_1](auto const &task) { called_1 = true; },
+                                    {.priority = 0, .push_cancel_id = cancel_id});
+    auto task_2 = task::make_shared([&called_2](auto const &task) { called_2 = true; },
+                                    {.priority = 1, .push_cancel_id = cancel_id});
 
     queue.suspend();
 
@@ -511,7 +514,7 @@ struct test_cancel_id : task_cancel_id {
     std::promise<void> promise;
     auto future = promise.get_future();
 
-    auto task = make_task([&future](auto const &) { future.get(); });
+    auto task = task::make_shared([&future](auto const &) { future.get(); });
     queue.push_back(*task);
 
     XCTAssertTrue(queue.is_operating());
@@ -533,7 +536,7 @@ struct test_cancel_id : task_cancel_id {
     std::promise<void> promise;
     auto future = promise.get_future();
 
-    auto task = make_task([&promise](auto const &) { promise.set_value(); });
+    auto task = task::make_shared([&promise](auto const &) { promise.set_value(); });
     queue.push_back(*task);
 
     XCTAssertTrue(queue.is_operating());

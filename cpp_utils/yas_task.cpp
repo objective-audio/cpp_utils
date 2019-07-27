@@ -42,12 +42,12 @@ void task::execute() {
     }
 }
 
-std::shared_ptr<task> yas::make_task(task::execution_f const &execution, task_option_t opt) {
+std::shared_ptr<task> task::make_shared(task::execution_f const &execution, task_option_t opt) {
     auto copied_execution = execution;
-    return make_task(std::move(copied_execution), std::move(opt));
+    return task::make_shared(std::move(copied_execution), std::move(opt));
 }
 
-std::shared_ptr<task> yas::make_task(task::execution_f &&execution, task_option_t opt) {
+std::shared_ptr<task> task::make_shared(task::execution_f &&execution, task_option_t opt) {
     return std::shared_ptr<task>(new task{std::move(execution), std::move(opt)});
 }
 
