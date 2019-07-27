@@ -14,10 +14,6 @@ using namespace yas;
 
 #pragma mark - task
 
-task::task(execution_f const &execution, task_option_t &&option)
-    : _canceled(false), _execution(execution), _option(std::move(option)) {
-}
-
 task::task(execution_f &&execution, task_option_t &&option)
     : _canceled(false), _execution(std::move(execution)), _option(std::move(option)) {
 }
@@ -47,7 +43,8 @@ void task::execute() {
 }
 
 std::shared_ptr<task> yas::make_task(task::execution_f const &execution, task_option_t opt) {
-    return std::shared_ptr<task>(new task{execution, std::move(opt)});
+    auto copied_execution = execution;
+    return make_task(std::move(copied_execution), std::move(opt));
 }
 
 std::shared_ptr<task> yas::make_task(task::execution_f &&execution, task_option_t opt) {

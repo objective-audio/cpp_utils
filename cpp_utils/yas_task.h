@@ -25,7 +25,6 @@ struct task final : controllable_task, std::enable_shared_from_this<task> {
     task_option_t _option;
     execution_f _execution;
 
-    explicit task(execution_f const &, task_option_t &&);
     explicit task(execution_f &&, task_option_t &&);
 
     task(task const &) = delete;
@@ -35,7 +34,6 @@ struct task final : controllable_task, std::enable_shared_from_this<task> {
 
     void execute() override;
 
-    friend std::shared_ptr<task> make_task(task::execution_f const &, task_option_t);
     friend std::shared_ptr<task> make_task(task::execution_f &&, task_option_t);
 };
 
