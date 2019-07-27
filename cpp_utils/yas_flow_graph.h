@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "yas_base.h"
+#include <optional>
 
 namespace yas::flow {
 template <typename Waiting>
@@ -37,7 +37,11 @@ struct state {
     std::optional<Running> _running;
 };
 
-struct waiting_out : base {
+struct out_impl_base {
+    virtual ~out_impl_base();
+};
+
+struct waiting_out {
     template <typename Waiting>
     waiting_out(flow::wait<Waiting>);
 
@@ -58,9 +62,12 @@ struct waiting_out : base {
 
     template <typename Running, typename Event>
     run<Running, Event> run() const;
+
+   private:
+    std::shared_ptr<out_impl_base> _impl;
 };
 
-struct running_out : base {
+struct running_out {
     template <typename Waiting>
     running_out(flow::wait<Waiting>);
 
@@ -79,6 +86,9 @@ struct running_out : base {
 
     template <typename Running, typename Event>
     run<Running, Event> run() const;
+
+   private:
+    std::shared_ptr<out_impl_base> _impl;
 };
 
 template <typename Waiting, typename Running, typename Event>
