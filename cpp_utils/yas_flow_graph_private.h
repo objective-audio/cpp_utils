@@ -244,10 +244,6 @@ graph<Waiting, Running, Event>::graph(Waiting waiting) : base(std::make_shared<i
 }
 
 template <typename Waiting, typename Running, typename Event>
-graph<Waiting, Running, Event>::graph(std::nullptr_t) : base(nullptr) {
-}
-
-template <typename Waiting, typename Running, typename Event>
 void graph<Waiting, Running, Event>::add_waiting(Waiting waiting, waiting_handler_f handler) {
     impl_ptr<impl>()->addWaiting(std::move(waiting), std::move(handler));
 }

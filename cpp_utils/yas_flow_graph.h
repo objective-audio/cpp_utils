@@ -121,7 +121,6 @@ struct graph : base {
     using running_handler_f = std::function<running_out(running_signal_t const &)>;
 
     graph(Waiting);
-    graph(std::nullptr_t);
 
     void add_waiting(Waiting, waiting_handler_f);
     void add_running(Running, running_handler_f);
