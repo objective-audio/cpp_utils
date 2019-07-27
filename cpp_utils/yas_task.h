@@ -34,11 +34,10 @@ struct task final : controllable_task, std::enable_shared_from_this<task> {
 
     void execute() override;
 
-    friend std::shared_ptr<task> make_task(task::execution_f &&, task_option_t);
+   public:
+    static std::shared_ptr<task> make_shared(task::execution_f const &, task_option_t opt = {});
+    static std::shared_ptr<task> make_shared(task::execution_f &&, task_option_t opt = {});
 };
-
-std::shared_ptr<task> make_task(task::execution_f const &, task_option_t opt = {});
-std::shared_ptr<task> make_task(task::execution_f &&, task_option_t opt = {});
 
 struct task_queue final {
     class impl;
