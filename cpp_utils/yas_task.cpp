@@ -243,13 +243,14 @@ struct task_queue::impl : base::impl {
             if (task) {
                 this->_current_task = task;
 
-                std::thread thread{[weak_task = to_weak(task), weak_queue = to_weak(cast<task_queue>())]() {
+                auto shared = std::dynamic_pointer_cast<impl>(shared_from_this());
+                std::thread thread{[weak_task = to_weak(task), weak_queue_impl = to_weak(shared)]() {
                     auto task = weak_task.lock();
                     if (task) {
                         task->controllable()->execute();
 
-                        if (auto queue = weak_queue.lock()) {
-                            queue.impl_ptr<impl>()->_task_did_finish(task);
+                        if (auto queue_impl = weak_queue_impl.lock()) {
+                            queue_impl->_task_did_finish(task);
                         }
                     }
                 }};
@@ -271,9 +272,6 @@ struct task_queue::impl : base::impl {
 };
 
 task_queue::task_queue(std::size_t const count) : base(std::make_unique<impl>(count)) {
-}
-
-task_queue::task_queue(std::nullptr_t) : base(nullptr) {
 }
 
 void task_queue::push_back(task &task) {

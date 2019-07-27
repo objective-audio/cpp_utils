@@ -48,7 +48,6 @@ struct task_queue : base {
     using cancellation_f = std::function<bool(base const &)>;
 
     explicit task_queue(std::size_t const priority_count = 1);
-    task_queue(std::nullptr_t);
 
     void push_back(task &);
     void push_front(task &);

@@ -328,12 +328,6 @@ struct test_cancel_id : base {
     XCTAssertTrue(end_future.get());
 }
 
-- (void)test_null_created {
-    task_queue queue{nullptr};
-
-    XCTAssertFalse(queue);
-}
-
 - (void)test_priority {
     XCTestExpectation *exe_ex = [self expectationWithDescription:@"call execution"];
 
