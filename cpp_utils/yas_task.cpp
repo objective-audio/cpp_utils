@@ -121,8 +121,16 @@ struct task_queue::impl : std::enable_shared_from_this<impl> {
         }
     }
 
-    void cancel_for_id(base const &cancel_id) {
-        this->cancel([&cancel_id](base const &target_cancel_id) { return cancel_id == target_cancel_id; });
+    void cancel_for_id(std::shared_ptr<task_cancel_id> const &cancel_id) {
+        if (cancel_id) {
+            this->cancel([&cancel_id](auto const &target_cancel_id) {
+                if (target_cancel_id) {
+                    return cancel_id->is_equal(target_cancel_id);
+                } else {
+                    return false;
+                }
+            });
+        }
     }
 
     void cancel(cancellation_f const &cancellation) {
@@ -282,7 +290,7 @@ void task_queue::cancel(task &task) {
     this->_impl->cancel(task.shared_from_this());
 }
 
-void task_queue::cancel_for_id(base const &identifier) {
+void task_queue::cancel_for_id(std::shared_ptr<task_cancel_id> const &identifier) {
     this->_impl->cancel_for_id(identifier);
 }
 

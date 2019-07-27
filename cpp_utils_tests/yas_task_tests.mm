@@ -11,9 +11,19 @@ using namespace std::chrono_literals;
 using namespace yas;
 
 namespace yas {
-struct test_cancel_id : base {
-    struct impl : base::impl {};
-    test_cancel_id() : base(std::make_shared<impl>()) {
+struct test_cancel_id : task_cancel_id {
+    struct equaler {};
+    std::shared_ptr<equaler> _equaler;
+
+    test_cancel_id() : _equaler(std::make_shared<equaler>()) {
+    }
+
+    virtual bool is_equal(std::shared_ptr<task_cancel_id> const &rhs) const override {
+        if (auto casted_rhs = std::dynamic_pointer_cast<test_cancel_id>(rhs)) {
+            return this->_equaler == casted_rhs->_equaler;
+        } else {
+            return false;
+        }
     }
 };
 }

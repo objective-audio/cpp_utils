@@ -43,14 +43,14 @@ std::shared_ptr<task> make_task(task::execution_f &&, task_option_t opt = {});
 struct task_queue final {
     class impl;
 
-    using cancellation_f = std::function<bool(base const &)>;
+    using cancellation_f = std::function<bool(std::shared_ptr<task_cancel_id> const &)>;
 
     explicit task_queue(std::size_t const priority_count = 1);
 
     void push_back(task &);
     void push_front(task &);
     void cancel(task &);
-    void cancel_for_id(base const &cancel_id);
+    void cancel_for_id(std::shared_ptr<task_cancel_id> const &cancel_id);
     void cancel(cancellation_f const &);
     void cancel_all();
     void wait_until_all_tasks_are_finished();
