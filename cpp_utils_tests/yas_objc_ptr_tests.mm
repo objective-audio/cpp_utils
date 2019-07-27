@@ -331,23 +331,25 @@ static int _objc_object_count = 0;
 
 - (void)test_weak {
     {
-        base::weak<objc_ptr<YASObjCTestObject *>> weak_objc_obj;
+        std::weak_ptr<objc_ptr<YASObjCTestObject *>> weak_objc_obj;
 
         {
-            auto objc_obj = objc_ptr_with_move_object([[YASObjCTestObject alloc] init]);
+            auto testObj = [[YASObjCTestObject alloc] init];
+            auto objc_obj = std::make_shared<objc_ptr<YASObjCTestObject *>>(testObj);
+            yas_release(testObj);
 
             XCTAssertTrue(objc_obj);
-            XCTAssertEqual([objc_obj.object() retainCount], 1);
+            XCTAssertEqual([objc_obj->object() retainCount], 1);
 
-            XCTAssertFalse(weak_objc_obj);
+            XCTAssertEqual(weak_objc_obj.use_count(), 0);
 
             weak_objc_obj = objc_obj;
 
-            XCTAssertTrue(weak_objc_obj);
-            XCTAssertEqual([objc_obj.object() retainCount], 1);
+            XCTAssertEqual(weak_objc_obj.use_count(), 1);
+            XCTAssertEqual([objc_obj->object() retainCount], 1);
         }
 
-        XCTAssertFalse(weak_objc_obj);
+        XCTAssertEqual(weak_objc_obj.use_count(), 0);
     }
 
     XCTAssertEqual(_objc_object_count, 0);
