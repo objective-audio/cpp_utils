@@ -13,10 +13,6 @@ struct task : base, controllable_task, std::enable_shared_from_this<task> {
 
     using execution_f = std::function<void(task const &)>;
 
-    explicit task(execution_f const &, task_option_t opt = {});
-    explicit task(execution_f &&, task_option_t opt = {});
-    task(std::nullptr_t);
-
     void cancel() override;
     bool is_canceled() const;
 
@@ -26,7 +22,21 @@ struct task : base, controllable_task, std::enable_shared_from_this<task> {
 
    private:
     void execute() override;
+
+    explicit task(execution_f const &, task_option_t &&);
+    explicit task(execution_f &&, task_option_t &&);
+
+    task(task const &) = delete;
+    task(task &&) = delete;
+    task &operator=(task const &) = delete;
+    task &operator=(task &&) = delete;
+
+    friend std::shared_ptr<task> make_task(task::execution_f const &, task_option_t);
+    friend std::shared_ptr<task> make_task(task::execution_f &&, task_option_t);
 };
+
+std::shared_ptr<task> make_task(task::execution_f const &, task_option_t opt = {});
+std::shared_ptr<task> make_task(task::execution_f &&, task_option_t opt = {});
 
 struct task_queue : base {
     class impl;
@@ -36,9 +46,9 @@ struct task_queue : base {
     explicit task_queue(std::size_t const priority_count = 1);
     task_queue(std::nullptr_t);
 
-    void push_back(task);
-    void push_front(task);
-    void cancel(task const &);
+    void push_back(task &);
+    void push_front(task &);
+    void cancel(task &);
     void cancel_for_id(base const &cancel_id);
     void cancel(cancellation_f const &);
     void cancel_all();
