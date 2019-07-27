@@ -8,8 +8,7 @@
 #include "yas_task_protocol.h"
 
 namespace yas {
-class task : public base {
-   public:
+struct task : base {
     class impl;
 
     using execution_f = std::function<void(task const &)>;
