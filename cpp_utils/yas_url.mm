@@ -48,7 +48,7 @@ CFURLRef url::cf_url() const {
 }
 
 url url::appending(std::string const &str) const {
-    auto url = make_objc_ptr<NSURL *>([=]() {
+    auto url = objc_ptr<NSURL *>([=]() {
         return [this->_impl->_url.object() URLByAppendingPathComponent:(__bridge NSString *)to_cf_object(str)];
     });
     return yas::url{std::make_shared<impl>(std::move(url))};

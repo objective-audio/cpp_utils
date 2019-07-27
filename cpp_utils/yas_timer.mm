@@ -12,7 +12,7 @@ struct timer::impl {
     objc_ptr<NSTimer *> _objc_timer;
 
     impl(double const time_interval, bool const repeats, std::function<void(void)> &&handler)
-        : _objc_timer(make_objc_ptr<NSTimer *>([time_interval, repeats, handler = std::move(handler)]() {
+        : _objc_timer(objc_ptr<NSTimer *>([time_interval, repeats, handler = std::move(handler)]() {
               return [NSTimer scheduledTimerWithTimeInterval:time_interval
                                                      repeats:repeats
                                                        block:[handler = std::move(handler)](NSTimer *) {
