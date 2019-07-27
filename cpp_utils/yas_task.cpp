@@ -53,7 +53,7 @@ std::shared_ptr<task> yas::make_task(task::execution_f &&execution, task_option_
 
 #pragma mark - queue
 
-struct task_queue::impl : base::impl {
+struct task_queue::impl : std::enable_shared_from_this<impl> {
     impl(std::size_t const count) : _tasks(count) {
     }
 
@@ -240,8 +240,7 @@ struct task_queue::impl : base::impl {
             if (task) {
                 this->_current_task = task;
 
-                auto shared = std::dynamic_pointer_cast<impl>(shared_from_this());
-                std::thread thread{[weak_task = to_weak(task), weak_queue_impl = to_weak(shared)]() {
+                std::thread thread{[weak_task = to_weak(task), weak_queue_impl = to_weak(shared_from_this())]() {
                     auto task = weak_task.lock();
                     if (task) {
                         task->controllable()->execute();
@@ -268,53 +267,53 @@ struct task_queue::impl : base::impl {
     }
 };
 
-task_queue::task_queue(std::size_t const count) : base(std::make_unique<impl>(count)) {
+task_queue::task_queue(std::size_t const count) : _impl(std::make_unique<impl>(count)) {
 }
 
 void task_queue::push_back(task &task) {
-    impl_ptr<impl>()->push_back(task.shared_from_this());
+    this->_impl->push_back(task.shared_from_this());
 }
 
 void task_queue::push_front(task &task) {
-    impl_ptr<impl>()->push_front(task.shared_from_this());
+    this->_impl->push_front(task.shared_from_this());
 }
 
 void task_queue::cancel(task &task) {
-    impl_ptr<impl>()->cancel(task.shared_from_this());
+    this->_impl->cancel(task.shared_from_this());
 }
 
 void task_queue::cancel_for_id(base const &identifier) {
-    impl_ptr<impl>()->cancel_for_id(identifier);
+    this->_impl->cancel_for_id(identifier);
 }
 
 void task_queue::cancel(cancellation_f const &cancellation) {
-    impl_ptr<impl>()->cancel(cancellation);
+    this->_impl->cancel(cancellation);
 }
 
 void task_queue::cancel_all() {
-    impl_ptr<impl>()->cancel();
+    this->_impl->cancel();
 }
 
 void task_queue::wait_until_all_tasks_are_finished() {
-    impl_ptr<impl>()->wait_until_all_tasks_are_finished();
+    this->_impl->wait_until_all_tasks_are_finished();
 }
 
 void task_queue::suspend() {
-    impl_ptr<impl>()->suspend();
+    this->_impl->suspend();
 }
 
 void task_queue::resume() {
-    impl_ptr<impl>()->resume();
+    this->_impl->resume();
 }
 
 std::size_t task_queue::priority_count() const {
-    return impl_ptr<impl>()->priority_count();
+    return this->_impl->priority_count();
 }
 
 bool task_queue::is_suspended() const {
-    return impl_ptr<impl>()->is_suspended();
+    return this->_impl->is_suspended();
 }
 
 bool task_queue::is_operating() const {
-    return impl_ptr<impl>()->is_operating();
+    return this->_impl->is_operating();
 }

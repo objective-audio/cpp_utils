@@ -40,7 +40,7 @@ struct task final : controllable_task, std::enable_shared_from_this<task> {
 std::shared_ptr<task> make_task(task::execution_f const &, task_option_t opt = {});
 std::shared_ptr<task> make_task(task::execution_f &&, task_option_t opt = {});
 
-struct task_queue : base {
+struct task_queue final {
     class impl;
 
     using cancellation_f = std::function<bool(base const &)>;
@@ -61,5 +61,8 @@ struct task_queue : base {
     std::size_t priority_count() const;
     bool is_suspended() const;
     bool is_operating() const;
+
+   private:
+    std::shared_ptr<impl> _impl;
 };
 }  // namespace yas
