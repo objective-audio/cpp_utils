@@ -25,8 +25,7 @@ struct task : base {
     controllable_task controllable() const;
 };
 
-class task_queue : public base {
-   public:
+struct task_queue : base {
     class impl;
 
     using cancellation_f = std::function<bool(base const &)>;
