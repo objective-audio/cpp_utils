@@ -14,40 +14,24 @@ using namespace yas;
 
 #pragma mark - task
 
-struct task::impl : base::impl {
-    std::atomic<bool> _canceled;
-    task_option_t _option;
-    execution_f _execution;
-
-    impl(execution_f const &execution, task_option_t &&option)
-        : _canceled(false), _execution(execution), _option(std::move(option)) {
-    }
-
-    impl(execution_f &&execution, task_option_t &&option)
-        : _canceled(false), _execution(std::move(execution)), _option(std::move(option)) {
-    }
-
-    void cancel() {
-        this->_canceled = true;
-    }
-};
-
-task::task(execution_f const &exe, task_option_t &&option) : base(std::make_shared<impl>(exe, std::move(option))) {
+task::task(execution_f const &execution, task_option_t &&option)
+    : _canceled(false), _execution(execution), _option(std::move(option)) {
 }
 
-task::task(execution_f &&exe, task_option_t &&opt) : base(std::make_shared<impl>(std::move(exe), std::move(opt))) {
+task::task(execution_f &&execution, task_option_t &&option)
+    : _canceled(false), _execution(std::move(execution)), _option(std::move(option)) {
 }
 
 void task::cancel() {
-    impl_ptr<impl>()->cancel();
+    this->_canceled = true;
 }
 
 bool task::is_canceled() const {
-    return impl_ptr<impl>()->_canceled;
+    return this->_canceled;
 }
 
 task_option_t const &task::option() const {
-    return impl_ptr<impl>()->_option;
+    return this->_option;
 }
 
 std::shared_ptr<controllable_task> task::controllable() {
@@ -56,7 +40,7 @@ std::shared_ptr<controllable_task> task::controllable() {
 
 void task::execute() {
     if (!this->is_canceled()) {
-        if (auto &execution = this->impl_ptr<impl>()->_execution) {
+        if (auto &execution = this->_execution) {
             execution(*this);
         }
     }

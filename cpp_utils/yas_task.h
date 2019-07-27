@@ -8,7 +8,7 @@
 #include "yas_task_protocol.h"
 
 namespace yas {
-struct task : base, controllable_task, std::enable_shared_from_this<task> {
+struct task final : controllable_task, std::enable_shared_from_this<task> {
     class impl;
 
     using execution_f = std::function<void(task const &)>;
@@ -21,7 +21,9 @@ struct task : base, controllable_task, std::enable_shared_from_this<task> {
     std::shared_ptr<controllable_task> controllable();
 
    private:
-    void execute() override;
+    std::atomic<bool> _canceled;
+    task_option_t _option;
+    execution_f _execution;
 
     explicit task(execution_f const &, task_option_t &&);
     explicit task(execution_f &&, task_option_t &&);
@@ -30,6 +32,8 @@ struct task : base, controllable_task, std::enable_shared_from_this<task> {
     task(task &&) = delete;
     task &operator=(task const &) = delete;
     task &operator=(task &&) = delete;
+
+    void execute() override;
 
     friend std::shared_ptr<task> make_task(task::execution_f const &, task_option_t);
     friend std::shared_ptr<task> make_task(task::execution_f &&, task_option_t);
