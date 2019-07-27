@@ -66,13 +66,23 @@ struct task_queue::impl : std::enable_shared_from_this<impl> {
 
         auto &cancel_id = task->option().push_cancel_id;
 
-        for (auto &deque : this->_tasks) {
-            erase_if(deque, [&cancel_id](auto const &value) { return value->option().push_cancel_id == cancel_id; });
+        if (cancel_id) {
+            for (auto &deque : this->_tasks) {
+                erase_if(deque, [&cancel_id](auto const &value) {
+                    if (auto const &push_cancel_id = value->option().push_cancel_id) {
+                        return push_cancel_id->is_equal(cancel_id);
+                    } else {
+                        return false;
+                    }
+                });
+            }
         }
 
         if (this->_current_task) {
-            if (this->_current_task->option().push_cancel_id == cancel_id) {
-                this->_current_task->cancel();
+            if (auto const &push_cancel_id = this->_current_task->option().push_cancel_id) {
+                if (push_cancel_id->is_equal(cancel_id)) {
+                    this->_current_task->cancel();
+                }
             }
         }
 
@@ -87,13 +97,23 @@ struct task_queue::impl : std::enable_shared_from_this<impl> {
 
         auto &cancel_id = task->option().push_cancel_id;
 
-        for (auto &deque : this->_tasks) {
-            erase_if(deque, [&cancel_id](auto const &value) { return value->option().push_cancel_id == cancel_id; });
+        if (cancel_id) {
+            for (auto &deque : this->_tasks) {
+                erase_if(deque, [&cancel_id](auto const &value) {
+                    if (auto const &push_cancel_id = value->option().push_cancel_id) {
+                        return push_cancel_id->is_equal(cancel_id);
+                    } else {
+                        return false;
+                    }
+                });
+            }
         }
 
         if (this->_current_task) {
-            if (this->_current_task->option().push_cancel_id == cancel_id) {
-                this->_current_task->cancel();
+            if (auto const &push_cancel_id = this->_current_task->option().push_cancel_id) {
+                if (push_cancel_id->is_equal(cancel_id)) {
+                    this->_current_task->cancel();
+                }
             }
         }
 

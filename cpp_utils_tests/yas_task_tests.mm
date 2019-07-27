@@ -12,6 +12,7 @@ using namespace yas;
 
 namespace yas {
 struct test_cancel_id : task_cancel_id {
+   private:
     struct equaler {};
     std::shared_ptr<equaler> _equaler;
 
@@ -24,6 +25,11 @@ struct test_cancel_id : task_cancel_id {
         } else {
             return false;
         }
+    }
+
+   public:
+    static std::shared_ptr<test_cancel_id> make_shared() {
+        return std::shared_ptr<test_cancel_id>(new test_cancel_id());
     }
 };
 }
@@ -235,7 +241,7 @@ struct test_cancel_id : task_cancel_id {
 
     bool called = false;
 
-    test_cancel_id identifier;
+    auto identifier = test_cancel_id::make_shared();
     auto task = make_task([&called](yas::task const &) { called = true; }, {.cancel_id = identifier});
 
     queue.push_back(*task);
@@ -256,7 +262,7 @@ struct test_cancel_id : task_cancel_id {
 
     bool called = false;
 
-    test_cancel_id identifier;
+    auto identifier = test_cancel_id::make_shared();
     auto task = make_task([&called](yas::task const &) { called = true; }, {.cancel_id = identifier});
 
     queue.push_back(*task);
@@ -283,7 +289,7 @@ struct test_cancel_id : task_cancel_id {
     auto wait_future = wait_promise.get_future();
     auto end_future = end_promise.get_future();
 
-    test_cancel_id identifier;
+    auto identifier = test_cancel_id::make_shared();
     auto task = make_task(
         [self, &start_promise, &wait_future, &end_promise](yas::task const &task) {
             start_promise.set_value();
@@ -317,7 +323,7 @@ struct test_cancel_id : task_cancel_id {
     auto wait_future = wait_promise.get_future();
     auto end_future = end_promise.get_future();
 
-    test_cancel_id identifier;
+    auto identifier = test_cancel_id::make_shared();
     auto task = make_task(
         [self, &start_promise, &wait_future, &end_promise](yas::task const &task) {
             start_promise.set_value();
@@ -437,10 +443,8 @@ struct test_cancel_id : task_cancel_id {
 - (void)test_cancel_by_push_cancel_id {
     task_queue queue;
 
-    base cancel_id_a{nullptr};
-    base cancel_id_b{nullptr};
-    cancel_id_a.set_impl_ptr(std::make_shared<base::impl>());
-    cancel_id_b.set_impl_ptr(std::make_shared<base::impl>());
+    auto cancel_id_a = test_cancel_id::make_shared();
+    auto cancel_id_b = test_cancel_id::make_shared();
 
     bool called_a_1 = false;
     bool called_a_2 = false;
@@ -476,8 +480,7 @@ struct test_cancel_id : task_cancel_id {
 - (void)test_cancel_different_priority {
     task_queue queue{2};
 
-    base cancel_id{nullptr};
-    cancel_id.set_impl_ptr(std::make_shared<base::impl>());
+    auto cancel_id = test_cancel_id::make_shared();
 
     bool called_1 = false;
     bool called_2 = false;
