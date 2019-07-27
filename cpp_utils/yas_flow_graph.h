@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "yas_base.h"
+#include <optional>
 
 namespace yas::flow {
 template <typename Waiting>
@@ -37,7 +37,11 @@ struct state {
     std::optional<Running> _running;
 };
 
-struct waiting_out : base {
+struct out_impl_base {
+    virtual ~out_impl_base();
+};
+
+struct waiting_out {
     template <typename Waiting>
     waiting_out(flow::wait<Waiting>);
 
@@ -58,9 +62,12 @@ struct waiting_out : base {
 
     template <typename Running, typename Event>
     run<Running, Event> run() const;
+
+   private:
+    std::shared_ptr<out_impl_base> _impl;
 };
 
-struct running_out : base {
+struct running_out {
     template <typename Waiting>
     running_out(flow::wait<Waiting>);
 
@@ -79,6 +86,9 @@ struct running_out : base {
 
     template <typename Running, typename Event>
     run<Running, Event> run() const;
+
+   private:
+    std::shared_ptr<out_impl_base> _impl;
 };
 
 template <typename Waiting, typename Running, typename Event>
@@ -112,7 +122,7 @@ struct running_signal {
 };
 
 template <typename Waiting, typename Running, typename Event>
-struct graph : base {
+struct graph final {
     class impl;
 
     using waiting_signal_t = waiting_signal<Waiting, Running, Event>;
@@ -121,7 +131,6 @@ struct graph : base {
     using running_handler_f = std::function<running_out(running_signal_t const &)>;
 
     graph(Waiting);
-    graph(std::nullptr_t);
 
     void add_waiting(Waiting, waiting_handler_f);
     void add_running(Running, running_handler_f);
@@ -131,6 +140,9 @@ struct graph : base {
     state<Waiting, Running> const &current() const;
 
     bool contains(state<Waiting, Running> const &) const;
+
+   private:
+    std::shared_ptr<impl> _impl;
 };
 }  // namespace yas::flow
 
