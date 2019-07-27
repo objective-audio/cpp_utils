@@ -16,7 +16,7 @@ struct url::impl {
     }
 
     impl(std::string const &str)
-        : _url(make_objc_ptr([[NSURL alloc] initWithString:(__bridge NSString *)to_cf_object(str)])) {
+        : _url(objc_ptr_with_move_object([[NSURL alloc] initWithString:(__bridge NSString *)to_cf_object(str)])) {
     }
 
     bool is_equal(std::shared_ptr<impl> const &rhs) const {
@@ -31,7 +31,7 @@ url::url(std::shared_ptr<impl> &&impl) : _impl(std::move(impl)) {
 }
 
 url url::file_url(std::string const &str) {
-    auto url = make_objc_ptr([[NSURL alloc] initFileURLWithPath:(__bridge NSString *)to_cf_object(str)]);
+    auto url = objc_ptr_with_move_object([[NSURL alloc] initFileURLWithPath:(__bridge NSString *)to_cf_object(str)]);
     return yas::url{std::make_shared<impl>(std::move(url))};
 }
 

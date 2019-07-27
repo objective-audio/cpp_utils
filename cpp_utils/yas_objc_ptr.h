@@ -54,7 +54,7 @@ struct objc_ptr<T, enable_if_id_t<T>> : base {
 };
 
 template <typename T>
-objc_ptr<T> make_objc_ptr(T const obj);
+objc_ptr<T> objc_ptr_with_move_object(T const obj);
 
 template <typename T>
 objc_ptr<T> make_objc_ptr(std::function<T(void)> const &func);

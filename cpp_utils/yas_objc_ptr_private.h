@@ -65,7 +65,7 @@ T objc_ptr<T, enable_if_id_t<T>>::autoreleased_object() const {
 }
 
 template <typename T>
-objc_ptr<T> make_objc_ptr(T const obj) {
+objc_ptr<T> objc_ptr_with_move_object(T const obj) {
     auto ptr = objc_ptr<T>{obj};
     yas_release(obj);
     return ptr;

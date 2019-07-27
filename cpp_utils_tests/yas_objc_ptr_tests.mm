@@ -303,7 +303,7 @@ static int _objc_object_count = 0;
 
 - (void)test_make_objc_ptr {
     {
-        auto objc_obj = make_objc_ptr([[YASObjCTestObject alloc] init]);
+        auto objc_obj = objc_ptr_with_move_object([[YASObjCTestObject alloc] init]);
 
         XCTAssertNotNil(objc_obj.object());
         XCTAssertEqual([objc_obj.object() retainCount], 1);
@@ -346,7 +346,7 @@ static int _objc_object_count = 0;
         base::weak<objc_ptr<YASObjCTestObject *>> weak_objc_obj;
 
         {
-            auto objc_obj = make_objc_ptr([[YASObjCTestObject alloc] init]);
+            auto objc_obj = objc_ptr_with_move_object([[YASObjCTestObject alloc] init]);
 
             XCTAssertTrue(objc_obj);
             XCTAssertEqual([objc_obj.object() retainCount], 1);
@@ -366,7 +366,7 @@ static int _objc_object_count = 0;
 }
 
 - (void)test_asterisk {
-    auto objc_obj = make_objc_ptr([[YASObjCTestObject alloc] init]);
+    auto objc_obj = objc_ptr_with_move_object([[YASObjCTestObject alloc] init]);
 
     XCTAssertEqualObjects(*objc_obj, objc_obj.object());
 
