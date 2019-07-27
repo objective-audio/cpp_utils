@@ -251,7 +251,7 @@ struct test_cancel_id : base {
 
     queue.push_back(*task);
 
-    queue.cancel([&identifier](base const &task_cancel_id) { return identifier == task_cancel_id; });
+    queue.cancel([&identifier](auto const &task_cancel_id) { return identifier == task_cancel_id; });
 
     queue.resume();
 
@@ -321,7 +321,7 @@ struct test_cancel_id : base {
 
     start_future.get();
 
-    queue.cancel([&identifier](base const &task_cancel_id) { return identifier == task_cancel_id; });
+    queue.cancel([&identifier](auto const &task_cancel_id) { return identifier == task_cancel_id; });
 
     wait_promise.set_value();
 
