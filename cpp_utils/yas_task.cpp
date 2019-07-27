@@ -56,8 +56,7 @@ std::shared_ptr<task> yas::make_task(task::execution_f &&execution, task_option_
 
 #pragma mark - queue
 
-class task_queue::impl : public base::impl {
-   public:
+struct task_queue::impl : base::impl {
     impl(std::size_t const count) : _tasks(count) {
     }
 
