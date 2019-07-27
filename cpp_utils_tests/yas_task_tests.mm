@@ -11,9 +11,25 @@ using namespace std::chrono_literals;
 using namespace yas;
 
 namespace yas {
-struct test_cancel_id : base {
-    struct impl : base::impl {};
-    test_cancel_id() : base(std::make_shared<impl>()) {
+struct test_cancel_id : task_cancel_id {
+   private:
+    struct equaler {};
+    std::shared_ptr<equaler> _equaler;
+
+    test_cancel_id() : _equaler(std::make_shared<equaler>()) {
+    }
+
+    virtual bool is_equal(std::shared_ptr<task_cancel_id> const &rhs) const override {
+        if (auto casted_rhs = std::dynamic_pointer_cast<test_cancel_id>(rhs)) {
+            return this->_equaler == casted_rhs->_equaler;
+        } else {
+            return false;
+        }
+    }
+
+   public:
+    static std::shared_ptr<test_cancel_id> make_shared() {
+        return std::shared_ptr<test_cancel_id>(new test_cancel_id());
     }
 };
 }
@@ -36,8 +52,8 @@ struct test_cancel_id : base {
     XCTestExpectation *exe_ex = [self expectationWithDescription:@"call execution"];
 
     task_queue queue;
-    task op([exe_ex](task const &) { [exe_ex fulfill]; });
-    queue.push_back(op);
+    auto task = make_task([exe_ex](yas::task const &) { [exe_ex fulfill]; });
+    queue.push_back(*task);
 
     [self waitForExpectationsWithTimeout:1.0 handler:nil];
 }
@@ -50,23 +66,23 @@ struct test_cancel_id : base {
 
     task_queue queue;
 
-    task task_1([self, &count, exe_ex](task const &op) {
+    auto task_1 = make_task([self, &count, exe_ex](task const &op) {
         XCTAssertEqual(count.load(), 0);
         ++count;
     });
-    task task_2([self, &count, exe_ex](task const &op) {
+    auto task_2 = make_task([self, &count, exe_ex](task const &op) {
         XCTAssertEqual(count.load(), 1);
         ++count;
     });
-    task task_3([self, &count, exe_ex](task const &op) {
+    auto task_3 = make_task([self, &count, exe_ex](task const &op) {
         XCTAssertEqual(count.load(), 2);
         ++count;
         [exe_ex fulfill];
     });
 
-    queue.push_back(task_1);
-    queue.push_back(task_2);
-    queue.push_back(task_3);
+    queue.push_back(*task_1);
+    queue.push_back(*task_2);
+    queue.push_back(*task_3);
 
     [self waitForExpectationsWithTimeout:1.0 handler:nil];
 
@@ -82,12 +98,12 @@ struct test_cancel_id : base {
 
     bool called = false;
 
-    task op([&called, exe_ex](task const &) {
+    auto task = make_task([&called, exe_ex](yas::task const &) {
         called = true;
         [exe_ex fulfill];
     });
 
-    queue.push_back(op);
+    queue.push_back(*task);
 
     [NSThread sleepForTimeInterval:0.1];
 
@@ -122,23 +138,23 @@ struct test_cancel_id : base {
 
     queue.suspend();
 
-    task task_1([self, &count, exe_ex](task const &op) {
+    auto task_1 = make_task([self, &count, exe_ex](task const &op) {
         XCTAssertEqual(count.load(), 0);
         ++count;
     });
-    task task_2([self, &count, exe_ex](task const &op) {
+    auto task_2 = make_task([self, &count, exe_ex](task const &op) {
         XCTAssertEqual(count.load(), 1);
         ++count;
     });
-    task task_3([self, &count, exe_ex](task const &op) {
+    auto task_3 = make_task([self, &count, exe_ex](task const &op) {
         XCTAssertEqual(count.load(), 2);
         ++count;
         [exe_ex fulfill];
     });
 
-    queue.push_back(task_3);
-    queue.push_front(task_2);
-    queue.push_front(task_1);
+    queue.push_back(*task_3);
+    queue.push_front(*task_2);
+    queue.push_front(*task_1);
 
     queue.resume();
 
@@ -154,11 +170,11 @@ struct test_cancel_id : base {
 
     bool called = false;
 
-    task op([&called](task const &) { called = true; });
+    auto task = make_task([&called](yas::task const &) { called = true; });
 
-    queue.push_back(op);
+    queue.push_back(*task);
 
-    op.cancel();
+    task->cancel();
 
     queue.resume();
 
@@ -174,11 +190,11 @@ struct test_cancel_id : base {
 
     bool called = false;
 
-    task op([&called](task const &) { called = true; });
+    auto task = make_task([&called](yas::task const &) { called = true; });
 
-    queue.push_back(op);
+    queue.push_back(*task);
 
-    queue.cancel(op);
+    queue.cancel(*task);
 
     queue.resume();
 
@@ -200,18 +216,18 @@ struct test_cancel_id : base {
     auto wait_future = wait_promise.get_future();
     auto end_future = end_promise.get_future();
 
-    task op([self, &start_promise, &wait_future, &end_promise](task const &op) {
+    auto task = make_task([self, &start_promise, &wait_future, &end_promise](yas::task const &task) {
         start_promise.set_value();
         wait_future.get();
-        end_promise.set_value(op.is_canceled());
+        end_promise.set_value(task.is_canceled());
     });
 
-    queue.push_back(op);
+    queue.push_back(*task);
     queue.resume();
 
     start_future.get();
 
-    queue.cancel(op);
+    queue.cancel(*task);
 
     wait_promise.set_value();
 
@@ -225,10 +241,10 @@ struct test_cancel_id : base {
 
     bool called = false;
 
-    test_cancel_id identifier;
-    task op([&called](task const &) { called = true; }, {.cancel_id = identifier});
+    auto identifier = test_cancel_id::make_shared();
+    auto task = make_task([&called](yas::task const &) { called = true; }, {.cancel_id = identifier});
 
-    queue.push_back(op);
+    queue.push_back(*task);
 
     queue.cancel_for_id(identifier);
 
@@ -246,12 +262,12 @@ struct test_cancel_id : base {
 
     bool called = false;
 
-    test_cancel_id identifier;
-    task op([&called](task const &) { called = true; }, {.cancel_id = identifier});
+    auto identifier = test_cancel_id::make_shared();
+    auto task = make_task([&called](yas::task const &) { called = true; }, {.cancel_id = identifier});
 
-    queue.push_back(op);
+    queue.push_back(*task);
 
-    queue.cancel([&identifier](base const &op_cancel_id) { return identifier == op_cancel_id; });
+    queue.cancel([&identifier](auto const &task_cancel_id) { return identifier == task_cancel_id; });
 
     queue.resume();
 
@@ -273,16 +289,16 @@ struct test_cancel_id : base {
     auto wait_future = wait_promise.get_future();
     auto end_future = end_promise.get_future();
 
-    test_cancel_id identifier;
-    task op(
-        [self, &start_promise, &wait_future, &end_promise](task const &op) {
+    auto identifier = test_cancel_id::make_shared();
+    auto task = make_task(
+        [self, &start_promise, &wait_future, &end_promise](yas::task const &task) {
             start_promise.set_value();
             wait_future.get();
-            end_promise.set_value(op.is_canceled());
+            end_promise.set_value(task.is_canceled());
         },
         {.cancel_id = identifier});
 
-    queue.push_back(op);
+    queue.push_back(*task);
     queue.resume();
 
     start_future.get();
@@ -307,33 +323,25 @@ struct test_cancel_id : base {
     auto wait_future = wait_promise.get_future();
     auto end_future = end_promise.get_future();
 
-    test_cancel_id identifier;
-    task op(
-        [self, &start_promise, &wait_future, &end_promise](task const &op) {
+    auto identifier = test_cancel_id::make_shared();
+    auto task = make_task(
+        [self, &start_promise, &wait_future, &end_promise](yas::task const &task) {
             start_promise.set_value();
             wait_future.get();
-            end_promise.set_value(op.is_canceled());
+            end_promise.set_value(task.is_canceled());
         },
         {.cancel_id = identifier});
 
-    queue.push_back(op);
+    queue.push_back(*task);
     queue.resume();
 
     start_future.get();
 
-    queue.cancel([&identifier](base const &op_cancel_id) { return identifier == op_cancel_id; });
+    queue.cancel([&identifier](auto const &task_cancel_id) { return identifier == task_cancel_id; });
 
     wait_promise.set_value();
 
     XCTAssertTrue(end_future.get());
-}
-
-- (void)test_null_created {
-    task_queue queue{nullptr};
-    task task{nullptr};
-
-    XCTAssertFalse(queue);
-    XCTAssertFalse(task);
 }
 
 - (void)test_priority {
@@ -346,50 +354,50 @@ struct test_cancel_id : base {
 
     queue.suspend();
 
-    task task_1a(
-        [self, &count](task const &op) {
+    auto task_1a = make_task(
+        [self, &count](yas::task const &task) {
             XCTAssertEqual(count.load(), 0);
             ++count;
         },
         {.priority = 0});
-    task task_1b(
-        [self, &count](task const &op) {
+    auto task_1b = make_task(
+        [self, &count](yas::task const &task) {
             XCTAssertEqual(count.load(), 1);
             ++count;
         },
         {.priority = 0});
-    task task_2a(
-        [self, &count](task const &op) {
+    auto task_2a = make_task(
+        [self, &count](yas::task const &task) {
             XCTAssertEqual(count.load(), 2);
             ++count;
         },
         {.priority = 1});
-    task task_2b(
-        [self, &count](task const &op) {
+    auto task_2b = make_task(
+        [self, &count](yas::task const &task) {
             XCTAssertEqual(count.load(), 3);
             ++count;
         },
         {.priority = 1});
-    task task_3a(
-        [self, &count](task const &op) {
+    auto task_3a = make_task(
+        [self, &count](yas::task const &task) {
             XCTAssertEqual(count.load(), 4);
             ++count;
         },
         {.priority = 2});
-    task task_3b(
-        [self, &count, exe_ex](task const &op) {
+    auto task_3b = make_task(
+        [self, &count, exe_ex](yas::task const &task) {
             XCTAssertEqual(count.load(), 5);
             ++count;
             [exe_ex fulfill];
         },
         {.priority = 2});
 
-    queue.push_back(task_3a);
-    queue.push_back(task_2a);
-    queue.push_back(task_1a);
-    queue.push_back(task_3b);
-    queue.push_back(task_2b);
-    queue.push_back(task_1b);
+    queue.push_back(*task_3a);
+    queue.push_back(*task_2a);
+    queue.push_back(*task_1a);
+    queue.push_back(*task_3b);
+    queue.push_back(*task_2b);
+    queue.push_back(*task_1b);
 
     queue.resume();
 
@@ -405,13 +413,13 @@ struct test_cancel_id : base {
 
     bool called = false;
 
-    task op([&called](task const &) {
+    auto task = make_task([&called](yas::task const &) {
         std::this_thread::sleep_for(100ms);
 
         called = true;
     });
 
-    queue.push_back(op);
+    queue.push_back(*task);
 
     queue.resume();
 
@@ -425,9 +433,9 @@ struct test_cancel_id : base {
 
     queue.suspend();
 
-    task op([](task const &) {});
+    auto task = make_task([](yas::task const &) {});
 
-    queue.push_back(op);
+    queue.push_back(*task);
 
     XCTAssertThrows(queue.wait_until_all_tasks_are_finished());
 }
@@ -435,10 +443,8 @@ struct test_cancel_id : base {
 - (void)test_cancel_by_push_cancel_id {
     task_queue queue;
 
-    base cancel_id_a{nullptr};
-    base cancel_id_b{nullptr};
-    cancel_id_a.set_impl_ptr(std::make_shared<base::impl>());
-    cancel_id_b.set_impl_ptr(std::make_shared<base::impl>());
+    auto cancel_id_a = test_cancel_id::make_shared();
+    auto cancel_id_b = test_cancel_id::make_shared();
 
     bool called_a_1 = false;
     bool called_a_2 = false;
@@ -446,19 +452,19 @@ struct test_cancel_id : base {
     bool called_n_1 = false;
     bool called_n_2 = false;
 
-    task op_a_1{[&called_a_1](auto const &op) { called_a_1 = true; }, {.push_cancel_id = cancel_id_a}};
-    task op_a_2{[&called_a_2](auto const &op) { called_a_2 = true; }, {.push_cancel_id = cancel_id_a}};
-    task op_b{[&called_b](auto const &op) { called_b = true; }, {.push_cancel_id = cancel_id_b}};
-    task op_n_1{[&called_n_1](auto const &op) { called_n_1 = true; }};
-    task op_n_2{[&called_n_2](auto const &op) { called_n_2 = true; }};
+    auto task_a_1 = make_task([&called_a_1](auto const &task) { called_a_1 = true; }, {.push_cancel_id = cancel_id_a});
+    auto task_a_2 = make_task([&called_a_2](auto const &task) { called_a_2 = true; }, {.push_cancel_id = cancel_id_a});
+    auto task_b = make_task([&called_b](auto const &task) { called_b = true; }, {.push_cancel_id = cancel_id_b});
+    auto task_n_1 = make_task([&called_n_1](auto const &task) { called_n_1 = true; });
+    auto task_n_2 = make_task([&called_n_2](auto const &task) { called_n_2 = true; });
 
     queue.suspend();
 
-    queue.push_back(std::move(op_a_1));
-    queue.push_back(std::move(op_b));
-    queue.push_back(std::move(op_n_1));
-    queue.push_back(std::move(op_a_2));
-    queue.push_back(std::move(op_n_2));
+    queue.push_back(*task_a_1);
+    queue.push_back(*task_b);
+    queue.push_back(*task_n_1);
+    queue.push_back(*task_a_2);
+    queue.push_back(*task_n_2);
 
     queue.resume();
 
@@ -474,19 +480,20 @@ struct test_cancel_id : base {
 - (void)test_cancel_different_priority {
     task_queue queue{2};
 
-    base cancel_id{nullptr};
-    cancel_id.set_impl_ptr(std::make_shared<base::impl>());
+    auto cancel_id = test_cancel_id::make_shared();
 
     bool called_1 = false;
     bool called_2 = false;
 
-    task op_1{[&called_1](auto const &op) { called_1 = true; }, {.priority = 0, .push_cancel_id = cancel_id}};
-    task op_2{[&called_2](auto const &op) { called_2 = true; }, {.priority = 1, .push_cancel_id = cancel_id}};
+    auto task_1 =
+        make_task([&called_1](auto const &task) { called_1 = true; }, {.priority = 0, .push_cancel_id = cancel_id});
+    auto task_2 =
+        make_task([&called_2](auto const &task) { called_2 = true; }, {.priority = 1, .push_cancel_id = cancel_id});
 
     queue.suspend();
 
-    queue.push_back(std::move(op_1));
-    queue.push_back(std::move(op_2));
+    queue.push_back(*task_1);
+    queue.push_back(*task_2);
 
     queue.resume();
 
@@ -504,8 +511,8 @@ struct test_cancel_id : base {
     std::promise<void> promise;
     auto future = promise.get_future();
 
-    task op{[&future](auto const &op) { future.get(); }};
-    queue.push_back(std::move(op));
+    auto task = make_task([&future](auto const &) { future.get(); });
+    queue.push_back(*task);
 
     XCTAssertTrue(queue.is_operating());
 
@@ -526,8 +533,8 @@ struct test_cancel_id : base {
     std::promise<void> promise;
     auto future = promise.get_future();
 
-    task op{[&promise](auto const &op) { promise.set_value(); }};
-    queue.push_back(std::move(op));
+    auto task = make_task([&promise](auto const &) { promise.set_value(); });
+    queue.push_back(*task);
 
     XCTAssertTrue(queue.is_operating());
 

@@ -14,64 +14,46 @@ using namespace yas;
 
 #pragma mark - task
 
-class task::impl : public base::impl, public controllable_task::impl {
-   public:
-    std::atomic<bool> _canceled;
-    task_option_t _option;
-
-    impl(execution_f const &execution, task_option_t &&option)
-        : _canceled(false), _execution(execution), _option(std::move(option)) {
-    }
-
-    impl(execution_f &&execution, task_option_t &&option)
-        : _canceled(false), _execution(std::move(execution)), _option(std::move(option)) {
-    }
-
-    void execute() {
-        if (this->_execution) {
-            if (!this->_canceled) {
-                this->_execution(cast<task>());
-            }
-        }
-    }
-
-    void cancel() {
-        this->_canceled = true;
-    }
-
-   private:
-    execution_f _execution;
-};
-
-task::task(execution_f const &exe, task_option_t option) : base(std::make_unique<impl>(exe, std::move(option))) {
-}
-
-task::task(execution_f &&exe, task_option_t opt) : base(std::make_unique<impl>(std::move(exe), std::move(opt))) {
-}
-
-task::task(std::nullptr_t) : base(nullptr) {
+task::task(execution_f &&execution, task_option_t &&option)
+    : _canceled(false), _execution(std::move(execution)), _option(std::move(option)) {
 }
 
 void task::cancel() {
-    impl_ptr<impl>()->cancel();
+    this->_canceled = true;
 }
 
 bool task::is_canceled() const {
-    return impl_ptr<impl>()->_canceled;
+    return this->_canceled;
 }
 
 task_option_t const &task::option() const {
-    return impl_ptr<impl>()->_option;
+    return this->_option;
 }
 
-controllable_task task::controllable() const {
-    return controllable_task{impl_ptr<controllable_task::impl>()};
+std::shared_ptr<controllable_task> task::controllable() {
+    return std::dynamic_pointer_cast<controllable_task>(shared_from_this());
+}
+
+void task::execute() {
+    if (!this->is_canceled()) {
+        if (auto &execution = this->_execution) {
+            execution(*this);
+        }
+    }
+}
+
+std::shared_ptr<task> yas::make_task(task::execution_f const &execution, task_option_t opt) {
+    auto copied_execution = execution;
+    return make_task(std::move(copied_execution), std::move(opt));
+}
+
+std::shared_ptr<task> yas::make_task(task::execution_f &&execution, task_option_t opt) {
+    return std::shared_ptr<task>(new task{std::move(execution), std::move(opt)});
 }
 
 #pragma mark - queue
 
-class task_queue::impl : public base::impl {
-   public:
+struct task_queue::impl : std::enable_shared_from_this<impl> {
     impl(std::size_t const count) : _tasks(count) {
     }
 
@@ -79,80 +61,108 @@ class task_queue::impl : public base::impl {
         this->cancel();
     }
 
-    void push_back(task &&task) {
+    void push_back(std::shared_ptr<task> &&task) {
         std::lock_guard<std::recursive_mutex> lock(this->_mutex);
 
-        auto &cancel_id = task.option().push_cancel_id;
+        auto &cancel_id = task->option().push_cancel_id;
 
-        for (auto &deque : this->_tasks) {
-            erase_if(deque, [&cancel_id](auto const &value) { return value.option().push_cancel_id == cancel_id; });
-        }
-
-        if (this->_current_task) {
-            if (this->_current_task.option().push_cancel_id == cancel_id) {
-                this->_current_task.cancel();
+        if (cancel_id) {
+            for (auto &deque : this->_tasks) {
+                erase_if(deque, [&cancel_id](auto const &value) {
+                    if (auto const &push_cancel_id = value->option().push_cancel_id) {
+                        return push_cancel_id->is_equal(cancel_id);
+                    } else {
+                        return false;
+                    }
+                });
             }
         }
 
-        auto &deque = this->_tasks.at(task.option().priority);
+        if (this->_current_task) {
+            if (auto const &push_cancel_id = this->_current_task->option().push_cancel_id) {
+                if (push_cancel_id->is_equal(cancel_id)) {
+                    this->_current_task->cancel();
+                }
+            }
+        }
+
+        auto &deque = this->_tasks.at(task->option().priority);
         deque.emplace_back(std::move(task));
 
         this->_start_next_task_if_needed();
     }
 
-    void push_front(task &&task) {
+    void push_front(std::shared_ptr<task> &&task) {
         std::lock_guard<std::recursive_mutex> lock(this->_mutex);
 
-        auto &cancel_id = task.option().push_cancel_id;
+        auto &cancel_id = task->option().push_cancel_id;
 
-        for (auto &deque : this->_tasks) {
-            erase_if(deque, [&cancel_id](auto const &value) { return value.option().push_cancel_id == cancel_id; });
-        }
-
-        if (this->_current_task) {
-            if (this->_current_task.option().push_cancel_id == cancel_id) {
-                this->_current_task.cancel();
+        if (cancel_id) {
+            for (auto &deque : this->_tasks) {
+                erase_if(deque, [&cancel_id](auto const &value) {
+                    if (auto const &push_cancel_id = value->option().push_cancel_id) {
+                        return push_cancel_id->is_equal(cancel_id);
+                    } else {
+                        return false;
+                    }
+                });
             }
         }
 
-        auto &deque = this->_tasks.at(task.option().priority);
+        if (this->_current_task) {
+            if (auto const &push_cancel_id = this->_current_task->option().push_cancel_id) {
+                if (push_cancel_id->is_equal(cancel_id)) {
+                    this->_current_task->cancel();
+                }
+            }
+        }
+
+        auto &deque = this->_tasks.at(task->option().priority);
         deque.emplace_front(std::move(task));
 
         this->_start_next_task_if_needed();
     }
 
-    void cancel(task const &canceling_task) {
+    void cancel(std::shared_ptr<task> const &canceling_task) {
         std::lock_guard<std::recursive_mutex> lock(this->_mutex);
 
         for (auto &deque : this->_tasks) {
             for (auto &task : deque) {
                 if (canceling_task == task) {
-                    task.cancel();
+                    task->cancel();
                 }
             }
         }
 
         if (this->_current_task) {
             if (this->_current_task == canceling_task) {
-                this->_current_task.cancel();
+                this->_current_task->cancel();
             }
         }
     }
 
-    void cancel_for_id(base const &cancel_id) {
-        this->cancel([&cancel_id](base const &target_cancel_id) { return cancel_id == target_cancel_id; });
+    void cancel_for_id(std::shared_ptr<task_cancel_id> const &cancel_id) {
+        if (cancel_id) {
+            this->cancel([&cancel_id](auto const &target_cancel_id) {
+                if (target_cancel_id) {
+                    return cancel_id->is_equal(target_cancel_id);
+                } else {
+                    return false;
+                }
+            });
+        }
     }
 
     void cancel(cancellation_f const &cancellation) {
         std::lock_guard<std::recursive_mutex> lock(this->_mutex);
 
         for (auto &deque : this->_tasks) {
-            erase_if(deque, [&cancellation](auto const &value) { return cancellation(value.option().cancel_id); });
+            erase_if(deque, [&cancellation](auto const &value) { return cancellation(value->option().cancel_id); });
         }
 
         if (this->_current_task) {
-            if (cancellation(this->_current_task.option().cancel_id)) {
-                this->_current_task.cancel();
+            if (cancellation(this->_current_task->option().cancel_id)) {
+                this->_current_task->cancel();
             }
         }
     }
@@ -162,13 +172,13 @@ class task_queue::impl : public base::impl {
 
         for (auto &deque : this->_tasks) {
             for (auto &task : deque) {
-                task.cancel();
+                task->cancel();
             }
             deque.clear();
         }
 
         if (this->_current_task) {
-            this->_current_task.cancel();
+            this->_current_task->cancel();
         }
     }
 
@@ -236,8 +246,8 @@ class task_queue::impl : public base::impl {
     }
 
    private:
-    task _current_task = nullptr;
-    std::vector<std::deque<task>> _tasks;
+    std::shared_ptr<task> _current_task = nullptr;
+    std::vector<std::deque<std::shared_ptr<task>>> _tasks;
     bool _suspended = false;
     mutable std::recursive_mutex _mutex;
 
@@ -245,7 +255,7 @@ class task_queue::impl : public base::impl {
         std::lock_guard<std::recursive_mutex> lock(this->_mutex);
 
         if (!this->_current_task && !this->_suspended) {
-            task task{nullptr};
+            std::shared_ptr<task> task{nullptr};
 
             for (auto &deque : this->_tasks) {
                 if (!deque.empty()) {
@@ -258,13 +268,13 @@ class task_queue::impl : public base::impl {
             if (task) {
                 this->_current_task = task;
 
-                std::thread thread{[weak_task = to_weak(task), weak_queue = to_weak(cast<task_queue>())]() {
+                std::thread thread{[weak_task = to_weak(task), weak_queue_impl = to_weak(shared_from_this())]() {
                     auto task = weak_task.lock();
                     if (task) {
-                        task.controllable().execute();
+                        task->controllable()->execute();
 
-                        if (auto queue = weak_queue.lock()) {
-                            queue.impl_ptr<impl>()->_task_did_finish(task);
+                        if (auto queue_impl = weak_queue_impl.lock()) {
+                            queue_impl->_task_did_finish(task);
                         }
                     }
                 }};
@@ -274,7 +284,7 @@ class task_queue::impl : public base::impl {
         }
     }
 
-    void _task_did_finish(task const &pre_task) {
+    void _task_did_finish(std::shared_ptr<task> const &pre_task) {
         std::lock_guard<std::recursive_mutex> lock(this->_mutex);
 
         if (this->_current_task == pre_task) {
@@ -285,56 +295,53 @@ class task_queue::impl : public base::impl {
     }
 };
 
-task_queue::task_queue(std::size_t const count) : base(std::make_unique<impl>(count)) {
+task_queue::task_queue(std::size_t const count) : _impl(std::make_unique<impl>(count)) {
 }
 
-task_queue::task_queue(std::nullptr_t) : base(nullptr) {
+void task_queue::push_back(task &task) {
+    this->_impl->push_back(task.shared_from_this());
 }
 
-void task_queue::push_back(task task) {
-    impl_ptr<impl>()->push_back(std::move(task));
+void task_queue::push_front(task &task) {
+    this->_impl->push_front(task.shared_from_this());
 }
 
-void task_queue::push_front(task task) {
-    impl_ptr<impl>()->push_front(std::move(task));
+void task_queue::cancel(task &task) {
+    this->_impl->cancel(task.shared_from_this());
 }
 
-void task_queue::cancel(task const &task) {
-    impl_ptr<impl>()->cancel(task);
-}
-
-void task_queue::cancel_for_id(base const &identifier) {
-    impl_ptr<impl>()->cancel_for_id(identifier);
+void task_queue::cancel_for_id(std::shared_ptr<task_cancel_id> const &identifier) {
+    this->_impl->cancel_for_id(identifier);
 }
 
 void task_queue::cancel(cancellation_f const &cancellation) {
-    impl_ptr<impl>()->cancel(cancellation);
+    this->_impl->cancel(cancellation);
 }
 
 void task_queue::cancel_all() {
-    impl_ptr<impl>()->cancel();
+    this->_impl->cancel();
 }
 
 void task_queue::wait_until_all_tasks_are_finished() {
-    impl_ptr<impl>()->wait_until_all_tasks_are_finished();
+    this->_impl->wait_until_all_tasks_are_finished();
 }
 
 void task_queue::suspend() {
-    impl_ptr<impl>()->suspend();
+    this->_impl->suspend();
 }
 
 void task_queue::resume() {
-    impl_ptr<impl>()->resume();
+    this->_impl->resume();
 }
 
 std::size_t task_queue::priority_count() const {
-    return impl_ptr<impl>()->priority_count();
+    return this->_impl->priority_count();
 }
 
 bool task_queue::is_suspended() const {
-    return impl_ptr<impl>()->is_suspended();
+    return this->_impl->is_suspended();
 }
 
 bool task_queue::is_operating() const {
-    return impl_ptr<impl>()->is_operating();
+    return this->_impl->is_operating();
 }
