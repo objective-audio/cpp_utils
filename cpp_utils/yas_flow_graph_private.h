@@ -121,7 +121,7 @@ run<Running, Event> running_out::run() const {
 #pragma mark - graph
 
 template <typename Waiting, typename Running, typename Event>
-struct graph<Waiting, Running, Event>::impl : base::impl {
+struct graph<Waiting, Running, Event>::impl {
     state<Waiting, Running> _current;
     std::unordered_map<Waiting, waiting_handler_f> _waiting_handlers;
     std::unordered_map<Running, running_handler_f> _running_handlers;
@@ -240,31 +240,31 @@ struct graph<Waiting, Running, Event>::impl : base::impl {
 };
 
 template <typename Waiting, typename Running, typename Event>
-graph<Waiting, Running, Event>::graph(Waiting waiting) : base(std::make_shared<impl>(std::move(waiting))) {
+graph<Waiting, Running, Event>::graph(Waiting waiting) : _impl(std::make_shared<impl>(std::move(waiting))) {
 }
 
 template <typename Waiting, typename Running, typename Event>
 void graph<Waiting, Running, Event>::add_waiting(Waiting waiting, waiting_handler_f handler) {
-    impl_ptr<impl>()->addWaiting(std::move(waiting), std::move(handler));
+    this->_impl->addWaiting(std::move(waiting), std::move(handler));
 }
 
 template <typename Waiting, typename Running, typename Event>
 void graph<Waiting, Running, Event>::add_running(Running running, running_handler_f handler) {
-    impl_ptr<impl>()->addRunning(std::move(running), std::move(handler));
+    this->_impl->addRunning(std::move(running), std::move(handler));
 }
 
 template <typename Waiting, typename Running, typename Event>
 void graph<Waiting, Running, Event>::run(Event const &event) {
-    impl_ptr<impl>()->run(event);
+    this->_impl->run(event);
 }
 
 template <typename Waiting, typename Running, typename Event>
 state<Waiting, Running> const &graph<Waiting, Running, Event>::current() const {
-    return impl_ptr<impl>()->_current;
+    return this->_impl->_current;
 }
 
 template <typename Waiting, typename Running, typename Event>
 bool graph<Waiting, Running, Event>::contains(state<Waiting, Running> const &state) const {
-    return impl_ptr<impl>()->contains(state);
+    return this->_impl->contains(state);
 }
 }  // namespace yas::flow

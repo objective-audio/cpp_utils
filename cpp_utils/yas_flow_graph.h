@@ -112,7 +112,7 @@ struct running_signal {
 };
 
 template <typename Waiting, typename Running, typename Event>
-struct graph : base {
+struct graph final {
     class impl;
 
     using waiting_signal_t = waiting_signal<Waiting, Running, Event>;
@@ -130,6 +130,9 @@ struct graph : base {
     state<Waiting, Running> const &current() const;
 
     bool contains(state<Waiting, Running> const &) const;
+
+   private:
+    std::shared_ptr<impl> _impl;
 };
 }  // namespace yas::flow
 
