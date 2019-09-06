@@ -42,13 +42,13 @@ void task::execute() {
     }
 }
 
-std::shared_ptr<task> task::make_shared(task::execution_f const &execution, task_option_t opt) {
+task_ptr task::make_shared(task::execution_f const &execution, task_option_t opt) {
     auto copied_execution = execution;
     return task::make_shared(std::move(copied_execution), std::move(opt));
 }
 
-std::shared_ptr<task> task::make_shared(task::execution_f &&execution, task_option_t opt) {
-    return std::shared_ptr<task>(new task{std::move(execution), std::move(opt)});
+task_ptr task::make_shared(task::execution_f &&execution, task_option_t opt) {
+    return task_ptr(new task{std::move(execution), std::move(opt)});
 }
 
 #pragma mark - queue
@@ -61,7 +61,7 @@ struct task_queue::impl : std::enable_shared_from_this<impl> {
         this->cancel();
     }
 
-    void push_back(std::shared_ptr<task> &&task) {
+    void push_back(task_ptr const &task) {
         std::lock_guard<std::recursive_mutex> lock(this->_mutex);
 
         auto &cancel_id = task->option().push_cancel_id;
@@ -87,12 +87,12 @@ struct task_queue::impl : std::enable_shared_from_this<impl> {
         }
 
         auto &deque = this->_tasks.at(task->option().priority);
-        deque.emplace_back(std::move(task));
+        deque.emplace_back(task);
 
         this->_start_next_task_if_needed();
     }
 
-    void push_front(std::shared_ptr<task> &&task) {
+    void push_front(task_ptr const &task) {
         std::lock_guard<std::recursive_mutex> lock(this->_mutex);
 
         auto &cancel_id = task->option().push_cancel_id;
@@ -118,12 +118,12 @@ struct task_queue::impl : std::enable_shared_from_this<impl> {
         }
 
         auto &deque = this->_tasks.at(task->option().priority);
-        deque.emplace_front(std::move(task));
+        deque.emplace_front(task);
 
         this->_start_next_task_if_needed();
     }
 
-    void cancel(std::shared_ptr<task> const &canceling_task) {
+    void cancel(task_ptr const &canceling_task) {
         std::lock_guard<std::recursive_mutex> lock(this->_mutex);
 
         for (auto &deque : this->_tasks) {
@@ -246,8 +246,8 @@ struct task_queue::impl : std::enable_shared_from_this<impl> {
     }
 
    private:
-    std::shared_ptr<task> _current_task = nullptr;
-    std::vector<std::deque<std::shared_ptr<task>>> _tasks;
+    task_ptr _current_task = nullptr;
+    std::vector<std::deque<task_ptr>> _tasks;
     bool _suspended = false;
     mutable std::recursive_mutex _mutex;
 
@@ -255,7 +255,7 @@ struct task_queue::impl : std::enable_shared_from_this<impl> {
         std::lock_guard<std::recursive_mutex> lock(this->_mutex);
 
         if (!this->_current_task && !this->_suspended) {
-            std::shared_ptr<task> task{nullptr};
+            task_ptr task{nullptr};
 
             for (auto &deque : this->_tasks) {
                 if (!deque.empty()) {
@@ -284,7 +284,7 @@ struct task_queue::impl : std::enable_shared_from_this<impl> {
         }
     }
 
-    void _task_did_finish(std::shared_ptr<task> const &pre_task) {
+    void _task_did_finish(task_ptr const &pre_task) {
         std::lock_guard<std::recursive_mutex> lock(this->_mutex);
 
         if (this->_current_task == pre_task) {
@@ -298,19 +298,19 @@ struct task_queue::impl : std::enable_shared_from_this<impl> {
 task_queue::task_queue(std::size_t const count) : _impl(std::make_unique<impl>(count)) {
 }
 
-void task_queue::push_back(task &task) {
-    this->_impl->push_back(task.shared_from_this());
+void task_queue::push_back(task_ptr const &task) {
+    this->_impl->push_back(task);
 }
 
-void task_queue::push_front(task &task) {
-    this->_impl->push_front(task.shared_from_this());
+void task_queue::push_front(task_ptr const &task) {
+    this->_impl->push_front(task);
 }
 
-void task_queue::cancel(task &task) {
-    this->_impl->cancel(task.shared_from_this());
+void task_queue::cancel(task_ptr const &task) {
+    this->_impl->cancel(task);
 }
 
-void task_queue::cancel_for_id(std::shared_ptr<task_cancel_id> const &identifier) {
+void task_queue::cancel_for_id(task_cancel_id_ptr const &identifier) {
     this->_impl->cancel_for_id(identifier);
 }
 

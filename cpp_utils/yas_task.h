@@ -8,6 +8,10 @@
 #include "yas_task_protocol.h"
 
 namespace yas {
+class task;
+
+using task_ptr = std::shared_ptr<task>;
+
 struct task final : controllable_task, std::enable_shared_from_this<task> {
     class impl;
 
@@ -35,8 +39,8 @@ struct task final : controllable_task, std::enable_shared_from_this<task> {
     void execute() override;
 
    public:
-    static std::shared_ptr<task> make_shared(task::execution_f const &, task_option_t opt = {});
-    static std::shared_ptr<task> make_shared(task::execution_f &&, task_option_t opt = {});
+    static task_ptr make_shared(task::execution_f const &, task_option_t opt = {});
+    static task_ptr make_shared(task::execution_f &&, task_option_t opt = {});
 };
 
 struct task_queue final {
@@ -46,10 +50,10 @@ struct task_queue final {
 
     explicit task_queue(std::size_t const priority_count = 1);
 
-    void push_back(task &);
-    void push_front(task &);
-    void cancel(task &);
-    void cancel_for_id(std::shared_ptr<task_cancel_id> const &cancel_id);
+    void push_back(task_ptr const &);
+    void push_front(task_ptr const &);
+    void cancel(task_ptr const &);
+    void cancel_for_id(task_cancel_id_ptr const &cancel_id);
     void cancel(cancellation_f const &);
     void cancel_all();
     void wait_until_all_tasks_are_finished();
