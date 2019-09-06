@@ -4,8 +4,7 @@
 
 #pragma once
 
-#include "yas_base.h"
-#include "yas_protocol.h"
+#include <memory>
 
 namespace yas {
 struct controllable_task {
@@ -22,9 +21,11 @@ struct task_cancel_id {
     virtual bool is_equal(std::shared_ptr<task_cancel_id> const &) const = 0;
 };
 
+using task_cancel_id_ptr = std::shared_ptr<task_cancel_id>;
+
 struct task_option_t {
     task_priority_t priority = 0;
-    std::shared_ptr<task_cancel_id> cancel_id = nullptr;
-    std::shared_ptr<task_cancel_id> push_cancel_id = nullptr;
+    task_cancel_id_ptr cancel_id = nullptr;
+    task_cancel_id_ptr push_cancel_id = nullptr;
 };
 }  // namespace yas

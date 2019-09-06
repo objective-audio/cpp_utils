@@ -53,7 +53,7 @@ struct test_cancel_id : task_cancel_id {
 
     task_queue queue;
     auto task = task::make_shared([exe_ex](yas::task const &) { [exe_ex fulfill]; });
-    queue.push_back(*task);
+    queue.push_back(task);
 
     [self waitForExpectationsWithTimeout:1.0 handler:nil];
 }
@@ -80,9 +80,9 @@ struct test_cancel_id : task_cancel_id {
         [exe_ex fulfill];
     });
 
-    queue.push_back(*task_1);
-    queue.push_back(*task_2);
-    queue.push_back(*task_3);
+    queue.push_back(task_1);
+    queue.push_back(task_2);
+    queue.push_back(task_3);
 
     [self waitForExpectationsWithTimeout:1.0 handler:nil];
 
@@ -103,7 +103,7 @@ struct test_cancel_id : task_cancel_id {
         [exe_ex fulfill];
     });
 
-    queue.push_back(*task);
+    queue.push_back(task);
 
     [NSThread sleepForTimeInterval:0.1];
 
@@ -152,9 +152,9 @@ struct test_cancel_id : task_cancel_id {
         [exe_ex fulfill];
     });
 
-    queue.push_back(*task_3);
-    queue.push_front(*task_2);
-    queue.push_front(*task_1);
+    queue.push_back(task_3);
+    queue.push_front(task_2);
+    queue.push_front(task_1);
 
     queue.resume();
 
@@ -172,7 +172,7 @@ struct test_cancel_id : task_cancel_id {
 
     auto task = task::make_shared([&called](yas::task const &) { called = true; });
 
-    queue.push_back(*task);
+    queue.push_back(task);
 
     task->cancel();
 
@@ -192,9 +192,9 @@ struct test_cancel_id : task_cancel_id {
 
     auto task = task::make_shared([&called](yas::task const &) { called = true; });
 
-    queue.push_back(*task);
+    queue.push_back(task);
 
-    queue.cancel(*task);
+    queue.cancel(task);
 
     queue.resume();
 
@@ -222,12 +222,12 @@ struct test_cancel_id : task_cancel_id {
         end_promise.set_value(task.is_canceled());
     });
 
-    queue.push_back(*task);
+    queue.push_back(task);
     queue.resume();
 
     start_future.get();
 
-    queue.cancel(*task);
+    queue.cancel(task);
 
     wait_promise.set_value();
 
@@ -244,7 +244,7 @@ struct test_cancel_id : task_cancel_id {
     auto identifier = test_cancel_id::make_shared();
     auto task = task::make_shared([&called](yas::task const &) { called = true; }, {.cancel_id = identifier});
 
-    queue.push_back(*task);
+    queue.push_back(task);
 
     queue.cancel_for_id(identifier);
 
@@ -265,7 +265,7 @@ struct test_cancel_id : task_cancel_id {
     auto identifier = test_cancel_id::make_shared();
     auto task = task::make_shared([&called](yas::task const &) { called = true; }, {.cancel_id = identifier});
 
-    queue.push_back(*task);
+    queue.push_back(task);
 
     queue.cancel([&identifier](auto const &task_cancel_id) { return identifier == task_cancel_id; });
 
@@ -298,7 +298,7 @@ struct test_cancel_id : task_cancel_id {
         },
         {.cancel_id = identifier});
 
-    queue.push_back(*task);
+    queue.push_back(task);
     queue.resume();
 
     start_future.get();
@@ -332,7 +332,7 @@ struct test_cancel_id : task_cancel_id {
         },
         {.cancel_id = identifier});
 
-    queue.push_back(*task);
+    queue.push_back(task);
     queue.resume();
 
     start_future.get();
@@ -392,12 +392,12 @@ struct test_cancel_id : task_cancel_id {
         },
         {.priority = 2});
 
-    queue.push_back(*task_3a);
-    queue.push_back(*task_2a);
-    queue.push_back(*task_1a);
-    queue.push_back(*task_3b);
-    queue.push_back(*task_2b);
-    queue.push_back(*task_1b);
+    queue.push_back(task_3a);
+    queue.push_back(task_2a);
+    queue.push_back(task_1a);
+    queue.push_back(task_3b);
+    queue.push_back(task_2b);
+    queue.push_back(task_1b);
 
     queue.resume();
 
@@ -419,7 +419,7 @@ struct test_cancel_id : task_cancel_id {
         called = true;
     });
 
-    queue.push_back(*task);
+    queue.push_back(task);
 
     queue.resume();
 
@@ -435,7 +435,7 @@ struct test_cancel_id : task_cancel_id {
 
     auto task = task::make_shared([](yas::task const &) {});
 
-    queue.push_back(*task);
+    queue.push_back(task);
 
     XCTAssertThrows(queue.wait_until_all_tasks_are_finished());
 }
@@ -463,11 +463,11 @@ struct test_cancel_id : task_cancel_id {
 
     queue.suspend();
 
-    queue.push_back(*task_a_1);
-    queue.push_back(*task_b);
-    queue.push_back(*task_n_1);
-    queue.push_back(*task_a_2);
-    queue.push_back(*task_n_2);
+    queue.push_back(task_a_1);
+    queue.push_back(task_b);
+    queue.push_back(task_n_1);
+    queue.push_back(task_a_2);
+    queue.push_back(task_n_2);
 
     queue.resume();
 
@@ -495,8 +495,8 @@ struct test_cancel_id : task_cancel_id {
 
     queue.suspend();
 
-    queue.push_back(*task_1);
-    queue.push_back(*task_2);
+    queue.push_back(task_1);
+    queue.push_back(task_2);
 
     queue.resume();
 
@@ -515,7 +515,7 @@ struct test_cancel_id : task_cancel_id {
     auto future = promise.get_future();
 
     auto task = task::make_shared([&future](auto const &) { future.get(); });
-    queue.push_back(*task);
+    queue.push_back(task);
 
     XCTAssertTrue(queue.is_operating());
 
@@ -537,7 +537,7 @@ struct test_cancel_id : task_cancel_id {
     auto future = promise.get_future();
 
     auto task = task::make_shared([&promise](auto const &) { promise.set_value(); });
-    queue.push_back(*task);
+    queue.push_back(task);
 
     XCTAssertTrue(queue.is_operating());
 
