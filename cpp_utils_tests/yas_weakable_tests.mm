@@ -31,7 +31,7 @@ using namespace yas;
         test_class(int const value) : _impl(std::make_shared<impl>(value)) {
         }
 
-        test_class(std::shared_ptr<impl> &&impl) : _impl(std::move(impl)) {
+        test_class(std::shared_ptr<weakable_impl> &&wimpl) : _impl(std::dynamic_pointer_cast<impl>(wimpl)) {
         }
 
         std::shared_ptr<weakable_impl> weakable_impl_ptr() const override {
