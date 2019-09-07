@@ -23,10 +23,8 @@ struct weak_ref {
     }
 
     std::optional<T> lock() const {
-        if (auto shared = this->_impl.lock()) {
-            if (auto casted = std::dynamic_pointer_cast<typename T::impl>(shared)) {
-                return std::make_optional<T>(std::move(casted));
-            }
+        if (auto shared_impl = this->_impl.lock()) {
+            return std::make_optional<T>(std::move(shared_impl));
         }
         return std::nullopt;
     }
