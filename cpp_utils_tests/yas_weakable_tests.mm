@@ -95,4 +95,22 @@ using namespace yas::weakable_test;
     XCTAssertFalse(locked_opt);
 }
 
+- (void)test_release {
+    std::optional<weak_ref<test_class>> weak_obj;
+
+    {
+        test_class source{4};
+
+        weak_obj = to_weak(source);
+
+        auto locked_opt = weak_obj->lock();
+
+        XCTAssertTrue(locked_opt);
+    }
+
+    auto locked_opt = weak_obj->lock();
+
+    XCTAssertFalse(locked_opt);
+}
+
 @end
