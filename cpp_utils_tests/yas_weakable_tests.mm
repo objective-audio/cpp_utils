@@ -7,6 +7,40 @@
 
 using namespace yas;
 
+namespace yas::weakable_test {
+struct test_class : weakable<test_class> {
+    struct impl : weakable_impl {
+        int value;
+
+        impl(int const value) : value(value) {
+        }
+    };
+
+    test_class(int const value) : _impl(std::make_shared<impl>(value)) {
+    }
+
+    test_class(std::shared_ptr<weakable_impl> &&wimpl) : _impl(std::dynamic_pointer_cast<impl>(wimpl)) {
+    }
+
+    std::shared_ptr<weakable_impl> weakable_impl_ptr() const override {
+        return this->_impl;
+    }
+
+    int value() {
+        return this->_impl->value;
+    }
+
+    void reset_impl() {
+        this->_impl.reset();
+    }
+
+   private:
+    std::shared_ptr<impl> _impl;
+};
+}
+
+using namespace yas::weakable_test;
+
 @interface yas_weakable_tests : XCTestCase
 
 @end
@@ -19,78 +53,64 @@ using namespace yas;
 - (void)tearDown {
 }
 
-- (void)test_weakable {
-    struct test_class : weakable<test_class> {
-        struct impl : weakable_impl {
-            int value;
+- (void)test_locked {
+    test_class source{1};
 
-            impl(int const value) : value(value) {
-            }
-        };
+    auto weak = to_weak(source);
 
-        test_class(int const value) : _impl(std::make_shared<impl>(value)) {
-        }
+    auto locked_opt = weak.lock();
 
-        test_class(std::shared_ptr<weakable_impl> &&wimpl) : _impl(std::dynamic_pointer_cast<impl>(wimpl)) {
-        }
+    XCTAssertTrue(locked_opt);
 
-        std::shared_ptr<weakable_impl> weakable_impl_ptr() const override {
-            return this->_impl;
-        }
+    XCTAssertEqual(locked_opt->value(), 1);
+}
 
-        int value() {
-            return this->_impl->value;
-        }
+- (void)test_weak_locked {
+    test_class source{2};
 
-        void reset_impl() {
-            this->_impl.reset();
-        }
+    auto weak = to_weak(source);
 
-       private:
-        std::shared_ptr<impl> _impl;
-    };
+    source.reset_impl();
+
+    auto locked_opt = weak.lock();
+
+    XCTAssertFalse(locked_opt);
+}
+
+- (void)test_copied_and_moved {
+    test_class source{3};
+
+    auto weak = to_weak(source);
+
+    auto copied = weak;
+    auto moved = std::move(weak);
+
+    auto copied_locked_opt = copied.lock();
+    XCTAssertTrue(copied_locked_opt);
+
+    auto moved_locked_opt = moved.lock();
+    XCTAssertTrue(moved_locked_opt);
+
+    auto locked_opt = weak.lock();
+    XCTAssertFalse(locked_opt);
+}
+
+- (void)test_release {
+    std::optional<weak_ref<test_class>> weak_obj;
 
     {
-        test_class source{1};
+        test_class source{4};
 
-        auto weak = to_weak(source);
+        weak_obj = to_weak(source);
 
-        auto locked_opt = weak.lock();
+        auto locked_opt = weak_obj->lock();
 
         XCTAssertTrue(locked_opt);
-
-        XCTAssertEqual(locked_opt->value(), 1);
     }
 
-    {
-        test_class source{2};
+    auto locked_opt = weak_obj->lock();
 
-        auto weak = to_weak(source);
-
-        source.reset_impl();
-
-        auto locked_opt = weak.lock();
-
-        XCTAssertFalse(locked_opt);
-    }
-
-    {
-        test_class source{3};
-
-        auto weak = to_weak(source);
-
-        auto copied = weak;
-        auto moved = std::move(weak);
-
-        auto copied_locked_opt = copied.lock();
-        XCTAssertTrue(copied_locked_opt);
-
-        auto moved_locked_opt = moved.lock();
-        XCTAssertTrue(moved_locked_opt);
-
-        auto locked_opt = weak.lock();
-        XCTAssertFalse(locked_opt);
-    }
+    XCTAssertFalse(locked_opt);
 }
 
 @end
