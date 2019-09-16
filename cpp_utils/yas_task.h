@@ -12,7 +12,7 @@ class task;
 
 using task_ptr = std::shared_ptr<task>;
 
-struct task final : controllable_task, std::enable_shared_from_this<task> {
+struct task final : controllable_task {
     class impl;
 
     using execution_f = std::function<void(task const &)>;
@@ -21,8 +21,6 @@ struct task final : controllable_task, std::enable_shared_from_this<task> {
     bool is_canceled() const;
 
     task_option_t const &option() const;
-
-    std::shared_ptr<controllable_task> controllable();
 
    private:
     std::atomic<bool> _canceled;
