@@ -12,6 +12,10 @@ struct controllable_task {
 
     virtual void execute() = 0;
     virtual void cancel() = 0;
+
+    static std::shared_ptr<controllable_task> cast(std::shared_ptr<controllable_task> const &task) {
+        return task;
+    }
 };
 
 using task_priority_t = uint32_t;

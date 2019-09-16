@@ -30,10 +30,6 @@ task_option_t const &task::option() const {
     return this->_option;
 }
 
-std::shared_ptr<controllable_task> task::controllable() {
-    return std::dynamic_pointer_cast<controllable_task>(shared_from_this());
-}
-
 void task::execute() {
     if (!this->is_canceled()) {
         if (auto &execution = this->_execution) {
@@ -53,12 +49,16 @@ task_ptr task::make_shared(task::execution_f &&execution, task_option_t opt) {
 
 #pragma mark - queue
 
-struct task_queue::impl : std::enable_shared_from_this<impl> {
+struct task_queue::impl {
     impl(std::size_t const count) : _tasks(count) {
     }
 
     ~impl() {
         this->cancel();
+    }
+
+    void prepare(std::shared_ptr<impl> const &shared_impl) {
+        this->_weak_impl = shared_impl;
     }
 
     void push_back(task_ptr const &task) {
@@ -246,6 +246,7 @@ struct task_queue::impl : std::enable_shared_from_this<impl> {
     }
 
    private:
+    std::weak_ptr<impl> _weak_impl;
     task_ptr _current_task = nullptr;
     std::vector<std::deque<task_ptr>> _tasks;
     bool _suspended = false;
@@ -268,10 +269,10 @@ struct task_queue::impl : std::enable_shared_from_this<impl> {
             if (task) {
                 this->_current_task = task;
 
-                std::thread thread{[weak_task = to_weak(task), weak_queue_impl = to_weak(shared_from_this())]() {
+                std::thread thread{[weak_task = to_weak(task), weak_queue_impl = this->_weak_impl]() {
                     auto task = weak_task.lock();
                     if (task) {
-                        task->controllable()->execute();
+                        controllable_task::cast(task)->execute();
 
                         if (auto queue_impl = weak_queue_impl.lock()) {
                             queue_impl->_task_did_finish(task);
@@ -296,6 +297,7 @@ struct task_queue::impl : std::enable_shared_from_this<impl> {
 };
 
 task_queue::task_queue(std::size_t const count) : _impl(std::make_unique<impl>(count)) {
+    this->_impl->prepare(this->_impl);
 }
 
 void task_queue::push_back(task_ptr const &task) {
