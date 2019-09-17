@@ -20,12 +20,17 @@ struct controllable_task {
 
 using task_priority_t = uint32_t;
 
+class task_cancel_id;
+using task_cancel_id_ptr = std::shared_ptr<task_cancel_id>;
+
 struct task_cancel_id {
     virtual ~task_cancel_id() = default;
     virtual bool is_equal(std::shared_ptr<task_cancel_id> const &) const = 0;
-};
 
-using task_cancel_id_ptr = std::shared_ptr<task_cancel_id>;
+    static task_cancel_id_ptr cast(task_cancel_id_ptr const &cancel_id) {
+        return cancel_id;
+    }
+};
 
 struct task_option_t {
     task_priority_t priority = 0;
