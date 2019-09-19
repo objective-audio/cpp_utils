@@ -4,7 +4,6 @@
 
 #pragma once
 
-#include "yas_base.h"
 #include "yas_boolean.h"
 #include "yas_cf_ref.h"
 #include "yas_cf_utils.h"
@@ -20,7 +19,6 @@
 #include "yas_flagset.h"
 #include "yas_flex_ptr.h"
 #include "yas_flow_graph.h"
-#include "yas_protocol.h"
 #include "yas_result.h"
 #include "yas_stl_utils.h"
 #include "yas_system_path_utils.h"
