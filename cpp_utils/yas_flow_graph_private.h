@@ -238,7 +238,7 @@ struct graph<Waiting, Running, Event>::impl {
 };
 
 template <typename Waiting, typename Running, typename Event>
-graph<Waiting, Running, Event>::graph(Waiting waiting) : _impl(std::make_shared<impl>(std::move(waiting))) {
+graph<Waiting, Running, Event>::graph(Waiting &&waiting) : _impl(std::make_unique<impl>(std::move(waiting))) {
 }
 
 template <typename Waiting, typename Running, typename Event>
@@ -264,5 +264,10 @@ state<Waiting, Running> const &graph<Waiting, Running, Event>::current() const {
 template <typename Waiting, typename Running, typename Event>
 bool graph<Waiting, Running, Event>::contains(state<Waiting, Running> const &state) const {
     return this->_impl->contains(state);
+}
+
+template <typename Waiting, typename Running, typename Event>
+std::shared_ptr<graph<Waiting, Running, Event>> graph<Waiting, Running, Event>::make_shared(Waiting waiting) {
+    return std::shared_ptr<graph<Waiting, Running, Event>>(new graph<Waiting, Running, Event>{std::move(waiting)});
 }
 }  // namespace yas::flow

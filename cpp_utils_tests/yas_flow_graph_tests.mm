@@ -36,9 +36,9 @@ using namespace yas;
         open,
     };
 
-    flow::graph<waiting_state, running_state, test_event> graph{waiting_state::closed};
+    auto graph = flow::graph<waiting_state, running_state, test_event>::make_shared(waiting_state::closed);
 
-    graph.add_waiting(waiting_state::closed, [](auto const &signal) {
+    graph->add_waiting(waiting_state::closed, [](auto const &signal) {
         switch (signal.event) {
             case test_event::open:
                 return signal.run(running_state::opening, signal.event);
@@ -47,7 +47,7 @@ using namespace yas;
         }
     });
 
-    graph.add_waiting(waiting_state::opened, [](auto const &signal) {
+    graph->add_waiting(waiting_state::opened, [](auto const &signal) {
         switch (signal.event) {
             case test_event::open:
                 return signal.stay();
@@ -58,33 +58,33 @@ using namespace yas;
 
     std::vector<running_state> called_states;
 
-    graph.add_running(running_state::opening, [&called_states](auto const &signal) {
+    graph->add_running(running_state::opening, [&called_states](auto const &signal) {
         called_states.push_back(running_state::opening);
         return signal.wait(waiting_state::opened);
     });
 
-    graph.add_running(running_state::closing, [&called_states](auto const &signal) {
+    graph->add_running(running_state::closing, [&called_states](auto const &signal) {
         called_states.push_back(running_state::closing);
         return signal.wait(waiting_state::closed);
     });
 
-    XCTAssertEqual(graph.current().kind(), flow::state_kind::waiting);
-    XCTAssertEqual(graph.current().waiting(), waiting_state::closed);
+    XCTAssertEqual(graph->current().kind(), flow::state_kind::waiting);
+    XCTAssertEqual(graph->current().waiting(), waiting_state::closed);
 
-    graph.run(test_event::close);
+    graph->run(test_event::close);
 
-    XCTAssertEqual(graph.current().kind(), flow::state_kind::waiting);
-    XCTAssertEqual(graph.current().waiting(), waiting_state::closed);
+    XCTAssertEqual(graph->current().kind(), flow::state_kind::waiting);
+    XCTAssertEqual(graph->current().waiting(), waiting_state::closed);
 
-    graph.run(test_event::open);
+    graph->run(test_event::open);
 
-    XCTAssertEqual(graph.current().kind(), flow::state_kind::waiting);
-    XCTAssertEqual(graph.current().waiting(), waiting_state::opened);
+    XCTAssertEqual(graph->current().kind(), flow::state_kind::waiting);
+    XCTAssertEqual(graph->current().waiting(), waiting_state::opened);
 
-    graph.run(test_event::close);
+    graph->run(test_event::close);
 
-    XCTAssertEqual(graph.current().kind(), flow::state_kind::waiting);
-    XCTAssertEqual(graph.current().waiting(), waiting_state::closed);
+    XCTAssertEqual(graph->current().kind(), flow::state_kind::waiting);
+    XCTAssertEqual(graph->current().waiting(), waiting_state::closed);
 }
 
 @end

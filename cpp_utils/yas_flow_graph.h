@@ -123,14 +123,10 @@ struct running_signal {
 
 template <typename Waiting, typename Running, typename Event>
 struct graph final {
-    class impl;
-
     using waiting_signal_t = waiting_signal<Waiting, Running, Event>;
     using running_signal_t = running_signal<Waiting, Running, Event>;
     using waiting_handler_f = std::function<waiting_out(waiting_signal_t const &)>;
     using running_handler_f = std::function<running_out(running_signal_t const &)>;
-
-    graph(Waiting);
 
     void add_waiting(Waiting, waiting_handler_f);
     void add_running(Running, running_handler_f);
@@ -141,8 +137,14 @@ struct graph final {
 
     bool contains(state<Waiting, Running> const &) const;
 
+    static std::shared_ptr<graph> make_shared(Waiting);
+
    private:
-    std::shared_ptr<impl> _impl;
+    class impl;
+
+    std::unique_ptr<impl> _impl;
+
+    explicit graph(Waiting &&);
 };
 }  // namespace yas::flow
 
