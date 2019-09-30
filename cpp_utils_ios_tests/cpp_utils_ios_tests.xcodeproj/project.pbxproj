@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		B6270D0D22EC7B7E0029810E /* yas_flow_graph_tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = B6270D0C22EC7B7E0029810E /* yas_flow_graph_tests.mm */; };
-		B6A28C0922D37D0000086ECF /* yas_weakable_tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = B6A28C0822D37D0000086ECF /* yas_weakable_tests.mm */; };
 		B6BBCF8D227AA240002B6396 /* yas_file_path_tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = B6BBCF8C227AA240002B6396 /* yas_file_path_tests.mm */; };
 		B6D4C5CA21E9A5A0004A95A8 /* cpp_utils.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B6D4C5C921E9A5A0004A95A8 /* cpp_utils.framework */; };
 		B6D4C5E921E9A5D2004A95A8 /* yas_objc_ptr_tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = B6D4C5CC21E9A5D2004A95A8 /* yas_objc_ptr_tests.mm */; };
@@ -44,7 +43,6 @@
 
 /* Begin PBXFileReference section */
 		B6270D0C22EC7B7E0029810E /* yas_flow_graph_tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = yas_flow_graph_tests.mm; sourceTree = "<group>"; };
-		B6A28C0822D37D0000086ECF /* yas_weakable_tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = yas_weakable_tests.mm; sourceTree = "<group>"; };
 		B6BBCF8C227AA240002B6396 /* yas_file_path_tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = yas_file_path_tests.mm; sourceTree = "<group>"; };
 		B6D4C5BF21E9A544004A95A8 /* cpp_utils_ios_tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = cpp_utils_ios_tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B6D4C5C421E9A544004A95A8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -160,7 +158,6 @@
 				B6D4C5D421E9A5D2004A95A8 /* yas_unless_tests.mm */,
 				B6D4C5D621E9A5D2004A95A8 /* yas_url_tests.mm */,
 				B6D4C5DC21E9A5D2004A95A8 /* yas_version_tests.mm */,
-				B6A28C0822D37D0000086ECF /* yas_weakable_tests.mm */,
 			);
 			name = cpp_utils_tests;
 			path = ../../cpp_utils_tests;
@@ -282,7 +279,6 @@
 				B6FA87B1227317BE00A77872 /* yas_thread_tests.mm in Sources */,
 				B6D4C5EB21E9A5D2004A95A8 /* yas_type_traits_tests.mm in Sources */,
 				B6D4C5F221E9A5D2004A95A8 /* yas_delaying_caller_tests.mm in Sources */,
-				B6A28C0922D37D0000086ECF /* yas_weakable_tests.mm in Sources */,
 				B6D4C60421E9A5D2004A95A8 /* yas_system_path_utils_tests.mm in Sources */,
 				B6D4C5FA21E9A5D2004A95A8 /* yas_to_integer_tests.mm in Sources */,
 			);
