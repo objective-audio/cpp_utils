@@ -6,7 +6,7 @@
 
 using namespace yas;
 
-delaying_caller::delaying_caller() : _handler(nullptr), _push_count(0) {
+delaying_caller::delaying_caller() : _handler(std::nullopt), _push_count(0) {
 }
 
 void delaying_caller::request(handler_f handler) {
@@ -26,7 +26,7 @@ void delaying_caller::request(handler_f handler) {
 }
 
 void delaying_caller::cancel() {
-    _handler = nullptr;
+    _handler = std::nullopt;
 }
 
 void delaying_caller::push() {
@@ -41,7 +41,7 @@ void delaying_caller::pop() {
     --_push_count;
 
     if (_push_count == 0 && _handler) {
-        _handler();
-        _handler = nullptr;
+        _handler.value()();
+        _handler = std::nullopt;
     }
 }

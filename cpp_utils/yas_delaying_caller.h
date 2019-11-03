@@ -5,6 +5,7 @@
 #pragma once
 
 #include <functional>
+#include <optional>
 
 namespace yas {
 class delaying_caller {
@@ -20,7 +21,7 @@ class delaying_caller {
     void pop();
 
    private:
-    handler_f _handler;
+    std::optional<handler_f> _handler;
     std::size_t _push_count;
 };
 }  // namespace yas
