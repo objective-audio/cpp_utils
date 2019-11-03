@@ -14,34 +14,34 @@ void delaying_caller::request(handler_f handler) {
         throw "argument is null.";
     }
 
-    if (_push_count == 0) {
-        if (_handler) {
+    if (this->_push_count == 0) {
+        if (this->_handler) {
             throw "_handler always exists.";
         }
 
         handler();
     } else {
-        _handler = std::move(handler);
+        this->_handler = std::move(handler);
     }
 }
 
 void delaying_caller::cancel() {
-    _handler = std::nullopt;
+    this->_handler = std::nullopt;
 }
 
 void delaying_caller::push() {
-    ++_push_count;
+    ++this->_push_count;
 }
 
 void delaying_caller::pop() {
-    if (_push_count == 0) {
+    if (this->_push_count == 0) {
         throw "_push_count decrease failed";
     }
 
-    --_push_count;
+    --this->_push_count;
 
-    if (_push_count == 0 && _handler) {
-        _handler.value()();
-        _handler = std::nullopt;
+    if (this->_push_count == 0 && this->_handler) {
+        this->_handler.value()();
+        this->_handler = std::nullopt;
     }
 }
