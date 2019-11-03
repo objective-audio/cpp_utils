@@ -6,42 +6,42 @@
 
 using namespace yas;
 
-delaying_caller::delaying_caller() : _handler(nullptr), _push_count(0) {
+delaying_caller::delaying_caller() : _handler(std::nullopt), _push_count(0) {
 }
 
 void delaying_caller::request(handler_f handler) {
     if (!handler) {
-        throw "argument is null.";
+        throw std::invalid_argument("argument is null.");
     }
 
-    if (_push_count == 0) {
-        if (_handler) {
-            throw "_handler always exists.";
+    if (this->_push_count == 0) {
+        if (this->_handler) {
+            throw std::runtime_error("_handler always exists.");
         }
 
         handler();
     } else {
-        _handler = std::move(handler);
+        this->_handler = std::move(handler);
     }
 }
 
 void delaying_caller::cancel() {
-    _handler = nullptr;
+    this->_handler = std::nullopt;
 }
 
 void delaying_caller::push() {
-    ++_push_count;
+    ++this->_push_count;
 }
 
 void delaying_caller::pop() {
-    if (_push_count == 0) {
-        throw "_push_count decrease failed";
+    if (this->_push_count == 0) {
+        throw std::runtime_error("_push_count decrease failed");
     }
 
-    --_push_count;
+    --this->_push_count;
 
-    if (_push_count == 0 && _handler) {
-        _handler();
-        _handler = nullptr;
+    if (this->_push_count == 0 && this->_handler) {
+        this->_handler.value()();
+        this->_handler = std::nullopt;
     }
 }

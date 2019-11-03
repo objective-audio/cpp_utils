@@ -17,52 +17,52 @@ cf_ref_impl::cf_ref_impl(std::nullptr_t) : _obj(nullptr) {
 }
 
 cf_ref_impl::~cf_ref_impl() {
-    if (_obj) {
-        CFRelease(_obj);
-        _obj = nullptr;
+    if (this->_obj) {
+        CFRelease(this->_obj);
+        this->_obj = nullptr;
     }
 }
 
 void cf_ref_impl::set_object(CFTypeRef const obj) {
-    std::lock_guard<std::recursive_mutex> lock(_mutex);
+    std::lock_guard<std::recursive_mutex> lock(this->_mutex);
     if (obj) {
         CFRetain(obj);
     }
 
-    if (_obj) {
-        CFRelease(_obj);
+    if (this->_obj) {
+        CFRelease(this->_obj);
     }
 
-    _obj = obj;
+    this->_obj = obj;
 }
 
 void cf_ref_impl::move_object(CFTypeRef const obj) {
-    std::lock_guard<std::recursive_mutex> lock(_mutex);
+    std::lock_guard<std::recursive_mutex> lock(this->_mutex);
 
-    if (_obj) {
-        CFRelease(_obj);
+    if (this->_obj) {
+        CFRelease(this->_obj);
     }
 
-    _obj = obj;
+    this->_obj = obj;
 }
 
 CFTypeRef cf_ref_impl::object() {
-    std::lock_guard<std::recursive_mutex> lock(_mutex);
-    return _obj;
+    std::lock_guard<std::recursive_mutex> lock(this->_mutex);
+    return this->_obj;
 }
 
 CFTypeRef cf_ref_impl::retained_object() {
-    std::lock_guard<std::recursive_mutex> lock(_mutex);
-    if (_obj) {
-        return CFRetain(_obj);
+    std::lock_guard<std::recursive_mutex> lock(this->_mutex);
+    if (this->_obj) {
+        return CFRetain(this->_obj);
     }
     return nullptr;
 }
 
 CFTypeRef cf_ref_impl::autoreleased_object() {
-    std::lock_guard<std::recursive_mutex> lock(_mutex);
-    if (_obj) {
-        return CFAutorelease(CFRetain(_obj));
+    std::lock_guard<std::recursive_mutex> lock(this->_mutex);
+    if (this->_obj) {
+        return CFAutorelease(CFRetain(this->_obj));
     }
     return nullptr;
 }
