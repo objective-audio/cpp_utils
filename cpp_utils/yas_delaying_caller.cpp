@@ -11,12 +11,12 @@ delaying_caller::delaying_caller() : _handler(std::nullopt), _push_count(0) {
 
 void delaying_caller::request(handler_f handler) {
     if (!handler) {
-        throw "argument is null.";
+        throw std::invalid_argument("argument is null.");
     }
 
     if (this->_push_count == 0) {
         if (this->_handler) {
-            throw "_handler always exists.";
+            throw std::runtime_error("_handler always exists.");
         }
 
         handler();
@@ -35,7 +35,7 @@ void delaying_caller::push() {
 
 void delaying_caller::pop() {
     if (this->_push_count == 0) {
-        throw "_push_count decrease failed";
+        throw std::runtime_error("_push_count decrease failed");
     }
 
     --this->_push_count;
