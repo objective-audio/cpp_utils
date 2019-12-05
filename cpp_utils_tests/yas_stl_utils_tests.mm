@@ -80,6 +80,36 @@
     XCTAssertThrows(filtered_map.at(4));
 }
 
+- (void)test_first_vector {
+    std::vector<int> vec{1, 2, 3, 4, 5};
+    auto const first_value = yas::first(vec, [](auto const &val) { return val > 3; });
+
+    XCTAssertEqual(first_value, 4);
+}
+
+- (void)test_first_vector_not_found {
+    std::vector<int> vec{1, 2, 3, 4, 5};
+    auto const first_value = yas::first(vec, [](auto const &val) { return val > 5; });
+
+    XCTAssertFalse(first_value.has_value());
+}
+
+- (void)test_first_map {
+    std::map<int, int> map{{0, 12}, {1, 11}, {2, 10}, {3, 9}, {4, 8}};
+    auto const first_value = yas::first(map, [](auto const &pair) { return pair.second <= 10; });
+
+    XCTAssertTrue(first_value.has_value());
+    XCTAssertEqual(first_value->first, 2);
+    XCTAssertEqual(first_value->second, 10);
+}
+
+- (void)test_first_map_not_found {
+    std::map<int, int> map{{0, 12}, {1, 11}, {2, 10}, {3, 9}, {4, 8}};
+    auto const first_value = yas::first(map, [](auto const &pair) { return pair.second < 8; });
+
+    XCTAssertFalse(first_value.has_value());
+}
+
 - (void)test_erase_at {
     std::vector<int> vec{4, 1, 6, 7};
 
