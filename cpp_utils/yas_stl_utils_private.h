@@ -61,6 +61,16 @@ T filter(T const &collection, P predicate) {
     return filtered;
 }
 
+template <typename T, typename P>
+std::optional<typename T::value_type> first(T const &collection, P predicate) {
+    for (auto &obj : collection) {
+        if (predicate(obj)) {
+            return obj;
+        }
+    }
+    return std::nullopt;
+}
+
 template <typename T>
 void erase_at(std::vector<T> &vector, std::size_t const idx) {
     vector.erase(vector.begin() + idx);
