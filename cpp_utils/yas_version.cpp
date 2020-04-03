@@ -3,7 +3,9 @@
 //
 
 #include "yas_version.h"
+
 #include <sstream>
+
 #include "yas_each_index.h"
 #include "yas_stl_utils.h"
 

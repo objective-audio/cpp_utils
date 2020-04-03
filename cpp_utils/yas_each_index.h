@@ -5,6 +5,7 @@
 #pragma once
 
 #include <iterator>
+
 #include "yas_type_traits.h"
 
 namespace yas {

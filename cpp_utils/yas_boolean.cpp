@@ -3,6 +3,7 @@
 //
 
 #include "yas_boolean.h"
+
 #include <utility>
 
 using namespace yas;

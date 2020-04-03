@@ -3,6 +3,7 @@
 //
 
 #include "yas_each_dictionary.h"
+
 #include "yas_each_index.h"
 
 using namespace yas;

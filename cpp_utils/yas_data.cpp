@@ -3,6 +3,7 @@
 //
 
 #include "yas_data.h"
+
 #include <Accelerate/Accelerate.h>
 
 using namespace yas;

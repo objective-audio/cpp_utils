@@ -5,6 +5,7 @@
 #pragma once
 
 #include <functional>
+
 #include "yas_task_protocol.h"
 
 namespace yas {
