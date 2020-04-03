@@ -5,6 +5,7 @@
 #pragma once
 
 #include <CoreFoundation/CoreFoundation.h>
+
 #include <string>
 #include <unordered_map>
 #include <vector>

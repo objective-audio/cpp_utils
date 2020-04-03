@@ -5,6 +5,7 @@
 #pragma once
 
 #include <CoreFoundation/CoreFoundation.h>
+
 #include "yas_each_index.h"
 
 template <typename T>

@@ -5,6 +5,7 @@
 #pragma once
 
 #include <string>
+
 #include "yas_result.h"
 
 namespace yas {
