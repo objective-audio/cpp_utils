@@ -33,10 +33,21 @@ namespace test {
     [super tearDown];
 }
 
-- (void)test_create {
+- (void)test_construct {
     flagset<test::test_enum> flagset;
 
     XCTAssertEqual(flagset.flags.size(), 3);
+    XCTAssertFalse(flagset.flags.any());
+}
+
+- (void)test_construct_with_initializer_list {
+    flagset<test::test_enum> flagset{test::test_enum::flag_a, test::test_enum::flag_b};
+
+    XCTAssertEqual(flagset.flags.size(), 3);
+
+    XCTAssertTrue(flagset.test(test::test_enum::flag_a));
+    XCTAssertTrue(flagset.test(test::test_enum::flag_b));
+    XCTAssertFalse(flagset.test(test::test_enum::flag_c));
 }
 
 - (void)test_set {
@@ -46,6 +57,12 @@ namespace test {
 
     XCTAssertTrue(flagset.test(test::test_enum::flag_a));
     XCTAssertFalse(flagset.test(test::test_enum::flag_b));
+    XCTAssertFalse(flagset.test(test::test_enum::flag_c));
+
+    flagset.set(test::test_enum::flag_b);
+
+    XCTAssertTrue(flagset.test(test::test_enum::flag_a));
+    XCTAssertTrue(flagset.test(test::test_enum::flag_b));
     XCTAssertFalse(flagset.test(test::test_enum::flag_c));
 }
 
