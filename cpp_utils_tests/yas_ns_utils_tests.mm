@@ -16,6 +16,8 @@ using namespace yas;
 - (void)test_to_ns_object_from_string {
     auto ns_object = to_ns_object("test_string");
     XCTAssertEqualObjects(ns_object.object(), @"test_string");
+
+    XCTAssertEqualObjects(to_ns_object("autoreleased_string").autoreleased_object(), @"autoreleased_string");
 }
 
 @end
