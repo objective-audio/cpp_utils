@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B61C30BF244C27AE00510913 /* yas_ns_utils.h in Headers */ = {isa = PBXBuildFile; fileRef = B61C30BD244C27AE00510913 /* yas_ns_utils.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B61C30C0244C27AE00510913 /* yas_ns_utils.mm in Sources */ = {isa = PBXBuildFile; fileRef = B61C30BE244C27AE00510913 /* yas_ns_utils.mm */; };
 		B625259F21DCF4BF00EE2ECA /* yas_cpp_utils_umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = B625259E21DCF4BF00EE2ECA /* yas_cpp_utils_umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B6359D0521DB721B00481348 /* cpp_utils.h in Headers */ = {isa = PBXBuildFile; fileRef = B6359D0321DB721B00481348 /* cpp_utils.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B6359DCB21DB728300481348 /* yas_to_string.h in Headers */ = {isa = PBXBuildFile; fileRef = B6359D8B21DB728300481348 /* yas_to_string.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -78,6 +80,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		B61C30BD244C27AE00510913 /* yas_ns_utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = yas_ns_utils.h; sourceTree = "<group>"; };
+		B61C30BE244C27AE00510913 /* yas_ns_utils.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = yas_ns_utils.mm; sourceTree = "<group>"; };
 		B625259E21DCF4BF00EE2ECA /* yas_cpp_utils_umbrella.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = yas_cpp_utils_umbrella.h; sourceTree = "<group>"; };
 		B6359D0021DB721B00481348 /* cpp_utils.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = cpp_utils.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B6359D0321DB721B00481348 /* cpp_utils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = cpp_utils.h; sourceTree = "<group>"; };
@@ -228,13 +232,12 @@
 				B6359DAE21DB728300481348 /* yas_flow_graph_private.h */,
 				B6B33BE3227F31CD004F87CD /* yas_flow_graph.cpp */,
 				B6359DC621DB728300481348 /* yas_flow_graph.h */,
+				B61C30BD244C27AE00510913 /* yas_ns_utils.h */,
+				B61C30BE244C27AE00510913 /* yas_ns_utils.mm */,
 				B6359D9521DB728300481348 /* yas_objc_cast.h */,
 				B6359DC121DB728300481348 /* yas_objc_ptr_private.h */,
 				B6359DA621DB728300481348 /* yas_objc_ptr.h */,
 				B6359DC221DB728300481348 /* yas_objc_ptr.mm */,
-				B6359D9821DB728300481348 /* yas_task_protocol.h */,
-				B6359DAB21DB728300481348 /* yas_task.cpp */,
-				B6359DC921DB728300481348 /* yas_task.h */,
 				B6359D9F21DB728300481348 /* yas_result_private.h */,
 				B6359DA821DB728300481348 /* yas_result.h */,
 				B6359DBB21DB728300481348 /* yas_stl_utils_private.h */,
@@ -242,6 +245,9 @@
 				B6359DB721DB728300481348 /* yas_stl_utils.h */,
 				B6359DCA21DB728300481348 /* yas_system_path_utils.h */,
 				B6359DC821DB728300481348 /* yas_system_path_utils.mm */,
+				B6359D9821DB728300481348 /* yas_task_protocol.h */,
+				B6359DAB21DB728300481348 /* yas_task.cpp */,
+				B6359DC921DB728300481348 /* yas_task.h */,
 				B6FA87AD227317A400A77872 /* yas_thread.h */,
 				B6FA87AC227317A400A77872 /* yas_thread.mm */,
 				B6359DA421DB728300481348 /* yas_timer.h */,
@@ -306,6 +312,7 @@
 				B6BBCF8A227AA224002B6396 /* yas_file_path.h in Headers */,
 				B6359E0921DB728300481348 /* yas_task.h in Headers */,
 				B6359DDA21DB728300481348 /* yas_type_traits.h in Headers */,
+				B61C30BF244C27AE00510913 /* yas_ns_utils.h in Headers */,
 				B6359DD821DB728300481348 /* yas_task_protocol.h in Headers */,
 				B6359DFA21DB728300481348 /* yas_types.h in Headers */,
 				B6359DDB21DB728300481348 /* yas_each_index.h in Headers */,
@@ -408,6 +415,7 @@
 				B6B33BE2227F31C3004F87CD /* yas_to_integer.cpp in Sources */,
 				B6359DE721DB728300481348 /* yas_flex_ptr.cpp in Sources */,
 				B6BBCF8B227AA224002B6396 /* yas_file_path.cpp in Sources */,
+				B61C30C0244C27AE00510913 /* yas_ns_utils.mm in Sources */,
 				B6359E0221DB728300481348 /* yas_objc_ptr.mm in Sources */,
 				B6359E0721DB728300481348 /* yas_file_manager.mm in Sources */,
 				B6359DE021DB728300481348 /* yas_version.cpp in Sources */,

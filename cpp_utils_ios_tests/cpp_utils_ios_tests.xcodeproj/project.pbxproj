@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B61C30C4244C324D00510913 /* yas_ns_utils_tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = B61C30C3244C324D00510913 /* yas_ns_utils_tests.mm */; };
 		B6270D0D22EC7B7E0029810E /* yas_flow_graph_tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = B6270D0C22EC7B7E0029810E /* yas_flow_graph_tests.mm */; };
 		B6BBCF8D227AA240002B6396 /* yas_file_path_tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = B6BBCF8C227AA240002B6396 /* yas_file_path_tests.mm */; };
 		B6D4C5CA21E9A5A0004A95A8 /* cpp_utils.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B6D4C5C921E9A5A0004A95A8 /* cpp_utils.framework */; };
@@ -42,6 +43,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		B61C30C3244C324D00510913 /* yas_ns_utils_tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = yas_ns_utils_tests.mm; sourceTree = "<group>"; };
 		B6270D0C22EC7B7E0029810E /* yas_flow_graph_tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = yas_flow_graph_tests.mm; sourceTree = "<group>"; };
 		B6BBCF8C227AA240002B6396 /* yas_file_path_tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = yas_file_path_tests.mm; sourceTree = "<group>"; };
 		B6D4C5BF21E9A544004A95A8 /* cpp_utils_ios_tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = cpp_utils_ios_tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -158,6 +160,7 @@
 				B6D4C5D421E9A5D2004A95A8 /* yas_unless_tests.mm */,
 				B6D4C5D621E9A5D2004A95A8 /* yas_url_tests.mm */,
 				B6D4C5DC21E9A5D2004A95A8 /* yas_version_tests.mm */,
+				B61C30C3244C324D00510913 /* yas_ns_utils_tests.mm */,
 			);
 			name = cpp_utils_tests;
 			path = ../../cpp_utils_tests;
@@ -262,6 +265,7 @@
 				B6D4C5FB21E9A5D2004A95A8 /* yas_each_dictionary_tests.mm in Sources */,
 				B6D4C60321E9A5D2004A95A8 /* yas_data_tests.mm in Sources */,
 				B6D4C5F821E9A5D2004A95A8 /* yas_objc_cast_tests.mm in Sources */,
+				B61C30C4244C324D00510913 /* yas_ns_utils_tests.mm in Sources */,
 				B6D4C5FE21E9A5D2004A95A8 /* yas_cf_tests.mm in Sources */,
 				B6D4C5F921E9A5D2004A95A8 /* yas_version_tests.mm in Sources */,
 				B6D4C5F021E9A5D2004A95A8 /* yas_to_floating_point_tests.mm in Sources */,
