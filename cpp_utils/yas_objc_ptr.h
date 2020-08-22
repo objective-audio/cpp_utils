@@ -60,4 +60,4 @@ template <typename T>
 objc_ptr<T> objc_ptr_with_move_object(T const obj);
 }  // namespace yas
 
-#include "yas_objc_ptr_private.h"
+#include <cpp_utils/yas_objc_ptr_private.h>

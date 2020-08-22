@@ -4,8 +4,8 @@
 
 #pragma once
 
+#include <cpp_utils/yas_objc_ptr.h>
 #include <string>
-#include "yas_objc_ptr.h"
 
 @class NSString;
 

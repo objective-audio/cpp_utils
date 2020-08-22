@@ -4,9 +4,9 @@
 
 #pragma once
 
-#include <functional>
+#include <cpp_utils/yas_task_protocol.h>
 
-#include "yas_task_protocol.h"
+#include <functional>
 
 namespace yas {
 class task;

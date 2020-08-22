@@ -4,9 +4,9 @@
 
 #pragma once
 
-#include <vector>
+#include <cpp_utils/yas_result.h>
 
-#include "yas_result.h"
+#include <vector>
 
 namespace yas {
 template <typename T>
@@ -64,4 +64,4 @@ struct data_copy {
 };
 }  // namespace yas
 
-#include "yas_data_private.h"
+#include <cpp_utils/yas_data_private.h>

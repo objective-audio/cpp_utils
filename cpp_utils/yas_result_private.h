@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "yas_exception.h"
+#include <cpp_utils/yas_exception.h>
 
 namespace yas {
 template <typename T, typename U>
