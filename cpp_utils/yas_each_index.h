@@ -4,9 +4,9 @@
 
 #pragma once
 
-#include <iterator>
+#include <cpp_utils/yas_type_traits.h>
 
-#include "yas_type_traits.h"
+#include <iterator>
 
 namespace yas {
 template <typename T>
@@ -55,4 +55,4 @@ template <typename T>
 each_index<T> make_each_index(T const start, T const end);
 }  // namespace yas
 
-#include "yas_each_index_private.h"
+#include <cpp_utils/yas_each_index_private.h>

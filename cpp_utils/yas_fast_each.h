@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "yas_type_traits.h"
+#include <cpp_utils/yas_type_traits.h>
 
 namespace yas {
 template <typename T, typename Enable = void>
@@ -55,4 +55,4 @@ fast_each<T> make_fast_each_ptr(T ptr, std::size_t const end);
 #define yas_each_value(__v) ((__v)._ptr[(__v)._index])
 #define yas_each_ptr(__v) (&yas_each_value(__v))
 
-#include "yas_fast_each_private.h"
+#include <cpp_utils/yas_fast_each_private.h>
