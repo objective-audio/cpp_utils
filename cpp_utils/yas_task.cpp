@@ -199,7 +199,7 @@ struct task_queue::impl {
 
             if (task_exists) {
                 if (this->_suspended) {
-                    throw "task_queue is suspended.";
+                    throw std::runtime_error("task_queue is suspended.");
                 }
                 std::this_thread::yield();
             } else {
