@@ -44,7 +44,7 @@ class result {
 };
 
 template <typename... Args>
-result<std::tuple<Args...>, std::nullptr_t> where(Args &&... args);
+result<std::tuple<Args...>, std::nullptr_t> where(Args &&...args);
 }  // namespace yas
 
 #include <cpp_utils/yas_result_private.h>

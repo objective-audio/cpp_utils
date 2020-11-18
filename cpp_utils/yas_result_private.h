@@ -132,7 +132,7 @@ struct _where_impl<Tpl, 0> {
 };
 
 template <typename... Args>
-result<std::tuple<Args...>, std::nullptr_t> where(Args &&... args) {
+result<std::tuple<Args...>, std::nullptr_t> where(Args &&...args) {
     auto tpl = std::forward_as_tuple(args...);
 
     if (_where_impl<decltype(tpl)>::value(tpl)) {
