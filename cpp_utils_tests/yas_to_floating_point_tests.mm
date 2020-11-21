@@ -3,7 +3,7 @@
 //
 
 #import <XCTest/XCTest.h>
-#import <cpp_utils/yas_to_floating_point.h>
+#import <cpp_utils/cpp_utils.h>
 
 using namespace yas;
 

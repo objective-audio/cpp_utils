@@ -26,6 +26,7 @@
 #include <cpp_utils/yas_thread.h>
 #include <cpp_utils/yas_timer.h>
 #include <cpp_utils/yas_to_bool.h>
+#include <cpp_utils/yas_to_floating_point.h>
 #include <cpp_utils/yas_to_integer.h>
 #include <cpp_utils/yas_to_string.h>
 #include <cpp_utils/yas_type_traits.h>
