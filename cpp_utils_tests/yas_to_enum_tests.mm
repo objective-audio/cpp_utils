@@ -3,7 +3,7 @@
 //
 
 #import <XCTest/XCTest.h>
-#import <cpp_utils/yas_to_bool.h>
+#import <cpp_utils/cpp_utils.h>
 
 @interface yas_to_enum_tests : XCTestCase
 

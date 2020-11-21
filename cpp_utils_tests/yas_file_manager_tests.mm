@@ -3,11 +3,7 @@
 //
 
 #import <XCTest/XCTest.h>
-#import <cpp_utils/yas_cf_utils.h>
-#import <cpp_utils/yas_file_manager.h>
-#import <cpp_utils/yas_file_path.h>
-#import <cpp_utils/yas_stl_utils.h>
-#import <cpp_utils/yas_system_path_utils.h>
+#import <cpp_utils/cpp_utils.h>
 
 using namespace yas;
 

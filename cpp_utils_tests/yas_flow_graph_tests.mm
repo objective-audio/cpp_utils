@@ -3,7 +3,7 @@
 //
 
 #import <XCTest/XCTest.h>
-#import <cpp_utils/yas_flow_graph.h>
+#import <cpp_utils/cpp_utils.h>
 #import <vector>
 
 using namespace yas;

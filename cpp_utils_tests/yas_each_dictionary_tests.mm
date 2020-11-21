@@ -3,7 +3,7 @@
 //
 
 #import <XCTest/XCTest.h>
-#import <cpp_utils/yas_each_dictionary.h>
+#import <cpp_utils/cpp_utils.h>
 
 @interface yas_each_dictionary_tests : XCTestCase
 

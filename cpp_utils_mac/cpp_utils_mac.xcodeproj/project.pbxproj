@@ -75,6 +75,7 @@
 		B6B33BE0227F28DA004F87CD /* yas_flow_graph.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B6B33BDF227F28DA004F87CD /* yas_flow_graph.cpp */; };
 		B6BBCF84227A7FD5002B6396 /* yas_file_path.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B6BBCF82227A7FD5002B6396 /* yas_file_path.cpp */; };
 		B6BBCF85227A7FD5002B6396 /* yas_file_path.h in Headers */ = {isa = PBXBuildFile; fileRef = B6BBCF83227A7FD5002B6396 /* yas_file_path.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B6F7DD672568A7120059DDF9 /* yas_to_floating_point.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B6F7DD662568A7120059DDF9 /* yas_to_floating_point.cpp */; };
 		B6FA87A822728C0A00A77872 /* yas_thread.mm in Sources */ = {isa = PBXBuildFile; fileRef = B6FA87A622728C0A00A77872 /* yas_thread.mm */; };
 		B6FA87A922728C0A00A77872 /* yas_thread.h in Headers */ = {isa = PBXBuildFile; fileRef = B6FA87A722728C0A00A77872 /* yas_thread.h */; settings = {ATTRIBUTES = (Public, ); }; };
 /* End PBXBuildFile section */
@@ -150,6 +151,7 @@
 		B6B33BDF227F28DA004F87CD /* yas_flow_graph.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = yas_flow_graph.cpp; sourceTree = "<group>"; };
 		B6BBCF82227A7FD5002B6396 /* yas_file_path.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = yas_file_path.cpp; sourceTree = "<group>"; };
 		B6BBCF83227A7FD5002B6396 /* yas_file_path.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = yas_file_path.h; sourceTree = "<group>"; };
+		B6F7DD662568A7120059DDF9 /* yas_to_floating_point.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = yas_to_floating_point.cpp; sourceTree = "<group>"; };
 		B6FA87A622728C0A00A77872 /* yas_thread.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = yas_thread.mm; sourceTree = "<group>"; };
 		B6FA87A722728C0A00A77872 /* yas_thread.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = yas_thread.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -253,6 +255,7 @@
 				B6359D2321DB727900481348 /* yas_timer.h */,
 				B6359D0D21DB727900481348 /* yas_timer.mm */,
 				B6359D0F21DB727900481348 /* yas_to_bool.h */,
+				B6F7DD662568A7120059DDF9 /* yas_to_floating_point.cpp */,
 				B6359D2F21DB727900481348 /* yas_to_floating_point.h */,
 				B6B33BDD227F277D004F87CD /* yas_to_integer.cpp */,
 				B6359D4321DB727900481348 /* yas_to_integer.h */,
@@ -423,6 +426,7 @@
 				B6359D8421DB727A00481348 /* yas_boolean.cpp in Sources */,
 				B6359D5021DB727A00481348 /* yas_delaying_caller.cpp in Sources */,
 				B6359D6A21DB727A00481348 /* yas_task.cpp in Sources */,
+				B6F7DD672568A7120059DDF9 /* yas_to_floating_point.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
