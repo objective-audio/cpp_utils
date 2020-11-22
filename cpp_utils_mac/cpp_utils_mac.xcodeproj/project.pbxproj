@@ -68,6 +68,8 @@
 		B6359D8921DB727A00481348 /* yas_system_path_utils.h in Headers */ = {isa = PBXBuildFile; fileRef = B6359D4921DB727900481348 /* yas_system_path_utils.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B6359E0D21DB729E00481348 /* objc_utils.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B6359E0C21DB729E00481348 /* objc_utils.framework */; };
 		B6359E2321DB784F00481348 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B6359E0E21DB733200481348 /* Accelerate.framework */; };
+		B6777F4E256A5CA500514E81 /* yas_background_queue.h in Headers */ = {isa = PBXBuildFile; fileRef = B6777F4C256A5CA500514E81 /* yas_background_queue.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B6777F4F256A5CA500514E81 /* yas_background_queue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B6777F4D256A5CA500514E81 /* yas_background_queue.cpp */; };
 		B68F80F7244C14A3008A912A /* yas_ns_utils.mm in Sources */ = {isa = PBXBuildFile; fileRef = B68F80F5244C14A3008A912A /* yas_ns_utils.mm */; };
 		B68F80F8244C14A3008A912A /* yas_ns_utils.h in Headers */ = {isa = PBXBuildFile; fileRef = B68F80F6244C14A3008A912A /* yas_ns_utils.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B6B33BDC227F1DFA004F87CD /* yas_cpp_utils_umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = B625259D21DCF48800EE2ECA /* yas_cpp_utils_umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -145,6 +147,8 @@
 		B6359D4921DB727900481348 /* yas_system_path_utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = yas_system_path_utils.h; sourceTree = "<group>"; };
 		B6359E0C21DB729E00481348 /* objc_utils.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = objc_utils.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B6359E0E21DB733200481348 /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
+		B6777F4C256A5CA500514E81 /* yas_background_queue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = yas_background_queue.h; sourceTree = "<group>"; };
+		B6777F4D256A5CA500514E81 /* yas_background_queue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = yas_background_queue.cpp; sourceTree = "<group>"; };
 		B68F80F5244C14A3008A912A /* yas_ns_utils.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = yas_ns_utils.mm; sourceTree = "<group>"; };
 		B68F80F6244C14A3008A912A /* yas_ns_utils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = yas_ns_utils.h; sourceTree = "<group>"; };
 		B6B33BDD227F277D004F87CD /* yas_to_integer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = yas_to_integer.cpp; sourceTree = "<group>"; };
@@ -199,6 +203,8 @@
 		B6359D0921DB727900481348 /* cpp_utils */ = {
 			isa = PBXGroup;
 			children = (
+				B6777F4D256A5CA500514E81 /* yas_background_queue.cpp */,
+				B6777F4C256A5CA500514E81 /* yas_background_queue.h */,
 				B6359D4421DB727900481348 /* yas_boolean.cpp */,
 				B6359D1521DB727900481348 /* yas_boolean.h */,
 				B6359D1321DB727900481348 /* yas_cf_ref_private.h */,
@@ -300,6 +306,7 @@
 				B6359D5321DB727A00481348 /* yas_cf_ref_private.h in Headers */,
 				B6359D6D21DB727A00481348 /* yas_flow_graph_private.h in Headers */,
 				B6359D8321DB727A00481348 /* yas_to_integer.h in Headers */,
+				B6777F4E256A5CA500514E81 /* yas_background_queue.h in Headers */,
 				B6359D7421DB727A00481348 /* yas_fast_each_private.h in Headers */,
 				B6359D6121DB727A00481348 /* yas_file_manager.h in Headers */,
 				B6359D4A21DB727A00481348 /* yas_to_string.h in Headers */,
@@ -418,6 +425,7 @@
 				B6359D7F21DB727A00481348 /* yas_cf_ref.cpp in Sources */,
 				B6B33BDE227F277D004F87CD /* yas_to_integer.cpp in Sources */,
 				B6359D6621DB727A00481348 /* yas_flex_ptr.cpp in Sources */,
+				B6777F4F256A5CA500514E81 /* yas_background_queue.cpp in Sources */,
 				B6359D8121DB727A00481348 /* yas_objc_ptr.mm in Sources */,
 				B6359D8621DB727A00481348 /* yas_file_manager.mm in Sources */,
 				B6359D5F21DB727A00481348 /* yas_version.cpp in Sources */,
