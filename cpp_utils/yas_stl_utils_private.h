@@ -72,6 +72,11 @@ std::optional<typename T::value_type> first(T const &collection, P predicate) {
 }
 
 template <typename T>
+void reverse(std::vector<T> &vector) {
+    std::reverse(vector.begin(), vector.end());
+}
+
+template <typename T>
 void erase_at(std::vector<T> &vector, std::size_t const idx) {
     vector.erase(vector.begin() + idx);
 }
