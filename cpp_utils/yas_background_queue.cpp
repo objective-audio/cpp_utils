@@ -13,7 +13,7 @@
 using namespace yas;
 
 struct background_queue::context {
-    std::vector<task_f> const tasks;
+    std::vector<task_f> tasks;
     std::atomic<bool> is_continue{true};
 
     context(std::vector<task_f> &&tasks) : tasks(std::move(tasks)) {
@@ -52,6 +52,8 @@ void background_queue::start() {
         while (context->is_continue) {
             while (context->is_continue) {
                 bool processed = false;
+                std::vector<std::size_t> completed;
+                std::size_t idx = 0;
 
                 for (auto const &task : context->tasks) {
                     auto const result = task();
@@ -60,6 +62,17 @@ void background_queue::start() {
                         processed = true;
                         std::this_thread::yield();
                         break;
+                    } else if (result == task_result::completed) {
+                        completed.emplace_back(idx);
+                    }
+
+                    ++idx;
+                }
+
+                if (completed.size() > 0) {
+                    std::reverse(completed.begin(), completed.end());
+                    for (auto const &idx : completed) {
+                        erase_at(context->tasks, idx);
                     }
                 }
 

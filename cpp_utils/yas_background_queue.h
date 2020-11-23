@@ -15,6 +15,7 @@ struct background_queue final {
     enum class task_result {
         processed,
         unprocessed,
+        completed,
     };
 
     using task_f = std::function<task_result(void)>;
