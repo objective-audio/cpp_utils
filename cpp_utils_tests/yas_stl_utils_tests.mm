@@ -110,6 +110,16 @@
     XCTAssertFalse(first_value.has_value());
 }
 
+- (void)test_reverse {
+    std::vector<int> vec{1, 2, 3};
+
+    yas::reverse(vec);
+
+    XCTAssertEqual(vec.at(0), 3);
+    XCTAssertEqual(vec.at(1), 2);
+    XCTAssertEqual(vec.at(2), 1);
+}
+
 - (void)test_erase_at {
     std::vector<int> vec{4, 1, 6, 7};
 
