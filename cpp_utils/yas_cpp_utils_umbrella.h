@@ -4,7 +4,6 @@
 
 #pragma once
 
-#include <cpp_utils/yas_background_queue.h>
 #include <cpp_utils/yas_boolean.h>
 #include <cpp_utils/yas_cf_ref.h>
 #include <cpp_utils/yas_cf_utils.h>
@@ -35,3 +34,4 @@
 #include <cpp_utils/yas_unless.h>
 #include <cpp_utils/yas_url.h>
 #include <cpp_utils/yas_version.h>
+#include <cpp_utils/yas_worker.h>

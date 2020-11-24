@@ -1,8 +1,8 @@
 //
-//  yas_playing_background_queue.cpp
+//  yas_worker.cpp
 //
 
-#include "yas_background_queue.h"
+#include "yas_worker.h"
 
 #include <atomic>
 #include <chrono>
@@ -12,7 +12,7 @@
 
 using namespace yas;
 
-struct background_queue::context {
+struct worker::context {
     std::vector<task_f> tasks;
     std::atomic<bool> is_continue{true};
 
@@ -20,28 +20,28 @@ struct background_queue::context {
     }
 };
 
-background_queue::background_queue() {
+worker::worker() {
 }
 
-background_queue::~background_queue() {
+worker::~worker() {
     this->stop();
 }
 
-void background_queue::add_task(uint32_t const priority, task_f &&task) {
+void worker::add_task(uint32_t const priority, task_f &&task) {
     if (this->_context) {
-        throw std::runtime_error("background_queue add_task() - already started.");
+        throw std::runtime_error("worker add_task() - already started.");
     }
 
     this->_tasks.emplace(priority, std::move(task));
 }
 
-void background_queue::start() {
+void worker::start() {
     if (this->_context) {
-        throw std::runtime_error("background_queue start() - already started.");
+        throw std::runtime_error("worker start() - already started.");
     }
 
     if (this->_tasks.size() == 0) {
-        throw std::runtime_error("background_queue start() - task is empty.");
+        throw std::runtime_error("worker start() - task is empty.");
     }
 
     auto tasks = to_vector<task_f>(this->_tasks, [](auto const &pair) { return pair.second; });
@@ -87,13 +87,13 @@ void background_queue::start() {
     thread.detach();
 }
 
-void background_queue::stop() {
+void worker::stop() {
     if (this->_context) {
         this->_context->is_continue = false;
         this->_context = nullptr;
     }
 }
 
-background_queue_ptr background_queue::make_shared() {
-    return background_queue_ptr(new background_queue{});
+worker_ptr worker::make_shared() {
+    return worker_ptr(new worker{});
 }

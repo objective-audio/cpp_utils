@@ -1,5 +1,5 @@
 //
-//  yas_playing_background_queue.h
+//  yas_worker.h
 //
 
 #pragma once
@@ -8,10 +8,10 @@
 #include <map>
 
 namespace yas {
-class background_queue;
-using background_queue_ptr = std::shared_ptr<background_queue>;
+class worker;
+using worker_ptr = std::shared_ptr<worker>;
 
-struct background_queue final {
+struct worker final {
     enum class task_result {
         processed,
         unprocessed,
@@ -20,13 +20,13 @@ struct background_queue final {
 
     using task_f = std::function<task_result(void)>;
 
-    ~background_queue();
+    ~worker();
 
     void add_task(uint32_t const priority, task_f &&);
     void start();
     void stop();
 
-    static background_queue_ptr make_shared();
+    static worker_ptr make_shared();
 
    private:
     class context;
@@ -34,6 +34,6 @@ struct background_queue final {
     std::multimap<uint32_t, task_f> _tasks;
     std::shared_ptr<context> _context = nullptr;
 
-    background_queue();
+    worker();
 };
 }  // namespace yas
