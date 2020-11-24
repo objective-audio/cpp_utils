@@ -29,10 +29,10 @@ struct worker final {
     static worker_ptr make_shared();
 
    private:
-    class context;
+    class resource;
 
     std::multimap<uint32_t, task_f> _tasks;
-    std::shared_ptr<context> _context = nullptr;
+    std::shared_ptr<resource> _resource = nullptr;
 
     worker();
 };

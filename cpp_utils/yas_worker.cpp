@@ -12,11 +12,11 @@
 
 using namespace yas;
 
-struct worker::context {
+struct worker::resource {
     std::vector<task_f> tasks;
     std::atomic<bool> is_continue{true};
 
-    context(std::vector<task_f> &&tasks) : tasks(std::move(tasks)) {
+    resource(std::vector<task_f> &&tasks) : tasks(std::move(tasks)) {
     }
 };
 
@@ -28,7 +28,7 @@ worker::~worker() {
 }
 
 void worker::add_task(uint32_t const priority, task_f &&task) {
-    if (this->_context) {
+    if (this->_resource) {
         throw std::runtime_error("worker add_task() - already started.");
     }
 
@@ -36,7 +36,7 @@ void worker::add_task(uint32_t const priority, task_f &&task) {
 }
 
 void worker::start() {
-    if (this->_context) {
+    if (this->_resource) {
         throw std::runtime_error("worker start() - already started.");
     }
 
@@ -46,16 +46,16 @@ void worker::start() {
 
     auto tasks = to_vector<task_f>(this->_tasks, [](auto const &pair) { return pair.second; });
 
-    this->_context = std::make_shared<context>(std::move(tasks));
+    this->_resource = std::make_shared<resource>(std::move(tasks));
 
-    std::thread thread{[context = this->_context] {
-        while (context->is_continue) {
-            while (context->is_continue) {
+    std::thread thread{[resource = this->_resource] {
+        while (resource->is_continue) {
+            while (resource->is_continue) {
                 bool processed = false;
                 std::vector<std::size_t> completed;
                 std::size_t idx = 0;
 
-                for (auto const &task : context->tasks) {
+                for (auto const &task : resource->tasks) {
                     auto const result = task();
 
                     if (result == task_result::processed) {
@@ -72,7 +72,7 @@ void worker::start() {
                 if (completed.size() > 0) {
                     std::reverse(completed.begin(), completed.end());
                     for (auto const &idx : completed) {
-                        erase_at(context->tasks, idx);
+                        erase_at(resource->tasks, idx);
                     }
                 }
 
@@ -88,9 +88,9 @@ void worker::start() {
 }
 
 void worker::stop() {
-    if (this->_context) {
-        this->_context->is_continue = false;
-        this->_context = nullptr;
+    if (this->_resource) {
+        this->_resource->is_continue = false;
+        this->_resource = nullptr;
     }
 }
 
