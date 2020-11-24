@@ -1,5 +1,5 @@
 //
-//  yas_playing_background_queue_tests.mm
+//  yas_worker_tests.mm
 //
 
 #import <XCTest/XCTest.h>
@@ -19,11 +19,11 @@ struct counter {
 };
 }
 
-@interface yas_playing_background_queue_tests : XCTestCase
+@interface yas_worker_tests : XCTestCase
 
 @end
 
-@implementation yas_playing_background_queue_tests
+@implementation yas_worker_tests
 
 - (void)test_all_unprocessed {
     NSMutableArray<XCTestExpectation *> *expectations = [[NSMutableArray alloc] init];
@@ -32,7 +32,7 @@ struct counter {
         [expectations addObject:[self expectationWithDescription:@""]];
     }
 
-    auto const queue = background_queue::make_shared();
+    auto const queue = worker::make_shared();
 
     queue->add_task(1, [&expectations, counter = std::make_shared<playing_test::counter>()] {
         int const count = counter->pull();
@@ -41,7 +41,7 @@ struct counter {
         } else if (count == 1) {
             [expectations[4] fulfill];
         }
-        return background_queue::task_result::unprocessed;
+        return worker::task_result::unprocessed;
     });
 
     queue->add_task(2, [&expectations, counter = std::make_shared<playing_test::counter>()] {
@@ -51,7 +51,7 @@ struct counter {
         } else if (count == 1) {
             [expectations[5] fulfill];
         }
-        return background_queue::task_result::unprocessed;
+        return worker::task_result::unprocessed;
     });
 
     queue->add_task(0, [&expectations, counter = std::make_shared<playing_test::counter>()] {
@@ -61,7 +61,7 @@ struct counter {
         } else if (count == 1) {
             [expectations[3] fulfill];
         }
-        return background_queue::task_result::unprocessed;
+        return worker::task_result::unprocessed;
     });
 
     queue->start();
@@ -76,22 +76,22 @@ struct counter {
         [expectations addObject:[self expectationWithDescription:@""]];
     }
 
-    auto const queue = background_queue::make_shared();
+    auto const queue = worker::make_shared();
 
     queue->add_task(0, [&expectations, counter = std::make_shared<playing_test::counter>()] {
         int const count = counter->pull();
         if (count == 0) {
             [expectations[0] fulfill];
-            return background_queue::task_result::processed;
+            return worker::task_result::processed;
         } else if (count == 1) {
             [expectations[1] fulfill];
-            return background_queue::task_result::processed;
+            return worker::task_result::processed;
         } else if (count == 2) {
             [expectations[2] fulfill];
         } else if (count == 3) {
             [expectations[5] fulfill];
         }
-        return background_queue::task_result::unprocessed;
+        return worker::task_result::unprocessed;
     });
 
     queue->add_task(1, [&expectations, counter = std::make_shared<playing_test::counter>()] {
@@ -101,18 +101,18 @@ struct counter {
         } else if (count == 1) {
             [expectations[6] fulfill];
         }
-        return background_queue::task_result::unprocessed;
+        return worker::task_result::unprocessed;
     });
 
     queue->add_task(2, [&expectations, counter = std::make_shared<playing_test::counter>()] {
         int const count = counter->pull();
         if (count == 0) {
             [expectations[4] fulfill];
-            return background_queue::task_result::processed;
+            return worker::task_result::processed;
         } else if (count == 1) {
             [expectations[7] fulfill];
         }
-        return background_queue::task_result::unprocessed;
+        return worker::task_result::unprocessed;
     });
 
     queue->start();
@@ -127,7 +127,7 @@ struct counter {
         [expectations addObject:[self expectationWithDescription:@""]];
     }
 
-    auto const queue = background_queue::make_shared();
+    auto const queue = worker::make_shared();
 
     queue->add_task(0, [&expectations, counter = std::make_shared<playing_test::counter>()] {
         int const count = counter->pull();
@@ -136,17 +136,17 @@ struct counter {
         } else if (count == 1) {
             [expectations[3] fulfill];
         }
-        return background_queue::task_result::unprocessed;
+        return worker::task_result::unprocessed;
     });
 
     queue->add_task(1, [&expectations, counter = std::make_shared<playing_test::counter>()] {
         int const count = counter->pull();
         if (count == 0) {
             [expectations[1] fulfill];
-            return background_queue::task_result::completed;
+            return worker::task_result::completed;
         } else {
             XCTFail();
-            return background_queue::task_result::unprocessed;
+            return worker::task_result::unprocessed;
         }
     });
 
@@ -157,7 +157,7 @@ struct counter {
         } else if (count == 1) {
             [expectations[4] fulfill];
         }
-        return background_queue::task_result::unprocessed;
+        return worker::task_result::unprocessed;
     });
 
     queue->start();
