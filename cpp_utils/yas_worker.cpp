@@ -20,8 +20,7 @@ struct worker::resource {
     }
 };
 
-worker::worker() {
-}
+worker::worker() = default;
 
 worker::~worker() {
     this->stop();
