@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include <chrono>
 #include <functional>
 #include <map>
 
@@ -27,13 +28,15 @@ struct worker final {
     void stop();
 
     static worker_ptr make_shared();
+    static worker_ptr make_shared(std::chrono::milliseconds const &);
 
    private:
     class resource;
 
     std::multimap<uint32_t, task_f> _tasks;
     std::shared_ptr<resource> _resource = nullptr;
+    std::chrono::milliseconds _sleep_duration;
 
-    worker();
+    worker(std::chrono::milliseconds const &);
 };
 }  // namespace yas

@@ -5,7 +5,6 @@
 #include "yas_worker.h"
 
 #include <atomic>
-#include <chrono>
 #include <thread>
 
 #include "yas_stl_utils.h"
@@ -20,7 +19,8 @@ struct worker::resource {
     }
 };
 
-worker::worker() = default;
+worker::worker(std::chrono::milliseconds const &duration) : _sleep_duration(duration) {
+}
 
 worker::~worker() {
     this->stop();
@@ -47,7 +47,7 @@ void worker::start() {
 
     this->_resource = std::make_shared<resource>(std::move(tasks));
 
-    std::thread thread{[resource = this->_resource] {
+    std::thread thread{[resource = this->_resource, sleep_duration = this->_sleep_duration] {
         while (resource->is_continue) {
             while (resource->is_continue) {
                 bool processed = false;
@@ -79,7 +79,7 @@ void worker::start() {
                     break;
                 }
             }
-            std::this_thread::sleep_for(std::chrono::milliseconds{10});
+            std::this_thread::sleep_for(sleep_duration);
         }
     }};
 
@@ -94,5 +94,9 @@ void worker::stop() {
 }
 
 worker_ptr worker::make_shared() {
-    return worker_ptr(new worker{});
+    return worker::make_shared(std::chrono::milliseconds{10});
+}
+
+worker_ptr worker::make_shared(std::chrono::milliseconds const &duration) {
+    return worker_ptr(new worker{duration});
 }
