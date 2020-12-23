@@ -9,9 +9,7 @@
 #include <map>
 
 namespace yas {
-class workable;
 class worker;
-using workable_ptr = std::shared_ptr<workable>;
 using worker_ptr = std::shared_ptr<worker>;
 
 struct workable {
@@ -32,6 +30,8 @@ struct workable {
    protected:
     class resource;
 };
+
+using workable_ptr = std::shared_ptr<workable>;
 
 struct worker final : workable {
     ~worker();
