@@ -12,7 +12,11 @@ namespace yas {
 class worker;
 using worker_ptr = std::shared_ptr<worker>;
 
-struct worker final {
+struct workable {
+    virtual ~workable() = default;
+};
+
+struct worker final : workable {
     enum class task_result {
         processed,
         unprocessed,
