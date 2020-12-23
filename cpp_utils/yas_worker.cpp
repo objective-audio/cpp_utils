@@ -11,7 +11,7 @@
 
 using namespace yas;
 
-struct worker::resource {
+struct workable::resource {
     std::vector<task_f> tasks;
     std::atomic<bool> is_continue{true};
 
