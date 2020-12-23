@@ -11,6 +11,8 @@
 namespace yas {
 class worker;
 using worker_ptr = std::shared_ptr<worker>;
+class worker_stub;
+using worker_stub_ptr = std::shared_ptr<worker_stub>;
 
 struct workable {
     virtual ~workable() = default;
@@ -49,5 +51,23 @@ struct worker final : workable {
     std::chrono::milliseconds _sleep_duration;
 
     worker(std::chrono::milliseconds const &);
+};
+
+struct worker_stub final : workable {
+    void add_task(uint32_t const priority, task_f &&) override;
+    void start() override;
+    void stop() override;
+
+    std::vector<task_f> resource_tasks() const;
+    bool is_started() const;
+    void process();
+
+    static worker_stub_ptr make_shared();
+
+   private:
+    std::multimap<uint32_t, task_f> _tasks;
+    std::shared_ptr<resource> _resource = nullptr;
+
+    worker_stub();
 };
 }  // namespace yas
