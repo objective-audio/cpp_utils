@@ -14,9 +14,7 @@ using worker_ptr = std::shared_ptr<worker>;
 
 struct workable {
     virtual ~workable() = default;
-};
 
-struct worker final : workable {
     enum class task_result {
         processed,
         unprocessed,
@@ -25,11 +23,17 @@ struct worker final : workable {
 
     using task_f = std::function<task_result(void)>;
 
+    virtual void add_task(uint32_t const priority, task_f &&) = 0;
+    virtual void start() = 0;
+    virtual void stop() = 0;
+};
+
+struct worker final : workable {
     ~worker();
 
-    void add_task(uint32_t const priority, task_f &&);
-    void start();
-    void stop();
+    void add_task(uint32_t const priority, task_f &&) override;
+    void start() override;
+    void stop() override;
 
     static worker_ptr make_shared();
     static worker_ptr make_shared(std::chrono::milliseconds const &);
