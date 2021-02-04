@@ -40,36 +40,45 @@ Running const &state<Waiting, Running>::running() const {
 
 #pragma mark - waiting_out
 
-template <typename Waiting>
-waiting_out::waiting_out(flow::wait<Waiting> value)
+template <typename Waiting, typename Running, typename Event>
+waiting_out<Waiting, Running, Event>::waiting_out(flow::wait<Waiting> value)
     : _impl(std::make_shared<out_impl<flow::wait<Waiting>>>(std::move(value))) {
 }
 
-template <typename Running, typename Event>
-waiting_out::waiting_out(flow::run<Running, Event> value)
+template <typename Waiting, typename Running, typename Event>
+waiting_out<Waiting, Running, Event>::waiting_out(flow::run<Running, Event> value)
     : _impl(std::make_shared<out_impl<flow::run<Running, Event>>>(std::move(value))) {
 }
 
 template <typename Waiting, typename Running, typename Event>
-enum waiting_out::kind waiting_out::kind() const {
+waiting_out<Waiting, Running, Event>::waiting_out(flow::stay value)
+    : _impl(std::make_shared<out_impl<flow::stay>>(std::move(value))) {
+}
+
+template <typename Waiting, typename Running, typename Event>
+waiting_out<Waiting, Running, Event>::waiting_out(std::nullptr_t) : _impl(nullptr) {
+}
+
+template <typename Waiting, typename Running, typename Event>
+waiting_out_kind waiting_out<Waiting, Running, Event>::kind() const {
     if (std::dynamic_pointer_cast<out_impl<flow::wait<Waiting>>>(this->_impl)) {
-        return kind::wait;
+        return waiting_out_kind::wait;
     } else if (std::dynamic_pointer_cast<out_impl<flow::run<Running, Event>>>(this->_impl)) {
-        return kind::run;
+        return waiting_out_kind::run;
     } else if (std::dynamic_pointer_cast<out_impl<flow::stay>>(this->_impl)) {
-        return kind::stay;
+        return waiting_out_kind::stay;
     } else {
         throw std::runtime_error("");
     }
 }
 
-template <typename Waiting>
-wait<Waiting> waiting_out::wait() const {
+template <typename Waiting, typename Running, typename Event>
+wait<Waiting> waiting_out<Waiting, Running, Event>::wait() const {
     return std::dynamic_pointer_cast<out_impl<flow::wait<Waiting>>>(this->_impl)->value;
 }
 
-template <typename Running, typename Event>
-run<Running, Event> waiting_out::run() const {
+template <typename Waiting, typename Running, typename Event>
+run<Running, Event> waiting_out<Waiting, Running, Event>::run() const {
     return std::dynamic_pointer_cast<out_impl<flow::run<Running, Event>>>(this->_impl)->value;
 }
 
@@ -182,18 +191,18 @@ struct graph<Waiting, Running, Event>::impl {
 
         this->_performing = false;
 
-        switch (state_out.template kind<Waiting, Running, Event>()) {
-            case waiting_out::kind::wait: {
-                this->_current = state_out.wait<Waiting>().waiting;
+        switch (state_out.kind()) {
+            case waiting_out_kind::wait: {
+                this->_current = state_out.wait().waiting;
             } break;
 
-            case waiting_out::kind::run: {
-                flow::run<Running, Event> run_out = state_out.run<Running, Event>();
+            case waiting_out_kind::run: {
+                flow::run<Running, Event> run_out = state_out.run();
                 this->_current = run_out.running;
                 this->_run(run_out.event);
             } break;
 
-            case waiting_out::kind::stay:
+            case waiting_out_kind::stay:
                 break;
         }
     }

@@ -38,7 +38,7 @@ struct state {
 };
 
 struct out_impl_base {
-    virtual ~out_impl_base();
+    virtual ~out_impl_base() = default;
 };
 
 template <typename T>
@@ -49,26 +49,19 @@ struct out_impl : out_impl_base {
     }
 };
 
+enum class waiting_out_kind { wait, run, stay };
+
+template <typename Waiting, typename Running, typename Event>
 struct waiting_out {
-    template <typename Waiting>
     waiting_out(flow::wait<Waiting>);
-
-    template <typename Running, typename Event>
     waiting_out(flow::run<Running, Event>);
-
     waiting_out(flow::stay);
-
     waiting_out(std::nullptr_t);
 
-    enum class kind { wait, run, stay };
+    waiting_out_kind kind() const;
 
-    template <typename Waiting, typename Running, typename Event>
-    kind kind() const;
-
-    template <typename Waiting>
     wait<Waiting> wait() const;
 
-    template <typename Running, typename Event>
     run<Running, Event> run() const;
 
    private:
@@ -103,16 +96,16 @@ template <typename Waiting, typename Running, typename Event>
 struct waiting_signal {
     Event const &event;
 
-    waiting_out wait(Waiting waiting) const {
+    waiting_out<Waiting, Running, Event> wait(Waiting waiting) const {
         return waiting_out(flow::wait<Waiting>{std::move(waiting)});
     }
 
-    waiting_out run(Running running, Event const &event) const {
-        return waiting_out(flow::run<Running, Event>{std::move(running), event});
+    waiting_out<Waiting, Running, Event> run(Running running, Event const &event) const {
+        return waiting_out<Waiting, Running, Event>{flow::run<Running, Event>{std::move(running), event}};
     }
 
-    waiting_out stay() const {
-        return waiting_out{flow::stay{}};
+    waiting_out<Waiting, Running, Event> stay() const {
+        return waiting_out<Waiting, Running, Event>{flow::stay{}};
     }
 };
 
@@ -133,7 +126,7 @@ template <typename Waiting, typename Running, typename Event>
 struct graph final {
     using waiting_signal_t = waiting_signal<Waiting, Running, Event>;
     using running_signal_t = running_signal<Waiting, Running, Event>;
-    using waiting_handler_f = std::function<waiting_out(waiting_signal_t const &)>;
+    using waiting_handler_f = std::function<waiting_out<Waiting, Running, Event>(waiting_signal_t const &)>;
     using running_handler_f = std::function<running_out(running_signal_t const &)>;
 
     void add_waiting(Waiting, waiting_handler_f);
