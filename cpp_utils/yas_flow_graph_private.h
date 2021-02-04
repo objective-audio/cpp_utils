@@ -68,7 +68,7 @@ waiting_out_kind waiting_out<Waiting, Running, Event>::kind() const {
     } else if (this->_stay_impl) {
         return waiting_out_kind::stay;
     } else {
-        throw std::runtime_error("flow_graph invalid waiting_out_kind");
+        throw std::runtime_error("flow_graph waiting_out kind() - kind not found");
     }
 }
 
@@ -86,37 +86,37 @@ run<Running, Event> waiting_out<Waiting, Running, Event>::run() const {
 
 template <typename Waiting, typename Running, typename Event>
 running_out<Waiting, Running, Event>::running_out(flow::wait<Waiting> value)
-    : _impl(std::make_shared<out_impl<flow::wait<Waiting>>>(std::move(value))) {
+    : _wait_impl(std::make_shared<out_impl<flow::wait<Waiting>>>(std::move(value))) {
 }
 
 template <typename Waiting, typename Running, typename Event>
 running_out<Waiting, Running, Event>::running_out(flow::run<Running, Event> value)
-    : _impl(std::make_shared<out_impl<flow::run<Running, Event>>>(std::move(value))) {
+    : _run_impl(std::make_shared<out_impl<flow::run<Running, Event>>>(std::move(value))) {
 }
 
 template <typename Waiting, typename Running, typename Event>
-running_out<Waiting, Running, Event>::running_out(std::nullptr_t) : _impl(nullptr) {
+running_out<Waiting, Running, Event>::running_out(std::nullptr_t) {
 }
 
 template <typename Waiting, typename Running, typename Event>
 running_out_kind running_out<Waiting, Running, Event>::kind() const {
-    if (std::dynamic_pointer_cast<out_impl<flow::wait<Waiting>>>(this->_impl)) {
+    if (this->_wait_impl) {
         return running_out_kind::wait;
-    } else if (std::dynamic_pointer_cast<out_impl<flow::run<Running, Event>>>(this->_impl)) {
+    } else if (this->_run_impl) {
         return running_out_kind::run;
     } else {
-        throw std::runtime_error("");
+        throw std::runtime_error("flow_graph running_out kind() - kind not found");
     }
 }
 
 template <typename Waiting, typename Running, typename Event>
 wait<Waiting> running_out<Waiting, Running, Event>::wait() const {
-    return std::dynamic_pointer_cast<out_impl<flow::wait<Waiting>>>(this->_impl)->value;
+    return this->_wait_impl->value;
 }
 
 template <typename Waiting, typename Running, typename Event>
 run<Running, Event> running_out<Waiting, Running, Event>::run() const {
-    return std::dynamic_pointer_cast<out_impl<flow::run<Running, Event>>>(this->_impl)->value;
+    return this->_run_impl->value;
 }
 
 #pragma mark - graph
