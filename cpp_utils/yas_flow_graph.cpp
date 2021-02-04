@@ -6,6 +6,3 @@
 
 using namespace yas;
 using namespace yas::flow;
-
-running_out::running_out(std::nullptr_t) : _impl(nullptr) {
-}

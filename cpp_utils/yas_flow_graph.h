@@ -68,24 +68,18 @@ struct waiting_out {
     std::shared_ptr<out_impl_base> _impl;
 };
 
+enum class running_out_kind { wait, run };
+
+template <typename Waiting, typename Running, typename Event>
 struct running_out {
-    template <typename Waiting>
     running_out(flow::wait<Waiting>);
-
-    template <typename Running, typename Event>
     running_out(flow::run<Running, Event>);
-
     running_out(std::nullptr_t);
 
-    enum class kind { wait, run };
+    running_out_kind kind() const;
 
-    template <typename Waiting, typename Running, typename Event>
-    kind kind() const;
-
-    template <typename Waiting>
     wait<Waiting> wait() const;
 
-    template <typename Running, typename Event>
     run<Running, Event> run() const;
 
    private:
@@ -113,12 +107,12 @@ template <typename Waiting, typename Running, typename Event>
 struct running_signal {
     Event const &event;
 
-    running_out wait(Waiting state) const {
-        return running_out{flow::wait<Waiting>{state}};
+    running_out<Waiting, Running, Event> wait(Waiting state) const {
+        return running_out<Waiting, Running, Event>{flow::wait<Waiting>{state}};
     }
 
-    running_out run(Running running, Event const &event) const {
-        return running_out{flow::run<Running, Event>{std::move(running), event}};
+    running_out<Waiting, Running, Event> run(Running running, Event const &event) const {
+        return running_out<Waiting, Running, Event>{flow::run<Running, Event>{std::move(running), event}};
     }
 };
 
@@ -127,7 +121,7 @@ struct graph final {
     using waiting_signal_t = waiting_signal<Waiting, Running, Event>;
     using running_signal_t = running_signal<Waiting, Running, Event>;
     using waiting_handler_f = std::function<waiting_out<Waiting, Running, Event>(waiting_signal_t const &)>;
-    using running_handler_f = std::function<running_out(running_signal_t const &)>;
+    using running_handler_f = std::function<running_out<Waiting, Running, Event>(running_signal_t const &)>;
 
     void add_waiting(Waiting, waiting_handler_f);
     void add_running(Running, running_handler_f);
