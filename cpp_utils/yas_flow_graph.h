@@ -65,7 +65,9 @@ struct waiting_out {
     run<Running, Event> run() const;
 
    private:
-    std::shared_ptr<out_impl_base> _impl;
+    std::shared_ptr<out_impl<flow::wait<Waiting>>> _wait_impl = nullptr;
+    std::shared_ptr<out_impl<flow::run<Running, Event>>> _run_impl = nullptr;
+    std::shared_ptr<out_impl<flow::stay>> _stay_impl = nullptr;
 };
 
 enum class running_out_kind { wait, run };
