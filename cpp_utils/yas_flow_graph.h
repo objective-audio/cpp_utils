@@ -41,6 +41,14 @@ struct out_impl_base {
     virtual ~out_impl_base();
 };
 
+template <typename T>
+struct out_impl : out_impl_base {
+    T value;
+
+    out_impl(T &&value) : value(std::move(value)) {
+    }
+};
+
 struct waiting_out {
     template <typename Waiting>
     waiting_out(flow::wait<Waiting>);

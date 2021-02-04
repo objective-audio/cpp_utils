@@ -38,16 +38,6 @@ Running const &state<Waiting, Running>::running() const {
     return *this->_running;
 }
 
-#pragma mark - out_base
-
-template <typename T>
-struct out_impl : out_impl_base {
-    T value;
-
-    out_impl(T &&value) : value(std::move(value)) {
-    }
-};
-
 #pragma mark - waiting_out
 
 template <typename Waiting>
