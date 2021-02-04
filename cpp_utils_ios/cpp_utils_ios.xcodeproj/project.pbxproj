@@ -74,7 +74,6 @@
 		B6777F57256A5D2A00514E81 /* yas_worker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B6777F55256A5D2A00514E81 /* yas_worker.cpp */; };
 		B6777F58256A5D2A00514E81 /* yas_worker.h in Headers */ = {isa = PBXBuildFile; fileRef = B6777F56256A5D2A00514E81 /* yas_worker.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B6B33BE2227F31C3004F87CD /* yas_to_integer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B6B33BE1227F31C3004F87CD /* yas_to_integer.cpp */; };
-		B6B33BE4227F31CD004F87CD /* yas_flow_graph.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B6B33BE3227F31CD004F87CD /* yas_flow_graph.cpp */; };
 		B6BBCF8A227AA224002B6396 /* yas_file_path.h in Headers */ = {isa = PBXBuildFile; fileRef = B6BBCF88227AA223002B6396 /* yas_file_path.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B6BBCF8B227AA224002B6396 /* yas_file_path.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B6BBCF89227AA224002B6396 /* yas_file_path.cpp */; };
 		B6F7DD5F2568A69F0059DDF9 /* yas_to_floating_point.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B6F7DD5D2568A69F0059DDF9 /* yas_to_floating_point.cpp */; };
@@ -152,7 +151,6 @@
 		B6777F55256A5D2A00514E81 /* yas_worker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = yas_worker.cpp; sourceTree = "<group>"; };
 		B6777F56256A5D2A00514E81 /* yas_worker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = yas_worker.h; sourceTree = "<group>"; };
 		B6B33BE1227F31C3004F87CD /* yas_to_integer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = yas_to_integer.cpp; sourceTree = "<group>"; };
-		B6B33BE3227F31CD004F87CD /* yas_flow_graph.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = yas_flow_graph.cpp; sourceTree = "<group>"; };
 		B6BBCF88227AA223002B6396 /* yas_file_path.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = yas_file_path.h; sourceTree = "<group>"; };
 		B6BBCF89227AA224002B6396 /* yas_file_path.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = yas_file_path.cpp; sourceTree = "<group>"; };
 		B6F7DD5D2568A69F0059DDF9 /* yas_to_floating_point.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = yas_to_floating_point.cpp; sourceTree = "<group>"; };
@@ -238,7 +236,6 @@
 				B6359DA721DB728300481348 /* yas_flex_ptr.cpp */,
 				B6359D8F21DB728300481348 /* yas_flex_ptr.h */,
 				B6359DAE21DB728300481348 /* yas_flow_graph_private.h */,
-				B6B33BE3227F31CD004F87CD /* yas_flow_graph.cpp */,
 				B6359DC621DB728300481348 /* yas_flow_graph.h */,
 				B61C30BD244C27AE00510913 /* yas_ns_utils.h */,
 				B61C30BE244C27AE00510913 /* yas_ns_utils.mm */,
@@ -418,7 +415,6 @@
 				B6359DFD21DB728300481348 /* yas_each_dictionary.cpp in Sources */,
 				B6FA87AE227317A500A77872 /* yas_thread.mm in Sources */,
 				B6359DCE21DB728300481348 /* yas_timer.mm in Sources */,
-				B6B33BE4227F31CD004F87CD /* yas_flow_graph.cpp in Sources */,
 				B6359DFE21DB728300481348 /* yas_stl_utils.cpp in Sources */,
 				B6359E0821DB728300481348 /* yas_system_path_utils.mm in Sources */,
 				B6359E0021DB728300481348 /* yas_cf_ref.cpp in Sources */,
