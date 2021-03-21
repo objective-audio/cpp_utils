@@ -52,7 +52,6 @@
 		B6359DF721DB728300481348 /* yas_stl_utils.h in Headers */ = {isa = PBXBuildFile; fileRef = B6359DB721DB728300481348 /* yas_stl_utils.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B6359DF821DB728300481348 /* yas_cf_utils.h in Headers */ = {isa = PBXBuildFile; fileRef = B6359DB821DB728300481348 /* yas_cf_utils.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B6359DF921DB728300481348 /* yas_each_data.h in Headers */ = {isa = PBXBuildFile; fileRef = B6359DB921DB728300481348 /* yas_each_data.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B6359DFA21DB728300481348 /* yas_types.h in Headers */ = {isa = PBXBuildFile; fileRef = B6359DBA21DB728300481348 /* yas_types.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B6359DFB21DB728300481348 /* yas_stl_utils_private.h in Headers */ = {isa = PBXBuildFile; fileRef = B6359DBB21DB728300481348 /* yas_stl_utils_private.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B6359DFC21DB728300481348 /* yas_each_index_private.h in Headers */ = {isa = PBXBuildFile; fileRef = B6359DBC21DB728300481348 /* yas_each_index_private.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B6359DFD21DB728300481348 /* yas_each_dictionary.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B6359DBD21DB728300481348 /* yas_each_dictionary.cpp */; };
@@ -129,7 +128,6 @@
 		B6359DB721DB728300481348 /* yas_stl_utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = yas_stl_utils.h; sourceTree = "<group>"; };
 		B6359DB821DB728300481348 /* yas_cf_utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = yas_cf_utils.h; sourceTree = "<group>"; };
 		B6359DB921DB728300481348 /* yas_each_data.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = yas_each_data.h; sourceTree = "<group>"; };
-		B6359DBA21DB728300481348 /* yas_types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = yas_types.h; sourceTree = "<group>"; };
 		B6359DBB21DB728300481348 /* yas_stl_utils_private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = yas_stl_utils_private.h; sourceTree = "<group>"; };
 		B6359DBC21DB728300481348 /* yas_each_index_private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = yas_each_index_private.h; sourceTree = "<group>"; };
 		B6359DBD21DB728300481348 /* yas_each_dictionary.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = yas_each_dictionary.cpp; sourceTree = "<group>"; };
@@ -264,7 +262,6 @@
 				B6359DC421DB728300481348 /* yas_to_integer.h */,
 				B6359D8B21DB728300481348 /* yas_to_string.h */,
 				B6359D9A21DB728300481348 /* yas_type_traits.h */,
-				B6359DBA21DB728300481348 /* yas_types.h */,
 				B6359D8D21DB728300481348 /* yas_unless.h */,
 				B6359D9321DB728300481348 /* yas_url.h */,
 				B6359D9C21DB728300481348 /* yas_url.mm */,
@@ -321,7 +318,6 @@
 				B6359DDA21DB728300481348 /* yas_type_traits.h in Headers */,
 				B61C30BF244C27AE00510913 /* yas_ns_utils.h in Headers */,
 				B6359DD821DB728300481348 /* yas_task_protocol.h in Headers */,
-				B6359DFA21DB728300481348 /* yas_types.h in Headers */,
 				B6359DDB21DB728300481348 /* yas_each_index.h in Headers */,
 				B6359DFB21DB728300481348 /* yas_stl_utils_private.h in Headers */,
 				B6359DF921DB728300481348 /* yas_each_data.h in Headers */,
