@@ -66,4 +66,19 @@ using namespace yas;
     [self waitForExpectations:@[expectation] timeout:10.0];
 }
 
+- (void)test_perform_sync_on_main {
+    auto main_expectation = [self expectationWithDescription:@""];
+    auto bg_expectation = [self expectationWithDescription:@""];
+
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), [&main_expectation, &bg_expectation] {
+        thread::perform_sync_on_main([&main_expectation] {
+            XCTAssertTrue(thread::is_main());
+            [main_expectation fulfill];
+        });
+        [bg_expectation fulfill];
+    });
+
+    [self waitForExpectations:@[main_expectation, bg_expectation] timeout:10.0 enforceOrder:YES];
+}
+
 @end
