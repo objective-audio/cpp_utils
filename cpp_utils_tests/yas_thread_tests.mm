@@ -42,10 +42,10 @@ using namespace yas;
     XCTAssertGreaterThan((end - begin), 0.4);
 }
 
-- (void)test_perform_on_main {
+- (void)test_perform_async_on_main {
     auto expectation = [self expectationWithDescription:@""];
 
-    thread::perform_on_main([&expectation] {
+    thread::perform_async_on_main([&expectation] {
         XCTAssertTrue(thread::is_main());
         [expectation fulfill];
     });
