@@ -8,79 +8,6 @@ C++のユーティリティー集
 ## Linked Frameworks
 Accelerate.framework
 
-## yas_base
-
-参照型を実現するための基底クラス。
-
-外部からアクセスするためのクラスは`yas::base`を継承し、実体となるクラスは`yas::base::impl`を継承する。
-
-```cpp
-struct derived : yas::base {
-    struct impl : base::impl {
-        float value;
-
-        impl(float value) : value(value) {
-        }
-    };
-
-    derived(float value) : base(std::make_shared<impl>(value)) {
-    }
-
-    void set_value(float value) {
-        impl_ptr<impl>()->value = value;
-    }
-
-    float value() const {
-        return impl_ptr<impl>()->value;
-    }
-};
-```
-
-## yas_protocol
-
-プロトコルを実現するクラス。`yas::base`を継承したクラスに対して多重継承して必要なインターフェースを持つことを定義する。
-
-```cpp
-struct sample_protocol : yas::protocol {
-    struct impl : yas::protocol::impl {
-        virtual int required_function() = 0;
-        virtual int optional_function() {
-            return 1;
-        }
-    };
-
-    sample_protocol(std::shared_ptr<impl> impl) : protocol(std::move(impl)) {
-    }
-
-    int required_function() {
-        return impl_ptr<impl>()->required_function();
-    }
-
-    int optional_function() {
-        return impl_ptr<impl>()->optional_function();
-    }
-};
-
-struct sample_object : yas::base {
-    struct impl : yas::base::impl, sample_protocol::impl {
-        int required_function() override {
-            return 2;
-        }
-    };
-
-    sample_object() : base(std::make_shared<impl>()) {
-    }
-
-    sample_protocol protocol() {
-        return sample_protocol{impl_ptr<sample_protocol::impl>()};
-    }
-};
-
-sample_object obj;
-obj.protocol().required_function(); // -> 2
-obj.protocol().optional_function(); // -> 1
-```
-
 ## yas_boolean
 
 boolをvectorで扱うためのクラス。1要素のサイズを`sizeof(bool)`で確保できる。
@@ -241,18 +168,6 @@ auto objc_obj1 = make_objc_ptr([[NSObject alloc] init]);
 auto objc_obj2 = yas::make_objc_ptr([](){ return [NSArray array]; });
 ```
 
-## yas_operation
-
-非同期処理をおこなうクラス群。処理は`operation`で持ち`operation_queue`に追加すると非同期で処理をする。
-
-```cpp
-yas::operation_queue queue;
-yas::operation op([](yas::operation const &) {
-    // 別スレッドで実行される処理
-});
-queue.push_back(op);
-```
-
 ## yas_fast_each
 
 インデックスやポインタを走査するためのクラス。高速に処理するために値のアクセスやインデックスの移動はマクロを使う。
@@ -340,10 +255,6 @@ yas::to_bool(test_enum::one); // -> true
 ## yas_type_traits
 
 * **has_operator_bool** -> 型に`operator bool()`が実装されているか調べる。
-
-## yas_types
-
-* **nullopt** -> `std::experimental::nullopt`を`yas::nullopt`で書ける。
 
 ## yas_unless
 

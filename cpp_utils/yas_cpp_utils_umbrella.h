@@ -30,7 +30,6 @@
 #include <cpp_utils/yas_to_integer.h>
 #include <cpp_utils/yas_to_string.h>
 #include <cpp_utils/yas_type_traits.h>
-#include <cpp_utils/yas_types.h>
 #include <cpp_utils/yas_unless.h>
 #include <cpp_utils/yas_url.h>
 #include <cpp_utils/yas_version.h>
