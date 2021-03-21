@@ -56,7 +56,7 @@ using namespace yas;
 - (void)test_perform_async_on_main_from_bg {
     auto expectation = [self expectationWithDescription:@""];
 
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), [&expectation] {
         thread::perform_async_on_main([&expectation] {
             XCTAssertTrue(thread::is_main());
             [expectation fulfill];
