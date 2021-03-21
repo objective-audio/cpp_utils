@@ -42,15 +42,43 @@ using namespace yas;
     XCTAssertGreaterThan((end - begin), 0.4);
 }
 
-- (void)test_perform_on_main {
+- (void)test_perform_async_on_main_from_main {
     auto expectation = [self expectationWithDescription:@""];
 
-    thread::perform_on_main([&expectation] {
+    thread::perform_async_on_main([&expectation] {
         XCTAssertTrue(thread::is_main());
         [expectation fulfill];
     });
 
     [self waitForExpectations:@[expectation] timeout:10.0];
+}
+
+- (void)test_perform_async_on_main_from_bg {
+    auto expectation = [self expectationWithDescription:@""];
+
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), [&expectation] {
+        thread::perform_async_on_main([&expectation] {
+            XCTAssertTrue(thread::is_main());
+            [expectation fulfill];
+        });
+    });
+
+    [self waitForExpectations:@[expectation] timeout:10.0];
+}
+
+- (void)test_perform_sync_on_main {
+    auto main_expectation = [self expectationWithDescription:@""];
+    auto bg_expectation = [self expectationWithDescription:@""];
+
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), [&main_expectation, &bg_expectation] {
+        thread::perform_sync_on_main([&main_expectation] {
+            XCTAssertTrue(thread::is_main());
+            [main_expectation fulfill];
+        });
+        [bg_expectation fulfill];
+    });
+
+    [self waitForExpectations:@[main_expectation, bg_expectation] timeout:10.0 enforceOrder:YES];
 }
 
 @end
