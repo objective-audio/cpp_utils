@@ -42,12 +42,25 @@ using namespace yas;
     XCTAssertGreaterThan((end - begin), 0.4);
 }
 
-- (void)test_perform_async_on_main {
+- (void)test_perform_async_on_main_from_main {
     auto expectation = [self expectationWithDescription:@""];
 
     thread::perform_async_on_main([&expectation] {
         XCTAssertTrue(thread::is_main());
         [expectation fulfill];
+    });
+
+    [self waitForExpectations:@[expectation] timeout:10.0];
+}
+
+- (void)test_perform_async_on_main_from_bg {
+    auto expectation = [self expectationWithDescription:@""];
+
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        thread::perform_async_on_main([&expectation] {
+            XCTAssertTrue(thread::is_main());
+            [expectation fulfill];
+        });
     });
 
     [self waitForExpectations:@[expectation] timeout:10.0];
