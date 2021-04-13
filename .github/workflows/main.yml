@@ -25,9 +25,6 @@ jobs:
         submodules: true
 
     # Runs a set of commands using the runners shell
-    - name: Install clang-format
-      run:
-        brew install clang-format
     - name: Run mac tests
       run:
         xcodebuild -workspace cpp_utils_mac.xcworkspace -scheme cpp_utils_mac_tests -configuration Debug OBJROOT=build -sdk macosx clean test
