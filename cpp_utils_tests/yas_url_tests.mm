@@ -51,6 +51,20 @@ using namespace yas;
     XCTAssertEqual(appended.path(), "test/dir/file.ext");
 }
 
+- (void)test_deleting_last_path_component {
+    auto url = yas::url{"test/dir/file.ext"};
+    auto deleted = url.deleting_last_path_component();
+
+    XCTAssertEqual(deleted.path(), "test/dir");
+}
+
+- (void)test_deleting_path_extension {
+    auto url = yas::url{"test/dir/file.ext"};
+    auto deleted = url.deleting_path_extension();
+
+    XCTAssertEqual(deleted.path(), "test/dir/file");
+}
+
 - (void)test_is_equal {
     auto url1a = yas::url{"test/dir"};
     auto url1b = yas::url{"test/dir"};
