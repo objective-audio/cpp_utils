@@ -54,6 +54,16 @@ url url::appending(std::string const &str) const {
     return yas::url{std::make_shared<impl>(std::move(url))};
 }
 
+url url::deleting_last_path_component() const {
+    auto url = objc_ptr<NSURL *>([=]() { return [this->_impl->_url.object() URLByDeletingLastPathComponent]; });
+    return yas::url{std::make_shared<impl>(std::move(url))};
+}
+
+url url::deleting_path_extension() const {
+    auto url = objc_ptr<NSURL *>([=]() { return [this->_impl->_url.object() URLByDeletingPathExtension]; });
+    return yas::url{std::make_shared<impl>(std::move(url))};
+}
+
 bool url::operator==(url const &rhs) const {
     return this->_impl->is_equal(rhs._impl);
 }

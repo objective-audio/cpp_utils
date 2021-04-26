@@ -22,6 +22,8 @@ struct url final {
     CFURLRef cf_url() const;
 
     url appending(std::string const &) const;
+    url deleting_last_path_component() const;
+    url deleting_path_extension() const;
 
     bool operator==(url const &rhs) const;
     bool operator!=(url const &rhs) const;
