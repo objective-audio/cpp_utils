@@ -14,15 +14,16 @@ using worker_ptr = std::shared_ptr<worker>;
 class worker_stub;
 using worker_stub_ptr = std::shared_ptr<worker_stub>;
 
+enum class worker_task_result {
+    processed,
+    unprocessed,
+    completed,
+};
+
 struct workable {
     virtual ~workable() = default;
 
-    enum class task_result {
-        processed,
-        unprocessed,
-        completed,
-    };
-
+    using task_result = worker_task_result;
     using task_f = std::function<task_result(void)>;
 
     virtual void add_task(uint32_t const priority, task_f &&) = 0;
