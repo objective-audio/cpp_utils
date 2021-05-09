@@ -384,7 +384,7 @@
     std::vector<std::string> vec{"a", "b", "c"};
 
     std::size_t idx = 0;
-    auto map = yas::to_map<std::size_t>(std::move(vec), [&idx](auto &value) { return idx++; });
+    auto map = yas::to_unordered_map<std::size_t>(std::move(vec), [&idx](auto &value) { return idx++; });
 
     XCTAssertEqual(map.size(), 3);
     XCTAssertEqual(map.at(0), "a");

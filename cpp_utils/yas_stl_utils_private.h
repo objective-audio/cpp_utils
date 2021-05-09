@@ -177,7 +177,7 @@ std::unordered_set<T> to_unordered_set(std::vector<T> vector) {
 }
 
 template <typename K, typename T, typename F>
-std::unordered_map<K, T> to_map(std::vector<T> collection, F function) {
+std::unordered_map<K, T> to_unordered_map(std::vector<T> collection, F function) {
     std::unordered_map<K, T> map;
 
     for (T &value : collection) {
