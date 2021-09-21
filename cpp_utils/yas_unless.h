@@ -23,6 +23,6 @@ namespace internal {
 
 template <typename T>
 internal::unless<T> unless(T &&value) {
-    return internal::unless<T>{std::move(value)};
+    return internal::unless<T>{std::forward<T>(value)};
 }
 }  // namespace yas
