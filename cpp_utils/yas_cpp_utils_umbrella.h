@@ -22,7 +22,7 @@
 #include <cpp_utils/yas_result.h>
 #include <cpp_utils/yas_stl_utils.h>
 #include <cpp_utils/yas_system_path_utils.h>
-#include <cpp_utils/yas_task.h>
+#include <cpp_utils/yas_task_queue.h>
 #include <cpp_utils/yas_thread.h>
 #include <cpp_utils/yas_timer.h>
 #include <cpp_utils/yas_to_bool.h>
