@@ -97,7 +97,7 @@ void task_queue<Canceller>::cancel(cancellation_f const &cancellation) {
     std::lock_guard<std::recursive_mutex> lock(this->_mutex);
 
     for (auto &deque : this->_tasks) {
-        erase_if(deque, [&cancellation](auto const &task) {
+        std::erase_if(deque, [&cancellation](auto const &task) {
             auto const &canceller = task->option().canceller;
             return canceller.has_value() && cancellation(canceller.value());
         });
