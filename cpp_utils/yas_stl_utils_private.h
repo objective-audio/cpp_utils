@@ -81,19 +81,6 @@ void erase_at(std::vector<T> &vector, std::size_t const idx) {
     vector.erase(vector.begin() + idx);
 }
 
-template <typename T, typename P>
-void erase_if(T &collection, P predicate) {
-    auto it = collection.begin();
-
-    while (it != collection.end()) {
-        if (predicate(*it)) {
-            it = collection.erase(it);
-        } else {
-            ++it;
-        }
-    }
-}
-
 template <typename T, typename U>
 void erase_if_exists(std::unordered_map<T, U> &map, T const &key) {
     if (map.count(key) > 0) {

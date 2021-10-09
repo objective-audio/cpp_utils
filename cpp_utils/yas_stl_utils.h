@@ -35,9 +35,6 @@ void reverse(std::vector<T> &vector);
 template <typename T>
 void erase_at(std::vector<T> &vector, std::size_t const idx);
 
-template <typename T, typename P>
-void erase_if(T &collection, P predicate);
-
 template <typename T, typename U>
 void erase_if_exists(std::unordered_map<T, U> &map, T const &key);
 
