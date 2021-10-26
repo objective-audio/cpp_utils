@@ -1,8 +1,5 @@
 //
 //  yas_data_private.h
-//  cpp_utils_test
-//
-//  Created by Yuki Yasoshima on 2018/03/24.
 //
 
 #pragma once
