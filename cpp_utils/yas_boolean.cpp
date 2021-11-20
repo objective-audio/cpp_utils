@@ -68,3 +68,8 @@ bool const &boolean::raw() const {
 std::string yas::to_string(boolean const &boolean) {
     return boolean != false ? "true" : "false";
 }
+
+std::ostream &operator<<(std::ostream &os, yas::boolean const &value) {
+    os << to_string(value);
+    return os;
+}

@@ -37,3 +37,5 @@ struct boolean {
 
 std::string to_string(boolean const &);
 }  // namespace yas
+
+std::ostream &operator<<(std::ostream &, yas::boolean const &);
