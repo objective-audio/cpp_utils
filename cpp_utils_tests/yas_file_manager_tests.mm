@@ -148,6 +148,48 @@ struct yas_file_manager_tests_cpp {
     XCTAssertEqual(to_string(file_manager::remove_contents_error::find_contents_failed), "find_contents_failed");
 }
 
+- (void)test_create_dir_error_ostream {
+    auto const values = {file_manager::create_dir_error::create_failed, file_manager::create_dir_error::file_exists};
+
+    for (auto const &value : values) {
+        std::ostringstream stream;
+        stream << value;
+        XCTAssertEqual(stream.str(), to_string(value));
+    }
+}
+
+- (void)test_content_kind_ostream {
+    auto const values = {file_manager::content_kind::directory, file_manager::content_kind::file};
+
+    for (auto const &value : values) {
+        std::ostringstream stream;
+        stream << value;
+        XCTAssertEqual(stream.str(), to_string(value));
+    }
+}
+
+- (void)test_remove_content_error_ostream {
+    auto const values = {file_manager::remove_content_error::remove_failed};
+
+    for (auto const &value : values) {
+        std::ostringstream stream;
+        stream << value;
+        XCTAssertEqual(stream.str(), to_string(value));
+    }
+}
+
+- (void)test_remove_contents_error_ostream {
+    auto const values = {file_manager::remove_contents_error::not_directory,
+                         file_manager::remove_contents_error::remove_failed,
+                         file_manager::remove_contents_error::find_contents_failed};
+
+    for (auto const &value : values) {
+        std::ostringstream stream;
+        stream << value;
+        XCTAssertEqual(stream.str(), to_string(value));
+    }
+}
+
 #pragma mark -
 
 - (void)create_file {

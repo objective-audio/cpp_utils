@@ -157,3 +157,23 @@ std::string yas::to_string(file_manager::remove_contents_error const &error) {
             return "find_contents_failed";
     }
 }
+
+std::ostream &operator<<(std::ostream &os, yas::file_manager::create_dir_error const &value) {
+    os << to_string(value);
+    return os;
+}
+
+std::ostream &operator<<(std::ostream &os, yas::file_manager::content_kind const &value) {
+    os << to_string(value);
+    return os;
+}
+
+std::ostream &operator<<(std::ostream &os, yas::file_manager::remove_content_error const &value) {
+    os << to_string(value);
+    return os;
+}
+
+std::ostream &operator<<(std::ostream &os, yas::file_manager::remove_contents_error const &value) {
+    os << to_string(value);
+    return os;
+}
