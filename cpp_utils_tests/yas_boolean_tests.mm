@@ -182,4 +182,14 @@ using namespace yas;
     XCTAssertEqual(to_string(false_flag), "false");
 }
 
+- (void)test_ostream {
+    auto const values = {boolean{false}, boolean{true}};
+
+    for (auto const &value : values) {
+        std::ostringstream stream;
+        stream << value;
+        XCTAssertEqual(stream.str(), to_string(value));
+    }
+}
+
 @end
