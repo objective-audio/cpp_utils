@@ -23,6 +23,9 @@ std::optional<std::size_t> index(std::vector<T> const &vector, T const &value);
 template <typename T>
 bool contains(std::vector<T> const &vector, T const &value);
 
+template <typename T, typename F>
+bool contains_if(std::vector<T> const &vector, F function);
+
 template <typename T, typename P>
 T filter(T const &collection, P predicate);
 
