@@ -431,6 +431,15 @@
     XCTAssertFalse(yas::contains(vec, std::string("b")));
 }
 
+- (void)test_contains_if {
+    std::vector<int> vec{1, 3};
+
+    XCTAssertFalse(yas::contains_if(vec, [](auto const &value) { return value == 0; }));
+    XCTAssertTrue(yas::contains_if(vec, [](auto const &value) { return value == 1; }));
+    XCTAssertFalse(yas::contains_if(vec, [](auto const &value) { return value == 2; }));
+    XCTAssertTrue(yas::contains_if(vec, [](auto const &value) { return value == 3; }));
+}
+
 - (void)test_split {
     std::string text = "a,b,cd,efg";
 

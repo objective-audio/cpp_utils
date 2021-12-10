@@ -48,6 +48,11 @@ bool contains(std::vector<T> const &vector, T const &value) {
     return std::find(vector.begin(), vector.end(), value) != vector.end();
 }
 
+template <typename T, typename F>
+bool contains_if(std::vector<T> const &vector, F function) {
+    return std::find_if(vector.begin(), vector.end(), function) != vector.end();
+}
+
 template <typename T, typename P>
 T filter(T const &collection, P predicate) {
     T filtered;
