@@ -161,6 +161,31 @@ std::vector<T> to_vector(std::unordered_set<T> set) {
     return vector;
 }
 
+template <typename R, typename T, typename F>
+std::vector<R> map(T const &collection, F function) {
+    std::vector<R> vector;
+    vector.reserve(collection.size());
+
+    for (auto const &obj : collection) {
+        vector.emplace_back(function(obj));
+    }
+
+    return vector;
+}
+
+template <typename R, typename T, typename F>
+std::vector<R> filter_map(T const &collection, F function) {
+    std::vector<R> vector;
+
+    for (auto const &obj : collection) {
+        if (auto opt_value = function(obj); opt_value.has_value()) {
+            vector.emplace_back(opt_value.value());
+        }
+    }
+
+    return vector;
+}
+
 template <typename T>
 std::unordered_set<T> to_unordered_set(std::vector<T> vector) {
     std::unordered_set<T> set;

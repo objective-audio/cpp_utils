@@ -68,6 +68,12 @@ std::vector<R> to_vector(T collection, F function);
 template <typename T>
 std::vector<T> to_vector(std::unordered_set<T> set);
 
+template <typename R, typename T, typename F>
+std::vector<R> map(T const &collection, F function);
+
+template <typename R, typename T, typename F>
+std::vector<R> filter_map(T const &collection, F function);
+
 template <typename T>
 std::unordered_set<T> to_unordered_set(std::vector<T> vector);
 
