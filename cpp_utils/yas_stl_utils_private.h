@@ -32,15 +32,20 @@ std::optional<T> min_empty_key(std::map<T, U> const &map) {
     return next;
 }
 
-template <typename T>
-std::optional<std::size_t> index(std::vector<T> const &vector, T const &target) {
-    auto it = std::find_if(vector.begin(), vector.end(), [&target](auto const &value) { return target == value; });
+template <typename T, typename F>
+std::optional<std::size_t> index(std::vector<T> const &vector, F function) {
+    auto it = std::find_if(vector.begin(), vector.end(), function);
 
     if (it != vector.end()) {
         return std::distance(vector.begin(), it);
     } else {
         return std::nullopt;
     }
+}
+
+template <typename T>
+std::optional<std::size_t> index(std::vector<T> const &vector, T const &target) {
+    return index(vector, [&target](auto const &value) { return target == value; });
 }
 
 template <typename T>

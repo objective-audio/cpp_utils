@@ -17,6 +17,9 @@ namespace yas {
 template <typename T, typename U>
 std::optional<T> min_empty_key(std::map<T, U> const &map);
 
+template <typename T, typename F>
+std::optional<std::size_t> index(std::vector<T> const &vector, F function);
+
 template <typename T>
 std::optional<std::size_t> index(std::vector<T> const &vector, T const &value);
 
