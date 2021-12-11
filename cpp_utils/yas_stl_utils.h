@@ -17,6 +17,9 @@ namespace yas {
 template <typename T, typename U>
 std::optional<T> min_empty_key(std::map<T, U> const &map);
 
+template <typename T, typename F>
+std::optional<std::size_t> index(std::vector<T> const &vector, F function);
+
 template <typename T>
 std::optional<std::size_t> index(std::vector<T> const &vector, T const &value);
 
@@ -67,6 +70,12 @@ std::vector<R> to_vector(T collection, F function);
 
 template <typename T>
 std::vector<T> to_vector(std::unordered_set<T> set);
+
+template <typename R, typename T, typename F>
+std::vector<R> map(T const &collection, F function);
+
+template <typename R, typename T, typename F>
+std::vector<R> filter_map(T const &collection, F function);
 
 template <typename T>
 std::unordered_set<T> to_unordered_set(std::vector<T> vector);

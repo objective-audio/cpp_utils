@@ -32,15 +32,20 @@ std::optional<T> min_empty_key(std::map<T, U> const &map) {
     return next;
 }
 
-template <typename T>
-std::optional<std::size_t> index(std::vector<T> const &vector, T const &target) {
-    auto it = std::find_if(vector.begin(), vector.end(), [&target](auto const &value) { return target == value; });
+template <typename T, typename F>
+std::optional<std::size_t> index(std::vector<T> const &vector, F function) {
+    auto it = std::find_if(vector.begin(), vector.end(), function);
 
     if (it != vector.end()) {
         return std::distance(vector.begin(), it);
     } else {
         return std::nullopt;
     }
+}
+
+template <typename T>
+std::optional<std::size_t> index(std::vector<T> const &vector, T const &target) {
+    return index(vector, [&target](auto const &value) { return target == value; });
 }
 
 template <typename T>
@@ -158,6 +163,31 @@ std::vector<T> to_vector(std::unordered_set<T> set) {
     std::vector<T> vector;
     vector.reserve(set.size());
     std::move(set.begin(), set.end(), std::back_inserter(vector));
+    return vector;
+}
+
+template <typename R, typename T, typename F>
+std::vector<R> map(T const &collection, F function) {
+    std::vector<R> vector;
+    vector.reserve(collection.size());
+
+    for (auto const &obj : collection) {
+        vector.emplace_back(function(obj));
+    }
+
+    return vector;
+}
+
+template <typename R, typename T, typename F>
+std::vector<R> filter_map(T const &collection, F function) {
+    std::vector<R> vector;
+
+    for (auto const &obj : collection) {
+        if (auto opt_value = function(obj); opt_value.has_value()) {
+            vector.emplace_back(opt_value.value());
+        }
+    }
+
     return vector;
 }
 

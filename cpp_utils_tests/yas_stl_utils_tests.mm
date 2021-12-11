@@ -56,7 +56,7 @@
     XCTAssertFalse(key);
 }
 
-- (void)test_filter_vector {
+- (void)test_filter_vector_type {
     std::vector<int> vec{1, 4, 5, 3, 2};
     auto filtered_vec = yas::filter(vec, [](auto const &val) { return (val % 2) != 0; });
 
@@ -66,7 +66,7 @@
     XCTAssertEqual(filtered_vec[2], 3);
 }
 
-- (void)test_filter_map {
+- (void)test_filter_map_type {
     std::map<int, int> map{{0, 12}, {1, 11}, {2, 10}, {3, 9}, {4, 8}};
     auto filtered_map = yas::filter(map, [](auto const &pair) { return (pair.second % 2) != 0; });
 
@@ -336,6 +336,57 @@
     XCTAssertEqual(mapped.at(0), "1");
     XCTAssertEqual(mapped.at(1), "2");
     XCTAssertEqual(mapped.at(2), "3");
+}
+
+- (void)test_map_same_type {
+    std::vector<int> const vector{0, 1, 2};
+    auto mapped = yas::map<int>(std::move(vector), [](int const &obj) { return obj + 1; });
+
+    XCTAssertEqual(mapped.size(), 3);
+    XCTAssertEqual(mapped.at(0), 1);
+    XCTAssertEqual(mapped.at(1), 2);
+    XCTAssertEqual(mapped.at(2), 3);
+}
+
+- (void)test_map_different_type {
+    std::vector<int> const vector{0, 1, 2};
+    auto mapped = yas::map<std::string>(std::move(vector), [](int const &obj) { return std::to_string(obj + 1); });
+
+    XCTAssertEqual(mapped.size(), 3);
+    XCTAssertEqual(mapped.at(0), "1");
+    XCTAssertEqual(mapped.at(1), "2");
+    XCTAssertEqual(mapped.at(2), "3");
+}
+
+- (void)test_filter_map_same_type {
+    std::vector<int> const vector{0, 1, 2};
+    auto mapped = yas::filter_map<int>(
+        vector, [](int const &obj) { return (obj != 1) ? std::make_optional(obj) : std::nullopt; });
+
+    XCTAssertEqual(mapped.size(), 2);
+    XCTAssertEqual(mapped.at(0), 0);
+    XCTAssertEqual(mapped.at(1), 2);
+}
+
+- (void)test_filter_map_different_type {
+    std::vector<int> const vector{0, 1, 2};
+    auto mapped = yas::filter_map<std::string>(
+        vector, [](int const &obj) { return (obj != 1) ? std::make_optional(std::to_string(obj + 1)) : std::nullopt; });
+
+    XCTAssertEqual(mapped.size(), 2);
+    XCTAssertEqual(mapped.at(0), "1");
+    XCTAssertEqual(mapped.at(1), "3");
+}
+
+- (void)test_filter_map_optional_type {
+    std::vector<std::optional<int>> const vector{0, 1, 2, std::nullopt};
+    auto mapped = yas::filter_map<std::optional<int>>(
+        vector, [](std::optional<int> const &obj) { return (obj != 1) ? std::make_optional(obj) : std::nullopt; });
+
+    XCTAssertEqual(mapped.size(), 3);
+    XCTAssertEqual(mapped.at(0), 0);
+    XCTAssertEqual(mapped.at(1), 2);
+    XCTAssertEqual(mapped.at(2), std::nullopt);
 }
 
 - (void)test_replace {
