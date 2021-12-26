@@ -106,6 +106,9 @@ auto to_tuple(std::vector<T> const &);
 
 template <typename K, typename T>
 std::map<K, std::shared_ptr<T>> lock_values(std::map<K, std::weak_ptr<T>> const &map);
+
+template <typename T>
+bool equal(std::vector<T> const &, std::vector<T> const &);
 }  // namespace yas
 
 #include <cpp_utils/yas_stl_utils_private.h>

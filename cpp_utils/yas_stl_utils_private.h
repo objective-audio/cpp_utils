@@ -278,4 +278,9 @@ std::map<K, std::shared_ptr<T>> lock_values(std::map<K, std::weak_ptr<T>> const 
 
     return locked_map;
 }
+
+template <typename T>
+bool equal(std::vector<T> const &lhs, std::vector<T> const &rhs) {
+    return std::equal(lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
+}
 }  // namespace yas
