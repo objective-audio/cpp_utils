@@ -549,4 +549,19 @@
     XCTAssertEqual(*locked.at(3), 3);
 }
 
+- (void)test_equal {
+    auto const vector1 = std::vector<int>{0, 1, 2};
+    auto const vector1b = std::vector<int>{0, 1, 2};
+    auto const vector2 = std::vector<int>{3, 4, 5};
+    auto const vector3 = std::vector<int>{0, 1, 3};
+    auto const vector4 = std::vector<int>{0, 1};
+    auto const vector5 = std::vector<int>{0, 1, 2, 3};
+
+    XCTAssertTrue(yas::equal(vector1, vector1b));
+    XCTAssertFalse(yas::equal(vector1, vector2));
+    XCTAssertFalse(yas::equal(vector1, vector3));
+    XCTAssertFalse(yas::equal(vector1, vector4));
+    XCTAssertFalse(yas::equal(vector1, vector5));
+}
+
 @end
