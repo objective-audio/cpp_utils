@@ -6,7 +6,6 @@
 
 #include <CoreFoundation/CoreFoundation.h>
 
-#include <iterator>
 #include <utility>
 #include <vector>
 
