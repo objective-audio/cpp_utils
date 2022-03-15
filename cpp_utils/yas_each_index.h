@@ -10,8 +10,7 @@
 
 namespace yas {
 template <typename T>
-class each_index_iterator : public std::iterator<std::input_iterator_tag, T> {
-   public:
+struct each_index_iterator {
     each_index_iterator(T const index);
 
     each_index_iterator &operator++();
@@ -30,8 +29,7 @@ template <typename T, typename Enable = void>
 class each_index;
 
 template <typename T>
-class each_index<T, enable_if_integral_t<T>> {
-   public:
+struct each_index<T, enable_if_integral_t<T>> {
     using iterator = each_index_iterator<T>;
 
     each_index(T const end);
