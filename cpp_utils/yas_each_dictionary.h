@@ -15,8 +15,7 @@ using cf_type_pair = std::pair<CFTypeRef, CFTypeRef>;
 using cf_type_vector = std::vector<cf_type_pair>;
 using cf_type_vector_ptr = std::shared_ptr<cf_type_vector>;
 
-class each_dictionary_iterator : public std::iterator<std::input_iterator_tag, std::pair<CFTypeRef, CFTypeRef>> {
-   public:
+struct each_dictionary_iterator {
     each_dictionary_iterator(cf_type_vector_ptr const &keys_and_values, std::size_t const index);
 
     each_dictionary_iterator &operator++();
