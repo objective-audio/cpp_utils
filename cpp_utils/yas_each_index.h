@@ -6,8 +6,6 @@
 
 #include <cpp_utils/yas_type_traits.h>
 
-#include <iterator>
-
 namespace yas {
 template <typename T>
 struct each_index_iterator {
