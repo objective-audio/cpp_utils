@@ -64,6 +64,8 @@
 		B6359D8921DB727A00481348 /* yas_system_path_utils.h in Headers */ = {isa = PBXBuildFile; fileRef = B6359D4921DB727900481348 /* yas_system_path_utils.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B6359E0D21DB729E00481348 /* objc_utils.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B6359E0C21DB729E00481348 /* objc_utils.framework */; };
 		B6359E2321DB784F00481348 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B6359E0E21DB733200481348 /* Accelerate.framework */; };
+		B658010D27FDD4B1009EAB96 /* yas_system_time_provider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B658010B27FDD4B0009EAB96 /* yas_system_time_provider.cpp */; };
+		B658010E27FDD4B1009EAB96 /* yas_system_time_provider.h in Headers */ = {isa = PBXBuildFile; fileRef = B658010C27FDD4B1009EAB96 /* yas_system_time_provider.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B6777F4E256A5CA500514E81 /* yas_worker.h in Headers */ = {isa = PBXBuildFile; fileRef = B6777F4C256A5CA500514E81 /* yas_worker.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B6777F4F256A5CA500514E81 /* yas_worker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B6777F4D256A5CA500514E81 /* yas_worker.cpp */; };
 		B688637A2700AA5A00D8530B /* yas_task_queue.h in Headers */ = {isa = PBXBuildFile; fileRef = B68863782700AA5A00D8530B /* yas_task_queue.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -144,6 +146,8 @@
 		B6359D4921DB727900481348 /* yas_system_path_utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = yas_system_path_utils.h; sourceTree = "<group>"; };
 		B6359E0C21DB729E00481348 /* objc_utils.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = objc_utils.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B6359E0E21DB733200481348 /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
+		B658010B27FDD4B0009EAB96 /* yas_system_time_provider.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = yas_system_time_provider.cpp; sourceTree = "<group>"; };
+		B658010C27FDD4B1009EAB96 /* yas_system_time_provider.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = yas_system_time_provider.h; sourceTree = "<group>"; };
 		B6777F4C256A5CA500514E81 /* yas_worker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = yas_worker.h; sourceTree = "<group>"; };
 		B6777F4D256A5CA500514E81 /* yas_worker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = yas_worker.cpp; sourceTree = "<group>"; };
 		B68863782700AA5A00D8530B /* yas_task_queue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = yas_task_queue.h; sourceTree = "<group>"; };
@@ -256,6 +260,8 @@
 				B6359D3621DB727900481348 /* yas_stl_utils.h */,
 				B6359D4921DB727900481348 /* yas_system_path_utils.h */,
 				B6359D4721DB727900481348 /* yas_system_path_utils.mm */,
+				B658010B27FDD4B0009EAB96 /* yas_system_time_provider.cpp */,
+				B658010C27FDD4B1009EAB96 /* yas_system_time_provider.h */,
 				B688637D2701E17C00D8530B /* yas_task_queue_private.h */,
 				B68863782700AA5A00D8530B /* yas_task_queue.h */,
 				B6FA87A722728C0A00A77872 /* yas_thread.h */,
@@ -345,6 +351,7 @@
 				B6359D6521DB727A00481348 /* yas_objc_ptr.h in Headers */,
 				B6359D5E21DB727A00481348 /* yas_result_private.h in Headers */,
 				B6359D6421DB727A00481348 /* yas_fast_each.h in Headers */,
+				B658010E27FDD4B1009EAB96 /* yas_system_time_provider.h in Headers */,
 				B6359D6821DB727A00481348 /* yas_version.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -427,6 +434,7 @@
 				B6359D8721DB727A00481348 /* yas_system_path_utils.mm in Sources */,
 				B6359D7F21DB727A00481348 /* yas_cf_ref.cpp in Sources */,
 				B6B33BDE227F277D004F87CD /* yas_to_integer.cpp in Sources */,
+				B658010D27FDD4B1009EAB96 /* yas_system_time_provider.cpp in Sources */,
 				B6359D6621DB727A00481348 /* yas_flex_ptr.cpp in Sources */,
 				B6F7C30C27A43185003BA908 /* yas_index_range.cpp in Sources */,
 				B6777F4F256A5CA500514E81 /* yas_worker.cpp in Sources */,
