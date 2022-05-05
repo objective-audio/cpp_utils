@@ -76,6 +76,8 @@
 		B6B33BDE227F277D004F87CD /* yas_to_integer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B6B33BDD227F277D004F87CD /* yas_to_integer.cpp */; };
 		B6BBCF84227A7FD5002B6396 /* yas_file_path.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B6BBCF82227A7FD5002B6396 /* yas_file_path.cpp */; };
 		B6BBCF85227A7FD5002B6396 /* yas_file_path.h in Headers */ = {isa = PBXBuildFile; fileRef = B6BBCF83227A7FD5002B6396 /* yas_file_path.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B6D41A5D282377B70052DF43 /* yas_assertion.mm in Sources */ = {isa = PBXBuildFile; fileRef = B6D41A5B282377B70052DF43 /* yas_assertion.mm */; };
+		B6D41A5E282377B70052DF43 /* yas_assertion.h in Headers */ = {isa = PBXBuildFile; fileRef = B6D41A5C282377B70052DF43 /* yas_assertion.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B6EEB98127A95999001DB7BF /* yas_identifier.h in Headers */ = {isa = PBXBuildFile; fileRef = B6EEB97F27A95999001DB7BF /* yas_identifier.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B6EEB98227A95999001DB7BF /* yas_identifier.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B6EEB98027A95999001DB7BF /* yas_identifier.cpp */; };
 		B6F7C30C27A43185003BA908 /* yas_index_range.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B6F7C30A27A43185003BA908 /* yas_index_range.cpp */; };
@@ -157,6 +159,8 @@
 		B6B33BDD227F277D004F87CD /* yas_to_integer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = yas_to_integer.cpp; sourceTree = "<group>"; };
 		B6BBCF82227A7FD5002B6396 /* yas_file_path.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = yas_file_path.cpp; sourceTree = "<group>"; };
 		B6BBCF83227A7FD5002B6396 /* yas_file_path.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = yas_file_path.h; sourceTree = "<group>"; };
+		B6D41A5B282377B70052DF43 /* yas_assertion.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = yas_assertion.mm; sourceTree = "<group>"; };
+		B6D41A5C282377B70052DF43 /* yas_assertion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = yas_assertion.h; sourceTree = "<group>"; };
 		B6EEB97F27A95999001DB7BF /* yas_identifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = yas_identifier.h; sourceTree = "<group>"; };
 		B6EEB98027A95999001DB7BF /* yas_identifier.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = yas_identifier.cpp; sourceTree = "<group>"; };
 		B6F7C30A27A43185003BA908 /* yas_index_range.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = yas_index_range.cpp; sourceTree = "<group>"; };
@@ -209,6 +213,8 @@
 		B6359D0921DB727900481348 /* cpp_utils */ = {
 			isa = PBXGroup;
 			children = (
+				B6D41A5C282377B70052DF43 /* yas_assertion.h */,
+				B6D41A5B282377B70052DF43 /* yas_assertion.mm */,
 				B6359D4421DB727900481348 /* yas_boolean.cpp */,
 				B6359D1521DB727900481348 /* yas_boolean.h */,
 				B6359D1321DB727900481348 /* yas_cf_ref_private.h */,
@@ -345,6 +351,7 @@
 				B6359D5521DB727A00481348 /* yas_boolean.h in Headers */,
 				B6359D7721DB727A00481348 /* yas_cf_utils.h in Headers */,
 				B6359D8021DB727A00481348 /* yas_objc_ptr_private.h in Headers */,
+				B6D41A5E282377B70052DF43 /* yas_assertion.h in Headers */,
 				B6359D5C21DB727A00481348 /* yas_cf_ref.h in Headers */,
 				B6359D5221DB727A00481348 /* yas_url.h in Headers */,
 				B6359D4B21DB727A00481348 /* yas_cf_utils_private.h in Headers */,
@@ -435,6 +442,7 @@
 				B6359D7F21DB727A00481348 /* yas_cf_ref.cpp in Sources */,
 				B6B33BDE227F277D004F87CD /* yas_to_integer.cpp in Sources */,
 				B658010D27FDD4B1009EAB96 /* yas_system_time_provider.cpp in Sources */,
+				B6D41A5D282377B70052DF43 /* yas_assertion.mm in Sources */,
 				B6359D6621DB727A00481348 /* yas_flex_ptr.cpp in Sources */,
 				B6F7C30C27A43185003BA908 /* yas_index_range.cpp in Sources */,
 				B6777F4F256A5CA500514E81 /* yas_worker.cpp in Sources */,

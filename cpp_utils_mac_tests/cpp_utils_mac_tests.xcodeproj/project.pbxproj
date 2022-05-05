@@ -13,6 +13,7 @@
 		B6777F5C256A5D6900514E81 /* yas_worker_tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = B6777F5B256A5D6900514E81 /* yas_worker_tests.mm */; };
 		B688637C2700AA9500D8530B /* yas_task_queue_tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = B688637B2700AA9500D8530B /* yas_task_queue_tests.mm */; };
 		B6BBCF87227A8AAE002B6396 /* yas_file_path_tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = B6BBCF86227A8AAE002B6396 /* yas_file_path_tests.mm */; };
+		B6D41A61282377EF0052DF43 /* yas_assertion_tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = B6D41A60282377EF0052DF43 /* yas_assertion_tests.mm */; };
 		B6D4C59321E9A042004A95A8 /* yas_objc_ptr_tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = B6D4C57621E9A042004A95A8 /* yas_objc_ptr_tests.mm */; };
 		B6D4C59521E9A042004A95A8 /* yas_type_traits_tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = B6D4C57821E9A042004A95A8 /* yas_type_traits_tests.mm */; };
 		B6D4C59621E9A042004A95A8 /* yas_flagset_tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = B6D4C57921E9A042004A95A8 /* yas_flagset_tests.mm */; };
@@ -53,6 +54,7 @@
 		B6777F5B256A5D6900514E81 /* yas_worker_tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = yas_worker_tests.mm; sourceTree = "<group>"; };
 		B688637B2700AA9500D8530B /* yas_task_queue_tests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = yas_task_queue_tests.mm; sourceTree = "<group>"; };
 		B6BBCF86227A8AAE002B6396 /* yas_file_path_tests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = yas_file_path_tests.mm; sourceTree = "<group>"; };
+		B6D41A60282377EF0052DF43 /* yas_assertion_tests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = yas_assertion_tests.mm; sourceTree = "<group>"; };
 		B6D4C56C21E99FD3004A95A8 /* cpp_utils_mac_tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = cpp_utils_mac_tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B6D4C57121E99FD3004A95A8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B6D4C57621E9A042004A95A8 /* yas_objc_ptr_tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = yas_objc_ptr_tests.mm; sourceTree = "<group>"; };
@@ -129,6 +131,7 @@
 		B6D4C57521E9A042004A95A8 /* cpp_utils_tests */ = {
 			isa = PBXGroup;
 			children = (
+				B6D41A60282377EF0052DF43 /* yas_assertion_tests.mm */,
 				B6D4C58221E9A042004A95A8 /* yas_boolean_tests.mm */,
 				B6D4C58421E9A042004A95A8 /* yas_cf_ref_tests.mm */,
 				B6D4C58B21E9A042004A95A8 /* yas_cf_tests.mm */,
@@ -297,6 +300,7 @@
 				B6D4C59521E9A042004A95A8 /* yas_type_traits_tests.mm in Sources */,
 				B6777F5C256A5D6900514E81 /* yas_worker_tests.mm in Sources */,
 				B6D4C59C21E9A042004A95A8 /* yas_delaying_caller_tests.mm in Sources */,
+				B6D41A61282377EF0052DF43 /* yas_assertion_tests.mm in Sources */,
 				B6D4C5AE21E9A042004A95A8 /* yas_system_path_utils_tests.mm in Sources */,
 				B6D4C5A421E9A042004A95A8 /* yas_to_integer_tests.mm in Sources */,
 				B61C30C2244C2C9A00510913 /* yas_ns_utils_tests.mm in Sources */,
