@@ -11,6 +11,8 @@
 		B6270D0D22EC7B7E0029810E /* yas_flow_graph_tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = B6270D0C22EC7B7E0029810E /* yas_flow_graph_tests.mm */; };
 		B6777F60256A5D7300514E81 /* yas_worker_tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = B6777F5F256A5D7300514E81 /* yas_worker_tests.mm */; };
 		B6886384270208A300D8530B /* yas_task_queue_tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = B6886383270208A300D8530B /* yas_task_queue_tests.mm */; };
+		B6B6035B283BBEA20070457F /* yas_unowned_tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = B6B6035A283BBEA20070457F /* yas_unowned_tests.mm */; };
+		B6B6035F283BBF2E0070457F /* objc_utils.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B6B6035E283BBF2E0070457F /* objc_utils.framework */; };
 		B6BBCF8D227AA240002B6396 /* yas_file_path_tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = B6BBCF8C227AA240002B6396 /* yas_file_path_tests.mm */; };
 		B6D4C5CA21E9A5A0004A95A8 /* cpp_utils.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B6D4C5C921E9A5A0004A95A8 /* cpp_utils.framework */; };
 		B6D4C5E921E9A5D2004A95A8 /* yas_objc_ptr_tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = B6D4C5CC21E9A5D2004A95A8 /* yas_objc_ptr_tests.mm */; };
@@ -50,6 +52,8 @@
 		B6270D0C22EC7B7E0029810E /* yas_flow_graph_tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = yas_flow_graph_tests.mm; sourceTree = "<group>"; };
 		B6777F5F256A5D7300514E81 /* yas_worker_tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = yas_worker_tests.mm; sourceTree = "<group>"; };
 		B6886383270208A300D8530B /* yas_task_queue_tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = yas_task_queue_tests.mm; sourceTree = "<group>"; };
+		B6B6035A283BBEA20070457F /* yas_unowned_tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = yas_unowned_tests.mm; sourceTree = "<group>"; };
+		B6B6035E283BBF2E0070457F /* objc_utils.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = objc_utils.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B6BBCF8C227AA240002B6396 /* yas_file_path_tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = yas_file_path_tests.mm; sourceTree = "<group>"; };
 		B6D4C5BF21E9A544004A95A8 /* cpp_utils_ios_tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = cpp_utils_ios_tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B6D4C5C421E9A544004A95A8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -91,6 +95,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B6B6035F283BBF2E0070457F /* objc_utils.framework in Frameworks */,
 				B6D4C5CA21E9A5A0004A95A8 /* cpp_utils.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -127,6 +132,7 @@
 		B6D4C5C821E9A5A0004A95A8 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B6B6035E283BBF2E0070457F /* objc_utils.framework */,
 				B6D4C5C921E9A5A0004A95A8 /* cpp_utils.framework */,
 			);
 			name = Frameworks;
@@ -170,6 +176,7 @@
 				B6D4C5D621E9A5D2004A95A8 /* yas_url_tests.mm */,
 				B6D4C5DC21E9A5D2004A95A8 /* yas_version_tests.mm */,
 				B6777F5F256A5D7300514E81 /* yas_worker_tests.mm */,
+				B6B6035A283BBEA20070457F /* yas_unowned_tests.mm */,
 			);
 			name = cpp_utils_tests;
 			path = ../../cpp_utils_tests;
@@ -288,6 +295,7 @@
 				B6D4C60521E9A5D2004A95A8 /* yas_flex_pointer_tests.mm in Sources */,
 				B6D4C5F121E9A5D2004A95A8 /* yas_unless_tests.mm in Sources */,
 				B6270D0D22EC7B7E0029810E /* yas_flow_graph_tests.mm in Sources */,
+				B6B6035B283BBEA20070457F /* yas_unowned_tests.mm in Sources */,
 				B6D4C5F621E9A5D2004A95A8 /* yas_types_tests.mm in Sources */,
 				B6D4C5F521E9A5D2004A95A8 /* yas_boolean_tests.mm in Sources */,
 				B6D4C5F421E9A5D2004A95A8 /* yas_to_string_tests.mm in Sources */,
