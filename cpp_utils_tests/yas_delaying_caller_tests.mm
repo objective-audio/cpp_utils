@@ -26,6 +26,8 @@ using namespace yas;
 
     bool called = false;
 
+    XCTAssertFalse(caller.is_suspending());
+
     caller.request([&called]() { called = true; });
 
     XCTAssertTrue(called);
@@ -37,7 +39,11 @@ using namespace yas;
     bool called_1 = false;
     bool called_2 = false;
 
+    XCTAssertFalse(caller.is_suspending());
+
     caller.push();
+
+    XCTAssertTrue(caller.is_suspending());
 
     caller.request([&called_1]() { called_1 = true; });
 
@@ -46,21 +52,25 @@ using namespace yas;
 
     caller.push();
 
+    XCTAssertTrue(caller.is_suspending());
     XCTAssertFalse(called_1);
     XCTAssertFalse(called_2);
 
     caller.request([&called_2]() { called_2 = true; });
 
+    XCTAssertTrue(caller.is_suspending());
     XCTAssertFalse(called_1);
     XCTAssertFalse(called_2);
 
     caller.pop();
 
+    XCTAssertTrue(caller.is_suspending());
     XCTAssertFalse(called_1);
     XCTAssertFalse(called_2);
 
     caller.pop();
 
+    XCTAssertFalse(caller.is_suspending());
     XCTAssertFalse(called_1);
     XCTAssertTrue(called_2);
 }
