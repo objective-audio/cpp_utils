@@ -20,6 +20,8 @@ class delaying_caller {
     void push();
     void pop();
 
+    [[nodiscard]] bool is_suspending() const;
+
    private:
     std::optional<handler_f> _handler;
     std::size_t _push_count;

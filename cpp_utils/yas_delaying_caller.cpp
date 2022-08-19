@@ -45,3 +45,7 @@ void delaying_caller::pop() {
         this->_handler = std::nullopt;
     }
 }
+
+bool delaying_caller::is_suspending() const {
+    return this->_push_count > 0;
+}
