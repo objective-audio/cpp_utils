@@ -81,7 +81,9 @@ template <typename T>
 std::unordered_set<T> to_unordered_set(std::vector<T> vector);
 
 template <typename K, typename T, typename F>
-std::unordered_map<K, T> to_unordered_map(std::vector<T> vector, F function);
+std::unordered_map<K, T> to_unordered_map(std::vector<T> &&vector, F function);
+template <typename K, typename T, typename F>
+std::unordered_map<K, T> to_unordered_map(std::vector<T> const &vector, F function);
 template <typename K, typename T, typename F>
 std::map<K, T> to_map(std::vector<T> &&vector, F function);
 template <typename K, typename T, typename F>
