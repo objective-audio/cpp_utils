@@ -232,21 +232,28 @@
     XCTAssertEqual(map2.at("b"), 2);
 }
 
-- (void)test_unordered_set_to_vector {
-    std::unordered_set<int> set{1, 3, 5};
-    auto vec = yas::to_vector(set);
+- (void)test_unordered_set_to_vector_by_move {
+    std::unordered_set<std::string> set{"1", "3", "5"};
+    auto const vec = yas::to_vector(std::move(set));
+
+    XCTAssertEqual(set.size(), 0);
+    XCTAssertEqual(vec.size(), 3);
+
+    XCTAssertTrue(yas::contains(vec, std::string("1")));
+    XCTAssertTrue(yas::contains(vec, std::string("3")));
+    XCTAssertTrue(yas::contains(vec, std::string("5")));
+}
+
+- (void)test_unordered_set_to_vector_by_copy {
+    std::unordered_set<int> const set{1, 3, 5};
+    auto const vec = yas::to_vector(set);
 
     XCTAssertEqual(set.size(), 3);
     XCTAssertEqual(vec.size(), 3);
 
-    for (auto const &val : vec) {
-        XCTAssertTrue(set.count(val));
-        if (set.count(val)) {
-            set.erase(val);
-        }
-    }
-
-    XCTAssertEqual(set.size(), 0);
+    XCTAssertTrue(yas::contains(vec, 1));
+    XCTAssertTrue(yas::contains(vec, 3));
+    XCTAssertTrue(yas::contains(vec, 5));
 }
 
 - (void)test_to_lower {

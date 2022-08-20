@@ -159,10 +159,19 @@ std::vector<R> to_vector(T const &collection, F function) {
 }
 
 template <typename T>
-std::vector<T> to_vector(std::unordered_set<T> set) {
+std::vector<T> to_vector(std::unordered_set<T> &&set) {
     std::vector<T> vector;
     vector.reserve(set.size());
     std::move(set.begin(), set.end(), std::back_inserter(vector));
+    set.clear();
+    return vector;
+}
+
+template <typename T>
+std::vector<T> to_vector(std::unordered_set<T> const &set) {
+    std::vector<T> vector;
+    vector.reserve(set.size());
+    std::copy(set.begin(), set.end(), std::back_inserter(vector));
     return vector;
 }
 
