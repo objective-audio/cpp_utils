@@ -147,7 +147,7 @@ void replace(std::unordered_map<T, U> &map, T const &key, U value) {
 }
 
 template <typename R, typename T, typename F>
-std::vector<R> to_vector(T collection, F function) {
+std::vector<R> to_vector(T const &collection, F function) {
     std::vector<R> vector;
     vector.reserve(collection.size());
 
