@@ -407,6 +407,32 @@
     XCTAssertEqual(value.size(), 0);
 }
 
+- (void)test_to_unordered_set_by_move {
+    std::vector<std::string> vec{"a", "b", "c"};
+
+    auto const set = yas::to_unordered_set(std::move(vec));
+
+    XCTAssertEqual(set.size(), 3);
+    XCTAssertTrue(set.contains("a"));
+    XCTAssertTrue(set.contains("b"));
+    XCTAssertTrue(set.contains("c"));
+
+    XCTAssertEqual(vec, (std::vector<std::string>{"", "", ""}));
+}
+
+- (void)test_to_unordered_set_by_copy {
+    std::vector<std::string> const vec{"a", "b", "c"};
+
+    auto const set = yas::to_unordered_set(vec);
+
+    XCTAssertEqual(set.size(), 3);
+    XCTAssertTrue(set.contains("a"));
+    XCTAssertTrue(set.contains("b"));
+    XCTAssertTrue(set.contains("c"));
+
+    XCTAssertEqual(vec, (std::vector<std::string>{"a", "b", "c"}));
+}
+
 - (void)test_to_unordered_map_by_move {
     std::vector<std::string> vec{"a", "b", "c"};
 

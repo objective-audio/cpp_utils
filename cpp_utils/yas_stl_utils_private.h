@@ -192,9 +192,16 @@ std::vector<R> filter_map(T const &collection, F function) {
 }
 
 template <typename T>
-std::unordered_set<T> to_unordered_set(std::vector<T> vector) {
+std::unordered_set<T> to_unordered_set(std::vector<T> &&vector) {
     std::unordered_set<T> set;
     std::move(vector.begin(), vector.end(), std::inserter(set, set.end()));
+    return set;
+}
+
+template <typename T>
+std::unordered_set<T> to_unordered_set(std::vector<T> const &vector) {
+    std::unordered_set<T> set;
+    std::copy(vector.begin(), vector.end(), std::inserter(set, set.end()));
     return set;
 }
 
