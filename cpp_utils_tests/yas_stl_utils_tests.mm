@@ -232,21 +232,28 @@
     XCTAssertEqual(map2.at("b"), 2);
 }
 
-- (void)test_unordered_set_to_vector {
-    std::unordered_set<int> set{1, 3, 5};
-    auto vec = yas::to_vector(set);
+- (void)test_unordered_set_to_vector_by_move {
+    std::unordered_set<std::string> set{"1", "3", "5"};
+    auto const vec = yas::to_vector(std::move(set));
+
+    XCTAssertEqual(set.size(), 0);
+    XCTAssertEqual(vec.size(), 3);
+
+    XCTAssertTrue(yas::contains(vec, std::string("1")));
+    XCTAssertTrue(yas::contains(vec, std::string("3")));
+    XCTAssertTrue(yas::contains(vec, std::string("5")));
+}
+
+- (void)test_unordered_set_to_vector_by_copy {
+    std::unordered_set<int> const set{1, 3, 5};
+    auto const vec = yas::to_vector(set);
 
     XCTAssertEqual(set.size(), 3);
     XCTAssertEqual(vec.size(), 3);
 
-    for (auto const &val : vec) {
-        XCTAssertTrue(set.count(val));
-        if (set.count(val)) {
-            set.erase(val);
-        }
-    }
-
-    XCTAssertEqual(set.size(), 0);
+    XCTAssertTrue(yas::contains(vec, 1));
+    XCTAssertTrue(yas::contains(vec, 3));
+    XCTAssertTrue(yas::contains(vec, 5));
 }
 
 - (void)test_to_lower {
@@ -407,28 +414,86 @@
     XCTAssertEqual(value.size(), 0);
 }
 
-- (void)test_to_unordered_map {
+- (void)test_to_unordered_set_by_move {
+    std::vector<std::string> vec{"a", "b", "c"};
+
+    auto const set = yas::to_unordered_set(std::move(vec));
+
+    XCTAssertEqual(set.size(), 3);
+    XCTAssertTrue(set.contains("a"));
+    XCTAssertTrue(set.contains("b"));
+    XCTAssertTrue(set.contains("c"));
+
+    XCTAssertEqual(vec, (std::vector<std::string>{"", "", ""}));
+}
+
+- (void)test_to_unordered_set_by_copy {
+    std::vector<std::string> const vec{"a", "b", "c"};
+
+    auto const set = yas::to_unordered_set(vec);
+
+    XCTAssertEqual(set.size(), 3);
+    XCTAssertTrue(set.contains("a"));
+    XCTAssertTrue(set.contains("b"));
+    XCTAssertTrue(set.contains("c"));
+
+    XCTAssertEqual(vec, (std::vector<std::string>{"a", "b", "c"}));
+}
+
+- (void)test_to_unordered_map_by_move {
     std::vector<std::string> vec{"a", "b", "c"};
 
     std::size_t idx = 0;
-    auto map = yas::to_unordered_map<std::size_t>(std::move(vec), [&idx](auto &value) { return idx++; });
+    auto const map = yas::to_unordered_map<std::size_t>(std::move(vec), [&idx](auto &value) { return idx++; });
 
     XCTAssertEqual(map.size(), 3);
     XCTAssertEqual(map.at(0), "a");
     XCTAssertEqual(map.at(1), "b");
     XCTAssertEqual(map.at(2), "c");
+
+    XCTAssertEqual(vec, (std::vector<std::string>{"", "", ""}));
 }
 
-- (void)test_to_map {
+- (void)test_to_unordered_map_by_copy {
+    std::vector<std::string> const vec{"a", "b", "c"};
+
+    std::size_t idx = 0;
+    auto const map = yas::to_unordered_map<std::size_t>(vec, [&idx](auto &value) { return idx++; });
+
+    XCTAssertEqual(map.size(), 3);
+    XCTAssertEqual(map.at(0), "a");
+    XCTAssertEqual(map.at(1), "b");
+    XCTAssertEqual(map.at(2), "c");
+
+    XCTAssertEqual(vec, (std::vector<std::string>{"a", "b", "c"}));
+}
+
+- (void)test_to_map_by_move {
     std::vector<std::string> vec{"a", "b", "c"};
 
     std::size_t idx = 10;
-    auto map = yas::to_map<std::size_t>(std::move(vec), [&idx](auto &value) { return idx--; });
+    auto const map = yas::to_map<std::size_t>(std::move(vec), [&idx](auto &value) { return idx--; });
 
     XCTAssertEqual(map.size(), 3);
     XCTAssertEqual(map.at(8), "c");
     XCTAssertEqual(map.at(9), "b");
     XCTAssertEqual(map.at(10), "a");
+
+    XCTAssertEqual(vec, (std::vector<std::string>{"", "", ""}));
+}
+
+- (void)test_to_map_by_copy {
+    std::vector<std::string> const vec{"a", "b", "c"};
+
+    std::size_t idx = 10;
+    auto const map = yas::to_map<std::size_t>(vec, [&idx](auto &value) { return idx--; });
+
+    XCTAssertEqual(map.size(), 3);
+    XCTAssertEqual(map.at(8), "c");
+    XCTAssertEqual(map.at(9), "b");
+    XCTAssertEqual(map.at(10), "a");
+
+    XCTAssertEqual(vec, (std::vector<std::string>{"a", "b", "c"}));
 }
 
 - (void)test_to_weak {

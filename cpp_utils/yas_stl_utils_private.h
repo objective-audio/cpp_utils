@@ -147,7 +147,7 @@ void replace(std::unordered_map<T, U> &map, T const &key, U value) {
 }
 
 template <typename R, typename T, typename F>
-std::vector<R> to_vector(T collection, F function) {
+std::vector<R> to_vector(T const &collection, F function) {
     std::vector<R> vector;
     vector.reserve(collection.size());
 
@@ -159,10 +159,19 @@ std::vector<R> to_vector(T collection, F function) {
 }
 
 template <typename T>
-std::vector<T> to_vector(std::unordered_set<T> set) {
+std::vector<T> to_vector(std::unordered_set<T> &&set) {
     std::vector<T> vector;
     vector.reserve(set.size());
     std::move(set.begin(), set.end(), std::back_inserter(vector));
+    set.clear();
+    return vector;
+}
+
+template <typename T>
+std::vector<T> to_vector(std::unordered_set<T> const &set) {
+    std::vector<T> vector;
+    vector.reserve(set.size());
+    std::copy(set.begin(), set.end(), std::back_inserter(vector));
     return vector;
 }
 
@@ -192,14 +201,21 @@ std::vector<R> filter_map(T const &collection, F function) {
 }
 
 template <typename T>
-std::unordered_set<T> to_unordered_set(std::vector<T> vector) {
+std::unordered_set<T> to_unordered_set(std::vector<T> &&vector) {
     std::unordered_set<T> set;
     std::move(vector.begin(), vector.end(), std::inserter(set, set.end()));
     return set;
 }
 
+template <typename T>
+std::unordered_set<T> to_unordered_set(std::vector<T> const &vector) {
+    std::unordered_set<T> set;
+    std::copy(vector.begin(), vector.end(), std::inserter(set, set.end()));
+    return set;
+}
+
 template <typename K, typename T, typename F>
-std::unordered_map<K, T> to_unordered_map(std::vector<T> vector, F function) {
+std::unordered_map<K, T> to_unordered_map(std::vector<T> &&vector, F function) {
     std::unordered_map<K, T> map;
 
     for (T &value : vector) {
@@ -210,11 +226,33 @@ std::unordered_map<K, T> to_unordered_map(std::vector<T> vector, F function) {
 }
 
 template <typename K, typename T, typename F>
-std::map<K, T> to_map(std::vector<T> vector, F function) {
+std::unordered_map<K, T> to_unordered_map(std::vector<T> const &vector, F function) {
+    std::unordered_map<K, T> map;
+
+    for (T const &value : vector) {
+        map.emplace(std::make_pair(function(value), value));
+    }
+
+    return map;
+}
+
+template <typename K, typename T, typename F>
+std::map<K, T> to_map(std::vector<T> &&vector, F function) {
     std::map<K, T> map;
 
     for (T &value : vector) {
         map.emplace(std::make_pair(function(value), std::move(value)));
+    }
+
+    return map;
+}
+
+template <typename K, typename T, typename F>
+std::map<K, T> to_map(std::vector<T> const &vector, F function) {
+    std::map<K, T> map;
+
+    for (T const &value : vector) {
+        map.emplace(std::make_pair(function(value), value));
     }
 
     return map;

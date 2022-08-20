@@ -66,10 +66,12 @@ template <typename T, typename U>
 void replace(std::unordered_map<T, U> &map, T const &key, U value);
 
 template <typename R, typename T, typename F>
-std::vector<R> to_vector(T collection, F function);
+std::vector<R> to_vector(T const &collection, F function);
 
 template <typename T>
-std::vector<T> to_vector(std::unordered_set<T> set);
+std::vector<T> to_vector(std::unordered_set<T> &&set);
+template <typename T>
+std::vector<T> to_vector(std::unordered_set<T> const &set);
 
 template <typename R, typename T, typename F>
 std::vector<R> map(T const &collection, F function);
@@ -78,12 +80,18 @@ template <typename R, typename T, typename F>
 std::vector<R> filter_map(T const &collection, F function);
 
 template <typename T>
-std::unordered_set<T> to_unordered_set(std::vector<T> vector);
+std::unordered_set<T> to_unordered_set(std::vector<T> &&vector);
+template <typename T>
+std::unordered_set<T> to_unordered_set(std::vector<T> const &vector);
 
 template <typename K, typename T, typename F>
-std::unordered_map<K, T> to_unordered_map(std::vector<T> vector, F function);
+std::unordered_map<K, T> to_unordered_map(std::vector<T> &&vector, F function);
 template <typename K, typename T, typename F>
-std::map<K, T> to_map(std::vector<T> vector, F function);
+std::unordered_map<K, T> to_unordered_map(std::vector<T> const &vector, F function);
+template <typename K, typename T, typename F>
+std::map<K, T> to_map(std::vector<T> &&vector, F function);
+template <typename K, typename T, typename F>
+std::map<K, T> to_map(std::vector<T> const &vector, F function);
 
 std::string to_lower(std::string);
 std::string replaced(std::string source, std::string const &target, std::string const &replacement);
