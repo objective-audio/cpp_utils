@@ -419,7 +419,7 @@
     XCTAssertEqual(map.at(2), "c");
 }
 
-- (void)test_to_map {
+- (void)test_to_map_by_move {
     std::vector<std::string> vec{"a", "b", "c"};
 
     std::size_t idx = 10;
@@ -429,6 +429,22 @@
     XCTAssertEqual(map.at(8), "c");
     XCTAssertEqual(map.at(9), "b");
     XCTAssertEqual(map.at(10), "a");
+
+    XCTAssertEqual(vec, (std::vector<std::string>{"", "", ""}));
+}
+
+- (void)test_to_map_by_copy {
+    std::vector<std::string> vec{"a", "b", "c"};
+
+    std::size_t idx = 10;
+    auto map = yas::to_map<std::size_t>(vec, [&idx](auto &value) { return idx--; });
+
+    XCTAssertEqual(map.size(), 3);
+    XCTAssertEqual(map.at(8), "c");
+    XCTAssertEqual(map.at(9), "b");
+    XCTAssertEqual(map.at(10), "a");
+
+    XCTAssertEqual(vec, (std::vector<std::string>{"a", "b", "c"}));
 }
 
 - (void)test_to_weak {
