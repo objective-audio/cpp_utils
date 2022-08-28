@@ -55,7 +55,7 @@
 }
 
 - (void)test_retaion_count {
-    NSDictionary *dict = @{@"a": @"1"};
+    NSDictionary *dict = [[NSDictionary alloc] initWithObjects:@[@"a"] forKeys:@[@"1"]];
     CFDictionaryRef cf_dict = (__bridge CFDictionaryRef)dict;
 
     auto pre_count = CFGetRetainCount(cf_dict);

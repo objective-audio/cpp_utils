@@ -6,6 +6,7 @@
 
 #include <cpp_utils/yas_result.h>
 
+#include <filesystem>
 #include <string>
 
 namespace yas {
@@ -43,10 +44,15 @@ struct file_manager {
     using content_paths_result_t = result<std::vector<std::string>, content_paths_error>;
 
     [[nodiscard]] static create_dir_result_t create_directory_if_not_exists(std::string const &path);
+    [[nodiscard]] static create_dir_result_t create_directory_if_not_exists(std::filesystem::path const &);
     [[nodiscard]] static exists_result_t content_exists(std::string const &path);
+    [[nodiscard]] static exists_result_t content_exists(std::filesystem::path const &);
     static remove_content_t remove_content(std::string const &path);
-    static remove_contents_result_t remove_contents_in_directory(std::string const &dir_path);
-    [[nodiscard]] static content_paths_result_t content_paths_in_directory(std::string const &dir_path);
+    static remove_content_t remove_content(std::filesystem::path const &);
+    static remove_contents_result_t remove_contents_in_directory(std::string const &path);
+    static remove_contents_result_t remove_contents_in_directory(std::filesystem::path const &);
+    [[nodiscard]] static content_paths_result_t content_paths_in_directory(std::string const &path);
+    [[nodiscard]] static content_paths_result_t content_paths_in_directory(std::filesystem::path const &);
 };
 
 std::string to_string(file_manager::create_dir_error const &);

@@ -63,7 +63,11 @@ static NSSearchPathDirectory to_search_path_directory(system_path_utils::dir con
 }
 
 std::string system_path_utils::directory_path(dir const dir) {
-    auto path = objc_ptr<NSString *>([&dir] {
+    return directory_fs_path(dir).string();
+}
+
+std::filesystem::path system_path_utils::directory_fs_path(dir const dir) {
+    auto const path = objc_ptr<NSString *>([&dir] {
         switch (dir) {
             case dir::temporary:
                 return NSTemporaryDirectory();

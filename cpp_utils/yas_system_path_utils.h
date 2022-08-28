@@ -6,6 +6,7 @@
 
 #include <cpp_utils/yas_url.h>
 
+#include <filesystem>
 #include <string>
 
 namespace yas::system_path_utils {
@@ -40,5 +41,6 @@ enum class dir {
 };
 
 [[nodiscard]] std::string directory_path(dir const);
+[[nodiscard]] std::filesystem::path directory_fs_path(dir const);
 [[nodiscard]] url directory_url(dir const);
 }  // namespace yas::system_path_utils
