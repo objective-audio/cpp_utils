@@ -4,19 +4,25 @@
 
 #import <XCTest/XCTest.h>
 #import <cpp_utils/cpp_utils.h>
+#include <iostream>
 
 using namespace yas;
+
+namespace yas::file_manager_test_utils {
+static std::filesystem::path make_root_path() {
+    return system_path_utils::directory_fs_path(system_path_utils::dir::document).append("root");
+}
+}
 
 @interface yas_file_manager_tests : XCTestCase
 
 @end
 
 struct yas_file_manager_tests_cpp {
-    yas::file_path root_path =
-        yas::file_path{system_path_utils::directory_path(system_path_utils::dir::document)}.appending("root");
-    yas::file_path file_path = this->root_path.appending("file");
-    yas::file_path dir_path = this->root_path.appending("dir");
-    yas::file_path empty_path = this->root_path.appending("empty");
+    std::filesystem::path root_path = file_manager_test_utils::make_root_path();
+    std::filesystem::path file_path = file_manager_test_utils::make_root_path().append("file");
+    std::filesystem::path dir_path = file_manager_test_utils::make_root_path().append("dir");
+    std::filesystem::path empty_path = file_manager_test_utils::make_root_path().append("empty");
 };
 
 @implementation yas_file_manager_tests {
@@ -24,11 +30,11 @@ struct yas_file_manager_tests_cpp {
 }
 
 - (void)setUp {
-    file_manager::remove_content(self->_cpp.root_path.string());
+    file_manager::remove_content(self->_cpp.root_path);
 }
 
 - (void)tearDown {
-    file_manager::remove_content(self->_cpp.root_path.string());
+    file_manager::remove_content(self->_cpp.root_path);
 }
 
 - (void)test_create_directory_if_exists {
