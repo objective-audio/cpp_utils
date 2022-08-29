@@ -8,10 +8,6 @@
 
 using namespace yas;
 
-file_manager::create_dir_result_t file_manager::create_directory_if_not_exists(std::string const &path) {
-    return create_directory_if_not_exists(std::filesystem::path(path));
-}
-
 file_manager::create_dir_result_t file_manager::create_directory_if_not_exists(std::filesystem::path const &path) {
     std::error_code error_code;
 
@@ -24,10 +20,6 @@ file_manager::create_dir_result_t file_manager::create_directory_if_not_exists(s
     }
 
     return create_dir_result_t{nullptr};
-}
-
-file_manager::exists_result_t file_manager::content_exists(std::string const &path) {
-    return content_exists(std::filesystem::path(path));
 }
 
 file_manager::exists_result_t file_manager::content_exists(std::filesystem::path const &content_path) {
@@ -55,10 +47,6 @@ file_manager::exists_result_t file_manager::content_exists(std::filesystem::path
     }
 }
 
-file_manager::remove_content_t file_manager::remove_content(std::string const &path) {
-    return remove_content(std::filesystem::path(path));
-}
-
 file_manager::remove_content_t file_manager::remove_content(std::filesystem::path const &path) {
     if (file_manager::content_exists(path)) {
         std::error_code error_code;
@@ -70,10 +58,6 @@ file_manager::remove_content_t file_manager::remove_content(std::filesystem::pat
         }
     }
     return remove_content_t{nullptr};
-}
-
-file_manager::remove_contents_result_t file_manager::remove_contents_in_directory(std::string const &path) {
-    return remove_contents_in_directory(std::filesystem::path{path});
 }
 
 file_manager::remove_contents_result_t file_manager::remove_contents_in_directory(std::filesystem::path const &path) {
@@ -101,10 +85,6 @@ file_manager::remove_contents_result_t file_manager::remove_contents_in_director
     }
 
     return remove_contents_result_t{nullptr};
-}
-
-file_manager::content_paths_result_t file_manager::content_paths_in_directory(std::string const &path) {
-    return content_paths_in_directory(std::filesystem::path(path));
 }
 
 file_manager::content_paths_result_t file_manager::content_paths_in_directory(std::filesystem::path const &path) {

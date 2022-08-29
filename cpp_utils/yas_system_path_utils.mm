@@ -62,10 +62,6 @@ static NSSearchPathDirectory to_search_path_directory(system_path_utils::dir con
 }
 }
 
-std::string system_path_utils::directory_path(dir const dir) {
-    return directory_fs_path(dir).string();
-}
-
 std::filesystem::path system_path_utils::directory_fs_path(dir const dir) {
     auto const path = objc_ptr<NSString *>([&dir] {
         switch (dir) {
@@ -80,8 +76,4 @@ std::filesystem::path system_path_utils::directory_fs_path(dir const dir) {
         }
     });
     return to_string((__bridge CFStringRef)path.object());
-}
-
-url system_path_utils::directory_url(dir const dir) {
-    return url::file_url(directory_path(dir));
 }
