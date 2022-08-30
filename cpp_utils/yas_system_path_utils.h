@@ -40,5 +40,5 @@ enum class dir {
     open_step_root,
 };
 
-[[nodiscard]] std::filesystem::path directory_fs_path(dir const);
+[[nodiscard]] std::filesystem::path directory_path(dir const);
 }  // namespace yas::system_path_utils
