@@ -10,7 +10,7 @@ using namespace yas;
 
 namespace yas::file_manager_test_utils {
 static std::filesystem::path make_root_path() {
-    return system_path_utils::directory_fs_path(system_path_utils::dir::document).append("root");
+    return system_path_utils::directory_path(system_path_utils::dir::document).append("root");
 }
 }
 
