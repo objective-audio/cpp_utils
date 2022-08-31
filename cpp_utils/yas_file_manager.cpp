@@ -11,11 +11,18 @@ using namespace yas;
 file_manager::create_dir_result_t file_manager::create_directory_if_not_exists(std::filesystem::path const &path) {
     std::error_code error_code;
 
-    if (std::filesystem::exists(path, error_code)) {
-        return create_dir_result_t{create_dir_error::file_exists};
+    if (auto const result = content_exists(path)) {
+        switch (result.value()) {
+            case content_kind::directory:
+                return create_dir_result_t{nullptr};
+            case content_kind::file:
+                return create_dir_result_t{create_dir_error::file_exists};
+        }
     }
 
-    if (!std::filesystem::create_directories(path, error_code)) {
+    auto const result = std::filesystem::create_directories(path, error_code);
+
+    if (!result || error_code) {
         return create_dir_result_t{create_dir_error::create_failed};
     }
 
@@ -33,6 +40,7 @@ file_manager::exists_result_t file_manager::content_exists(std::filesystem::path
 
     if (exists) {
         bool const result = std::filesystem::is_directory(content_path, error_code);
+
         if (error_code) {
             return exists_result_t{nullptr};
         }
