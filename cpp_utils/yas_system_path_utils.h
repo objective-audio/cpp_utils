@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include <cpp_utils/yas_url.h>
+#include <TargetConditionals.h>
 
 #include <filesystem>
 #include <string>
