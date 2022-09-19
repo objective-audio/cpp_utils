@@ -120,8 +120,8 @@ struct yas_file_manager_tests_cpp {
     auto const &paths = result.value();
 
     XCTAssertEqual(paths.size(), 2);
-    XCTAssertTrue(contains(paths, file_path.string()));
-    XCTAssertTrue(contains(paths, dir_path.string()));
+    XCTAssertTrue(contains(paths, file_path));
+    XCTAssertTrue(contains(paths, dir_path));
 
     auto result2 = file_manager::content_paths_in_directory(file_path.string());
 

@@ -41,7 +41,7 @@ struct file_manager {
     using exists_result_t = result<content_kind, std::nullptr_t>;
     using remove_content_t = result<std::nullptr_t, remove_content_error>;
     using remove_contents_result_t = result<std::nullptr_t, remove_contents_error>;
-    using content_paths_result_t = result<std::vector<std::string>, content_paths_error>;
+    using content_paths_result_t = result<std::vector<std::filesystem::path>, content_paths_error>;
 
     [[nodiscard]] static create_dir_result_t create_directory_if_not_exists(std::filesystem::path const &);
     [[nodiscard]] static exists_result_t content_exists(std::filesystem::path const &);

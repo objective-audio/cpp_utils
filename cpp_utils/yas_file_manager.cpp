@@ -112,10 +112,10 @@ file_manager::content_paths_result_t file_manager::content_paths_in_directory(st
         return content_paths_result_t{content_paths_error::find_contents_failed};
     }
 
-    std::vector<std::string> paths;
+    std::vector<std::filesystem::path> paths;
 
     for (auto const &content : iterator) {
-        paths.emplace_back(content.path().string());
+        paths.emplace_back(content.path());
     }
 
     return content_paths_result_t{std::move(paths)};
