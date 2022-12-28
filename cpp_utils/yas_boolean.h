@@ -5,6 +5,7 @@
 #pragma once
 
 #include <string>
+#include <ostream>
 
 namespace yas {
 struct boolean {
