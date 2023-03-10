@@ -47,6 +47,7 @@
 		B6D4C5B221E9A04B004A95A8 /* cpp_utils.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B6D4C5B121E9A04B004A95A8 /* cpp_utils.framework */; };
 		B6DB92442271F51B000E61CE /* yas_file_manager_tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = B6DB92432271F51B000E61CE /* yas_file_manager_tests.mm */; };
 		B6EEB98427A959EB001DB7BF /* yas_identifier_tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = B6EEB98327A959EB001DB7BF /* yas_identifier_tests.mm */; };
+		B6F133C529BA029900E91090 /* yas_lock_tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = B6F133C429BA029900E91090 /* yas_lock_tests.mm */; };
 		B6F7C30F27A431F5003BA908 /* yas_index_range_tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = B6F7C30E27A431F5003BA908 /* yas_index_range_tests.mm */; };
 		B6FA87AB22728D3700A77872 /* yas_thread_tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = B6FA87AA22728D3700A77872 /* yas_thread_tests.mm */; };
 /* End PBXBuildFile section */
@@ -94,6 +95,7 @@
 		B6D4C5B121E9A04B004A95A8 /* cpp_utils.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = cpp_utils.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B6DB92432271F51B000E61CE /* yas_file_manager_tests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = yas_file_manager_tests.mm; sourceTree = "<group>"; };
 		B6EEB98327A959EB001DB7BF /* yas_identifier_tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = yas_identifier_tests.mm; sourceTree = "<group>"; };
+		B6F133C429BA029900E91090 /* yas_lock_tests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = yas_lock_tests.mm; sourceTree = "<group>"; };
 		B6F7C30E27A431F5003BA908 /* yas_index_range_tests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = yas_index_range_tests.mm; sourceTree = "<group>"; };
 		B6FA87AA22728D3700A77872 /* yas_thread_tests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = yas_thread_tests.mm; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -180,6 +182,7 @@
 				B6B60356283BBCFF0070457F /* yas_unowned_tests.mm */,
 				B6A63CDD2861FE0600D25E7C /* yas_json_tests.mm */,
 				B6A63CDC2861FE0600D25E7C /* yas_json_utils_tests.mm */,
+				B6F133C429BA029900E91090 /* yas_lock_tests.mm */,
 			);
 			name = cpp_utils_tests;
 			path = ../../cpp_utils_tests;
@@ -318,6 +321,7 @@
 				B6777F5C256A5D6900514E81 /* yas_worker_tests.mm in Sources */,
 				B6D4C59C21E9A042004A95A8 /* yas_delaying_caller_tests.mm in Sources */,
 				B6D41A61282377EF0052DF43 /* yas_assertion_tests.mm in Sources */,
+				B6F133C529BA029900E91090 /* yas_lock_tests.mm in Sources */,
 				B6D4C5AE21E9A042004A95A8 /* yas_system_path_utils_tests.mm in Sources */,
 				B6D4C5A421E9A042004A95A8 /* yas_to_integer_tests.mm in Sources */,
 				B61C30C2244C2C9A00510913 /* yas_ns_utils_tests.mm in Sources */,
