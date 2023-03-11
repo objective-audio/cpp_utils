@@ -53,16 +53,16 @@ using namespace yas;
 
     XCTestExpectation *exp = [self expectationWithDescription:@"timer"];
 
-    auto timer = yas::timer(0.1, true, [exp, &count_all]() { ++count_all; });
+    auto timer = yas::timer(0.05, true, [exp, &count_all]() { ++count_all; });
 
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3 * NSEC_PER_SEC)), dispatch_get_main_queue(),
-                   [&timer, &count_all, &count_invalidated]() mutable {
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(),
+                   [&timer, &count_all, &count_invalidated, exp]() mutable {
                        timer.invalidate();
                        count_invalidated = count_all;
-                   });
 
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3 * NSEC_PER_SEC)), dispatch_get_main_queue(),
-                   [exp]() mutable { [exp fulfill]; });
+                       dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)),
+                                      dispatch_get_main_queue(), [exp]() mutable { [exp fulfill]; });
+                   });
 
     [self waitForExpectations:@[exp] timeout:10.0];
 
