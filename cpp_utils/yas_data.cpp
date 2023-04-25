@@ -4,6 +4,8 @@
 
 #include "yas_data.h"
 
+#define ACCELERATE_NEW_LAPACK
+
 #include <Accelerate/Accelerate.h>
 
 using namespace yas;
