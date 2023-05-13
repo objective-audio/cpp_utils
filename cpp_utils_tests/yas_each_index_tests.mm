@@ -3,7 +3,7 @@
 //
 
 #import <XCTest/XCTest.h>
-#import <cpp_utils/cpp_utils.h>
+#import <cpp_utils/yas_each_index.h>
 
 @interface yas_enumerator_tests : XCTestCase
 

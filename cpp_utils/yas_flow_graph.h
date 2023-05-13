@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include <functional>
 #include <optional>
 
 namespace yas::flow {

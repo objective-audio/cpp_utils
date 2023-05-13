@@ -3,7 +3,7 @@
 //
 
 #import <XCTest/XCTest.h>
-#import <cpp_utils/cpp_utils.h>
+#import <cpp_utils/yas_flex_ptr.h>
 
 @interface yas_flex_pointer_tests : XCTestCase
 

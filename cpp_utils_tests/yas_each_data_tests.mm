@@ -3,7 +3,7 @@
 //
 
 #import <XCTest/XCTest.h>
-#import <cpp_utils/cpp_utils.h>
+#import <cpp_utils/yas_each_data.h>
 #import <vector>
 
 using namespace yas;
