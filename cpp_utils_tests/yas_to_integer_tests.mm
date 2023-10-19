@@ -4,6 +4,7 @@
 
 #import <XCTest/XCTest.h>
 #import <cpp_utils/yas_to_integer.h>
+#include <typeinfo>
 
 using namespace yas;
 
