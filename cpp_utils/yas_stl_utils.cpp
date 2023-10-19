@@ -4,6 +4,7 @@
 
 #include "yas_stl_utils.h"
 
+#include <algorithm>
 #include <sstream>
 
 std::string yas::to_lower(std::string string) {

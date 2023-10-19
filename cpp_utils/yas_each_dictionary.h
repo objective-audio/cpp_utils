@@ -6,6 +6,7 @@
 
 #include <CoreFoundation/CoreFoundation.h>
 
+#include <memory>
 #include <utility>
 #include <vector>
 
