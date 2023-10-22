@@ -8,6 +8,7 @@
 
 #include <filesystem>
 #include <string>
+#include <ostream>
 
 namespace yas {
 struct file_manager {
