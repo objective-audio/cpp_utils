@@ -8,6 +8,7 @@
 #include <map>
 #include <memory>
 #include <optional>
+#include <set>
 #include <string>
 #include <unordered_map>
 #include <unordered_set>
@@ -92,6 +93,9 @@ template <typename K, typename T, typename F>
 std::map<K, T> to_map(std::vector<T> &&vector, F function);
 template <typename K, typename T, typename F>
 std::map<K, T> to_map(std::vector<T> const &vector, F function);
+
+template <typename E, typename T, typename F>
+std::set<E> to_set(T const &collection, F function);
 
 std::string to_lower(std::string);
 std::string replaced(std::string source, std::string const &target, std::string const &replacement);
