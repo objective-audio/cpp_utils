@@ -259,6 +259,17 @@ std::map<K, T> to_map(std::vector<T> const &vector, F function) {
     return map;
 }
 
+template <typename E, typename T, typename F>
+std::set<E> to_set(T const &collection, F function) {
+    std::set<E> set;
+
+    for (auto const &value : collection) {
+        set.emplace(function(value));
+    }
+
+    return set;
+}
+
 template <typename T, typename F>
 std::string joined(T const &collection, std::string const &separator, F function) {
     std::ostringstream stream;

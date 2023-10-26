@@ -629,4 +629,16 @@
     XCTAssertFalse(yas::equal(vector1, vector5));
 }
 
+- (void)test_to_set {
+    auto const vector = std::vector<int>{2, 1, 0};
+    auto const set = yas::to_set<int>(vector, [](auto const &value) { return value; });
+
+    XCTAssertEqual(set.size(), 3);
+
+    auto iterator = set.begin();
+    XCTAssertEqual(*iterator, 0);
+    XCTAssertEqual(*(++iterator), 1);
+    XCTAssertEqual(*(++iterator), 2);
+}
+
 @end
