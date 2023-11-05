@@ -59,7 +59,7 @@ id json_utils::to_json_object(json_value const &value) {
     } else if (value.string.has_value()) {
         return (__bridge NSString *)to_cf_object(value.string.value());
     } else if (value.has_value(json_value_kind::map)) {
-        NSMutableDictionary *const dictionary = [[NSMutableDictionary alloc] init];
+        NSMutableDictionary *const dictionary = [[[NSMutableDictionary alloc] init] autorelease];
 
         for (auto const &pair : value.map.value()) {
             if (auto const &value = pair.second; !value.is_empty()) {
@@ -70,7 +70,7 @@ id json_utils::to_json_object(json_value const &value) {
 
         return dictionary;
     } else if (value.has_value(json_value_kind::vector)) {
-        NSMutableArray *const array = [[NSMutableArray alloc] init];
+        NSMutableArray *const array = [[[NSMutableArray alloc] init] autorelease];
 
         auto const &vector = value.vector.value();
         for (auto const &value : vector) {
