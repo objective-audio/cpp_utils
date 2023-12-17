@@ -93,7 +93,7 @@
     yas::version ver3{"1.2.0"};
     yas::version ver4{"1.2"};
 
-    XCTAssertTrue(ver1 == ver2);
+    XCTAssertTrue(ver3 == ver4);
 
     yas::version ver5{"1.2.3"};
     yas::version ver6{"1.5.3"};
@@ -110,7 +110,7 @@
     yas::version ver3{"1.2.0"};
     yas::version ver4{"1.2"};
 
-    XCTAssertFalse(ver1 != ver2);
+    XCTAssertFalse(ver3 != ver4);
 
     yas::version ver5{"1.2.3"};
     yas::version ver6{"1.5.3"};
