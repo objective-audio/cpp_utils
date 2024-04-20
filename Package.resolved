@@ -1,0 +1,14 @@
+{
+  "pins" : [
+    {
+      "identity" : "objc_utils",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/objective-audio/objc_utils.git",
+      "state" : {
+        "branch" : "master",
+        "revision" : "30709b7e941daa9fffec83c36513ad44a4c13dac"
+      }
+    }
+  ],
+  "version" : 2
+}
