@@ -9,22 +9,32 @@ let package = Package(
     products: [
         .library(
             name: "cpp-utils",
-            targets: ["cpp-utils"]
+            targets: ["cpp-utils", "objc-utils"]
         ),
-    ],
-    dependencies: [
-        .package(url: "https://github.com/objective-audio/objc_utils.git", branch: "master"),
     ],
     targets: [
         .target(
+            name: "objc-utils",
+            cSettings: [
+                .unsafeFlags(["-fno-objc-arc"])
+            ]),
+        .target(
             name: "cpp-utils",
             dependencies: [
-                .product(name: "objc-utils", package: "objc_utils")
+                "objc-utils",
             ],
             cxxSettings: [
                 .unsafeFlags(["-fcxx-modules"]),
             ]
         ),
+        .testTarget(
+            name: "objc-utils-tests",
+            dependencies: [
+                "objc-utils",
+            ],
+            cSettings: [
+                .unsafeFlags(["-fno-objc-arc"])
+            ]),
         .testTarget(
             name: "cpp-utils-tests",
             dependencies: [
