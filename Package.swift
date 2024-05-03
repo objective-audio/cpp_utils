@@ -9,7 +9,7 @@ let package = Package(
     products: [
         .library(
             name: "cpp-utils",
-            targets: ["cpp-utils", "objc-utils"]
+            targets: ["cpp-utils", "objc-utils", "observing"]
         ),
     ],
     targets: [
@@ -27,6 +27,12 @@ let package = Package(
                 .unsafeFlags(["-fcxx-modules"]),
             ]
         ),
+        .target(
+            name: "observing",
+            dependencies: [
+                "cpp-utils"
+            ]
+        ),
         .testTarget(
             name: "objc-utils-tests",
             dependencies: [
@@ -39,6 +45,15 @@ let package = Package(
             name: "cpp-utils-tests",
             dependencies: [
                 "cpp-utils",
+            ]
+        ),
+        .testTarget(
+            name: "observing-tests",
+            dependencies: [
+                "observing",
+            ],
+            cxxSettings: [
+                .unsafeFlags(["-fcxx-modules"])
             ]
         ),
     ],
