@@ -50,19 +50,19 @@ CFURLRef url::cf_url() const {
 }
 
 url url::appending(std::string const &str) const {
-    auto url = objc_ptr<NSURL *>([=]() {
+    auto url = objc_ptr<NSURL *>([this, &str]() {
         return [this->_impl->_url.object() URLByAppendingPathComponent:(__bridge NSString *)to_cf_object(str)];
     });
     return yas::url{std::make_shared<impl>(std::move(url))};
 }
 
 url url::deleting_last_path_component() const {
-    auto url = objc_ptr<NSURL *>([=]() { return [this->_impl->_url.object() URLByDeletingLastPathComponent]; });
+    auto url = objc_ptr<NSURL *>([this]() { return [this->_impl->_url.object() URLByDeletingLastPathComponent]; });
     return yas::url{std::make_shared<impl>(std::move(url))};
 }
 
 url url::deleting_path_extension() const {
-    auto url = objc_ptr<NSURL *>([=]() { return [this->_impl->_url.object() URLByDeletingPathExtension]; });
+    auto url = objc_ptr<NSURL *>([this]() { return [this->_impl->_url.object() URLByDeletingPathExtension]; });
     return yas::url{std::make_shared<impl>(std::move(url))};
 }
 

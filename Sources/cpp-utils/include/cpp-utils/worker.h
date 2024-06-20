@@ -7,6 +7,7 @@
 #include <chrono>
 #include <functional>
 #include <map>
+#include <vector>
 
 namespace yas {
 class worker;
