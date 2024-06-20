@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 
 #include <optional>
+#include <memory>
 
 using namespace yas;
 

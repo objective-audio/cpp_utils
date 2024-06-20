@@ -4,6 +4,8 @@
 
 #include "delaying_caller.h"
 
+#include <stdexcept>
+
 using namespace yas;
 
 delaying_caller::delaying_caller() : _handler(std::nullopt), _push_count(0) {

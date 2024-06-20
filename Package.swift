@@ -5,7 +5,7 @@ import PackageDescription
 
 let package = Package(
     name: "cpp-utils",
-    platforms: [.macOS(.v10_15), .iOS(.v13), .macCatalyst(.v13)],
+    platforms: [.macOS(.v14), .iOS(.v17), .macCatalyst(.v17)],
     products: [
         .library(
             name: "cpp-utils",
@@ -25,6 +25,11 @@ let package = Package(
             ],
             cxxSettings: [
                 .unsafeFlags(["-fcxx-modules"]),
+                .define("ACCELERATE_NEW_LAPACK", to: "1"),
+                .define("ACCELERATE_LAPACK_ILP64", to: "1"),
+            ],
+            linkerSettings: [
+                .linkedFramework("Accelerate"),
             ]
         ),
         .target(
