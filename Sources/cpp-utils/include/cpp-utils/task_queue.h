@@ -9,6 +9,7 @@
 #include <mutex>
 #include <optional>
 #include <vector>
+#include <atomic>
 
 namespace yas {
 template <typename Canceller>
