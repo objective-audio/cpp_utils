@@ -9,6 +9,7 @@
 #include <filesystem>
 #include <ostream>
 #include <string>
+#include <vector>
 
 namespace yas {
 struct file_manager {
