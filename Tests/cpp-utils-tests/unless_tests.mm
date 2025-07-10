@@ -4,6 +4,8 @@
 
 #import <XCTest/XCTest.h>
 #import <cpp-utils/unless.h>
+#include <memory>
+#include <string>
 
 @interface unless_tests : XCTestCase
 

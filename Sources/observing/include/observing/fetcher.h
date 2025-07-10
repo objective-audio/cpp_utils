@@ -3,6 +3,7 @@
 //
 
 #pragma once
+#include <optional>
 
 #include "syncable.h"
 

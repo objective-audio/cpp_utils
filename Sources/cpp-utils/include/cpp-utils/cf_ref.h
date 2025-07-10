@@ -3,9 +3,10 @@
 //
 
 #pragma once
-
 #include <CoreFoundation/CFBase.h>
 
+#include <cstddef>
+#include <memory>
 #include <mutex>
 
 namespace yas {
