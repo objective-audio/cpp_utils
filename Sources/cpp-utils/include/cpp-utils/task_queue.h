@@ -4,12 +4,12 @@
 
 #pragma once
 
+#include <atomic>
 #include <deque>
 #include <functional>
 #include <mutex>
 #include <optional>
 #include <vector>
-#include <atomic>
 
 namespace yas {
 template <typename Canceller>
